@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.ReverseProxy", "Yarp.R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextSharp.UnitTest", "NextSharp.UnitTest\NextSharp.UnitTest.csproj", "{C84F3E84-F444-419C-8B06-BCA1C9D24D5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{DF7C5224-CE02-4436-A086-DB2F40DC021E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{C84F3E84-F444-419C-8B06-BCA1C9D24D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C84F3E84-F444-419C-8B06-BCA1C9D24D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C84F3E84-F444-419C-8B06-BCA1C9D24D5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,5 +81,6 @@ Global
 		{BA548DC9-A28E-41AA-92EF-FE9C26F78079} = {AE797A1F-96E2-494A-B416-94E3DD77522E}
 		{7CB6011A-B7DA-4152-BAFA-A80771A8A855} = {A8FCA6D7-B9A4-4FCC-BD85-D09BDBACC34E}
 		{C84F3E84-F444-419C-8B06-BCA1C9D24D5F} = {AFEB392D-E760-447E-B89F-DBD63D2D4D44}
+		{DF7C5224-CE02-4436-A086-DB2F40DC021E} = {AE797A1F-96E2-494A-B416-94E3DD77522E}
 	EndGlobalSection
 EndGlobal
