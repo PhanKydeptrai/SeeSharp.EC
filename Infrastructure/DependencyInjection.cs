@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Application.Abstractions.EventBus;
+using Infrastructure.MessageBroker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -6,6 +8,7 @@ namespace Infrastructure;
 
 public static class DependencyInjection
 {
+    //FIXME: AddInfrastructure
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -20,13 +23,13 @@ public static class DependencyInjection
 
     private static IServiceCollection AddHealthCheck(this IServiceCollection services, IConfiguration configuration)
     {
-        //string? connectionString = configuration.GetConnectionString("PrimaryDatabase");
-        //string? readOnlyConnectionString = configuration.GetConnectionString("ReadOnlyDatabase");
-        //string? redisConnectionString = configuration.GetConnectionString("Redis");
+        string? connectionString = configuration.GetConnectionString("PrimaryDatabase");
+        string? readOnlyConnectionString = configuration.GetConnectionString("ReadOnlyDatabase");
+        string? redisConnectionString = configuration.GetConnectionString("Redis");
 
-        ////Message Broker
-        //string? rabbitMQHost = configuration.GetConnectionString("MessageBroker:Host");
-        //string? ServerName = configuration.GetConnectionString("MessageBroker:Username");
+        //Message Broker
+        string? rabbitMQHost = configuration.GetConnectionString("MessageBroker:Host");
+        string? ServerName = configuration.GetConnectionString("MessageBroker:Username");
 
         ////? Thiếu một đống cấu hình HealthCheck
         //services.AddHealthChecks()
@@ -57,7 +60,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddEventBus(this IServiceCollection services)
     {
-        //services.AddTransient<IEventBus, EventBus>();
+        services.AddTransient<IEventBus, EventBus>();
         return services;
     }
 
@@ -65,13 +68,13 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        //string connection = configuration.GetConnectionString("Redis")
-        //        ?? throw new ArgumentNullException("Redis connection string is missing");
+        string connection = configuration.GetConnectionString("Redis")
+                ?? throw new ArgumentNullException("Redis connection string is missing");
 
-        //services.AddStackExchangeRedisCache(redisOptions =>
-        //{
-        //    redisOptions.Configuration = connection;
-        //});
+        services.AddStackExchangeRedisCache(redisOptions =>
+        {
+            redisOptions.Configuration = connection;
+        });
 
         return services;
     }

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Persistence;
-
+//FIXME: AddPersistnce
 public static class DependencyInjection
 {
     public static IServiceCollection AddPersistnce(
@@ -11,17 +11,19 @@ public static class DependencyInjection
     {
         services.AddPrimaryDatabase(configuration)
             .AddReadOnlyDatabase(configuration)
-            .AddAbstractsReplicaDatabase(configuration);
+            .AddAbstractsDatabase(configuration);
+        
         return services;
     }
 
+    //Add Primary Database(MySQL)
     private static IServiceCollection AddPrimaryDatabase(
         this IServiceCollection services,
         IConfiguration configuration)
     {
 
-        //string connectionString = configuration.GetConnectionString("PrimaryDatabase")
-        //    ?? throw new Exception("MySQL connection string is null");
+        string connectionString = configuration.GetConnectionString("PrimaryDatabase")
+            ?? throw new Exception("MySQL connection string is null");
         //services.AddDbContext<NextSharpDbContext>(options =>
         //{
         //    options.UseMySQL(connectionString);
@@ -31,6 +33,7 @@ public static class DependencyInjection
         return services;
     }
 
+    //Add ReadOnly Database(PostgreSQL)
     private static IServiceCollection AddReadOnlyDatabase(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -45,7 +48,8 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddAbstractsReplicaDatabase(
+    //Add Abstracts Replica Database
+    private static IServiceCollection AddAbstractsDatabase(
         this IServiceCollection services,
         IConfiguration configuration)
     {

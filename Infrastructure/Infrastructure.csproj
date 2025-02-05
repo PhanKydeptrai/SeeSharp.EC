@@ -19,8 +19,6 @@
 		<PackageReference Include="Seq.Extensions.Logging" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="HealthCheck\" />
-	  <Folder Include="MessageBroker\" />
 	  <Folder Include="Repositories\" />
 	</ItemGroup>
 	<ItemGroup>

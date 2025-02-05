@@ -9,7 +9,6 @@
 		<PackageReference Include="MySql.EntityFrameworkCore" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Converter\" />
 	  <Folder Include="Database\" />
 	</ItemGroup>
 	<ItemGroup>

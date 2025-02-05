@@ -3,6 +3,7 @@ using API.Extentions;
 using Application;
 using HealthChecks.UI.Client;
 using Infrastructure;
+using Infrastructure.MessageBroker;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Persistence;
 using Serilog;
@@ -46,12 +47,13 @@ builder.Services.AddApplication(builder.Configuration)
 #endregion
 
 #region Cấu hình Masstransit
-//builder.Services.Configure<MessageBrokerSetting>(
-//    builder.Configuration.GetSection("MessageBroker"));
+builder.Services.Configure<MessageBrokerSetting>(
+    builder.Configuration.GetSection("MessageBroker"));
 
 //builder.Services.AddSingleton(
 //    sp => sp.GetRequiredService<IOptions<MessageBrokerSetting>>().Value);
 #endregion
+
 
 #region Cấu hình Open Telemetry
 //TODO: Thêm cấu hình cho OpenTelemetry
@@ -74,6 +76,13 @@ loggerConfig.ReadFrom.Configuration(context.Configuration));
 app.UseSerilogRequestLogging(); //Serilog middleware
 
 app.UseRequestContextLogging(); //Middleware log thông tin request
+
+//Seq
+//builder.Services.AddLogging(loggingBuilder =>
+//{
+//    loggingBuilder.AddSeq();
+//});
+
 #endregion
 
 #region Cors
