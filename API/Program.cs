@@ -1,7 +1,10 @@
 ﻿using System.Reflection;
 using API.Extentions;
+using Application;
 using HealthChecks.UI.Client;
+using Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Persistence;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,9 +40,9 @@ app.MapHealthChecks("api/health", new HealthCheckOptions
 
 
 #region Dependency Injection
-//builder.Services.AddApplication(builder.Configuration)
-//    .AddPersistnce(builder.Configuration)
-//    .AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication(builder.Configuration)
+    .AddPersistnce(builder.Configuration)
+    .AddInfrastructure(builder.Configuration);
 #endregion
 
 #region Cấu hình Masstransit
@@ -67,7 +70,10 @@ app.MapHealthChecks("api/health", new HealthCheckOptions
 #region Serilog
 builder.Host.UseSerilog((context, loggerConfig) =>
 loggerConfig.ReadFrom.Configuration(context.Configuration));
-app.UseSerilogRequestLogging(); 
+
+app.UseSerilogRequestLogging(); //Serilog middleware
+
+app.UseRequestContextLogging(); //Middleware log thông tin request
 #endregion
 
 #region Cors

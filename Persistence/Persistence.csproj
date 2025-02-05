@@ -8,4 +8,11 @@
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 		<PackageReference Include="MySql.EntityFrameworkCore" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Converter\" />
+	  <Folder Include="Database\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Application\Application.csproj" />
+	</ItemGroup>
 </Project>

@@ -18,5 +18,13 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
 		<PackageReference Include="Seq.Extensions.Logging" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="HealthCheck\" />
+	  <Folder Include="MessageBroker\" />
+	  <Folder Include="Repositories\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Persistence\Persistence.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -9,8 +9,10 @@
 		<PackageReference Include="MassTransit.RabbitMQ" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Abstractions\" />
-	  <Folder Include="Features\" />
+	  <Folder Include="Abstractions\Data\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>
 
 </Project>
