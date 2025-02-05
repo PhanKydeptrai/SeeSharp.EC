@@ -9,7 +9,8 @@
 		<PackageReference Include="MySql.EntityFrameworkCore" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Database\" />
+	  <Folder Include="Database\MySQL\Configuration\" />
+	  <Folder Include="Database\PostgreSQL\Configuration\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Application\Application.csproj" />
