@@ -1,3 +1,6 @@
+using Domain.Entities.CustomerVouchers;
+using Domain.Entities.OrderTransactions;
+
 namespace Domain.Entities.Vouchers;
 
 //NOTE: Create factory method
@@ -16,6 +19,6 @@ public sealed class Voucher
     public Status Status { get; private set; }
 
     //Foreign key
-    // public ICollection<CustomerVoucher> CustomerVouchers { get; set; } = null!;
-    // public ICollection<OrderTransaction> OrderTransactions { get; set; } = null!;
+    public ICollection<CustomerVoucher> CustomerVouchers { get; set; } = null!;
+    public ICollection<OrderTransaction> OrderTransactions { get; set; } = null!;
 }

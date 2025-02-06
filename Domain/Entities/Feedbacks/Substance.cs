@@ -21,6 +21,7 @@ public sealed class Substance : ValueObject
 
         return new Substance(value);
     }
+    public static readonly Substance Empty = new(string.Empty);
     private const int MaxLength = 50;
     public override IEnumerable<object> GetAtomicValues()
     {

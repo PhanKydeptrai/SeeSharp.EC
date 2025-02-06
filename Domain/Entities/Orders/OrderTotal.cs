@@ -4,7 +4,7 @@ namespace Domain.Entities.Orders;
 
 public sealed class OrderTotal : ValueObject
 {
-    public OrderTotal(decimal value) => Value = value;
+    private OrderTotal(decimal value) => Value = value;
     public decimal Value { get; }
     public static OrderTotal NewOrderTotal(decimal value) 
     {

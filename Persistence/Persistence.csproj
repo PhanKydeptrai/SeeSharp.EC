@@ -9,7 +9,6 @@
 		<PackageReference Include="MySql.EntityFrameworkCore" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Database\MySQL\Configuration\" />
 	  <Folder Include="Database\PostgreSQL\Configuration\" />
 	</ItemGroup>
 	<ItemGroup>

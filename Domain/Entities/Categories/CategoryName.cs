@@ -13,6 +13,7 @@ public sealed class CategoryName : ValueObject
         {
             throw new ArgumentNullException(nameof(value), "Category name cannot be empty");
         }
+        
         if (value.Length > MaxLength)
         {
             throw new ArgumentOutOfRangeException(

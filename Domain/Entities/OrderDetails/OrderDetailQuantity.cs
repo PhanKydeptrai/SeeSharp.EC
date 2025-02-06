@@ -2,7 +2,7 @@ namespace Domain.Entities.OrderDetails;
 
 public sealed class OrderDetailQuantity
 {
-    public OrderDetailQuantity(int value) => Value = value;
+    private OrderDetailQuantity(int value) => Value = value;
     public int Value { get; }
     public static OrderDetailQuantity NewOrderDetailQuantity(int value) 
     {
