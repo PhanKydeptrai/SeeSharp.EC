@@ -1,4 +1,7 @@
-﻿namespace Domain.Entities.Users;
+﻿using Domain.Entities.Customers;
+using Domain.Entities.Employees;
+
+namespace Domain.Entities.Users;
 
 public sealed class User
 {
@@ -12,47 +15,51 @@ public sealed class User
     public Gender Gender { get; private set; }
     public DateTime? DateOfBirth { get; private set; }
     public string? ImageUrl { get; private set; } = string.Empty;
-    //public Customer? Customer { get; set; } = null!;
-    //public Employee? Employee { get; set; } = null!;
+    public Customer? Customer { get; set; } = null!;
+
+    //FIXME: Add navigation properties
+    public Employee? Employee { get; set; } = null!;
     //public ICollection<UserAuthenticationToken>? UserAuthenticationTokens { get; set; } = null!;
     //public ICollection<VerificationToken>? VerificationTokens { get; set; } = null!;
-    private User(Ulid userId,
-        string userName,
-        string email,
-        string phoneNumber,
-        string passwordHash,
+
+    private User(UserId userId,
+        UserName userName,
+        Email email,
+        PhoneNumber phoneNumber,
+        PasswordHash passwordHash,
         UserStatus userStatus,
         bool isVerify,
         Gender gender,
         DateTime? dateOfBirth,
         string? imageUrl)
     {
-        UserId = new UserId(userId);
-        UserName = UserName.NewUserName(userName);
-        Email = Email.NewEmail(email) ?? Email.Empty;
-        PhoneNumber = PhoneNumber.NewPhoneNumber(phoneNumber) ?? PhoneNumber.Empty;
-        PasswordHash = PasswordHash.NewPasswordHash(passwordHash) ?? PasswordHash.Empty;
+        UserId = userId;
+        UserName = userName;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        PasswordHash = passwordHash;
         UserStatus = userStatus;
         Gender = gender;
         IsVerify = isVerify;
         DateOfBirth = dateOfBirth;
-        ImageUrl = imageUrl ?? string.Empty;
+        ImageUrl = imageUrl;
     }
+
     //Factory Method
-    public User NewUser(Ulid userId,
-        string userName,
-        string email,
-        string? phoneNumber,
-        string? passwordHash,
+    public User NewUser(UserId userId,
+        UserName userName,
+        Email email,
+        PhoneNumber? phoneNumber,
+        PasswordHash? passwordHash,
         DateTime? dateOfBirth,
         string? imageUrl)
     {
         return new User(
             userId, 
             userName, 
-            email ?? string.Empty, 
-            phoneNumber ?? string.Empty, 
-            passwordHash ?? string.Empty, 
+            email, 
+            phoneNumber ?? PhoneNumber.Empty, 
+            passwordHash ?? PasswordHash.Empty, 
             UserStatus.Inactive, 
             false, 
             Gender.Unknown,
