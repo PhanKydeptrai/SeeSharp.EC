@@ -1,17 +1,18 @@
 using Domain.Entities.Customers;
+using Domain.Entities.OrderDetails;
 
 namespace Domain.Entities.Orders;
 
 public sealed class Order
 {
-    public OrderId OrderId { get; set; } = null!;
-    public CustomerId CustomerId { get; set; } = null!;
-    public OrderTotal Total { get; set; } = null!;
-    public OrderPaymentStatus PaymentStatus { get; set; }
-    public OrderStatus OrderStatus { get; set; }
-    public Ulid OrderTransactionId { get; set; } //FIXME: Change to OrderTransactionId
+    public OrderId OrderId { get; private set; } = null!;
+    public CustomerId CustomerId { get; private set; } = null!;
+    public OrderTotal Total { get; private set; } = null!;
+    public OrderPaymentStatus PaymentStatus { get; private set; }
+    public OrderStatus OrderStatus { get; private set; }
+    public Ulid OrderTransactionId { get; private set; } //FIXME: Change to OrderTransactionId
     //* Foreign Key
-    // public ICollection<OrderDetail>? OrderDetails { get; set; } = null!; //FIXME: Change to OrderDetails
+    public ICollection<OrderDetail>? OrderDetails { get; set; } = null!;
     // public OrderTransaction OrderTransaction { get; set; } = null!; //FIXME: Change to OrderTransaction
     public Customer? Customer { get; set; } = null!;
     //public Feedback? Feedback { get; set; } = null!; //FIXME: Change to Feedback
