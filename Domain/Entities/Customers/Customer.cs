@@ -1,0 +1,49 @@
+﻿using Domain.Entities.Users;
+
+namespace Domain.Entities.Customers;
+public sealed class Customer
+{
+    public CustomerId CustomerId { get; private set; } = null!;
+    public UserId UserId { get; private set; } = null!;
+    public CustomerStatus CustomerStatus { get; private set; }
+    public CustomerType CustomerType { get; private set; }
+    public User? User { get; private set; } = null!;
+    //FIXME: Add navigation properties
+    //Foreign key
+    //public ICollection<ShippingInformation>? ShippingInformations { get; set; } = null!;
+    //public ICollection<CustomerVoucher>? CustomerVouchers { get; set; } = null!;
+    //public ICollection<WishItem>? WishItems { get; set; } = null!;
+    //public ICollection<Order>? Orders { get; set; } = null!;
+    //public ICollection<Feedback>? Feedbacks { get; set; } = null!;
+    //public ICollection<Bill>? Bills { get; set; } = null!;
+
+    public Customer(
+        CustomerId customerId, 
+        UserId userId, 
+        CustomerStatus customerStatus, 
+        CustomerType customerType)
+    {
+        CustomerId = customerId;
+        UserId = userId;
+        CustomerStatus = customerStatus;
+        CustomerType = customerType;
+    }
+    
+    //* factory method
+    public static Customer NewRegisteredCustomer(
+        CustomerId customerId, 
+        UserId userId)
+    {
+        return new Customer(customerId, userId, CustomerStatus.Active, CustomerType.Subscribed);
+    }
+
+    public static Customer NewNormalCustomer(
+        CustomerId customerId, 
+        UserId userId)
+    {
+        return new Customer(customerId, userId, CustomerStatus.Active, CustomerType.Normal);
+    }
+
+}
+
+

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+		<PackageReference Include="Ulid" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="IRepositories\" />
+	</ItemGroup>
+</Project>
