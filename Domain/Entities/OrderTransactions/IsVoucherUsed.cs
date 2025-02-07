@@ -8,6 +8,7 @@ public sealed class IsVoucherUsed : ValueObject
     public bool Value { get; }
     public static readonly IsVoucherUsed NotUsed = new IsVoucherUsed(false);
     public static readonly IsVoucherUsed Used = new IsVoucherUsed(true);
+    public static IsVoucherUsed FromBoolean(bool value) => value ? Used : NotUsed;
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

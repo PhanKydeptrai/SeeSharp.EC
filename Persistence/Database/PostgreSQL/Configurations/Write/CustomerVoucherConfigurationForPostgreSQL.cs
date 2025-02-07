@@ -4,7 +4,7 @@ using Domain.Entities.Vouchers;
 using Domain.Entities.CustomerVouchers;
 using Domain.Entities.Customers;
 
-namespace NextSharp.Persistence.Database.Postgresql.Configurations;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class CustomerVoucherConfigurationForPostgreSQL : IEntityTypeConfiguration<CustomerVoucher>
 {

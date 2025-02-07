@@ -17,7 +17,7 @@ internal sealed class BillConfigurationForMySQL : IEntityTypeConfiguration<Bill>
             .HasConversion(
                 value => value.Value.ToString(), 
                 value => new BillId(Ulid.Parse(value)))
-                .HasColumnType("varchar(26)");
+            .HasColumnType("varchar(26)");
 
         builder.Property(x => x.OrderId)
             .IsRequired()

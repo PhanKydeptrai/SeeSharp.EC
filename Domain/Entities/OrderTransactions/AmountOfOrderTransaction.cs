@@ -14,6 +14,7 @@ public sealed class AmountOfOrderTransaction : ValueObject
         }
         return new AmountOfOrderTransaction(value);
     }
+    public static AmountOfOrderTransaction FromDecimal(decimal value) => new AmountOfOrderTransaction(value);
     public decimal Value { get; }
     public override IEnumerable<object> GetAtomicValues()
     {

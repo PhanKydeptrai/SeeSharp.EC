@@ -4,7 +4,7 @@ using Domain.Entities.ShippingInformations;
 
 namespace Domain.Entities.Bills;
 //NOTE: Create factory method
-public class Bill
+public sealed class Bill
 {
     public BillId BillId { get; set; } = null!;
     public OrderId OrderId { get; set; } = null!;

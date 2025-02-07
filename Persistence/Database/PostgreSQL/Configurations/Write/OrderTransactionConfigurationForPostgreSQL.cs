@@ -6,7 +6,7 @@ using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace NextSharp.Persistence.Database.Postgresql.Configurations;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeConfiguration<OrderTransaction>
 {
@@ -26,7 +26,7 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
                 v => v!.Value,
                 v => PayerName.FromString(v))
             .HasColumnType("varchar(50)");
-        
+
         builder.Property(a => a.PayerEmail)
             .IsRequired(false)
             .HasConversion(
@@ -36,10 +36,16 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
 
         builder.Property(a => a.Amount)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => AmountOfOrderTransaction.FromDecimal(v))
             .HasColumnType("decimal(18,2)");
 
         builder.Property(a => a.Description)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => DescriptionOfOrderTransaction.FromString(v))
             .HasColumnType("varchar(255)");
 
         builder.Property(a => a.PaymentMethod)
@@ -52,6 +58,9 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
 
         builder.Property(a => a.IsVoucherUsed)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => IsVoucherUsed.FromBoolean(v))
             .HasColumnType("boolean");
 
         builder.Property(a => a.VoucherId)
@@ -78,8 +87,8 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
         builder.HasOne(a => a.Voucher)
             .WithMany(a => a.OrderTransactions)
             .HasForeignKey(a => a.VoucherId);
-        
-        
+
+
     }
 
 }

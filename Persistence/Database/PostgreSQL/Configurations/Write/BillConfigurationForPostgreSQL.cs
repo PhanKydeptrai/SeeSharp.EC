@@ -1,11 +1,11 @@
+using Domain.Entities.Bills;
+using Domain.Entities.Customers;
+using Domain.Entities.Orders;
+using Domain.Entities.ShippingInformations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.Entities.Orders;
-using Domain.Entities.Customers;
-using Domain.Entities.Bills;
-using Domain.Entities.ShippingInformations;
 
-namespace NextSharp.Persistence.Database.Postgresql.Configurations;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<Bill>
 {
