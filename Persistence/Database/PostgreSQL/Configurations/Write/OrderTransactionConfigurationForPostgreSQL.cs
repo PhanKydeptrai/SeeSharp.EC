@@ -1,7 +1,10 @@
-using NextSharp.Domain.Entities.OrderTransactionEntity;
+using Domain.Entities.Bills;
+using Domain.Entities.Orders;
+using Domain.Entities.OrderTransactions;
+using Domain.Entities.Users;
+using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -12,15 +15,23 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
         builder.HasKey(x => x.OrderTransactionId);
         builder.Property(a => a.OrderTransactionId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new OrderTransactionId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.PayerName)
             .IsRequired(false)
+            .HasConversion(
+                v => v!.Value,
+                v => PayerName.FromString(v))
             .HasColumnType("varchar(50)");
         
         builder.Property(a => a.PayerEmail)
             .IsRequired(false)
+            .HasConversion(
+                v => v!.Value,
+                v => Email.FromString(v))
             .HasColumnType("varchar(200)");
 
         builder.Property(a => a.Amount)
@@ -45,17 +56,23 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
 
         builder.Property(a => a.VoucherId)
             .IsRequired(false)
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v!.Value.ToString(),
+                v => new VoucherId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.OrderId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new OrderId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.BillId)
             .IsRequired(false)
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v!.Value.ToString(),
+                v => new BillId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.HasOne(a => a.Voucher)

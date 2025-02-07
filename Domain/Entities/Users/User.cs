@@ -13,7 +13,7 @@ public sealed class User
     public PhoneNumber? PhoneNumber { get; private set; } = PhoneNumber.Empty;
     public PasswordHash? PasswordHash { get; private set; } = PasswordHash.Empty;
     public UserStatus UserStatus { get; private set; }
-    public bool IsVerify { get; private set; } //FIXME: Change to value object
+    public IsVerify IsVerify { get; private set; } 
     public Gender Gender { get; private set; }
     public DateTime? DateOfBirth { get; private set; }
     public string? ImageUrl { get; private set; } = string.Empty;
@@ -29,7 +29,7 @@ public sealed class User
         PhoneNumber phoneNumber,
         PasswordHash passwordHash,
         UserStatus userStatus,
-        bool isVerify,
+        IsVerify isVerify,
         Gender gender,
         DateTime? dateOfBirth,
         string? imageUrl)
@@ -62,7 +62,7 @@ public sealed class User
             phoneNumber ?? PhoneNumber.Empty, 
             passwordHash ?? PasswordHash.Empty, 
             UserStatus.Inactive, 
-            false, 
+            IsVerify.False, 
             Gender.Unknown,
             dateOfBirth, 
             imageUrl ?? string.Empty);

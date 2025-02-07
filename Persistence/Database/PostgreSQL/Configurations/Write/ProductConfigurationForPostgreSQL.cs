@@ -1,7 +1,7 @@
+using Domain.Entities.Categories;
+using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Domain.Entities.ProductEntity;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -12,12 +12,17 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.HasKey(a => a.ProductId);
         builder.Property(a => a.ProductId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new ProductId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.ProductName)
             .IsRequired()
-                .HasColumnType("varchar(50)");
+            .HasConversion(
+                v => v.Value,
+                v => ProductName.FromString(v))
+            .HasColumnType("varchar(50)");
         
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)
@@ -29,19 +34,23 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
 
         builder.Property(a => a.ProductPrice)
             .IsRequired()
-                .HasColumnType("decimal(18,2)");
+            .HasConversion(
+                v => v.Value,
+                v => ProductPrice.FromDecimal(v))
+            .HasColumnType("decimal(18,2)");
 
         builder.Property(a => a.ProductStatus)
             .IsRequired()
             .HasConversion(
                 v => v.ToString(),
-                v => (ProductStatus)Enum.Parse(typeof(ProductStatus), v)
-            )
+                v => (ProductStatus)Enum.Parse(typeof(ProductStatus), v))
             .HasColumnType("varchar(20)");
 
         builder.Property(a => a.CategoryId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new CategoryId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.HasMany(a => a.WishItems)

@@ -1,7 +1,6 @@
-using NextSharp.Domain.Entities.VoucherEntity;
+using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -12,15 +11,26 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.HasKey(x => x.VoucherId);
         builder.Property(a => a.VoucherId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new VoucherId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.VoucherName)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => VoucherName.FromString(v)
+            )
             .HasColumnType("varchar(20)");
 
         builder.Property(a => a.VoucherCode)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => VoucherCode.FromString(v)
+            )
             .HasColumnType("varchar(20)");
 
         builder.Property(a => a.VoucherType)
@@ -33,14 +43,26 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
 
         builder.Property(a => a.PercentageDiscount)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => PercentageDiscount.FromDecimal(v)
+            )
             .HasColumnType("integer");
         
         builder.Property(a => a.MaximumDiscountAmount)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => MaximumDiscountAmount.FromDecimal(v)
+            )
             .HasColumnType("decimal");
         
         builder.Property(a => a.MinimumOrderAmount)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => MinimumOrderAmount.FromDecimal(v)
+            )
             .HasColumnType("decimal");
 
         builder.Property(a => a.StartDate)
@@ -53,6 +75,10 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
 
         builder.Property(a => a.Description)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => VoucherDescription.FromString(v)
+            )
             .HasColumnType("varchar(255)");
 
         builder.Property(a => a.Status)

@@ -4,7 +4,6 @@ using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MySql.EntityFrameworkCore.Extensions;
-using Persistence.Converter;
 
 namespace Persistence.Database.MySQL.Configurations;
 
@@ -64,7 +63,10 @@ internal sealed class UserConfigurationForMySQL : IEntityTypeConfiguration<User>
             .HasColumnType("varchar(20)");
 
         builder.Property(a => a.IsVerify)
-            .IsRequired() //FIXME: Add Converter for Value Object
+            .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => IsVerify.FromBoolean(v))
             .HasColumnType("tinyint");
 
         builder.Property(a => a.Gender)

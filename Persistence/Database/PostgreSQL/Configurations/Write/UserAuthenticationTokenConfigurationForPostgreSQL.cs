@@ -1,7 +1,7 @@
-using NextSharp.Domain.Entities.UserAuthenticationTokenEntity;
+using Domain.Entities.UserAuthenticationTokens;
+using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -12,7 +12,10 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
         builder.HasKey(a => a.UserAuthenticationTokenId);
         builder.Property(a => a.UserAuthenticationTokenId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new UserAuthenticationTokenId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.Value)
@@ -33,11 +36,18 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
 
         builder.Property(a => a.IsBlackList)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => IsBlackList.FromBoolean(v)
+            )
             .HasColumnType("boolean");
         
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new UserId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
 
     }

@@ -36,7 +36,7 @@ internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfigur
             .IsRequired()
             .HasConversion(
                 v => v.Value,
-                v => CustomerVoucherQuantity.NewCustomerVoucherQuantity(v)) //!FIXME
+                v => CustomerVoucherQuantity.FromInt(v))
             .HasColumnType("integer");
 
         //* Một voucher có nhiều customerVoucher

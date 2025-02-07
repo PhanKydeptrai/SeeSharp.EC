@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
-
-namespace Infrastructure.HealthCheck;
+﻿namespace Infrastructure.HealthCheck;
 
 //internal sealed class DatabaseHealthCheck : IHealthCheck
 //{

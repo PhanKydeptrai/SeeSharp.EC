@@ -1,7 +1,8 @@
-using NextSharp.Domain.Entities.FeedbackEntity;
+using Domain.Entities.Customers;
+using Domain.Entities.Feedbacks;
+using Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -13,11 +14,16 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
         
         builder.Property(x => x.FeedbackId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new FeedbackId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
         
         builder.Property(x => x.Substance)
             .IsRequired(false)
+            .HasConversion(
+                v => v!.Value.ToString(),
+                v => Substance.FromString(v))
             .HasColumnType("varchar(255)");
 
         builder.Property(x => x.ImageUrl)
@@ -26,16 +32,23 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
 
         builder.Property(x => x.RatingScore)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => RatingScore.FromFloat(v))
             .HasColumnType("float");
         
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new OrderId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new CustomerId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         //Một order có một feedback

@@ -1,7 +1,8 @@
-using NextSharp.Domain.Entities.CustomerVoucherEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
+using Domain.Entities.Vouchers;
+using Domain.Entities.CustomerVouchers;
+using Domain.Entities.Customers;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -12,21 +13,30 @@ internal sealed class CustomerVoucherConfigurationForPostgreSQL : IEntityTypeCon
         builder.HasKey(x => x.CustomerVoucherId);
         builder.Property(x => x.CustomerVoucherId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new CustomerVoucherId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
         
         builder.Property(x => x.VoucherId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new VoucherId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new CustomerId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
                 
         builder.Property(x => x.Quantity)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => CustomerVoucherQuantity.FromInt(v))
             .HasColumnType("integer");
 
         //* Một voucher có nhiều customerVoucher

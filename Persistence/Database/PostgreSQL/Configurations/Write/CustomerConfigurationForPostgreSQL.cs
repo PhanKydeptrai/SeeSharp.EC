@@ -1,7 +1,7 @@
+using Domain.Entities.Customers;
+using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Domain.Entities.CustomerEntity;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -13,22 +13,30 @@ internal sealed class CustomerConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.HasKey(a => a.CustomerId);
         builder.Property(a => a.CustomerId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new CustomerId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new UserId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
         
         builder.Property(a => a.CustomerStatus) 
             .IsRequired()
-            // .HasConversion<EnumToStringConverter<CustomerStatus>>()
+            .HasConversion(
+                v => v.ToString(),
+                v => (CustomerStatus)Enum.Parse(typeof(CustomerStatus), v))
             .HasColumnType("varchar(20)");
 
         builder.Property(a => a.CustomerType)
             .IsRequired()
-            // .HasConversion<EnumToStringConverter<CustomerType>>()
+            .HasConversion(
+                v => v.ToString(),
+                v => (CustomerType)Enum.Parse(typeof(CustomerType), v))
             .HasColumnType("varchar(20)");
                 
         

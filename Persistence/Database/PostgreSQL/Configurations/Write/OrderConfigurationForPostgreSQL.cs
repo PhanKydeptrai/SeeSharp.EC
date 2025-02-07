@@ -1,10 +1,9 @@
-using NextSharp.Domain.Entities.BillEntity;
-using NextSharp.Domain.Entities.OrderEntity;
-using NextSharp.Domain.Entities.OrderTransactionEntity;
+using Domain.Entities.Bills;
+using Domain.Entities.Customers;
+using Domain.Entities.Orders;
+using Domain.Entities.OrderTransactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
-using System;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -16,16 +15,23 @@ internal sealed class OrderConfigurationForPostgreSQL : IEntityTypeConfiguration
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new OrderId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new CustomerId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.Total)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => OrderTotal.FromDecimal(v))
             .HasColumnType("decimal");
         
         builder.Property(x => x.PaymentStatus)
@@ -46,7 +52,9 @@ internal sealed class OrderConfigurationForPostgreSQL : IEntityTypeConfiguration
 
         builder.Property(x => x.OrderTransactionId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new OrderTransactionId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.HasMany(x => x.OrderDetails)

@@ -15,6 +15,7 @@ public sealed class OrderTotal : ValueObject
         }
         return new OrderTotal(value);
     } 
+    public static OrderTotal FromDecimal(decimal value) => NewOrderTotal(value);
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

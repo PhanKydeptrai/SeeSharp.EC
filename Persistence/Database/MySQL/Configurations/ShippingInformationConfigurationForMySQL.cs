@@ -3,7 +3,6 @@ using Domain.Entities.ShippingInformations;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Persistence.Converter;
 
 namespace Persistence.Database.MySQL.Configurations;
 

@@ -1,8 +1,8 @@
-﻿using Domain.Entities.Products;
+﻿using Domain.Entities.Categories;
+using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MySql.EntityFrameworkCore.Extensions;
-using Persistence.Converter;
 
 namespace Persistence.Database.MySQL.Configurations;
 
@@ -52,7 +52,10 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
 
         builder.Property(a => a.CategoryId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new CategoryId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
 
         builder.HasMany(a => a.WishItems)

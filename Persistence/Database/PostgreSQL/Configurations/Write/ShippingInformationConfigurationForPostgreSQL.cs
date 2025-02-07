@@ -1,7 +1,8 @@
-using NextSharp.Domain.Entities.ShippingInformationEntity;
+using Domain.Entities.Customers;
+using Domain.Entities.ShippingInformations;
+using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -12,40 +13,74 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
         builder.HasKey(x => x.ShippingInformationId);
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new ShippingInformationId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
         
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new CustomerId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.FullName)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => FullName.FromString(v)
+            )
             .HasColumnType("varchar(50)");
         
         builder.Property(x => x.PhoneNumber)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => PhoneNumber.FromString(v)
+            )
             .HasColumnType("varchar(10)");
 
         builder.Property(x => x.IsDefault) 
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => IsDefault.FromBoolean(v)
+            )
             .HasColumnType("boolean");
 
         builder.Property(x => x.SpecificAddress)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => SpecificAddress.FromString(v)
+            )
             .HasColumnType("varchar(50)");
 
         builder.Property(x => x.Province)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => Province.FromString(v)
+            )
             .HasColumnType("varchar(50)");
         
         builder.Property(x => x.District)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => District.FromString(v)
+            )
             .HasColumnType("varchar(50)");
 
         builder.Property(x => x.Ward)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => Ward.FromString(v)
+            )
             .HasColumnType("varchar(50)");           
     }   
 }

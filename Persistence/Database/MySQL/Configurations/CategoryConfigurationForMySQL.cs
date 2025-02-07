@@ -1,4 +1,3 @@
-using System;
 using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,7 +22,7 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
             .IsRequired()
             .HasConversion(
                 value => value.Value.ToString(),
-                value => CategoryName.NewCategoryName(value ?? string.Empty) //!FIXME
+                value => CategoryName.FromString(value)
             )
             .HasColumnType("varchar(50)")
             .ForMySQLHasCharset("utf8mb4");

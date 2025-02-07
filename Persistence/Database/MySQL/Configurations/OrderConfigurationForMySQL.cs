@@ -33,7 +33,7 @@ internal sealed class OrderConfigurationForMySQL : IEntityTypeConfiguration<Orde
             .IsRequired()
             .HasConversion(
                 v => v.Value,
-                v => OrderTotal.NewOrderTotal(v) //!FIXME
+                v => OrderTotal.FromDecimal(v)
             )
             .HasColumnType("decimal");
         

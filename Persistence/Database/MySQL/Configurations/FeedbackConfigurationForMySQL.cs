@@ -23,7 +23,7 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
             .IsRequired(false)
             .HasConversion(
                 v => v!.Value.ToString(),
-                v => Substance.NewSubstance(v)) //!FIXME
+                v => Substance.FromString(v))
             .HasColumnType("varchar(255)");
 
         builder.Property(x => x.ImageUrl)
@@ -34,7 +34,7 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
             .IsRequired()
             .HasConversion(
                 v => v.Value,
-                v => RatingScore.NewRatingScore(v)) //!FIXME
+                v => RatingScore.FromFloat(v))
             .HasColumnType("float");
 
         builder.Property(x => x.OrderId)

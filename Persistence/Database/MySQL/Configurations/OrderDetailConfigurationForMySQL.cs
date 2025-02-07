@@ -39,7 +39,7 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
             .IsRequired()
             .HasConversion(
                 x => x.Value,
-                x => OrderDetailQuantity.NewOrderDetailQuantity(x) //!FIXME
+                x => OrderDetailQuantity.FromInt(x) 
             )
             .HasColumnType("int");
         
@@ -47,7 +47,7 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
             .IsRequired()
             .HasConversion(
                 x => x.Value,
-                x => OrderDetailUnitPrice.NewOrderDetailUnitPrice(x) //!FIXME
+                x => OrderDetailUnitPrice.FromDecimal(x) 
             )
             .HasColumnType("decimal");       
     }

@@ -1,10 +1,11 @@
+using Domain.Entities.Bills;
+using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
 using Domain.Entities.Users;
 using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MySql.EntityFrameworkCore.Extensions;
-using Persistence.Converter;
 
 namespace Persistence.Database.MySQL.Configurations;
 
@@ -34,7 +35,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
             .IsRequired(false)
             .HasConversion(
                 v => v!.Value,
-                v => Email.NewEmail(v) //!FIXME
+                v => Email.FromString(v)
             )
             .HasColumnType("varchar(200)");
 
@@ -50,8 +51,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
             .IsRequired()
             .HasConversion(
                 v => v.ToString(),
-                v => (PaymentMethod)Enum.Parse(typeof(PaymentMethod), v)
-            )
+                v => (PaymentMethod)Enum.Parse(typeof(PaymentMethod), v))
             .HasColumnType("varchar(50)");
 
         builder.Property(a => a.IsVoucherUsed)
@@ -68,12 +68,17 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
 
         builder.Property(a => a.OrderId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new OrderId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.BillId)
             .IsRequired(false)
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v!.Value.ToString(),
+                v => new BillId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
 
         builder.HasOne(a => a.Voucher)

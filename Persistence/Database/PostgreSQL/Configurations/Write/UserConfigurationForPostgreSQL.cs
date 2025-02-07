@@ -1,9 +1,8 @@
-﻿using NextSharp.Domain.Entities.CustomerEntity;
-using NextSharp.Domain.Entities.EmployeeEntity;
-using NextSharp.Domain.Entities.UserEntity;
+﻿using Domain.Entities.Customers;
+using Domain.Entities.Employees;
+using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -15,23 +14,42 @@ internal sealed class UserConfigurationForPostgreSQL : IEntityTypeConfiguration<
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new UserId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.UserName)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => UserName.FromString(v)
+            )
             .HasColumnType("varchar(50)");
 
         builder.Property(a => a.Email)
             .IsRequired()
+            .HasConversion(
+                v => v!.Value,
+                v => Email.FromString(v)
+            )
             .HasColumnType("varchar(200)");
 
         builder.Property(a => a.PhoneNumber)
             .IsRequired()
+            .HasConversion(
+                v => v!.Value,
+                v => PhoneNumber.FromString(v)
+            )
             .HasColumnType("varchar(20)");
 
         builder.Property(a => a.PasswordHash)
             .IsRequired()
+            .HasConversion(
+                v => v!.Value,
+                v => PasswordHash.FromString(v)
+            )
             .HasColumnType("varchar(64)");
 
         builder.Property(a => a.UserStatus)
@@ -44,6 +62,9 @@ internal sealed class UserConfigurationForPostgreSQL : IEntityTypeConfiguration<
 
         builder.Property(a => a.IsVerify)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => IsVerify.FromBoolean(v))
             .HasColumnType("boolean");
 
         builder.Property(a => a.Gender)

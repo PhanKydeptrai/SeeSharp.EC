@@ -15,6 +15,8 @@ public sealed class OrderDetailUnitPrice : ValueObject
         }
         return new OrderDetailUnitPrice(value);
     }
+    public static OrderDetailUnitPrice FromDecimal(decimal value) => new OrderDetailUnitPrice(value);
+
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

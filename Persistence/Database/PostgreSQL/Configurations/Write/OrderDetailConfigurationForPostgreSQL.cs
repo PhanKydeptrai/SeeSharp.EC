@@ -1,7 +1,8 @@
-using NextSharp.Domain.Entities.OrderDetailEntity;
+using Domain.Entities.OrderDetails;
+using Domain.Entities.Orders;
+using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -12,25 +13,37 @@ internal sealed class OrderDetailConfigurationForPostgreSQL : IEntityTypeConfigu
         builder.HasKey(x => x.OrderDetailId);
         builder.Property(x => x.OrderDetailId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                x => x.Value.ToString(),
+                x => new OrderDetailId(Ulid.Parse(x)))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                x => x.Value.ToString(),
+                x => new OrderId(Ulid.Parse(x)))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                x => x.Value.ToString(),
+                x => new ProductId(Ulid.Parse(x)))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.Quantity)
             .IsRequired()
+            .HasConversion(
+                x => x.Value,
+                x => OrderDetailQuantity.FromInt(x))
             .HasColumnType("int");
         
         builder.Property(x => x.UnitPrice)
             .IsRequired()
+            .HasConversion(
+                x => x.Value,
+                x => OrderDetailUnitPrice.FromDecimal(x))
             .HasColumnType("decimal");       
     }
 }

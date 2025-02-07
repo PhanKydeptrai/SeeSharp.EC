@@ -1,7 +1,7 @@
-using NextSharp.Domain.Entities.VerificationTokenEntity;
+using Domain.Entities.Users;
+using Domain.Entities.VerificationTokens;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -12,7 +12,10 @@ internal sealed class VerificationTokenConfigurationForPostgreSQL : IEntityTypeC
         builder.HasKey(x => x.VerificationTokenId);
         builder.Property(a => a.VerificationTokenId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new VerificationTokenId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
             
         builder.Property(a => a.Temporary)
@@ -29,7 +32,10 @@ internal sealed class VerificationTokenConfigurationForPostgreSQL : IEntityTypeC
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new UserId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
     }
 }

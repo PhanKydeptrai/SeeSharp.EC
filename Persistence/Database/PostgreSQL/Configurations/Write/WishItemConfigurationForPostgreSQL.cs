@@ -1,7 +1,8 @@
-using NextSharp.Domain.Entities.WishItemEntity;
+using Domain.Entities.Customers;
+using Domain.Entities.Products;
+using Domain.Entities.WishItems;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NextSharp.Persistence.Converter;
 
 namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
@@ -12,16 +13,25 @@ internal sealed class WishItemConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.HasKey(x => x.WishItemId);
         builder.Property(x => x.WishItemId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new WishItemId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new CustomerId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
+            .HasConversion(
+                v => v.Value.ToString(),
+                v => new ProductId(Ulid.Parse(v))
+            )
             .HasColumnType("varchar(26)");
 
     }
