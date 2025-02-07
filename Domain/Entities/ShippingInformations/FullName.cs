@@ -23,6 +23,7 @@ public sealed class FullName : ValueObject
 
         return new FullName(value);
     }
+    public static FullName FromString(string value) => new FullName(value);
 
     public static readonly FullName Empty = new FullName(string.Empty);
     private const int MaxLength = 50;

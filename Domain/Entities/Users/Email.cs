@@ -32,6 +32,7 @@ public sealed class Email : ValueObject
 
         return new Email(value);
     }
+    public static Email FromString(string value) => new Email(value);
 
     public readonly static Email Empty = new Email(string.Empty);
 

@@ -21,8 +21,9 @@ public sealed class District : ValueObject
 
         return new District(value);
     }
-    public static readonly int MaxLength = 50;
+    public static District FromString(string value) => new District(value);
     public static readonly District Empty = new District(string.Empty);
+    private const int MaxLength = 50;
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

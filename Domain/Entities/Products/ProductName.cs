@@ -30,7 +30,7 @@ public sealed class ProductName : ValueObject
 
         return new ProductName(value);
     }
-
+    public static ProductName FromString(string value) => NewProductName(value);
     public static readonly ProductName Empty = new ProductName(string.Empty); 
 
     private const int MaxLength = 50;

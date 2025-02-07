@@ -1,5 +1,8 @@
+using Domain.Entities.Bills;
 using Domain.Entities.Customers;
+using Domain.Entities.Feedbacks;
 using Domain.Entities.OrderDetails;
+using Domain.Entities.OrderTransactions;
 
 namespace Domain.Entities.Orders;
 
@@ -10,13 +13,13 @@ public sealed class Order
     public OrderTotal Total { get; private set; } = null!;
     public OrderPaymentStatus PaymentStatus { get; private set; }
     public OrderStatus OrderStatus { get; private set; }
-    public Ulid OrderTransactionId { get; private set; } //FIXME: Change to OrderTransactionId
+    public OrderTransactionId OrderTransactionId { get; private set; } 
     //* Foreign Key
     public ICollection<OrderDetail>? OrderDetails { get; set; } = null!;
-    // public OrderTransaction OrderTransaction { get; set; } = null!; //FIXME: Change to OrderTransaction
+    public OrderTransaction OrderTransaction { get; set; } = null!; 
     public Customer? Customer { get; set; } = null!;
-    //public Feedback? Feedback { get; set; } = null!; //FIXME: Change to Feedback
-    //public Bill? Bill { get; set; } = null!; //FIXME: Change to Bill
+    public Feedback? Feedback { get; set; } = null!; 
+    public Bill? Bill { get; set; } = null!;
 
 
     private Order(
@@ -25,7 +28,7 @@ public sealed class Order
         OrderTotal total, 
         OrderPaymentStatus paymentStatus, 
         OrderStatus orderStatus, 
-        Ulid orderTransactionId)
+        OrderTransactionId orderTransactionId)
     {
         OrderId = orderId;
         CustomerId = customerId;
@@ -41,7 +44,7 @@ public sealed class Order
         OrderTotal total, 
         OrderPaymentStatus paymentStatus, 
         OrderStatus orderStatus, 
-        Ulid orderTransactionId)
+        OrderTransactionId orderTransactionId)
     {
         return new Order(
             orderId, 

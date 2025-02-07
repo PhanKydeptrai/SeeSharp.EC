@@ -13,6 +13,7 @@ public sealed class CategoryName : ValueObject
         {
             throw new ArgumentNullException(nameof(value), "Category name cannot be empty");
         }
+        
         if (value.Length > MaxLength)
         {
             throw new ArgumentOutOfRangeException(
@@ -22,6 +23,7 @@ public sealed class CategoryName : ValueObject
 
         return new CategoryName(value);
     }
+    public static CategoryName FromString(string value) => new CategoryName(value);
     public static readonly CategoryName Empty = new CategoryName(string.Empty);
     private const int MaxLength = 50;
     public override IEnumerable<object> GetAtomicValues()

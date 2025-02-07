@@ -21,8 +21,9 @@ public sealed class Ward : ValueObject
 
         return new Ward(value);
     }
-    public static readonly int MaxLength = 50;
+    public static Ward FromString(string value) => new Ward(value);
     public static readonly Ward Empty = new Ward(string.Empty);
+    private const int MaxLength = 50;
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

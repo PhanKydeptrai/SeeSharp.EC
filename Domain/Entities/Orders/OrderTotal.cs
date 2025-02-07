@@ -4,7 +4,7 @@ namespace Domain.Entities.Orders;
 
 public sealed class OrderTotal : ValueObject
 {
-    public OrderTotal(decimal value) => Value = value;
+    private OrderTotal(decimal value) => Value = value;
     public decimal Value { get; }
     public static OrderTotal NewOrderTotal(decimal value) 
     {
@@ -15,6 +15,7 @@ public sealed class OrderTotal : ValueObject
         }
         return new OrderTotal(value);
     } 
+    public static OrderTotal FromDecimal(decimal value) => NewOrderTotal(value);
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

@@ -20,6 +20,7 @@ public sealed class Province : ValueObject
 
         return new Province(value);
     }
+    public static Province FromString(string value) => new Province(value);
     public static readonly Province Empty = new Province(string.Empty);
     private const int MaxLength = 50;
     public string Value { get; }

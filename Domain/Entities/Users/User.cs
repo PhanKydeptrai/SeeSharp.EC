@@ -1,5 +1,7 @@
 ﻿using Domain.Entities.Customers;
 using Domain.Entities.Employees;
+using Domain.Entities.UserAuthenticationTokens;
+using Domain.Entities.VerificationTokens;
 
 namespace Domain.Entities.Users;
 
@@ -11,16 +13,15 @@ public sealed class User
     public PhoneNumber? PhoneNumber { get; private set; } = PhoneNumber.Empty;
     public PasswordHash? PasswordHash { get; private set; } = PasswordHash.Empty;
     public UserStatus UserStatus { get; private set; }
-    public bool IsVerify { get; private set; }
+    public IsVerify IsVerify { get; private set; } 
     public Gender Gender { get; private set; }
     public DateTime? DateOfBirth { get; private set; }
     public string? ImageUrl { get; private set; } = string.Empty;
     public Customer? Customer { get; set; } = null!;
 
-    //FIXME: Add navigation properties
     public Employee? Employee { get; set; } = null!;
-    //public ICollection<UserAuthenticationToken>? UserAuthenticationTokens { get; set; } = null!;
-    //public ICollection<VerificationToken>? VerificationTokens { get; set; } = null!;
+    public ICollection<UserAuthenticationToken>? UserAuthenticationTokens { get; set; } = null!;
+    public ICollection<VerificationToken>? VerificationTokens { get; set; } = null!;
 
     private User(UserId userId,
         UserName userName,
@@ -28,7 +29,7 @@ public sealed class User
         PhoneNumber phoneNumber,
         PasswordHash passwordHash,
         UserStatus userStatus,
-        bool isVerify,
+        IsVerify isVerify,
         Gender gender,
         DateTime? dateOfBirth,
         string? imageUrl)
@@ -61,7 +62,7 @@ public sealed class User
             phoneNumber ?? PhoneNumber.Empty, 
             passwordHash ?? PasswordHash.Empty, 
             UserStatus.Inactive, 
-            false, 
+            IsVerify.False, 
             Gender.Unknown,
             dateOfBirth, 
             imageUrl ?? string.Empty);

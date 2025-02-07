@@ -26,6 +26,7 @@ public sealed class PhoneNumber : ValueObject
         return new PhoneNumber(value);
     }
 
+    public static PhoneNumber FromString(string value) => new PhoneNumber(value);
     public readonly static PhoneNumber Empty = new PhoneNumber(string.Empty);
 
     public string Value { get; }

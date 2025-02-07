@@ -16,6 +16,7 @@ public sealed class MaximumDiscountAmount : ValueObject
 
         return new MaximumDiscountAmount(value);
     }
+    public static MaximumDiscountAmount FromDecimal(decimal value) => new MaximumDiscountAmount(value);
     public decimal Value { get; }
     public override IEnumerable<object> GetAtomicValues()
     {

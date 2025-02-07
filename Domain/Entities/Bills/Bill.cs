@@ -1,5 +1,6 @@
 using Domain.Entities.Customers;
 using Domain.Entities.Orders;
+using Domain.Entities.ShippingInformations;
 
 namespace Domain.Entities.Bills;
 //NOTE: Create factory method
@@ -10,10 +11,10 @@ public class Bill
     public CustomerId CustomerId { get; set; } = null!;
     public DateTime CreatedDate { get; set; } 
     public PaymentMethod PaymentMethod { get; set; }
-    public Ulid ShippingInformationId { get; set; } //FIXME: Change to ShippingInformationId
+    public ShippingInformationId ShippingInformationId { get; set; } = null!;
 
     //* Foreign key
     public Order Order { get; set; } = null!;
     public Customer Customer { get; set; } = null!;
-    // public ShippingInformation ShippingInformation { get; set; } = null!; //FIXME: Change to ShippingInformation
+    public ShippingInformation ShippingInformation { get; set; } = null!;
 }

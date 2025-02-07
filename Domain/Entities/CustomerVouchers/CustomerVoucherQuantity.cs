@@ -15,6 +15,7 @@ public sealed class CustomerVoucherQuantity : ValueObject
         }
         return new CustomerVoucherQuantity(quantity);
     }
+    public static CustomerVoucherQuantity FromInt(int quantity) => new CustomerVoucherQuantity(quantity);
 
     public override IEnumerable<object> GetAtomicValues()
     {

@@ -15,6 +15,7 @@ public sealed class RatingScore : ValueObject
         }
         return new RatingScore(value);
     }
+    public static RatingScore FromFloat(float value) => new RatingScore(value);
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;
