@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Persistence.Database.MySQL;
+using Persistence.Database.PostgreSQL;
 
 namespace Persistence;
 //FIXME: AddPersistnce
@@ -24,10 +27,10 @@ public static class DependencyInjection
 
         string connectionString = configuration.GetConnectionString("PrimaryDatabase")
             ?? throw new Exception("MySQL connection string is null");
-        //services.AddDbContext<NextSharpDbContext>(options =>
-        //{
-        //    options.UseMySQL(connectionString);
-        //});
+        services.AddDbContext<NextSharpMySQLDbContext>(options =>
+        {
+            options.UseMySQL(connectionString);
+        });
 
 
         return services;
@@ -38,16 +41,17 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        //string connectionString = configuration.GetConnectionString("ReadOnlyDatabase")
-        //    ?? throw new Exception("PostgreSQL connection string is null");
-        //services.AddDbContext<NextSharpReadOnlyDbContext>(options =>
-        //{
-        //    options.UseNpgsql(connectionString);
-        //});
+        string connectionString = configuration.GetConnectionString("ReadOnlyDatabase")
+            ?? throw new Exception("PostgreSQL connection string is null");
+        services.AddDbContext<NextSharpPostgreSQLReadDbContext>(options =>
+        {
+            options.UseNpgsql(connectionString);
+        });
 
         return services;
     }
 
+    //FIXME: Add Abstracts Database
     //Add Abstracts Replica Database
     private static IServiceCollection AddAbstractsDatabase(
         this IServiceCollection services,

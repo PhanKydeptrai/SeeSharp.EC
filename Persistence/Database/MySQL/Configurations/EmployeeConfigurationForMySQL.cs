@@ -3,7 +3,7 @@ using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Persistence.Database.MySQL.Configuration;
+namespace Persistence.Database.MySQL.Configurations;
 
 internal sealed class EmployeeConfigurationForMySQL : IEntityTypeConfiguration<Employee>
 {

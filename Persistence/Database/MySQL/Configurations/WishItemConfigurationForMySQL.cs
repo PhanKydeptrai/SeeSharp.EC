@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Entities.Customers;
 using Domain.Entities.Products;
 
-namespace Persistence.Database.MySQL.Configuration;
+namespace Persistence.Database.MySQL.Configurations;
 
 internal sealed class WishItemConfigurationForMySQL : IEntityTypeConfiguration<WishItem>
 {

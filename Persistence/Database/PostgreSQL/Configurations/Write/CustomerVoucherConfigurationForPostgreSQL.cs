@@ -1,47 +1,37 @@
-using Domain.Entities.Customers;
-using Domain.Entities.CustomerVouchers;
-using Domain.Entities.Vouchers;
+using NextSharp.Domain.Entities.CustomerVoucherEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using NextSharp.Persistence.Converter;
 
-namespace Persistence.Database.MySQL.Configuration;
+namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
-internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfiguration<CustomerVoucher>
+internal sealed class CustomerVoucherConfigurationForPostgreSQL : IEntityTypeConfiguration<CustomerVoucher>
 {
     public void Configure(EntityTypeBuilder<CustomerVoucher> builder)
     {
         builder.HasKey(x => x.CustomerVoucherId);
         builder.Property(x => x.CustomerVoucherId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new CustomerVoucherId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
-
+        
         builder.Property(x => x.VoucherId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new VoucherId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new CustomerId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
-
+                
         builder.Property(x => x.Quantity)
             .IsRequired()
-            .HasConversion(
-                v => v.Value,
-                v => CustomerVoucherQuantity.NewCustomerVoucherQuantity(v)) //!FIXME
             .HasColumnType("integer");
 
         //* Một voucher có nhiều customerVoucher
         builder.HasOne(x => x.Voucher)
             .WithMany(x => x.CustomerVouchers)
-            .HasForeignKey(x => x.VoucherId);
+            .HasForeignKey(x => x.VoucherId);          
     }
 }

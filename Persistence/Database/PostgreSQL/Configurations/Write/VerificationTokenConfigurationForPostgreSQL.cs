@@ -1,27 +1,24 @@
-﻿using Domain.Entities.Users;
-using Domain.Entities.VerificationTokens;
+using NextSharp.Domain.Entities.VerificationTokenEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Persistence.Converter;
+using NextSharp.Persistence.Converter;
 
-namespace Persistence.Database.MySQL.Configuration;
+namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
-internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfiguration<VerificationToken>
+internal sealed class VerificationTokenConfigurationForPostgreSQL : IEntityTypeConfiguration<VerificationToken>
 {
     public void Configure(EntityTypeBuilder<VerificationToken> builder)
     {
         builder.HasKey(x => x.VerificationTokenId);
         builder.Property(a => a.VerificationTokenId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new VerificationTokenId(Ulid.Parse(v))
-            )
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
+            
         builder.Property(a => a.Temporary)
             .IsRequired(false)
             .HasColumnType("varchar(64)");
-
+        
         builder.Property(a => a.CreatedDate)
             .IsRequired()
             .HasColumnType("TIMESTAMP");
@@ -32,10 +29,7 @@ internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfig
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new UserId(Ulid.Parse(v))
-            )
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
     }
 }

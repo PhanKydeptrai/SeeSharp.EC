@@ -1,48 +1,41 @@
-using Domain.Entities.Customers;
-using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using NextSharp.Domain.Entities.CustomerEntity;
+using NextSharp.Persistence.Converter;
 
-namespace Persistence.Database.MySQL.Configuration;
+namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
-internal sealed class CustomerConfigurationForMySQL : IEntityTypeConfiguration<Customer>
+internal sealed class CustomerConfigurationForPostgreSQL : IEntityTypeConfiguration<Customer>
 {
+
     public void Configure(EntityTypeBuilder<Customer> builder)
     {
         builder.HasKey(a => a.CustomerId);
         builder.Property(a => a.CustomerId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new CustomerId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new UserId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
-
-        builder.Property(a => a.CustomerStatus)
+        
+        builder.Property(a => a.CustomerStatus) 
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (CustomerStatus)Enum.Parse(typeof(CustomerStatus), v))
+            // .HasConversion<EnumToStringConverter<CustomerStatus>>()
             .HasColumnType("varchar(20)");
 
         builder.Property(a => a.CustomerType)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (CustomerType)Enum.Parse(typeof(CustomerType), v))
+            // .HasConversion<EnumToStringConverter<CustomerType>>()
             .HasColumnType("varchar(20)");
-
-
+                
+        
         builder.HasMany(a => a.ShippingInformations)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
-
+        
         builder.HasMany(a => a.CustomerVouchers)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
@@ -50,15 +43,15 @@ internal sealed class CustomerConfigurationForMySQL : IEntityTypeConfiguration<C
         builder.HasMany(a => a.WishItems)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
-
+        
         builder.HasMany(a => a.Orders)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
-
+        
         builder.HasMany(a => a.Feedbacks)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
-
+        
         builder.HasMany(a => a.Bills)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);

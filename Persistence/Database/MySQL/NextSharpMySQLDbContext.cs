@@ -18,9 +18,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Database.MySQL;
 
-public class NextSharpDbContext : DbContext
+public sealed class NextSharpMySQLDbContext : DbContext
 {
-    public NextSharpDbContext(DbContextOptions<NextSharpDbContext> options) : base(options) { }
+    public NextSharpMySQLDbContext(DbContextOptions<NextSharpMySQLDbContext> options) : base(options) { }
     public DbSet<Bill> Bills { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Customer> Customers { get; set; }
@@ -40,23 +40,13 @@ public class NextSharpDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.ApplyConfiguration(new BillConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new CategoryConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new CustomerConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new CustomerVoucherConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new EmployeeConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new FeedbackConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new OrderDetailConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new OrderConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new OrderTransactionConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new ProductConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new ShippingInformationConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new UserAuthenticationTokenConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new UserConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new VerificationTokenConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new VoucherConfigurationForMySQL());
-        // modelBuilder.ApplyConfiguration(new WishItemConfigurationForMySQL());
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(NextSharpMySQLDbContext).Assembly,
+            WriteConfigurationsFilter);
 
         base.OnModelCreating(modelBuilder);
     }
+
+    private static bool WriteConfigurationsFilter(Type type) =>
+        type.FullName?.Contains("Database.MySQL.Configurations") ?? false;
 }

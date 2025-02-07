@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Persistence.Converter;
 
-namespace Persistence.Database.MySQL.Configuration;
+namespace Persistence.Database.MySQL.Configurations;
 
 internal sealed class ShippingInformationConfigurationForMySQL : IEntityTypeConfiguration<ShippingInformation>
 {

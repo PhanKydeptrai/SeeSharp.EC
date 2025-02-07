@@ -1,41 +1,26 @@
-using Domain.Entities.OrderTransactions;
-using Domain.Entities.Users;
-using Domain.Entities.Vouchers;
+using NextSharp.Domain.Entities.OrderTransactionEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MySql.EntityFrameworkCore.Extensions;
-using Persistence.Converter;
+using NextSharp.Persistence.Converter;
 
-namespace Persistence.Database.MySQL.Configuration;
+namespace NextSharp.Persistence.Database.Postgresql.Configurations;
 
-internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<OrderTransaction>
+internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeConfiguration<OrderTransaction>
 {
     public void Configure(EntityTypeBuilder<OrderTransaction> builder)
     {
         builder.HasKey(x => x.OrderTransactionId);
         builder.Property(a => a.OrderTransactionId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new OrderTransactionId(Ulid.Parse(v))
-            )
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.PayerName)
             .IsRequired(false)
-            .HasConversion(
-                v => v!.Value,
-                v => PayerName.FromString(v)
-            )
-            .HasColumnType("varchar(50)")
-            .ForMySQLHasCharset("utf8mb4");
+            .HasColumnType("varchar(50)");
         
         builder.Property(a => a.PayerEmail)
             .IsRequired(false)
-            .HasConversion(
-                v => v!.Value,
-                v => Email.NewEmail(v) //!FIXME
-            )
             .HasColumnType("varchar(200)");
 
         builder.Property(a => a.Amount)
@@ -56,14 +41,11 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
 
         builder.Property(a => a.IsVoucherUsed)
             .IsRequired()
-            .HasColumnType("tinyint(1)");
+            .HasColumnType("boolean");
 
         builder.Property(a => a.VoucherId)
             .IsRequired(false)
-            .HasConversion(
-                v => v!.Value.ToString(),
-                v => new VoucherId(Ulid.Parse(v))
-            )
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.OrderId)
@@ -82,4 +64,5 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         
         
     }
+
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MySql.EntityFrameworkCore.Extensions;
 using Persistence.Converter;
 
-namespace Persistence.Database.MySQL.Configuration;
+namespace Persistence.Database.MySQL.Configurations;
 
 internal sealed class UserConfigurationForMySQL : IEntityTypeConfiguration<User>
 {
