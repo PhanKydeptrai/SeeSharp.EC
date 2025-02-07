@@ -1,4 +1,6 @@
 using Domain.Entities.Categories;
+using Domain.Entities.OrderDetails;
+using Domain.Entities.WishItems;
 
 namespace Domain.Entities.Products;
 
@@ -13,8 +15,8 @@ public sealed class Product
     public CategoryId CategoryId { get; private set; }
     public Category? Category { get; private set; } = null!;
     //* Foreign key
-    // public ICollection<WishItem>? WishItems { get; private set; } = null!; //FIXME: Change to WishItems
-    // public ICollection<OrderDetail>? OrderDetails { get; private set; } = null!; //FIXME: Change to OrderDetails
+     public ICollection<WishItem>? WishItems { get; private set; } = null!; //FIXME: Change to WishItems
+    public ICollection<OrderDetail>? OrderDetails { get; private set; } = null!; //FIXME: Change to OrderDetails
 
     private Product(
         ProductId productId, 

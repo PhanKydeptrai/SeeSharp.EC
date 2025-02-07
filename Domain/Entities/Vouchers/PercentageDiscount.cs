@@ -17,6 +17,7 @@ public sealed class PercentageDiscount : ValueObject
 
         return new PercentageDiscount(value);
     }
+    public static PercentageDiscount FromDecimal(int value) => new PercentageDiscount(value);
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

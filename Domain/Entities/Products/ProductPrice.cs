@@ -8,7 +8,7 @@ public sealed class ProductPrice : ValueObject
     {
         Value = value;
     }
-    public static ProductPrice FromDecimal(decimal value)
+    public static ProductPrice NewProductPrice(decimal value)
     {
         if (value < 0)
         {
@@ -17,6 +17,7 @@ public sealed class ProductPrice : ValueObject
         
         return new ProductPrice(value);
     }
+    public static ProductPrice FromDecimal(decimal value) => NewProductPrice(value);
     public decimal Value { get; }
     public override IEnumerable<object> GetAtomicValues()
     {

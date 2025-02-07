@@ -20,6 +20,7 @@ public sealed class SpecificAddress : ValueObject
         }
         return new SpecificAddress(value);
     }
+    public static SpecificAddress FromString(string value) => new SpecificAddress(value);
     public static readonly SpecificAddress Empty = new SpecificAddress(string.Empty);
     private const int MaxLength = 255; 
     public override IEnumerable<object> GetAtomicValues()

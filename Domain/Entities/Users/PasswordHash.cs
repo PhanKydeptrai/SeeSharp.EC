@@ -21,7 +21,7 @@ public sealed class PasswordHash : ValueObject
         }
         return new PasswordHash(string.Empty);
     }
-
+    public static PasswordHash FromString(string value) => new PasswordHash(value);
     public readonly static PasswordHash Empty = new PasswordHash(string.Empty);
     public string Value { get; }
     private const int Length = 64;

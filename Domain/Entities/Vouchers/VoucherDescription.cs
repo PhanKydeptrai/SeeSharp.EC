@@ -24,7 +24,7 @@ public sealed class VoucherDescription : ValueObject
 
         return new VoucherDescription(value);
     } 
-
+    public static VoucherDescription FromString(string value) => new VoucherDescription(value);
     private const int MaxLength = 255;
     public override IEnumerable<object> GetAtomicValues()
     {

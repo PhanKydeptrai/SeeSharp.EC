@@ -25,12 +25,9 @@ public sealed class UserName : ValueObject
 
         return new UserName(value);
     }
+    public static UserName FromString(string value) => NewUserName(value);
 
-    public static UserName Empty()
-    {
-        return new UserName(string.Empty);
-    }
-
+    public static readonly UserName Empty = new UserName(string.Empty);
     public string Value { get; }
 
     public override IEnumerable<object> GetAtomicValues()

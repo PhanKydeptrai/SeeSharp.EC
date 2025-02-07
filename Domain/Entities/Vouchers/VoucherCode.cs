@@ -21,6 +21,7 @@ public sealed class VoucherCode : ValueObject
 
         return new VoucherCode(value);
     }
+    public static VoucherCode FromString(string value) => new VoucherCode(value);
     public static readonly VoucherCode Empty = new VoucherCode(string.Empty);
 
     private const int MaxLength = 50;

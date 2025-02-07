@@ -16,6 +16,8 @@ public sealed class MinimumOrderAmount : ValueObject
 
         return new MinimumOrderAmount(value);
     }
+
+    public static MinimumOrderAmount FromDecimal(decimal value) => new MinimumOrderAmount(value);
     public decimal Value { get; }
     public override IEnumerable<object> GetAtomicValues()
     {
