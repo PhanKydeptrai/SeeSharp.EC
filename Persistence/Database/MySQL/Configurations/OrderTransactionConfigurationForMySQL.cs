@@ -30,7 +30,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
             )
             .HasColumnType("varchar(50)")
             .ForMySQLHasCharset("utf8mb4");
-        
+
         builder.Property(a => a.PayerEmail)
             .IsRequired(false)
             .HasConversion(
@@ -41,10 +41,16 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
 
         builder.Property(a => a.Amount)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => AmountOfOrderTransaction.FromDecimal(v))
             .HasColumnType("decimal(18,2)");
 
         builder.Property(a => a.Description)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => DescriptionOfOrderTransaction.FromString(v))
             .HasColumnType("varchar(255)");
 
         builder.Property(a => a.PaymentMethod)
@@ -56,6 +62,9 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
 
         builder.Property(a => a.IsVoucherUsed)
             .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => IsVoucherUsed.FromBoolean(v))
             .HasColumnType("tinyint(1)");
 
         builder.Property(a => a.VoucherId)
@@ -84,7 +93,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.HasOne(a => a.Voucher)
             .WithMany(a => a.OrderTransactions)
             .HasForeignKey(a => a.VoucherId);
-        
-        
+
+
     }
 }

@@ -18,13 +18,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Database.PostgreSQL;
 
-public sealed class NextSharpPostgreSQLWriteDbContext : DbContext
+public sealed class NextSharpPostgreSQLReadDbContextSample : DbContext
 {
-    public NextSharpPostgreSQLWriteDbContext(DbContextOptions<NextSharpPostgreSQLWriteDbContext> options)
-        : base(options)
-    {
+    public NextSharpPostgreSQLReadDbContextSample(DbContextOptions<NextSharpPostgreSQLReadDbContextSample> options) : base(options) { }
 
-    }
     public DbSet<Bill> Bills { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Customer> Customers { get; set; }
@@ -41,15 +38,15 @@ public sealed class NextSharpPostgreSQLWriteDbContext : DbContext
     public DbSet<VerificationToken> VerifyVerificationTokens { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
     public DbSet<WishItem> WishItems { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(
-            typeof(NextSharpPostgreSQLWriteDbContext).Assembly,
+            typeof(NextSharpPostgreSQLReadDbContextSample).Assembly,
             WriteConfigurationsFilter);
 
         base.OnModelCreating(modelBuilder);
     }
-
     private static bool WriteConfigurationsFilter(Type type) =>
-        type.FullName?.Contains("Database.PostgreSQL.Configurations.Write") ?? false;
+        type.FullName?.Contains("Database.PostgreSQL.Configurations.Read") ?? false;
 }

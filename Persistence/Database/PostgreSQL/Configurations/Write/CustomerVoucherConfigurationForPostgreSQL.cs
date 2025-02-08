@@ -1,10 +1,10 @@
+using Domain.Entities.Customers;
+using Domain.Entities.CustomerVouchers;
+using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.Entities.Vouchers;
-using Domain.Entities.CustomerVouchers;
-using Domain.Entities.Customers;
 
-namespace NextSharp.Persistence.Database.Postgresql.Configurations;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class CustomerVoucherConfigurationForPostgreSQL : IEntityTypeConfiguration<CustomerVoucher>
 {
@@ -17,7 +17,7 @@ internal sealed class CustomerVoucherConfigurationForPostgreSQL : IEntityTypeCon
                 v => v.Value.ToString(),
                 v => new CustomerVoucherId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
-        
+
         builder.Property(x => x.VoucherId)
             .IsRequired()
             .HasConversion(
@@ -31,7 +31,7 @@ internal sealed class CustomerVoucherConfigurationForPostgreSQL : IEntityTypeCon
                 v => v.Value.ToString(),
                 v => new CustomerId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
-                
+
         builder.Property(x => x.Quantity)
             .IsRequired()
             .HasConversion(
@@ -42,6 +42,6 @@ internal sealed class CustomerVoucherConfigurationForPostgreSQL : IEntityTypeCon
         //* Một voucher có nhiều customerVoucher
         builder.HasOne(x => x.Voucher)
             .WithMany(x => x.CustomerVouchers)
-            .HasForeignKey(x => x.VoucherId);          
+            .HasForeignKey(x => x.VoucherId);
     }
 }

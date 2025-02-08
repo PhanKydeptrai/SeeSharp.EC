@@ -3,7 +3,7 @@ using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace NextSharp.Persistence.Database.Postgresql.Configurations;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfiguration<Product>
 {
@@ -23,7 +23,7 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
                 v => v.Value,
                 v => ProductName.FromString(v))
             .HasColumnType("varchar(50)");
-        
+
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)
             .HasColumnType("varchar(255)");
@@ -56,7 +56,7 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.HasMany(a => a.WishItems)
             .WithOne(a => a.Product)
             .HasForeignKey(a => a.ProductId);
-        
+
         builder.HasMany(a => a.OrderDetails)
             .WithOne(a => a.Product)
             .HasForeignKey(a => a.ProductId);

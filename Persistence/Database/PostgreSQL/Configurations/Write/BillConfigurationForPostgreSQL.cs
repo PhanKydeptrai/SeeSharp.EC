@@ -1,11 +1,11 @@
+using Domain.Entities.Bills;
+using Domain.Entities.Customers;
+using Domain.Entities.Orders;
+using Domain.Entities.ShippingInformations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.Entities.Orders;
-using Domain.Entities.Customers;
-using Domain.Entities.Bills;
-using Domain.Entities.ShippingInformations;
 
-namespace NextSharp.Persistence.Database.Postgresql.Configurations;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<Bill>
 {
@@ -33,7 +33,7 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
                 value => new CustomerId(Ulid.Parse(value)))
             .HasColumnType("varchar(26)");
 
-        builder.Property(x => x.CreatedDate)    
+        builder.Property(x => x.CreatedDate)
             .IsRequired()
             .HasColumnType("TIMESTAMP");
 
@@ -50,11 +50,11 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
                 value => value.Value.ToString(),
                 value => new ShippingInformationId(Ulid.Parse(value)))
             .HasColumnType("varchar(26)");
-        
+
         builder.HasOne(a => a.ShippingInformation)
             .WithMany(a => a.Bills)
             .HasForeignKey(a => a.ShippingInformationId);
-        
+
 
     }
 }

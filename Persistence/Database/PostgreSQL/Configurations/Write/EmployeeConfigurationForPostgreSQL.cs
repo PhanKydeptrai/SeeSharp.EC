@@ -3,7 +3,7 @@ using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace NextSharp.Persistence.Database.Postgresql.Configurations;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class EmployeeConfigurationForPostgreSQL : IEntityTypeConfiguration<Employee>
 {

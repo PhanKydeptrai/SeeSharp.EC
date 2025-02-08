@@ -20,6 +20,8 @@ public sealed class DescriptionOfOrderTransaction : ValueObject
 
         return new DescriptionOfOrderTransaction(value);
     }
+
+    public static DescriptionOfOrderTransaction FromString(string value) => new DescriptionOfOrderTransaction(value);
     public string Value { get; }
     private const int MaxLength = 255;
     public override IEnumerable<object> GetAtomicValues()

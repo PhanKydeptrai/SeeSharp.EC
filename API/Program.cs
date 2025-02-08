@@ -9,28 +9,50 @@ using Persistence;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết 
+builder.Services.AddHealthChecks();
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+#region Dependency Injection
+builder.Services.AddApplication(builder.Configuration)
+    .AddPersistnce(builder.Configuration)
+    .AddInfrastructure(builder.Configuration);
+#endregion
+builder.Services.AddCustomProblemDetails();
+builder.Host.UseSerilog((context, loggerConfig) =>
+loggerConfig.ReadFrom.Configuration(context.Configuration));
+builder.Services.Cors();
+
+#region Cấu hình Masstransit
+
+builder.Services.Configure<MessageBrokerSetting>(
+    builder.Configuration.GetSection("MessageBroker"));
+
+//builder.Services.AddSingleton(
+//    sp => sp.GetRequiredService<IOptions<MessageBrokerSetting>>().Value);
+#endregion
 var app = builder.Build();
 
-builder.Services.AddEndpointsApiExplorer();
 //Cấu hình Authen và Author
 
 
 #region Cấu hình API Document
-builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết 
-app.UseSwaggerAndScalar();
+
+
 #endregion
 
 
 
 #region Problem Details
-builder.Services.AddCustomProblemDetails();
-app.UseStatusCodePages(); 
+
+app.UseStatusCodePages();
 #endregion
 
 
 
 #region Health Check
-builder.Services.AddHealthChecks();
 
 app.MapHealthChecks("api/health", new HealthCheckOptions
 {
@@ -40,19 +62,9 @@ app.MapHealthChecks("api/health", new HealthCheckOptions
 #endregion
 
 
-#region Dependency Injection
-builder.Services.AddApplication(builder.Configuration)
-    .AddPersistnce(builder.Configuration)
-    .AddInfrastructure(builder.Configuration);
-#endregion
 
-#region Cấu hình Masstransit
-builder.Services.Configure<MessageBrokerSetting>(
-    builder.Configuration.GetSection("MessageBroker"));
 
-//builder.Services.AddSingleton(
-//    sp => sp.GetRequiredService<IOptions<MessageBrokerSetting>>().Value);
-#endregion
+
 
 
 #region Cấu hình Open Telemetry
@@ -70,8 +82,7 @@ builder.Services.Configure<MessageBrokerSetting>(
 
 
 #region Serilog
-builder.Host.UseSerilog((context, loggerConfig) =>
-loggerConfig.ReadFrom.Configuration(context.Configuration));
+
 
 app.UseSerilogRequestLogging(); //Serilog middleware
 
@@ -86,24 +97,22 @@ app.UseRequestContextLogging(); //Middleware log thông tin request
 #endregion
 
 #region Cors
-builder.Services.Cors();
 app.UseCors("AllowAll");
 #endregion
 
 #region Authen và Author
-builder.Services.AddAuthentication();
-app.UseAuthentication();
-builder.Services.AddAuthorization();
-app.UseAuthorization();
+
 #endregion
 
-
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
 
 
 #region Cấu hình minimal API
-builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+
 app.MapEndpoints(); 
 #endregion
 

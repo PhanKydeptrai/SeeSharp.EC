@@ -4,9 +4,9 @@ using Domain.Entities.ShippingInformations;
 
 namespace Domain.Entities.Bills;
 //NOTE: Create factory method
-public class Bill
+public sealed class Bill
 {
-    public BillId BillId { get; set; } = null!;
+    public BillId BillId { get; private set; } = null!;
     public OrderId OrderId { get; set; } = null!;
     public CustomerId CustomerId { get; set; } = null!;
     public DateTime CreatedDate { get; set; } 

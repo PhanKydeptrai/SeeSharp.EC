@@ -2,7 +2,7 @@ using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace NextSharp.Persistence.Database.Postgresql.Configurations;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfiguration<Voucher>
 {
@@ -48,7 +48,7 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
                 v => PercentageDiscount.FromDecimal(v)
             )
             .HasColumnType("integer");
-        
+
         builder.Property(a => a.MaximumDiscountAmount)
             .IsRequired()
             .HasConversion(
@@ -56,7 +56,7 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
                 v => MaximumDiscountAmount.FromDecimal(v)
             )
             .HasColumnType("decimal");
-        
+
         builder.Property(a => a.MinimumOrderAmount)
             .IsRequired()
             .HasConversion(
@@ -68,7 +68,7 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.Property(a => a.StartDate)
             .IsRequired()
             .HasColumnType("TIMESTAMP");
-        
+
         builder.Property(a => a.ExpiredDate)
             .IsRequired()
             .HasColumnType("TIMESTAMP");

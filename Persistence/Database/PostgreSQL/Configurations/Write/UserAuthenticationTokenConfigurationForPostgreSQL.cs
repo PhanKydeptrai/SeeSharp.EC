@@ -3,7 +3,7 @@ using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace NextSharp.Persistence.Database.Postgresql.Configurations;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntityTypeConfiguration<UserAuthenticationToken>
 {
@@ -29,7 +29,7 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
                 v => (TokenType)Enum.Parse(typeof(TokenType), v)
             )
             .HasColumnType("varchar(20)");
-        
+
         builder.Property(a => a.ExpiredTime)
             .IsRequired()
             .HasColumnType("TIMESTAMP");
@@ -41,7 +41,7 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
                 v => IsBlackList.FromBoolean(v)
             )
             .HasColumnType("boolean");
-        
+
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(

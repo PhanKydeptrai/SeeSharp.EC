@@ -13,7 +13,7 @@ public sealed class Category
     private Category(
         CategoryId categoryId, 
         CategoryName categoryName, 
-        string? imageUrl, 
+        string imageUrl, 
         CategoryStatus categoryStatus)
     {
         CategoryId = categoryId;

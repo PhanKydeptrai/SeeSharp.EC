@@ -15,7 +15,7 @@ public static class DependencyInjection
         services.AddPrimaryDatabase(configuration)
             .AddReadOnlyDatabase(configuration)
             .AddAbstractsDatabase(configuration);
-        
+
         return services;
     }
 
@@ -41,13 +41,20 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
+
         string connectionString = configuration.GetConnectionString("ReadOnlyDatabase")
             ?? throw new Exception("PostgreSQL connection string is null");
-        services.AddDbContext<NextSharpPostgreSQLReadDbContext>(options =>
+        //Dbcontext để ghi
+        services.AddDbContext<NextSharpPostgreSQLWriteDbContext>((sp, options) =>
         {
             options.UseNpgsql(connectionString);
         });
-
+        //Dbcontext để đọc
+        services.AddDbContext<NextSharpPostgreSQLReadDbContextSample>((sp, options) =>
+        {
+            options.UseNpgsql(connectionString)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
         return services;
     }
 
