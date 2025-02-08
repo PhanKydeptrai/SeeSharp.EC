@@ -49,12 +49,12 @@ public static class DependencyInjection
         {
             options.UseNpgsql(connectionString);
         });
-        ////Dbcontext để đọc
-        //services.AddDbContext<NextSharpPostgreSQLReadDbContext>((sp, options) =>
-        //{
-        //    options.UseNpgsql(connectionString)
-        //        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        //});
+        //Dbcontext để đọc
+        services.AddDbContext<NextSharpPostgreSQLReadDbContextSample>((sp, options) =>
+        {
+            options.UseNpgsql(connectionString)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
         return services;
     }
 

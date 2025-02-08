@@ -18,12 +18,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Database.PostgreSQL;
 
-public sealed class NextSharpPostgreSQLReadDbContext : DbContext
+public sealed class NextSharpPostgreSQLReadDbContextSample : DbContext
 {
-    public NextSharpPostgreSQLReadDbContext(DbContextOptions<NextSharpPostgreSQLReadDbContext> options) : base(options) 
-    {
-        this.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-    }
+    public NextSharpPostgreSQLReadDbContextSample(DbContextOptions<NextSharpPostgreSQLReadDbContextSample> options) : base(options) { }
 
     public DbSet<Bill> Bills { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -45,7 +42,7 @@ public sealed class NextSharpPostgreSQLReadDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(
-            typeof(NextSharpPostgreSQLReadDbContext).Assembly,
+            typeof(NextSharpPostgreSQLReadDbContextSample).Assembly,
             WriteConfigurationsFilter);
 
         base.OnModelCreating(modelBuilder);
