@@ -14,7 +14,7 @@ public class FeedbackReadModel
 
     public string CustomerId { get; set; } = null!;
 
-    public virtual CustomerReadModel Customer { get; set; } = null!;
+    public CustomerReadModel Customer { get; set; } = null!;
 
-    public virtual OrderReadModel Order { get; set; } = null!;
+    public OrderReadModel Order { get; set; } = null!;
 }

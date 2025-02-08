@@ -18,7 +18,7 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
                 v => new ShippingInformationId(Ulid.Parse(v))
             )
             .HasColumnType("varchar(26)");
-        
+
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
@@ -34,7 +34,7 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
                 v => FullName.FromString(v)
             )
             .HasColumnType("varchar(50)");
-        
+
         builder.Property(x => x.PhoneNumber)
             .IsRequired()
             .HasConversion(
@@ -43,7 +43,7 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
             )
             .HasColumnType("varchar(10)");
 
-        builder.Property(x => x.IsDefault) 
+        builder.Property(x => x.IsDefault)
             .IsRequired()
             .HasConversion(
                 v => v.Value,
@@ -66,7 +66,7 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
                 v => Province.FromString(v)
             )
             .HasColumnType("varchar(50)");
-        
+
         builder.Property(x => x.District)
             .IsRequired()
             .HasConversion(
@@ -81,6 +81,6 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
                 v => v.Value,
                 v => Ward.FromString(v)
             )
-            .HasColumnType("varchar(50)");           
-    }   
+            .HasColumnType("varchar(50)");
+    }
 }

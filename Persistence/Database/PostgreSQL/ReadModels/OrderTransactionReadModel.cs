@@ -22,9 +22,9 @@ public class OrderTransactionReadModel
 
     public string? BillId { get; set; }
 
-    public virtual BillReadModel? Bill { get; set; }
+    public BillReadModel? Bill { get; set; }
 
-    public virtual OrderReadModel Order { get; set; } = null!;
+    public OrderReadModel Order { get; set; } = null!;
 
-    public virtual VoucherReadModel? Voucher { get; set; }
+    public VoucherReadModel? Voucher { get; set; }
 }

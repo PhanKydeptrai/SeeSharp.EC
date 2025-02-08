@@ -12,5 +12,5 @@ public class VerifyVerificationTokenReadModel
 
     public DateTime ExpiredDate { get; set; }
 
-    public virtual UserReadModel User { get; set; } = null!;
+    public UserReadModel User { get; set; } = null!;
 }

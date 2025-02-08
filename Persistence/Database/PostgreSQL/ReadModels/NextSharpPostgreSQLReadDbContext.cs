@@ -13,37 +13,37 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
     {
     }
 
-    public virtual DbSet<BillReadModel> Bills { get; set; }
+    public DbSet<BillReadModel> Bills { get; set; }
 
-    public virtual DbSet<CategoryReadModel> Categories { get; set; }
+    public DbSet<CategoryReadModel> Categories { get; set; }
 
-    public virtual DbSet<CustomerReadModel> Customers { get; set; }
+    public DbSet<CustomerReadModel> Customers { get; set; }
 
-    public virtual DbSet<CustomerVoucherReadModel> CustomerVouchers { get; set; }
+    public DbSet<CustomerVoucherReadModel> CustomerVouchers { get; set; }
 
-    public virtual DbSet<EmployeeReadModel> Employees { get; set; }
+    public DbSet<EmployeeReadModel> Employees { get; set; }
 
-    public virtual DbSet<FeedbackReadModel> Feedbacks { get; set; }
+    public DbSet<FeedbackReadModel> Feedbacks { get; set; }
 
-    public virtual DbSet<OrderReadModel> Orders { get; set; }
+    public DbSet<OrderReadModel> Orders { get; set; }
 
-    public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+    public DbSet<OrderDetail> OrderDetails { get; set; }
 
-    public virtual DbSet<OrderTransactionReadModel> OrderTransactions { get; set; }
+    public DbSet<OrderTransactionReadModel> OrderTransactions { get; set; }
 
-    public virtual DbSet<ProductReadModel> Products { get; set; }
+    public DbSet<ProductReadModel> Products { get; set; }
 
-    public virtual DbSet<ShippingInformationReadModel> ShippingInformations { get; set; }
+    public DbSet<ShippingInformationReadModel> ShippingInformations { get; set; }
 
-    public virtual DbSet<UserReadModel> Users { get; set; }
+    public DbSet<UserReadModel> Users { get; set; }
 
-    public virtual DbSet<UserAuthenticationToken> UserAuthenticationTokens { get; set; }
+    public DbSet<UserAuthenticationToken> UserAuthenticationTokens { get; set; }
 
-    public virtual DbSet<VerifyVerificationTokenReadModel> VerifyVerificationTokens { get; set; }
+    public DbSet<VerifyVerificationTokenReadModel> VerifyVerificationTokens { get; set; }
 
-    public virtual DbSet<VoucherReadModel> Vouchers { get; set; }
+    public DbSet<VoucherReadModel> Vouchers { get; set; }
 
-    public virtual DbSet<WishItemReadModel> WishItems { get; set; }
+    public DbSet<WishItemReadModel> WishItems { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:ReadOnlyDatabase");

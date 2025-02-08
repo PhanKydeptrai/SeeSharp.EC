@@ -39,16 +39,16 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
             .IsRequired()
             .HasConversion(
                 x => x.Value,
-                x => OrderDetailQuantity.FromInt(x) 
+                x => OrderDetailQuantity.FromInt(x)
             )
             .HasColumnType("int");
-        
+
         builder.Property(x => x.UnitPrice)
             .IsRequired()
             .HasConversion(
                 x => x.Value,
-                x => OrderDetailUnitPrice.FromDecimal(x) 
+                x => OrderDetailUnitPrice.FromDecimal(x)
             )
-            .HasColumnType("decimal");       
+            .HasColumnType("decimal");
     }
 }

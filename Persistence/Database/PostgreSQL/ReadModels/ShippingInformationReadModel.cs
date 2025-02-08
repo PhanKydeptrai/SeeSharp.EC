@@ -20,7 +20,7 @@ public class ShippingInformationReadModel
 
     public string Ward { get; set; } = null!;
 
-    public virtual ICollection<BillReadModel> Bills { get; set; } = new List<BillReadModel>();
+    public ICollection<BillReadModel> Bills { get; set; } = new List<BillReadModel>();
 
-    public virtual CustomerReadModel Customer { get; set; } = null!;
+    public CustomerReadModel Customer { get; set; } = null!;
 }

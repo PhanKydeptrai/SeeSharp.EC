@@ -1,6 +1,6 @@
+using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.Entities.Categories;
 
 namespace Persistence.Database.PostgreSQL.Configurations.Write;
 

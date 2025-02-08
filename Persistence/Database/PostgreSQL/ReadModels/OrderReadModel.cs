@@ -14,13 +14,13 @@ public class OrderReadModel
 
     public string OrderTransactionId { get; set; } = null!;
 
-    public virtual BillReadModel? Bill { get; set; }
+    public BillReadModel? Bill { get; set; }
 
-    public virtual CustomerReadModel Customer { get; set; } = null!;
+    public CustomerReadModel Customer { get; set; } = null!;
 
-    public virtual FeedbackReadModel? Feedback { get; set; }
+    public FeedbackReadModel? Feedback { get; set; }
 
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
-    public virtual OrderTransactionReadModel? OrderTransaction { get; set; }
+    public OrderTransactionReadModel? OrderTransaction { get; set; }
 }

@@ -38,12 +38,12 @@ internal sealed class OrderDetailConfigurationForPostgreSQL : IEntityTypeConfigu
                 x => x.Value,
                 x => OrderDetailQuantity.FromInt(x))
             .HasColumnType("int");
-        
+
         builder.Property(x => x.UnitPrice)
             .IsRequired()
             .HasConversion(
                 x => x.Value,
                 x => OrderDetailUnitPrice.FromDecimal(x))
-            .HasColumnType("decimal");       
+            .HasColumnType("decimal");
     }
 }

@@ -33,7 +33,7 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
                 value => new CustomerId(Ulid.Parse(value)))
             .HasColumnType("varchar(26)");
 
-        builder.Property(x => x.CreatedDate)    
+        builder.Property(x => x.CreatedDate)
             .IsRequired()
             .HasColumnType("TIMESTAMP");
 
@@ -50,11 +50,11 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
                 value => value.Value.ToString(),
                 value => new ShippingInformationId(Ulid.Parse(value)))
             .HasColumnType("varchar(26)");
-        
+
         builder.HasOne(a => a.ShippingInformation)
             .WithMany(a => a.Bills)
             .HasForeignKey(a => a.ShippingInformationId);
-        
+
 
     }
 }

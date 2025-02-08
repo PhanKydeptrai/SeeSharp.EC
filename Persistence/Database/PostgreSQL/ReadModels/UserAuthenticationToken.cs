@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Persistence.Database.PostgreSQL.ReadModels;
+﻿namespace Persistence.Database.PostgreSQL.ReadModels;
 
 public partial class UserAuthenticationToken
 {
@@ -17,5 +14,5 @@ public partial class UserAuthenticationToken
 
     public string UserId { get; set; } = null!;
 
-    public virtual UserReadModel User { get; set; } = null!;
+    public UserReadModel User { get; set; } = null!;
 }

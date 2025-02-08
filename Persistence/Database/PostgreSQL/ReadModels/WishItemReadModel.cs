@@ -8,7 +8,7 @@ public class WishItemReadModel
 
     public string ProductId { get; set; } = null!;
 
-    public virtual CustomerReadModel Customer { get; set; } = null!;
+    public CustomerReadModel Customer { get; set; } = null!;
 
-    public virtual ProductReadModel Product { get; set; } = null!;
+    public ProductReadModel Product { get; set; } = null!;
 }

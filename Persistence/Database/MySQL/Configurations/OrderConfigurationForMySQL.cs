@@ -36,7 +36,7 @@ internal sealed class OrderConfigurationForMySQL : IEntityTypeConfiguration<Orde
                 v => OrderTotal.FromDecimal(v)
             )
             .HasColumnType("decimal");
-        
+
         builder.Property(x => x.PaymentStatus)
             .IsRequired()
             .HasConversion(
@@ -68,7 +68,7 @@ internal sealed class OrderConfigurationForMySQL : IEntityTypeConfiguration<Orde
         builder.HasOne(a => a.Bill)
             .WithOne(a => a.Order)
             .HasForeignKey<Bill>(a => a.OrderId);
-        
+
         builder.HasOne(a => a.OrderTransaction)
             .WithOne(a => a.Order)
             .HasForeignKey<OrderTransaction>(a => a.OrderId);

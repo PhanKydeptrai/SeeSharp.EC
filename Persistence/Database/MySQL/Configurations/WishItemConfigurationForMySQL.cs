@@ -1,8 +1,8 @@
-﻿using Domain.Entities.WishItems;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using Domain.Entities.Customers;
+﻿using Domain.Entities.Customers;
 using Domain.Entities.Products;
+using Domain.Entities.WishItems;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.Database.MySQL.Configurations;
 

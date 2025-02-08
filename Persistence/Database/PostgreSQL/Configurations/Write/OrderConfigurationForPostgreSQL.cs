@@ -33,7 +33,7 @@ internal sealed class OrderConfigurationForPostgreSQL : IEntityTypeConfiguration
                 v => v.Value,
                 v => OrderTotal.FromDecimal(v))
             .HasColumnType("decimal");
-        
+
         builder.Property(x => x.PaymentStatus)
             .IsRequired()
             .HasConversion(
@@ -64,7 +64,7 @@ internal sealed class OrderConfigurationForPostgreSQL : IEntityTypeConfiguration
         builder.HasOne(a => a.Bill)
             .WithOne(a => a.Order)
             .HasForeignKey<Bill>(a => a.OrderId);
-        
+
         builder.HasOne(a => a.OrderTransaction)
             .WithOne(a => a.Order)
             .HasForeignKey<OrderTransaction>(a => a.OrderId);

@@ -24,7 +24,7 @@ public class VoucherReadModel
 
     public string Status { get; set; } = null!;
 
-    public virtual ICollection<CustomerVoucherReadModel> CustomerVouchers { get; set; } = new List<CustomerVoucherReadModel>();
+    public ICollection<CustomerVoucherReadModel> CustomerVouchers { get; set; } = new List<CustomerVoucherReadModel>();
 
-    public virtual ICollection<OrderTransactionReadModel> OrderTransactions { get; set; } = new List<OrderTransactionReadModel>();
+    public ICollection<OrderTransactionReadModel> OrderTransactions { get; set; } = new List<OrderTransactionReadModel>();
 }

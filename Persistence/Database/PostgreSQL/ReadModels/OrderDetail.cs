@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Persistence.Database.PostgreSQL.ReadModels;
+﻿namespace Persistence.Database.PostgreSQL.ReadModels;
 
 public partial class OrderDetail
 {
@@ -15,7 +12,7 @@ public partial class OrderDetail
 
     public decimal UnitPrice { get; set; }
 
-    public virtual OrderReadModel Order { get; set; } = null!;
+    public OrderReadModel Order { get; set; } = null!;
 
-    public virtual ProductReadModel Product { get; set; } = null!;
+    public ProductReadModel Product { get; set; } = null!;
 }

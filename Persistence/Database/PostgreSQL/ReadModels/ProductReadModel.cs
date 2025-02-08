@@ -16,9 +16,9 @@ public class ProductReadModel
 
     public string CategoryId { get; set; } = null!;
 
-    public virtual CategoryReadModel Category { get; set; } = null!;
+    public CategoryReadModel Category { get; set; } = null!;
 
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
-    public virtual ICollection<WishItemReadModel> WishItems { get; set; } = new List<WishItemReadModel>();
+    public ICollection<WishItemReadModel> WishItems { get; set; } = new List<WishItemReadModel>();
 }

@@ -14,11 +14,11 @@ public class BillReadModel
 
     public string ShippingInformationId { get; set; } = null!;
 
-    public virtual CustomerReadModel Customer { get; set; } = null!;
+    public CustomerReadModel Customer { get; set; } = null!;
 
-    public virtual OrderReadModel Order { get; set; } = null!;
+    public OrderReadModel Order { get; set; } = null!;
 
-    public virtual ICollection<OrderTransactionReadModel> OrderTransactions { get; set; } = new List<OrderTransactionReadModel>();
+    public ICollection<OrderTransactionReadModel> OrderTransactions { get; set; } = new List<OrderTransactionReadModel>();
 
-    public virtual ShippingInformationReadModel ShippingInformation { get; set; } = null!;
+    public ShippingInformationReadModel ShippingInformation { get; set; } = new ShippingInformationReadModel();
 }

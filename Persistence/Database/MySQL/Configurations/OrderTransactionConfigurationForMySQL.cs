@@ -30,7 +30,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
             )
             .HasColumnType("varchar(50)")
             .ForMySQLHasCharset("utf8mb4");
-        
+
         builder.Property(a => a.PayerEmail)
             .IsRequired(false)
             .HasConversion(
@@ -93,7 +93,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.HasOne(a => a.Voucher)
             .WithMany(a => a.OrderTransactions)
             .HasForeignKey(a => a.VoucherId);
-        
-        
+
+
     }
 }

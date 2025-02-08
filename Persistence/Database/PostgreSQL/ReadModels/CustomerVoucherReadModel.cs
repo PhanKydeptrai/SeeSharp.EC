@@ -10,7 +10,7 @@ public class CustomerVoucherReadModel
 
     public int Quantity { get; set; }
 
-    public virtual CustomerReadModel Customer { get; set; } = null!;
+    public CustomerReadModel Customer { get; set; } = null!;
 
-    public virtual VoucherReadModel Voucher { get; set; } = null!;
+    public VoucherReadModel Voucher { get; set; } = null!;
 }

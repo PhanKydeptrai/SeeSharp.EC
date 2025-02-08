@@ -24,8 +24,8 @@ internal sealed class CustomerConfigurationForPostgreSQL : IEntityTypeConfigurat
                 v => v.Value.ToString(),
                 v => new UserId(Ulid.Parse(v)))
             .HasColumnType("varchar(26)");
-        
-        builder.Property(a => a.CustomerStatus) 
+
+        builder.Property(a => a.CustomerStatus)
             .IsRequired()
             .HasConversion(
                 v => v.ToString(),
@@ -38,12 +38,12 @@ internal sealed class CustomerConfigurationForPostgreSQL : IEntityTypeConfigurat
                 v => v.ToString(),
                 v => (CustomerType)Enum.Parse(typeof(CustomerType), v))
             .HasColumnType("varchar(20)");
-                
-        
+
+
         builder.HasMany(a => a.ShippingInformations)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
-        
+
         builder.HasMany(a => a.CustomerVouchers)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
@@ -51,15 +51,15 @@ internal sealed class CustomerConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.HasMany(a => a.WishItems)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
-        
+
         builder.HasMany(a => a.Orders)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
-        
+
         builder.HasMany(a => a.Feedbacks)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);
-        
+
         builder.HasMany(a => a.Bills)
             .WithOne(a => a.Customer)
             .HasForeignKey(a => a.CustomerId);

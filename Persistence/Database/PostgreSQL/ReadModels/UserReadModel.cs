@@ -22,11 +22,11 @@ public class UserReadModel
 
     public string? ImageUrl { get; set; }
 
-    public virtual CustomerReadModel? Customer { get; set; }
+    public CustomerReadModel? Customer { get; set; }
 
-    public virtual EmployeeReadModel? Employee { get; set; }
+    public EmployeeReadModel? Employee { get; set; }
 
-    public virtual ICollection<UserAuthenticationToken> UserAuthenticationTokens { get; set; } = new List<UserAuthenticationToken>();
+    public ICollection<UserAuthenticationToken> UserAuthenticationTokens { get; set; } = new List<UserAuthenticationToken>();
 
-    public virtual ICollection<VerifyVerificationTokenReadModel> VerifyVerificationTokens { get; set; } = new List<VerifyVerificationTokenReadModel>();
+    public ICollection<VerifyVerificationTokenReadModel> VerifyVerificationTokens { get; set; } = new List<VerifyVerificationTokenReadModel>();
 }
