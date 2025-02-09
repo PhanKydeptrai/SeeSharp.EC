@@ -1,3 +1,16 @@
+using Domain.Primitives;
+
 namespace Domain.Entities.OrderTransactions;
 
-public record OrderTransactionId(Ulid Value);
+public class OrderTransactionId : ValueObject
+{
+    private OrderTransactionId(Ulid value) => Value = value;
+    public Ulid Value { get; }
+    public static OrderTransactionId New() => new(Ulid.NewUlid());
+    public static OrderTransactionId FromString(string value) => new(Ulid.Parse(value));
+    public static readonly OrderTransactionId Empty = new(Ulid.Empty);
+    public override IEnumerable<object> GetAtomicValues()
+    {
+        yield return Value;
+    }
+}

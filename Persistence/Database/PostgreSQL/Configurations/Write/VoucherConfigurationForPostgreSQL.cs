@@ -45,7 +45,7 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
             .IsRequired()
             .HasConversion(
                 v => v.Value,
-                v => PercentageDiscount.FromDecimal(v)
+                v => PercentageDiscount.FromInt(v)
             )
             .HasColumnType("integer");
 

@@ -4,7 +4,6 @@ using Domain.Entities.Users;
 using Domain.Entities.Vouchers;
 
 namespace Domain.Entities.OrderTransactions;
-//NOTE: Create factory method
 public sealed class OrderTransaction
 {
     public OrderTransactionId OrderTransactionId { get; private set; } = null!;
@@ -22,4 +21,52 @@ public sealed class OrderTransaction
     public Order? Order { get; set; } = null!;
     public Voucher? Voucher { get; set; }
     public Bill? Bill { get; set; }
+
+    private OrderTransaction(
+        OrderTransactionId orderTransactionId,
+        PayerName? payerName,
+        Email? payerEmail,
+        AmountOfOrderTransaction amount,
+        DescriptionOfOrderTransaction description,
+        PaymentMethod paymentMethod,
+        IsVoucherUsed isVoucherUsed,
+        VoucherId? voucherId,
+        OrderId orderId,
+        BillId? billId)
+    {
+        OrderTransactionId = orderTransactionId;
+        PayerName = payerName;
+        PayerEmail = payerEmail;
+        Amount = amount;
+        Description = description;
+        PaymentMethod = paymentMethod;
+        IsVoucherUsed = isVoucherUsed;
+        VoucherId = voucherId;
+        OrderId = orderId;
+        BillId = billId;
+    }
+
+    public static OrderTransaction NewOrderTransaction(
+        PayerName? payerName,
+        Email? payerEmail,
+        AmountOfOrderTransaction amount,
+        DescriptionOfOrderTransaction description,
+        PaymentMethod paymentMethod,
+        IsVoucherUsed isVoucherUsed,
+        VoucherId? voucherId,
+        OrderId orderId,
+        BillId? billId)
+    {
+        return new OrderTransaction(
+            OrderTransactionId.New(),
+            payerName ?? PayerName.Empty,
+            payerEmail ?? Email.Empty,
+            amount,
+            description,
+            paymentMethod,
+            isVoucherUsed,
+            voucherId,
+            orderId,
+            billId);
+    }
 }

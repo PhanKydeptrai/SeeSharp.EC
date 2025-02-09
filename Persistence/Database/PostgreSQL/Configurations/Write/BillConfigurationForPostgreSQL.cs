@@ -16,7 +16,7 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
             .IsRequired()
             .HasConversion(
                 value => value.Value.ToString(),
-                value => new BillId(Ulid.Parse(value)))
+                value => BillId.FromString(value))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.OrderId)

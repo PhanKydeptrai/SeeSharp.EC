@@ -3,7 +3,6 @@ using Domain.Entities.Customers;
 using Domain.Entities.Users;
 
 namespace Domain.Entities.ShippingInformations;
-//NOTE: Create factory method
 public sealed class ShippingInformation
 {
     public ShippingInformationId ShippingInformationId { get; private set; } = null!;
@@ -18,4 +17,51 @@ public sealed class ShippingInformation
     //* Foreign key
     public Customer? Customer { get; set; } = null!;
     public ICollection<Bill>? Bills { get; set; } = null!;
+
+    private ShippingInformation(
+        ShippingInformationId shippingInformationId,
+        CustomerId customerId,
+        FullName fullName,
+        PhoneNumber phoneNumber,
+        IsDefault isDefault,
+        SpecificAddress specificAddress,
+        Province province,
+        District district,
+        Ward ward)
+    {
+        ShippingInformationId = shippingInformationId;
+        CustomerId = customerId;
+        FullName = fullName;
+        PhoneNumber = phoneNumber;
+        IsDefault = isDefault;
+        SpecificAddress = specificAddress;
+        Province = province;
+        District = district;
+        Ward = ward;
+    }
+
+    //Factory method
+    public static ShippingInformation NewShippingInformation(
+        ShippingInformationId shippingInformationId,
+        CustomerId customerId,
+        FullName fullName,
+        PhoneNumber phoneNumber,
+        IsDefault isDefault,
+        SpecificAddress specificAddress,
+        Province province,
+        District district,
+        Ward ward)
+    {
+        return new ShippingInformation(
+            shippingInformationId,
+            customerId,
+            fullName,
+            phoneNumber,
+            isDefault,
+            specificAddress,
+            province,
+            district,
+            ward);
+    }
+
 }

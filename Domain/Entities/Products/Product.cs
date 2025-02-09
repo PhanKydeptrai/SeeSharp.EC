@@ -36,8 +36,7 @@ public sealed class Product
         CategoryId = categoryId;
     }
 
-    public static Product NewProduct(
-        ProductId productId, 
+    public static Product NewProduct( 
         ProductName productName, 
         string? imageUrl, 
         string? description, 
@@ -45,7 +44,7 @@ public sealed class Product
         CategoryId categoryId)
     {
         return new Product(
-            productId, 
+            ProductId.New(), 
             productName, 
             imageUrl ?? string.Empty, 
             description ?? string.Empty, 
