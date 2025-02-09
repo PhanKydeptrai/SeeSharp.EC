@@ -26,7 +26,7 @@ public class UserReadModel
 
     public EmployeeReadModel? Employee { get; set; }
 
-    public ICollection<UserAuthenticationToken> UserAuthenticationTokens { get; set; } = new List<UserAuthenticationToken>();
+    public ICollection<UserAuthenticationTokenReadModel> UserAuthenticationTokens { get; set; } = new List<UserAuthenticationTokenReadModel>();
 
     public ICollection<VerifyVerificationTokenReadModel> VerifyVerificationTokens { get; set; } = new List<VerifyVerificationTokenReadModel>();
 }

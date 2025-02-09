@@ -1,6 +1,6 @@
 ﻿namespace Persistence.Database.PostgreSQL.ReadModels;
 
-public partial class UserAuthenticationToken
+public partial class UserAuthenticationTokenReadModel
 {
     public string UserAuthenticationTokenId { get; set; } = null!;
 

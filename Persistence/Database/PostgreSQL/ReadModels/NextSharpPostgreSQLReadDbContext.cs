@@ -27,7 +27,7 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
 
     public DbSet<OrderReadModel> Orders { get; set; }
 
-    public DbSet<OrderDetail> OrderDetails { get; set; }
+    public DbSet<OrderDetailReadModel> OrderDetails { get; set; }
 
     public DbSet<OrderTransactionReadModel> OrderTransactions { get; set; }
 
@@ -37,7 +37,7 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
 
     public DbSet<UserReadModel> Users { get; set; }
 
-    public DbSet<UserAuthenticationToken> UserAuthenticationTokens { get; set; }
+    public DbSet<UserAuthenticationTokenReadModel> UserAuthenticationTokens { get; set; }
 
     public DbSet<VerifyVerificationTokenReadModel> VerifyVerificationTokens { get; set; }
 
@@ -149,7 +149,7 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders).HasForeignKey(d => d.CustomerId);
         });
 
-        modelBuilder.Entity<OrderDetail>(entity =>
+        modelBuilder.Entity<OrderDetailReadModel>(entity =>
         {
             entity.HasIndex(e => e.OrderId, "IX_OrderDetails_OrderId");
 
@@ -233,7 +233,7 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
             entity.Property(e => e.UserStatus).HasMaxLength(20);
         });
 
-        modelBuilder.Entity<UserAuthenticationToken>(entity =>
+        modelBuilder.Entity<UserAuthenticationTokenReadModel>(entity =>
         {
             entity.HasIndex(e => e.UserId, "IX_UserAuthenticationTokens_UserId");
 

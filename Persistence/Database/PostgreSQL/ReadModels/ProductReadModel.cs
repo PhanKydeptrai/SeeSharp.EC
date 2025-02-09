@@ -18,7 +18,7 @@ public class ProductReadModel
 
     public CategoryReadModel Category { get; set; } = null!;
 
-    public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public ICollection<OrderDetailReadModel> OrderDetails { get; set; } = new List<OrderDetailReadModel>();
 
     public ICollection<WishItemReadModel> WishItems { get; set; } = new List<WishItemReadModel>();
 }

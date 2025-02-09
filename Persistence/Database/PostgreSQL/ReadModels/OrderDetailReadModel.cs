@@ -1,6 +1,6 @@
 ﻿namespace Persistence.Database.PostgreSQL.ReadModels;
 
-public partial class OrderDetail
+public partial class OrderDetailReadModel
 {
     public string OrderDetailId { get; set; } = null!;
 

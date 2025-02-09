@@ -20,7 +20,7 @@ public class OrderReadModel
 
     public FeedbackReadModel? Feedback { get; set; }
 
-    public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public ICollection<OrderDetailReadModel> OrderDetails { get; set; } = new List<OrderDetailReadModel>();
 
     public OrderTransactionReadModel? OrderTransaction { get; set; }
 }
