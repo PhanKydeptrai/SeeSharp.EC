@@ -34,7 +34,7 @@ public sealed class NextSharpMySQLDbContext : DbContext
     public DbSet<ShippingInformation> ShippingInformations { get; set; }
     public DbSet<UserAuthenticationToken> UserAuthenticationTokens { get; set; }
     public DbSet<User> Users { get; set; }
-    public DbSet<VerificationToken> VerifyVerificationTokens { get; set; }
+    public DbSet<VerificationToken> VerificationTokens { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
     public DbSet<WishItem> WishItems { get; set; }
 

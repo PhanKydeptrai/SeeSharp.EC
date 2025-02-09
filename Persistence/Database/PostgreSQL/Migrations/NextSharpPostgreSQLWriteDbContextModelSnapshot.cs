@@ -8,7 +8,7 @@ using Persistence.Database.PostgreSQL;
 
 #nullable disable
 
-namespace Persistence.Database.Postgresql.Migrations
+namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(NextSharpPostgreSQLWriteDbContext))]
     partial class NextSharpPostgreSQLWriteDbContextModelSnapshot : ModelSnapshot
@@ -463,7 +463,7 @@ namespace Persistence.Database.Postgresql.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("VerifyVerificationTokens");
+                    b.ToTable("VerificationToken");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>

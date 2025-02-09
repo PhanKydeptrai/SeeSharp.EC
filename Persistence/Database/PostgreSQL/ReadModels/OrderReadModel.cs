@@ -2,9 +2,9 @@
 
 public class OrderReadModel
 {
-    public string OrderId { get; set; } = null!;
+    public Ulid OrderId { get; set; }
 
-    public string CustomerId { get; set; } = null!;
+    public Ulid CustomerId { get; set; }
 
     public decimal Total { get; set; }
 
@@ -12,15 +12,15 @@ public class OrderReadModel
 
     public string OrderStatus { get; set; } = null!;
 
-    public string OrderTransactionId { get; set; } = null!;
+    public Ulid OrderTransactionId { get; set; }
 
-    public BillReadModel? Bill { get; set; }
+    public BillReadModel? BillReadModel { get; set; }
 
-    public CustomerReadModel Customer { get; set; } = null!;
+    public CustomerReadModel CustomerReadModel { get; set; } = null!;
 
-    public FeedbackReadModel? Feedback { get; set; }
+    public FeedbackReadModel? FeedbackReadModel { get; set; }
 
-    public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public ICollection<OrderDetailReadModel> OrderDetailReadModels { get; set; } = new List<OrderDetailReadModel>();
 
-    public OrderTransactionReadModel? OrderTransaction { get; set; }
+    public OrderTransactionReadModel? OrderTransactionReadModel { get; set; }
 }

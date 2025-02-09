@@ -2,13 +2,9 @@
 
 public class EmployeeReadModel
 {
-    public string EmployeeId { get; set; } = null!;
-
-    public string UserId { get; set; } = null!;
-
+    public Ulid EmployeeId { get; set; }
+    public Ulid UserId { get; set; }
     public string EmployeeStatus { get; set; } = null!;
-
     public string Role { get; set; } = null!;
-
-    public UserReadModel User { get; set; } = null!;
+    public UserReadModel UserReadModel { get; set; } = null!;
 }
