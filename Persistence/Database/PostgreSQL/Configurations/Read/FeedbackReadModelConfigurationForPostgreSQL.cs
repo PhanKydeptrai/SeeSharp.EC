@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Persistence.Converter;
 using Persistence.Database.PostgreSQL.ReadModels;
 
-namespace Persistence.Database.PostgreSQL.Configurations.Write;
+namespace Persistence.Database.PostgreSQL.Configurations.Read;
 
 internal sealed class FeedbackReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<FeedbackReadModel>
 {

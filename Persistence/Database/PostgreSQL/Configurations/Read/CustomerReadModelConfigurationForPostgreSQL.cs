@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Persistence.Converter;
 using Persistence.Database.PostgreSQL.ReadModels;
 
-namespace Persistence.Database.PostgreSQL.Configurations.Write;
+namespace Persistence.Database.PostgreSQL.Configurations.Read;
 
 internal sealed class CustomerReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<CustomerReadModel>
 {
@@ -43,11 +43,11 @@ internal sealed class CustomerReadModelConfigurationForPostgreSQL : IEntityTypeC
             .HasForeignKey(a => a.CustomerId);
 
         builder.HasMany(a => a.OrderReadModels)
-            .WithOne(a => a.Customer)
+            .WithOne(a => a.CustomerReadModel)
             .HasForeignKey(a => a.CustomerId);
 
         builder.HasMany(a => a.FeedbackReadModels)
-            .WithOne(a => a.Customer)
+            .WithOne(a => a.CustomerReadModel)
             .HasForeignKey(a => a.CustomerId);
 
         builder.HasMany(a => a.BillReadModels)

@@ -9,10 +9,10 @@ using Persistence.Database.PostgreSQL;
 
 #nullable disable
 
-namespace Persistence.Database.Postgresql.Migrations
+namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(NextSharpPostgreSQLWriteDbContext))]
-    [Migration("20250207171340_NextSharpReadOnly")]
+    [Migration("20250209081348_NextSharpReadOnly")]
     partial class NextSharpReadOnly
     {
         /// <inheritdoc />
@@ -466,7 +466,7 @@ namespace Persistence.Database.Postgresql.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("VerifyVerificationTokens");
+                    b.ToTable("VerificationToken");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>

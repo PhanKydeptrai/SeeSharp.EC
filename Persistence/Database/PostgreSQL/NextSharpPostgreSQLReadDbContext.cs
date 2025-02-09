@@ -3,9 +3,9 @@ using Persistence.Database.PostgreSQL.ReadModels;
 
 namespace Persistence.Database.PostgreSQL;
 
-public sealed class NextSharpPostgreSQLReadDbContextSample : DbContext
+public sealed class NextSharpPostgreSQLReadDbContext : DbContext
 {
-    public NextSharpPostgreSQLReadDbContextSample(DbContextOptions<NextSharpPostgreSQLReadDbContextSample> options) 
+    public NextSharpPostgreSQLReadDbContext(DbContextOptions<NextSharpPostgreSQLReadDbContext> options)
         : base(options) { }
     public DbSet<BillReadModel> BillReadModels { get; set; }
     public DbSet<CategoryReadModel> Categories { get; set; }
@@ -20,14 +20,14 @@ public sealed class NextSharpPostgreSQLReadDbContextSample : DbContext
     public DbSet<ShippingInformationReadModel> ShippingInformations { get; set; }
     public DbSet<UserAuthenticationTokenReadModel> UserAuthenticationTokens { get; set; }
     public DbSet<UserReadModel> Users { get; set; }
-    public DbSet<VerificationTokenReadModel> VerifyVerificationTokens { get; set; }
+    public DbSet<VerificationTokenReadModel> VerificationTokens { get; set; }
     public DbSet<VoucherReadModel> Vouchers { get; set; }
     public DbSet<WishItemReadModel> WishItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(
-            typeof(NextSharpPostgreSQLReadDbContextSample).Assembly,
+            typeof(NextSharpPostgreSQLReadDbContext).Assembly,
             WriteConfigurationsFilter);
 
         base.OnModelCreating(modelBuilder);

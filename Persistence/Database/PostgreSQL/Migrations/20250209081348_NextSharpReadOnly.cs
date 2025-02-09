@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Persistence.Database.Postgresql.Migrations
+namespace Persistence.Database.PostgreSQL.Migrations
 {
     /// <inheritdoc />
     public partial class NextSharpReadOnly : Migration
@@ -151,7 +152,7 @@ namespace Persistence.Database.Postgresql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "VerifyVerificationTokens",
+                name: "VerificationToken",
                 columns: table => new
                 {
                     VerificationTokenId = table.Column<string>(type: "varchar(26)", nullable: false),
@@ -162,9 +163,9 @@ namespace Persistence.Database.Postgresql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VerifyVerificationTokens", x => x.VerificationTokenId);
+                    table.PrimaryKey("PK_VerificationToken", x => x.VerificationTokenId);
                     table.ForeignKey(
-                        name: "FK_VerifyVerificationTokens_Users_UserId",
+                        name: "FK_VerificationToken_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -490,8 +491,8 @@ namespace Persistence.Database.Postgresql.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VerifyVerificationTokens_UserId",
-                table: "VerifyVerificationTokens",
+                name: "IX_VerificationToken_UserId",
+                table: "VerificationToken",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -527,7 +528,7 @@ namespace Persistence.Database.Postgresql.Migrations
                 name: "UserAuthenticationTokens");
 
             migrationBuilder.DropTable(
-                name: "VerifyVerificationTokens");
+                name: "VerificationToken");
 
             migrationBuilder.DropTable(
                 name: "WishItems");
