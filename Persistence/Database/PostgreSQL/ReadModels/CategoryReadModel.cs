@@ -2,13 +2,9 @@
 
 public class CategoryReadModel
 {
-    public string CategoryId { get; set; } = null!;
-
-    public string CategoryName { get; set; } = null!;
-
+    public Ulid CategoryId { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }
-
-    public string CategoryStatus { get; set; } = null!;
-
-    public ICollection<ProductReadModel>? Products { get; set; } = new List<ProductReadModel>();
+    public string CategoryStatus { get; set; } = string.Empty;
+    public ICollection<ProductReadModel>? ProductReadModels { get; set; }
 }

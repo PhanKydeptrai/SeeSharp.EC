@@ -1,0 +1,56 @@
+using Domain.Entities.Bills;
+using Domain.Entities.OrderTransactions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Persistence.Converter;
+using Persistence.Database.PostgreSQL.ReadModels;
+
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
+
+internal sealed class OrderReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<OrderReadModel>
+{
+    public void Configure(EntityTypeBuilder<OrderReadModel> builder)
+    {
+        builder.HasKey(x => x.OrderId);
+
+        builder.Property(x => x.OrderId)
+            .IsRequired()
+            .HasConversion<UlidToStringConverter>()
+            .HasColumnType("varchar(26)");
+
+        builder.Property(x => x.CustomerId)
+            .IsRequired()
+            .HasConversion<UlidToStringConverter>()
+            .HasColumnType("varchar(26)");
+
+        builder.Property(x => x.Total)
+            .IsRequired()
+            .HasColumnType("decimal");
+
+        builder.Property(x => x.PaymentStatus)
+            .IsRequired()
+            .HasColumnType("varchar(20)");
+
+        builder.Property(x => x.OrderStatus)
+            .IsRequired()
+            .HasColumnType("varchar(20)");
+
+        builder.Property(x => x.OrderTransactionId)
+            .IsRequired()
+            .HasConversion<UlidToStringConverter>()
+            .HasColumnType("varchar(26)");
+
+        builder.HasMany(x => x.OrderDetailReadModels)
+            .WithOne(x => x.OrderReadModel)
+            .HasForeignKey(x => x.OrderId);
+
+        builder.HasOne(a => a.BillReadModel)
+            .WithOne(a => a.Order)
+            .HasForeignKey<Bill>(a => a.OrderId);
+
+        builder.HasOne(a => a.OrderTransactionReadModel)
+            .WithOne(a => a.OrderReadModel)
+            .HasForeignKey<OrderTransaction>(a => a.OrderId);
+
+    }
+}

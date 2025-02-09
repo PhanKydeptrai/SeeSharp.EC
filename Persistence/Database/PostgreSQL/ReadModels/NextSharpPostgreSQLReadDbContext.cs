@@ -14,40 +14,23 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
     }
 
     public DbSet<BillReadModel> Bills { get; set; }
-
     public DbSet<CategoryReadModel> Categories { get; set; }
-
     public DbSet<CustomerReadModel> Customers { get; set; }
-
     public DbSet<CustomerVoucherReadModel> CustomerVouchers { get; set; }
-
     public DbSet<EmployeeReadModel> Employees { get; set; }
-
     public DbSet<FeedbackReadModel> Feedbacks { get; set; }
-
     public DbSet<OrderReadModel> Orders { get; set; }
-
     public DbSet<OrderDetailReadModel> OrderDetails { get; set; }
-
     public DbSet<OrderTransactionReadModel> OrderTransactions { get; set; }
-
     public DbSet<ProductReadModel> Products { get; set; }
-
     public DbSet<ShippingInformationReadModel> ShippingInformations { get; set; }
-
     public DbSet<UserReadModel> Users { get; set; }
-
     public DbSet<UserAuthenticationTokenReadModel> UserAuthenticationTokens { get; set; }
-
-    public DbSet<VerifyVerificationTokenReadModel> VerifyVerificationTokens { get; set; }
-
+    public DbSet<VerificationTokenReadModel> VerificationTokens { get; set; }
     public DbSet<VoucherReadModel> Vouchers { get; set; }
-
     public DbSet<WishItemReadModel> WishItems { get; set; }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:ReadOnlyDatabase");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BillReadModel>(entity =>
@@ -89,7 +72,7 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
             entity.Property(e => e.CustomerType).HasMaxLength(20);
             entity.Property(e => e.UserId).HasMaxLength(26);
 
-            entity.HasOne(d => d.User).WithOne(p => p.Customer).HasForeignKey<CustomerReadModel>(d => d.UserId);
+            entity.HasOne(d => d.UserReadModel).WithOne(p => p.CustomerReadModel).HasForeignKey<CustomerReadModel>(d => d.UserId);
         });
 
         modelBuilder.Entity<CustomerVoucherReadModel>(entity =>
@@ -159,9 +142,9 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
             entity.Property(e => e.OrderId).HasMaxLength(26);
             entity.Property(e => e.ProductId).HasMaxLength(26);
 
-            entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails).HasForeignKey(d => d.OrderId);
+            entity.HasOne(d => d.OrderReadModel).WithMany(p => p.OrderDetails).HasForeignKey(d => d.OrderId);
 
-            entity.HasOne(d => d.Product).WithMany(p => p.OrderDetails).HasForeignKey(d => d.ProductId);
+            entity.HasOne(d => d.ProductReadModel).WithMany(p => p.OrderDetails).HasForeignKey(d => d.ProductId);
         });
 
         modelBuilder.Entity<OrderTransactionReadModel>(entity =>
@@ -182,11 +165,11 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
             entity.Property(e => e.PaymentMethod).HasMaxLength(50);
             entity.Property(e => e.VoucherId).HasMaxLength(26);
 
-            entity.HasOne(d => d.Bill).WithMany(p => p.OrderTransactions).HasForeignKey(d => d.BillId);
+            entity.HasOne(d => d.BillReadModel).WithMany(p => p.OrderTransactions).HasForeignKey(d => d.BillId);
 
-            entity.HasOne(d => d.Order).WithOne(p => p.OrderTransaction).HasForeignKey<OrderTransactionReadModel>(d => d.OrderId);
+            entity.HasOne(d => d.OrderReadModel).WithOne(p => p.OrderTransaction).HasForeignKey<OrderTransactionReadModel>(d => d.OrderId);
 
-            entity.HasOne(d => d.Voucher).WithMany(p => p.OrderTransactions).HasForeignKey(d => d.VoucherId);
+            entity.HasOne(d => d.VoucherReadModel).WithMany(p => p.OrderTransactions).HasForeignKey(d => d.VoucherId);
         });
 
         modelBuilder.Entity<ProductReadModel>(entity =>
@@ -201,7 +184,7 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
             entity.Property(e => e.ProductPrice).HasPrecision(18, 2);
             entity.Property(e => e.ProductStatus).HasMaxLength(20);
 
-            entity.HasOne(d => d.Category).WithMany(p => p.Products).HasForeignKey(d => d.CategoryId);
+            entity.HasOne(d => d.CategoryReadModel).WithMany(p => p.ProductReadModels).HasForeignKey(d => d.CategoryId);
         });
 
         modelBuilder.Entity<ShippingInformationReadModel>(entity =>
@@ -243,7 +226,7 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
             entity.Property(e => e.UserId).HasMaxLength(26);
             entity.Property(e => e.Value).HasMaxLength(256);
 
-            entity.HasOne(d => d.User).WithMany(p => p.UserAuthenticationTokens).HasForeignKey(d => d.UserId);
+            entity.HasOne(d => d.UserReadModel).WithMany(p => p.UserAuthenticationTokens).HasForeignKey(d => d.UserId);
         });
 
         modelBuilder.Entity<VerifyVerificationTokenReadModel>(entity =>
@@ -283,9 +266,9 @@ public partial class NextSharpPostgreSQLReadDbContext : DbContext
             entity.Property(e => e.CustomerId).HasMaxLength(26);
             entity.Property(e => e.ProductId).HasMaxLength(26);
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.WishItems).HasForeignKey(d => d.CustomerId);
+            entity.HasOne(d => d.CustomerReadModel).WithMany(p => p.WishItems).HasForeignKey(d => d.CustomerId);
 
-            entity.HasOne(d => d.Product).WithMany(p => p.WishItems).HasForeignKey(d => d.ProductId);
+            entity.HasOne(d => d.ProductReadModel).WithMany(p => p.WishItems).HasForeignKey(d => d.ProductId);
         });
 
         OnModelCreatingPartial(modelBuilder);

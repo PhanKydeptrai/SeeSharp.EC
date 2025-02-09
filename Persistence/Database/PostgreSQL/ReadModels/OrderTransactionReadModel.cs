@@ -2,7 +2,7 @@
 
 public class OrderTransactionReadModel
 {
-    public string OrderTransactionId { get; set; } = null!;
+    public Ulid OrderTransactionId { get; set; }
 
     public string? PayerName { get; set; }
 
@@ -16,15 +16,15 @@ public class OrderTransactionReadModel
 
     public bool IsVoucherUsed { get; set; }
 
-    public string? VoucherId { get; set; }
+    public Ulid? VoucherId { get; set; }
 
-    public string OrderId { get; set; } = null!;
+    public Ulid OrderId { get; set; }
 
-    public string? BillId { get; set; }
+    public Ulid? BillId { get; set; }
 
-    public BillReadModel? Bill { get; set; }
+    public BillReadModel? BillReadModel { get; set; }
 
-    public OrderReadModel Order { get; set; } = null!;
+    public OrderReadModel OrderReadModel { get; set; } = null!;
 
-    public VoucherReadModel? Voucher { get; set; }
+    public VoucherReadModel? VoucherReadModel { get; set; }
 }

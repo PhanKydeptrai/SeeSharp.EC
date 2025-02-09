@@ -1,29 +1,24 @@
-using Domain.Entities.Customers;
 using Domain.Entities.Feedbacks;
-using Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Persistence.Converter;
+using Persistence.Database.PostgreSQL.ReadModels;
 
 namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
-internal sealed class FeedbackReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<Feedback>
+internal sealed class FeedbackReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<FeedbackReadModel>
 {
-    public void Configure(EntityTypeBuilder<Feedback> builder)
+    public void Configure(EntityTypeBuilder<FeedbackReadModel> builder)
     {
         builder.HasKey(x => x.FeedbackId);
 
         builder.Property(x => x.FeedbackId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new FeedbackId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.Substance)
             .IsRequired(false)
-            .HasConversion(
-                v => v!.Value.ToString(),
-                v => Substance.FromString(v))
             .HasColumnType("varchar(255)");
 
         builder.Property(x => x.ImageUrl)
@@ -32,28 +27,21 @@ internal sealed class FeedbackReadModelConfigurationForPostgreSQL : IEntityTypeC
 
         builder.Property(x => x.RatingScore)
             .IsRequired()
-            .HasConversion(
-                v => v.Value,
-                v => RatingScore.FromFloat(v))
             .HasColumnType("float");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new OrderId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new CustomerId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         //Một order có một feedback
-        builder.HasOne(x => x.Order)
-            .WithOne(x => x.Feedback)
+        builder.HasOne(x => x.OrderReadModel)
+            .WithOne(x => x.FeedbackReadModel)
             .HasForeignKey<Feedback>(x => x.OrderId);
 
     }

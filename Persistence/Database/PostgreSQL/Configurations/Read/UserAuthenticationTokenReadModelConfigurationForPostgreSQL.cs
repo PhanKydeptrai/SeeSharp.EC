@@ -1,21 +1,18 @@
-using Domain.Entities.UserAuthenticationTokens;
-using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Persistence.Converter;
+using Persistence.Database.PostgreSQL.ReadModels;
 
 namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
-internal sealed class UserAuthenticationTokenReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<UserAuthenticationToken>
+internal sealed class UserAuthenticationTokenReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<UserAuthenticationTokenReadModel>
 {
-    public void Configure(EntityTypeBuilder<UserAuthenticationToken> builder)
+    public void Configure(EntityTypeBuilder<UserAuthenticationTokenReadModel> builder)
     {
         builder.HasKey(a => a.UserAuthenticationTokenId);
         builder.Property(a => a.UserAuthenticationTokenId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new UserAuthenticationTokenId(Ulid.Parse(v))
-            )
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.Value)
@@ -24,10 +21,6 @@ internal sealed class UserAuthenticationTokenReadModelConfigurationForPostgreSQL
 
         builder.Property(a => a.TokenType)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (TokenType)Enum.Parse(typeof(TokenType), v)
-            )
             .HasColumnType("varchar(20)");
 
         builder.Property(a => a.ExpiredTime)
@@ -36,18 +29,11 @@ internal sealed class UserAuthenticationTokenReadModelConfigurationForPostgreSQL
 
         builder.Property(a => a.IsBlackList)
             .IsRequired()
-            .HasConversion(
-                v => v.Value,
-                v => IsBlackList.FromBoolean(v)
-            )
             .HasColumnType("boolean");
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new UserId(Ulid.Parse(v))
-            )
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
     }

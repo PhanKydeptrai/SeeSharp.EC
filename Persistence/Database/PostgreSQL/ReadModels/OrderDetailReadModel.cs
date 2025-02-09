@@ -2,17 +2,17 @@
 
 public partial class OrderDetailReadModel
 {
-    public string OrderDetailId { get; set; } = null!;
+    public Ulid OrderDetailId { get; set; }
 
-    public string OrderId { get; set; } = null!;
+    public Ulid OrderId { get; set; }
 
-    public string ProductId { get; set; } = null!;
+    public Ulid ProductId { get; set; }
 
     public int Quantity { get; set; }
 
     public decimal UnitPrice { get; set; }
 
-    public OrderReadModel Order { get; set; } = null!;
+    public OrderReadModel OrderReadModel { get; set; } = null!;
 
-    public ProductReadModel Product { get; set; } = null!;
+    public ProductReadModel ProductReadModel { get; set; } = null!;
 }

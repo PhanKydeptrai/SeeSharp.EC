@@ -1,36 +1,27 @@
-using Domain.Entities.Bills;
-using Domain.Entities.Customers;
-using Domain.Entities.Orders;
-using Domain.Entities.ShippingInformations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Persistence.Converter;
+using Persistence.Database.PostgreSQL.ReadModels;
 
 namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
-internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<Bill>
+internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<BillReadModel>
 {
-    public void Configure(EntityTypeBuilder<Bill> builder)
+    public void Configure(EntityTypeBuilder<BillReadModel> builder)
     {
         builder.HasKey(x => x.BillId);
         builder.Property(x => x.BillId)
             .IsRequired()
-            .HasConversion(
-                value => value.Value.ToString(),
-                value => new BillId(Ulid.Parse(value)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion(
-                value => value.Value.ToString(),
-                value => new OrderId(Ulid.Parse(value)))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion(
-                value => value.Value.ToString(),
-                value => new CustomerId(Ulid.Parse(value)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CreatedDate)
@@ -39,16 +30,11 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
 
         builder.Property(x => x.PaymentMethod)
             .IsRequired()
-            .HasConversion(
-                value => value.ToString(),
-                value => (PaymentMethod)Enum.Parse(typeof(PaymentMethod), value))
             .HasColumnType("varchar(20)");
 
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
-            .HasConversion(
-                value => value.Value.ToString(),
-                value => new ShippingInformationId(Ulid.Parse(value)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.HasOne(a => a.ShippingInformation)

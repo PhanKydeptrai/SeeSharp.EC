@@ -5,24 +5,24 @@ namespace Persistence.Database.PostgreSQL;
 
 public sealed class NextSharpPostgreSQLReadDbContextSample : DbContext
 {
-    public NextSharpPostgreSQLReadDbContextSample(DbContextOptions<NextSharpPostgreSQLReadDbContextSample> options) : base(options) { }
-
+    public NextSharpPostgreSQLReadDbContextSample(DbContextOptions<NextSharpPostgreSQLReadDbContextSample> options) 
+        : base(options) { }
     public DbSet<BillReadModel> BillReadModels { get; set; }
-    public DbSet<CategoryReadModel> CategorieReadModels { get; set; }
-    public DbSet<CustomerReadModel> CustomerReadModels { get; set; }
-    public DbSet<CustomerVoucherReadModel> CustomerVoucherReadModels { get; set; }
-    public DbSet<EmployeeReadModel> EmployeeReadModels { get; set; }
-    public DbSet<FeedbackReadModel> FeedbackReadModels { get; set; }
+    public DbSet<CategoryReadModel> Categories { get; set; }
+    public DbSet<CustomerReadModel> Customers { get; set; }
+    public DbSet<CustomerVoucherReadModel> CustomerVouchers { get; set; }
+    public DbSet<EmployeeReadModel> Employees { get; set; }
+    public DbSet<FeedbackReadModel> Feedbacks { get; set; }
     public DbSet<OrderDetailReadModel> OrderDetails { get; set; }
-    public DbSet<OrderReadModel> OrderReadModels { get; set; }
-    public DbSet<OrderTransactionReadModel> OrderTransactionReadModels { get; set; }
-    public DbSet<ProductReadModel> ProductReadModels { get; set; }
-    public DbSet<ShippingInformationReadModel> ShippingInformationReadModels { get; set; }
-    public DbSet<UserAuthenticationTokenReadModel> UserAuthenticationTokenReadModels { get; set; }
-    public DbSet<UserReadModel> UserReadModels { get; set; }
-    public DbSet<VerifyVerificationTokenReadModel> VerifyVerificationTokenReadModels { get; set; }
-    public DbSet<VoucherReadModel> VoucherReadModels { get; set; }
-    public DbSet<WishItemReadModel> WishItemReadModels { get; set; }
+    public DbSet<OrderReadModel> Orders { get; set; }
+    public DbSet<OrderTransactionReadModel> OrderTransactions { get; set; }
+    public DbSet<ProductReadModel> Products { get; set; }
+    public DbSet<ShippingInformationReadModel> ShippingInformations { get; set; }
+    public DbSet<UserAuthenticationTokenReadModel> UserAuthenticationTokens { get; set; }
+    public DbSet<UserReadModel> Users { get; set; }
+    public DbSet<VerificationTokenReadModel> VerifyVerificationTokens { get; set; }
+    public DbSet<VoucherReadModel> Vouchers { get; set; }
+    public DbSet<WishItemReadModel> WishItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

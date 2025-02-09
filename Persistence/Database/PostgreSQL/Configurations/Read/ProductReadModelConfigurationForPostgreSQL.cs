@@ -1,27 +1,22 @@
-using Domain.Entities.Categories;
-using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Persistence.Converter;
+using Persistence.Database.PostgreSQL.ReadModels;
 
 namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
-internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<Product>
+internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<ProductReadModel>
 {
-    public void Configure(EntityTypeBuilder<Product> builder)
+    public void Configure(EntityTypeBuilder<ProductReadModel> builder)
     {
         builder.HasKey(a => a.ProductId);
         builder.Property(a => a.ProductId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new ProductId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.ProductName)
             .IsRequired()
-            .HasConversion(
-                v => v.Value,
-                v => ProductName.FromString(v))
             .HasColumnType("varchar(50)");
 
         builder.Property(a => a.ImageUrl)
@@ -34,31 +29,23 @@ internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeCo
 
         builder.Property(a => a.ProductPrice)
             .IsRequired()
-            .HasConversion(
-                v => v.Value,
-                v => ProductPrice.FromDecimal(v))
             .HasColumnType("decimal(18,2)");
 
         builder.Property(a => a.ProductStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (ProductStatus)Enum.Parse(typeof(ProductStatus), v))
             .HasColumnType("varchar(20)");
 
         builder.Property(a => a.CategoryId)
             .IsRequired()
-            .HasConversion(
-                v => v.Value.ToString(),
-                v => new CategoryId(Ulid.Parse(v)))
+            .HasConversion<UlidToStringConverter>()
             .HasColumnType("varchar(26)");
 
-        builder.HasMany(a => a.WishItems)
-            .WithOne(a => a.Product)
+        builder.HasMany(a => a.WishItemReadModels)
+            .WithOne(a => a.ProductReadModel)
             .HasForeignKey(a => a.ProductId);
 
-        builder.HasMany(a => a.OrderDetails)
-            .WithOne(a => a.Product)
+        builder.HasMany(a => a.OrderDetailReadModels)
+            .WithOne(a => a.ProductReadModel)
             .HasForeignKey(a => a.ProductId);
     }
 }

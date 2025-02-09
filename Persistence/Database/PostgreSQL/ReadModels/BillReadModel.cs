@@ -2,23 +2,14 @@
 
 public class BillReadModel
 {
-    public string BillId { get; set; } = null!;
-
-    public string OrderId { get; set; } = null!;
-
-    public string CustomerId { get; set; } = null!;
-
+    public Ulid BillId { get; set; } 
+    public Ulid OrderId { get; set; }
+    public Ulid CustomerId { get; set; }
     public DateTime CreatedDate { get; set; }
-
-    public string PaymentMethod { get; set; } = null!;
-
-    public string ShippingInformationId { get; set; } = null!;
-
+    public string PaymentMethod { get; set; } = string.Empty;
+    public Ulid ShippingInformationId { get; set; }
     public CustomerReadModel Customer { get; set; } = null!;
-
     public OrderReadModel Order { get; set; } = null!;
-
     public ICollection<OrderTransactionReadModel> OrderTransactions { get; set; } = new List<OrderTransactionReadModel>();
-
     public ShippingInformationReadModel ShippingInformation { get; set; } = new ShippingInformationReadModel();
 }

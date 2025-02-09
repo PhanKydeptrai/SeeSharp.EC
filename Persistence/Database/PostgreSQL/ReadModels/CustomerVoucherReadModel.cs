@@ -2,15 +2,10 @@
 
 public class CustomerVoucherReadModel
 {
-    public string CustomerVoucherId { get; set; } = null!;
-
-    public string VoucherId { get; set; } = null!;
-
-    public string CustomerId { get; set; } = null!;
-
+    public Ulid CustomerVoucherId { get; set; }
+    public Ulid VoucherId { get; set; } 
+    public Ulid CustomerId { get; set; }
     public int Quantity { get; set; }
-
-    public CustomerReadModel Customer { get; set; } = null!;
-
-    public VoucherReadModel Voucher { get; set; } = null!;
+    public CustomerReadModel CustomerReadModel { get; set; } = null!;
+    public VoucherReadModel VoucherReadModel { get; set; } = null!;
 }
