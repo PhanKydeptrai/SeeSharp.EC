@@ -14,7 +14,7 @@ internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfig
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new VerificationTokenId(Ulid.Parse(v))
+                v => VerificationTokenId.FromString(v)
             )
             .HasColumnType("varchar(26)");
         builder.Property(a => a.Temporary)
@@ -33,7 +33,7 @@ internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfig
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new UserId(Ulid.Parse(v))
+                v => UserId.FromString(v)
             )
             .HasColumnType("varchar(26)");
     }

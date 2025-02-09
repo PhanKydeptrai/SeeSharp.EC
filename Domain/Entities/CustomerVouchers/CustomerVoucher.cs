@@ -13,4 +13,28 @@ public sealed class CustomerVoucher
     //Foreign key
     public Voucher? Voucher { get; set; } = null!;
     public Customer? Customer { get; set; } = null!;
+
+    private CustomerVoucher(
+        CustomerVoucherId customerVoucherId,
+        VoucherId voucherId,
+        CustomerId customerId,
+        CustomerVoucherQuantity quantity)
+    {
+        CustomerVoucherId = customerVoucherId;
+        VoucherId = voucherId;
+        CustomerId = customerId;
+        Quantity = quantity;
+    }
+
+    public static CustomerVoucher NewCustomerVoucher(
+        VoucherId voucherId,
+        CustomerId customerId,
+        CustomerVoucherQuantity quantity)
+    {
+        return new CustomerVoucher(
+            CustomerVoucherId.New(),
+            voucherId,
+            customerId,
+            quantity);
+    }
 }

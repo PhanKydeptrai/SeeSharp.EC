@@ -15,14 +15,13 @@ internal sealed class WishItemConfigurationForPostgreSQL : IEntityTypeConfigurat
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new WishItemId(Ulid.Parse(v))
-            )
+                v => WishItemId.FromString(v))
             .HasColumnType("varchar(26)");
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new CustomerId(Ulid.Parse(v))
+                v => CustomerId.FromString(v)
             )
             .HasColumnType("varchar(26)");
 
@@ -30,7 +29,7 @@ internal sealed class WishItemConfigurationForPostgreSQL : IEntityTypeConfigurat
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new ProductId(Ulid.Parse(v))
+                v => ProductId.FromString(v)
             )
             .HasColumnType("varchar(26)");
 

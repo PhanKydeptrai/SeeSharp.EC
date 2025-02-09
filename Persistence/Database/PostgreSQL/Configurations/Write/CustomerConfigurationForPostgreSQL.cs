@@ -15,14 +15,14 @@ internal sealed class CustomerConfigurationForPostgreSQL : IEntityTypeConfigurat
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new CustomerId(Ulid.Parse(v)))
+                v => CustomerId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new UserId(Ulid.Parse(v)))
+                v => UserId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.CustomerStatus)

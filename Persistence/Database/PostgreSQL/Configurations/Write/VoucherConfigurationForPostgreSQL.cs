@@ -13,7 +13,7 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new VoucherId(Ulid.Parse(v))
+                v => VoucherId.FromString(v)
             )
             .HasColumnType("varchar(26)");
 

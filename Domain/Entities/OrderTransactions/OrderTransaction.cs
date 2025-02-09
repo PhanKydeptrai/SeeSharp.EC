@@ -24,15 +24,15 @@ public sealed class OrderTransaction
 
     private OrderTransaction(
         OrderTransactionId orderTransactionId,
-        PayerName? payerName,
-        Email? payerEmail,
+        PayerName payerName,
+        Email payerEmail,
         AmountOfOrderTransaction amount,
         DescriptionOfOrderTransaction description,
         PaymentMethod paymentMethod,
         IsVoucherUsed isVoucherUsed,
-        VoucherId? voucherId,
+        VoucherId voucherId,
         OrderId orderId,
-        BillId? billId)
+        BillId billId)
     {
         OrderTransactionId = orderTransactionId;
         PayerName = payerName;
@@ -65,8 +65,8 @@ public sealed class OrderTransaction
             description,
             paymentMethod,
             isVoucherUsed,
-            voucherId,
+            voucherId ?? VoucherId.Empty,
             orderId,
-            billId);
+            billId ?? BillId.Empty);
     }
 }

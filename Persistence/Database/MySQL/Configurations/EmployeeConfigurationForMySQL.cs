@@ -14,14 +14,14 @@ internal sealed class EmployeeConfigurationForMySQL : IEntityTypeConfiguration<E
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new EmployeeId(Ulid.Parse(v)))
+                v => EmployeeId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.UserId)
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new UserId(Ulid.Parse(v)))
+                v => UserId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.EmployeeStatus)

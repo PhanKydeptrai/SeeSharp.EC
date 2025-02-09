@@ -15,21 +15,21 @@ internal sealed class OrderDetailConfigurationForPostgreSQL : IEntityTypeConfigu
             .IsRequired()
             .HasConversion(
                 x => x.Value.ToString(),
-                x => new OrderDetailId(Ulid.Parse(x)))
+                x => OrderDetailId.FromString(x))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
                 x => x.Value.ToString(),
-                x => new OrderId(Ulid.Parse(x)))
+                x => OrderId.FromString(x))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
             .HasConversion(
                 x => x.Value.ToString(),
-                x => new ProductId(Ulid.Parse(x)))
+                x => ProductId.FromString(x))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.Quantity)

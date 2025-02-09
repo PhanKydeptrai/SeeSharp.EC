@@ -33,22 +33,14 @@ public sealed class Customer
         CustomerStatus = customerStatus;
         CustomerType = customerType;
     }
-    
+
     //* factory method
-    public static Customer NewRegisteredCustomer(
-        CustomerId customerId, 
-        UserId userId)
+    public static Customer NewCustomer(
+        UserId userId,
+        CustomerType customerType)
     {
-        return new Customer(customerId, userId, CustomerStatus.Active, CustomerType.Subscribed);
+        return new Customer(CustomerId.New(), userId, CustomerStatus.Active, customerType);
     }
-
-    public static Customer NewNormalCustomer(
-        CustomerId customerId, 
-        UserId userId)
-    {
-        return new Customer(customerId, userId, CustomerStatus.Active, CustomerType.Normal);
-    }
-
 }
 
 

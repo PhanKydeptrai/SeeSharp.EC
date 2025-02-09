@@ -15,7 +15,7 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
             .IsRequired()
             .HasConversion(
                 x => x.Value.ToString(),
-                x => new OrderDetailId(Ulid.Parse(x))
+                x => OrderDetailId.FromString(x)
             )
             .HasColumnType("varchar(26)");
 
@@ -23,7 +23,7 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
             .IsRequired()
             .HasConversion(
                 x => x.Value.ToString(),
-                x => new OrderId(Ulid.Parse(x))
+                x => OrderId.FromString(x)
             )
             .HasColumnType("varchar(26)");
 
@@ -31,7 +31,7 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
             .IsRequired()
             .HasConversion(
                 x => x.Value.ToString(),
-                x => new ProductId(Ulid.Parse(x))
+                x => ProductId.FromString(x)
             )
             .HasColumnType("varchar(26)");
 

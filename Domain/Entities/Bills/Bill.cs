@@ -17,4 +17,37 @@ public sealed class Bill
     public Order Order { get; set; } = null!;
     public Customer Customer { get; set; } = null!;
     public ShippingInformation ShippingInformation { get; set; } = null!;
+
+
+    private Bill(
+        BillId billId,
+        OrderId orderId,
+        CustomerId customerId,
+        DateTime createdDate,
+        PaymentMethod paymentMethod,
+        ShippingInformationId shippingInformationId)
+    {
+        BillId = billId;
+        OrderId = orderId;
+        CustomerId = customerId;
+        CreatedDate = createdDate;
+        PaymentMethod = paymentMethod;
+        ShippingInformationId = shippingInformationId;
+    }
+
+    public static Bill NewBill(
+        OrderId orderId,
+        CustomerId customerId,
+        DateTime createdDate,
+        PaymentMethod paymentMethod,
+        ShippingInformationId shippingInformationId)
+    {
+        return new Bill(
+            BillId.New(),
+            orderId,
+            customerId,
+            createdDate,
+            paymentMethod,
+            shippingInformationId);
+    }
 }

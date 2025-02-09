@@ -17,7 +17,7 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new OrderTransactionId(Ulid.Parse(v)))
+                v => OrderTransactionId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.PayerName)
@@ -67,21 +67,21 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
             .IsRequired(false)
             .HasConversion(
                 v => v!.Value.ToString(),
-                v => new VoucherId(Ulid.Parse(v)))
+                v => VoucherId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.OrderId)
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new OrderId(Ulid.Parse(v)))
+                v => OrderId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.BillId)
             .IsRequired(false)
             .HasConversion(
                 v => v!.Value.ToString(),
-                v => new BillId(Ulid.Parse(v)))
+                v => BillId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.HasOne(a => a.Voucher)
