@@ -2,9 +2,8 @@ using Domain.Primitives;
 
 namespace Domain.Entities.Bills;
 
-// public record BillId(Ulid Value);
 
-public class BillId : ValueObject
+public sealed class BillId : ValueObject
 {
     private BillId(Ulid value) => Value = value;
     public Ulid Value { get; }

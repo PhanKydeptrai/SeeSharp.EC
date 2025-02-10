@@ -2,7 +2,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities.Vouchers;
 
-public class VoucherId : ValueObject
+public sealed class VoucherId : ValueObject
 {
     private VoucherId(Ulid value) => Value = value;
     public Ulid Value { get; }

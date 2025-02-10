@@ -2,7 +2,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities.Employees;
 
-public class EmployeeId : ValueObject
+public sealed class EmployeeId : ValueObject
 {
     private EmployeeId(Ulid value) => Value = value;
     public Ulid Value { get; }

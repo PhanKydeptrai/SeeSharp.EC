@@ -30,7 +30,7 @@ public sealed class Voucher
         MinimumOrderAmount minimumOrderAmount,
         DateTime startDate,
         DateTime expiredDate,
-        VoucherDescription voucherDescription,
+        VoucherDescription description,
         Status status)
     {
         VoucherId = voucherId;
@@ -42,7 +42,7 @@ public sealed class Voucher
         MinimumOrderAmount = minimumOrderAmount;
         StartDate = startDate;
         ExpiredDate = expiredDate;
-        Description = voucherDescription;
+        Description = description;
         Status = status;
     }
 

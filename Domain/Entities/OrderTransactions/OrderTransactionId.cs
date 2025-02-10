@@ -2,7 +2,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities.OrderTransactions;
 
-public class OrderTransactionId : ValueObject
+public sealed class OrderTransactionId : ValueObject
 {
     private OrderTransactionId(Ulid value) => Value = value;
     public Ulid Value { get; }

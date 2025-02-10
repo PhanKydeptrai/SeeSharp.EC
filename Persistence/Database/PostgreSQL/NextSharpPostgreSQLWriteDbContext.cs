@@ -21,10 +21,7 @@ namespace Persistence.Database.PostgreSQL;
 public sealed class NextSharpPostgreSQLWriteDbContext : DbContext
 {
     public NextSharpPostgreSQLWriteDbContext(DbContextOptions<NextSharpPostgreSQLWriteDbContext> options)
-        : base(options)
-    {
-
-    }
+        : base(options) { }
     public DbSet<Bill> Bills { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Customer> Customers { get; set; }

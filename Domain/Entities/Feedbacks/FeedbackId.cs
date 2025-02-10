@@ -1,7 +1,7 @@
 using Domain.Primitives;
 
 namespace Domain.Entities.Feedbacks;
-public class FeedbackId : ValueObject
+public sealed class FeedbackId : ValueObject
 {
     private FeedbackId(Ulid value) => Value = value;
     public Ulid Value { get; }

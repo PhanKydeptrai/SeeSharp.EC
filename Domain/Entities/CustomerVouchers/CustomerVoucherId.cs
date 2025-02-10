@@ -1,7 +1,7 @@
 using Domain.Primitives;
 
 namespace Domain.Entities.CustomerVouchers;
-public class CustomerVoucherId : ValueObject
+public sealed class CustomerVoucherId : ValueObject
 {
     private CustomerVoucherId(Ulid value) => Value = value;
     public Ulid Value { get; }

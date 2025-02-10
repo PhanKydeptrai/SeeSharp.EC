@@ -2,7 +2,7 @@
 
 namespace Domain.Entities.Customers;
 
-public class CustomerId : ValueObject
+public sealed class CustomerId : ValueObject
 {
     private CustomerId(Ulid value) => Value = value;
     public Ulid Value { get; }

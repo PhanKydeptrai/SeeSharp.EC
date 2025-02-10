@@ -4,16 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Persistence.Database.PostgreSQL;
+using Persistence.Database.MySQL;
 
 #nullable disable
 
-namespace Persistence.Database.PostgreSQL.Migrations
+namespace Persistence.Database.MySQL.Migrations
 {
-    [DbContext(typeof(NextSharpPostgreSQLWriteDbContext))]
-    [Migration("20250209081348_NextSharpReadOnly")]
-    partial class NextSharpReadOnly
+    [DbContext(typeof(NextSharpMySQLDbContext))]
+    [Migration("20250209163609_NextSharpPrimary")]
+    partial class NextSharpPrimary
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,9 +20,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
                 {
@@ -68,7 +65,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(50)")
+                        .HasAnnotation("MySQL:Charset", "utf8mb4");
 
                     b.Property<string>("CategoryStatus")
                         .IsRequired()
@@ -233,7 +231,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsVoucherUsed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("OrderId")
                         .IsRequired()
@@ -243,7 +241,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.Property<string>("PayerName")
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(50)")
+                        .HasAnnotation("MySQL:Charset", "utf8mb4");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
@@ -305,14 +304,16 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(26)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasAnnotation("MySQL:Charset", "utf8mb4");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(50)")
+                        .HasAnnotation("MySQL:Charset", "utf8mb4");
 
                     b.Property<decimal>("ProductPrice")
                         .HasColumnType("decimal(18,2)");
@@ -346,7 +347,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -380,7 +381,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("TIMESTAMP");
 
                     b.Property<bool>("IsBlackList")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("TokenType")
                         .IsRequired()
@@ -421,10 +422,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<bool>("IsVerify")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("varchar(64)");
 
                     b.Property<string>("PhoneNumber")
@@ -433,7 +433,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(50)")
+                        .HasAnnotation("MySQL:Charset", "utf8mb4");
 
                     b.Property<string>("UserStatus")
                         .IsRequired()
@@ -466,7 +467,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("VerificationToken");
+                    b.ToTable("VerificationTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>
@@ -476,7 +477,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasAnnotation("MySQL:Charset", "utf8mb4");
 
                     b.Property<DateTime>("ExpiredDate")
                         .HasColumnType("TIMESTAMP");

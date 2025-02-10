@@ -23,12 +23,11 @@ public sealed class Category
     }
 
     public static Category NewCategory(
-        CategoryId categoryId, 
         CategoryName categoryName, 
         string? imageUrl)
     {
         return new Category(
-            categoryId, 
+            CategoryId.New(), 
             categoryName, 
             imageUrl ?? string.Empty, 
             CategoryStatus.Available);

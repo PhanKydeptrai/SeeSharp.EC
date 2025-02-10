@@ -464,7 +464,7 @@ namespace Persistence.Database.MySQL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("VerifyVerificationTokens");
+                    b.ToTable("VerificationTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>

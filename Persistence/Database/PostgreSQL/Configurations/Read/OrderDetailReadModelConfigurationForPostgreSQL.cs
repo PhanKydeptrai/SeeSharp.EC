@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Persistence.Converter;
-using Persistence.Database.PostgreSQL.ReadModels;
+using Domain.Database.PostgreSQL.ReadModels;
 
-namespace Persistence.Database.PostgreSQL.Configurations.Read;
+namespace Domain.Database.PostgreSQL.Configurations.Read;
 
 internal sealed class OrderDetailReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<OrderDetailReadModel>
 {

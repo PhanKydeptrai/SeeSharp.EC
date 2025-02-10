@@ -3,7 +3,6 @@ using Domain.Entities.Orders;
 using Domain.Entities.ShippingInformations;
 
 namespace Domain.Entities.Bills;
-//NOTE: Create factory method
 public sealed class Bill
 {
     public BillId BillId { get; private set; } = null!;

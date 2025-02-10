@@ -1,8 +1,7 @@
 using Domain.Primitives;
 
 namespace Domain.Entities.Orders;
-
-public class OrderId : ValueObject
+public sealed class OrderId : ValueObject
 {
     private OrderId(Ulid value) => Value = value;
     public Ulid Value { get; }

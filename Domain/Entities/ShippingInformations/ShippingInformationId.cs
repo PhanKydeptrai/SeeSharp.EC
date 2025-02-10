@@ -2,7 +2,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities.ShippingInformations;
 
-public class ShippingInformationId : ValueObject
+public sealed class ShippingInformationId : ValueObject
 {
     private ShippingInformationId(Ulid value) => Value = value;
     public Ulid Value { get; }

@@ -1,4 +1,4 @@
-﻿namespace Persistence.Database.PostgreSQL.ReadModels;
+﻿namespace Domain.Database.PostgreSQL.ReadModels;
 
 public class CustomerReadModel
 {

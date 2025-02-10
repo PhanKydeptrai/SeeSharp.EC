@@ -2,7 +2,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities.UserAuthenticationTokens;
 
-public class UserAuthenticationTokenId : ValueObject
+public sealed class UserAuthenticationTokenId : ValueObject
 {
     private UserAuthenticationTokenId(Ulid value) => Value = value;
     public Ulid Value { get; }

@@ -80,7 +80,6 @@ app.MapHealthChecks("api/health", new HealthCheckOptions
 //     }).UseOtlpExporter();
 #endregion
 
-
 #region Serilog
 
 
