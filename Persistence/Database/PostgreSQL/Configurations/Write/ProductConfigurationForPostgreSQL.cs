@@ -14,7 +14,7 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new ProductId(Ulid.Parse(v)))
+                v => ProductId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.ProductName)
@@ -50,7 +50,7 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new CategoryId(Ulid.Parse(v)))
+                v => CategoryId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.HasMany(a => a.WishItems)

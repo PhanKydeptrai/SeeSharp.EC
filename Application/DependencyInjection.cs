@@ -22,6 +22,7 @@ public static class DependencyInjection
         });
         //NOTE: Chưa hiểu
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
+        //Cấu hình MassTransit
         services.AddMassTransitConfiguration(configuration);
         //Cấu hình FluentValidation
         ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;

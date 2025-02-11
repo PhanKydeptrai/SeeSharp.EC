@@ -162,7 +162,7 @@ namespace Persistence.Database.MySQL.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "VerifyVerificationTokens",
+                name: "VerificationTokens",
                 columns: table => new
                 {
                     VerificationTokenId = table.Column<string>(type: "varchar(26)", nullable: false),
@@ -173,9 +173,9 @@ namespace Persistence.Database.MySQL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VerifyVerificationTokens", x => x.VerificationTokenId);
+                    table.PrimaryKey("PK_VerificationTokens", x => x.VerificationTokenId);
                     table.ForeignKey(
-                        name: "FK_VerifyVerificationTokens_Users_UserId",
+                        name: "FK_VerificationTokens_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -510,8 +510,8 @@ namespace Persistence.Database.MySQL.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VerifyVerificationTokens_UserId",
-                table: "VerifyVerificationTokens",
+                name: "IX_VerificationTokens_UserId",
+                table: "VerificationTokens",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -547,7 +547,7 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "UserAuthenticationTokens");
 
             migrationBuilder.DropTable(
-                name: "VerifyVerificationTokens");
+                name: "VerificationTokens");
 
             migrationBuilder.DropTable(
                 name: "WishItems");

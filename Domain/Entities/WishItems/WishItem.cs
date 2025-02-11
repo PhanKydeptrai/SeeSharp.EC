@@ -12,4 +12,23 @@ public sealed class WishItem
     //Foreign key
     public Customer? Customer { get; set; } = null!;
     public Product? Product { get; set; } = null!;
+
+
+    private WishItem(
+        WishItemId wishItemId, 
+        CustomerId customerId, 
+        ProductId productId)
+    {
+        WishItemId = wishItemId;
+        CustomerId = customerId;
+        ProductId = productId;
+    }
+
+    public static WishItem NewWishItem(
+        WishItemId wishItemId,
+        CustomerId customerId,
+        ProductId productId)
+    {
+        return new WishItem(wishItemId, customerId, productId);
+    }
 }

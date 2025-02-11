@@ -8,8 +8,4 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="IRepositories\" />
-	</ItemGroup>
 </Project>

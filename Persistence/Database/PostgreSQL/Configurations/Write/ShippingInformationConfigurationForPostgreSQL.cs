@@ -15,7 +15,7 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new ShippingInformationId(Ulid.Parse(v))
+                v => ShippingInformationId.FromString(v)
             )
             .HasColumnType("varchar(26)");
 
@@ -23,7 +23,7 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new CustomerId(Ulid.Parse(v))
+                v => CustomerId.FromString(v)
             )
             .HasColumnType("varchar(26)");
 

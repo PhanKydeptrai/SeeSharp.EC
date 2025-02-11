@@ -47,7 +47,7 @@ public sealed class User
     }
 
     //Factory Method
-    public User NewUser(UserId userId,
+    public User NewUser(
         UserName userName,
         Email email,
         PhoneNumber? phoneNumber,
@@ -56,7 +56,7 @@ public sealed class User
         string? imageUrl)
     {
         return new User(
-            userId, 
+            UserId.New(), 
             userName, 
             email, 
             phoneNumber ?? PhoneNumber.Empty, 

@@ -14,7 +14,7 @@ internal sealed class VoucherConfigurationForMySQL : IEntityTypeConfiguration<Vo
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new VoucherId(Ulid.Parse(v))
+                v => VoucherId.FromString(v)
             )
             .HasColumnType("varchar(26)");
 
@@ -46,7 +46,7 @@ internal sealed class VoucherConfigurationForMySQL : IEntityTypeConfiguration<Vo
             .IsRequired()
             .HasConversion(
                 v => v.Value,
-                v => PercentageDiscount.FromDecimal(v)
+                v => PercentageDiscount.FromInt(v)
             )
             .HasColumnType("integer");
 

@@ -9,12 +9,15 @@ using Persistence;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+//Cấu hình Authen và Author
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết 
 builder.Services.AddHealthChecks();
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+
 #region Dependency Injection
 builder.Services.AddApplication(builder.Configuration)
     .AddPersistnce(builder.Configuration)
@@ -33,23 +36,9 @@ builder.Services.Configure<MessageBrokerSetting>(
 //builder.Services.AddSingleton(
 //    sp => sp.GetRequiredService<IOptions<MessageBrokerSetting>>().Value);
 #endregion
+
 var app = builder.Build();
-
-//Cấu hình Authen và Author
-
-
-#region Cấu hình API Document
-
-
-#endregion
-
-
-
-#region Problem Details
-
 app.UseStatusCodePages();
-#endregion
-
 
 
 #region Health Check
@@ -79,7 +68,6 @@ app.MapHealthChecks("api/health", new HealthCheckOptions
 //             .AddNpgsql();
 //     }).UseOtlpExporter();
 #endregion
-
 
 #region Serilog
 

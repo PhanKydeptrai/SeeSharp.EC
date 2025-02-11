@@ -13,7 +13,7 @@ internal sealed class CategoryConfigurationForPostgreSQL : IEntityTypeConfigurat
             .IsRequired()
             .HasConversion(
                 value => value.Value.ToString(),
-                value => new CategoryId(Ulid.Parse(value)))
+                value => CategoryId.FromString(value))
             .HasColumnType("varchar(26)");
 
         builder.Property(a => a.CategoryName)

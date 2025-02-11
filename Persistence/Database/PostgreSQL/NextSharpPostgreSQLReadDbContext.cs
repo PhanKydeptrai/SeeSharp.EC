@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Persistence.Database.PostgreSQL.ReadModels;
+using Domain.Database.PostgreSQL.ReadModels;
 
 namespace Persistence.Database.PostgreSQL;
 

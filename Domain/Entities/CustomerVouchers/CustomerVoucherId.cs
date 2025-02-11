@@ -1,3 +1,15 @@
-namespace Domain.Entities.CustomerVouchers;
+using Domain.Primitives;
 
-public record CustomerVoucherId(Ulid Value);
+namespace Domain.Entities.CustomerVouchers;
+public sealed class CustomerVoucherId : ValueObject
+{
+    private CustomerVoucherId(Ulid value) => Value = value;
+    public Ulid Value { get; }
+    public static CustomerVoucherId New() => new(Ulid.NewUlid());
+    public static CustomerVoucherId FromString(string value) => new(Ulid.Parse(value));
+    public static readonly CustomerVoucherId Empty = new(Ulid.Empty);
+    public override IEnumerable<object> GetAtomicValues()
+    {
+        yield return Value;
+    }
+}

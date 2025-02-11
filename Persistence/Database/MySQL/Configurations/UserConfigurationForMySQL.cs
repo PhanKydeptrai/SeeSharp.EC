@@ -17,7 +17,7 @@ internal sealed class UserConfigurationForMySQL : IEntityTypeConfiguration<User>
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new UserId(Ulid.Parse(v))
+                v => UserId.FromString(v)
             )
             .HasColumnType("varchar(26)");
 

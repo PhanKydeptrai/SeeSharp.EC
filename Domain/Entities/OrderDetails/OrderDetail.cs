@@ -2,7 +2,6 @@ using Domain.Entities.Orders;
 using Domain.Entities.Products;
 
 namespace Domain.Entities.OrderDetails;
-//NOTE: Create factory method
 public sealed class OrderDetail
 {
     public OrderDetailId OrderDetailId { get; private set; } = null!;
@@ -13,4 +12,32 @@ public sealed class OrderDetail
     //* Foreign Key
     public Order? Order { get; set; } = null!;
     public Product? Product { get; set; } = null!;
+
+    private OrderDetail(
+        OrderDetailId orderDetailId,
+        OrderId orderId,
+        ProductId productId,
+        OrderDetailQuantity quantity,
+        OrderDetailUnitPrice unitPrice)
+    {
+        OrderDetailId = orderDetailId;
+        OrderId = orderId;
+        ProductId = productId;
+        Quantity = quantity;
+        UnitPrice = unitPrice;
+    }
+
+    public static OrderDetail NewOrderDetail(
+        OrderId orderId,
+        ProductId productId,
+        OrderDetailQuantity quantity,
+        OrderDetailUnitPrice unitPrice)
+    {
+        return new OrderDetail(
+            OrderDetailId.New(),
+            orderId,
+            productId,
+            quantity,
+            unitPrice);
+    }
 }

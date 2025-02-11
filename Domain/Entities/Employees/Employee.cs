@@ -24,17 +24,15 @@ public sealed class Employee
 
     //factory method
     public static Employee NewEmployee(
-        EmployeeId employeeId, 
         UserId userId)
     {
-        return new Employee(employeeId, userId, Role.Employee, EmployeeStatus.Active);
+        return new Employee(EmployeeId.New(), userId, Role.Employee, EmployeeStatus.Active);
     }
 
-    public static Employee NewAdmin(
-        EmployeeId employeeId, 
+    public static Employee NewAdmin( 
         UserId userId)
     {
-        return new Employee(employeeId, userId, Role.Admin, EmployeeStatus.Active);
+        return new Employee(EmployeeId.New(), userId, Role.Admin, EmployeeStatus.Active);
     }
 
 }

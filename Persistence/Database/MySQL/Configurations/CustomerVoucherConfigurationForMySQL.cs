@@ -15,21 +15,21 @@ internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfigur
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new CustomerVoucherId(Ulid.Parse(v)))
+                v => CustomerVoucherId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.VoucherId)
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new VoucherId(Ulid.Parse(v)))
+                v => VoucherId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
                 v => v.Value.ToString(),
-                v => new CustomerId(Ulid.Parse(v)))
+                v => CustomerId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.Quantity)
