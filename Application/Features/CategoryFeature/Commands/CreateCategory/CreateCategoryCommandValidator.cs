@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Application.Features.CategoryFeature.CreateCategory;
+namespace Application.Features.CategoryFeature.Commands.CreateCategory;
 
 internal sealed class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>
 {
