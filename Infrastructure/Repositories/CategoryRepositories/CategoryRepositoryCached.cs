@@ -65,7 +65,7 @@ internal sealed class CategoryRepositoryCached : ICategoryRepository
                 cancellationToken);
 
             return category;
-        }
+        }   
 
         category = JsonConvert.DeserializeObject<CategoryReadModel>(cachedCategory);
 

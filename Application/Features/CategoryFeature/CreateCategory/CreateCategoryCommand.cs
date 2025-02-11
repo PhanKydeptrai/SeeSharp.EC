@@ -1,8 +1,8 @@
 ﻿using Application.Abstractions.Messaging;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Features.CategoryFeature;
+namespace Application.Features.CategoryFeature.CreateCategory;
 
-public record CreateCategoryCommand(
+public sealed record CreateCategoryCommand(
     string categoryName,
     IFormFile? image) : ICommand;

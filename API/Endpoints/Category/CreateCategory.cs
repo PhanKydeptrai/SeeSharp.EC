@@ -1,6 +1,6 @@
 ﻿using API.Extentions;
 using API.Infrastructure;
-using Application.Features.CategoryFeature;
+using Application.Features.CategoryFeature.CreateCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +13,7 @@ internal sealed class CreateCategory : IEndpoint
         async (
             [FromForm] string categoryName,
             [FromForm] IFormFile? image,
-            ISender sender) =>
+            [FromServices] ISender sender) =>
         {
             var command = new CreateCategoryCommand(categoryName, image);
             var result = await sender.Send(command);

@@ -3,9 +3,9 @@ using Domain.Entities.Categories;
 using Domain.IRepositories.CategoryRepositories;
 using SharedKernel;
 
-namespace Application.Features.CategoryFeature;
+namespace Application.Features.CategoryFeature.CreateCategory;
 
-public class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand>
+internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand>
 {
     private readonly ICategoryRepository _categoryRepository;
 
@@ -16,7 +16,7 @@ public class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComman
 
     public async Task<Result> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        //Xu ly anh
+        //FIXME: Xử lý ảnh
         string imageUrl = string.Empty;
 
         await _categoryRepository.AddCategoryToMySQL(
