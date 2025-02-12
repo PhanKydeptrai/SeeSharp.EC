@@ -15,21 +15,21 @@ internal sealed class BillConfigurationForMySQL : IEntityTypeConfiguration<Bill>
         builder.Property(x => x.BillId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToString(),
+                value => value.ToString(),
                 value => BillId.FromString(value))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToString(),
+                value => value.ToString(),
                 value => OrderId.FromString(value))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToString(),
+                value => value.ToString(),
                 value => CustomerId.FromString(value))
             .HasColumnType("varchar(26)");
 
@@ -48,7 +48,7 @@ internal sealed class BillConfigurationForMySQL : IEntityTypeConfiguration<Bill>
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToString(),
+                value => value.ToString(),
                 value => ShippingInformationId.FromString(value))
             .HasColumnType("varchar(26)");
 

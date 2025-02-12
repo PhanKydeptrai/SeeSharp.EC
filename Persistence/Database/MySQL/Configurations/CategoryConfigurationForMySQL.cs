@@ -13,7 +13,7 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToString(),
+                value => value.ToString(),
                 value => CategoryId.FromString(value)
             )
             .HasColumnType("varchar(26)");
@@ -21,7 +21,7 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
         builder.Property(a => a.CategoryName)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToString(),
+                value => value.Value,
                 value => CategoryName.FromString(value)
             )
             .HasColumnType("varchar(50)")

@@ -20,11 +20,12 @@ public sealed class CategoryName : ValueObject
                 nameof(value),
                 $"Category name cannot be longer than {MaxLength} characters");
         }
-
+        
         return new CategoryName(value);
     }
-    public static CategoryName FromString(string value) => new CategoryName(value);
-    public static readonly CategoryName Empty = new CategoryName(string.Empty);
+    public static CategoryName FromString(string value) => new(value);
+
+    public static readonly CategoryName Empty = new(string.Empty);
     private const int MaxLength = 50;
     public override IEnumerable<object> GetAtomicValues()
     {

@@ -13,7 +13,7 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
         builder.Property(a => a.UserAuthenticationTokenId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => UserAuthenticationTokenId.FromString(v)
             )
             .HasColumnType("varchar(26)");
@@ -45,7 +45,7 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => UserId.FromString(v)
             )
             .HasColumnType("varchar(26)");

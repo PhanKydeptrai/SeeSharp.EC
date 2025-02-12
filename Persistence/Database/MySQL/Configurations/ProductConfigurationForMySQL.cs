@@ -14,7 +14,7 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
         builder.Property(a => a.ProductId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => ProductId.FromString(v))
             .HasColumnType("varchar(26)");
 
@@ -53,7 +53,7 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => CategoryId.FromString(v)
             )
             .HasColumnType("varchar(26)");

@@ -14,7 +14,7 @@ internal sealed class ShippingInformationConfigurationForMySQL : IEntityTypeConf
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => ShippingInformationId.FromString(v)
             )
             .HasColumnType("varchar(26)");
@@ -22,7 +22,7 @@ internal sealed class ShippingInformationConfigurationForMySQL : IEntityTypeConf
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => CustomerId.FromString(v)
             )
             .HasColumnType("varchar(26)");

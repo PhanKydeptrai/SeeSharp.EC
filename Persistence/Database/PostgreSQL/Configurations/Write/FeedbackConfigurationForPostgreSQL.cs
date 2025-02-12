@@ -15,7 +15,7 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(x => x.FeedbackId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => FeedbackId.FromString(v))
             .HasColumnType("varchar(26)");
 
@@ -40,14 +40,14 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => OrderId.FromString(v))
             .HasColumnType("varchar(26)");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => CustomerId.FromString(v))
             .HasColumnType("varchar(26)");
 

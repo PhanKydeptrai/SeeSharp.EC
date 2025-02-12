@@ -13,7 +13,7 @@ internal sealed class VoucherConfigurationForMySQL : IEntityTypeConfiguration<Vo
         builder.Property(a => a.VoucherId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => VoucherId.FromString(v)
             )
             .HasColumnType("varchar(26)");

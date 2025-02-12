@@ -17,7 +17,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.Property(a => a.OrderTransactionId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => OrderTransactionId.FromString(v)
             )
             .HasColumnType("varchar(26)");
@@ -78,7 +78,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.Property(a => a.OrderId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => OrderId.FromString(v)
             )
             .HasColumnType("varchar(26)");
@@ -86,7 +86,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.Property(a => a.BillId)
             .IsRequired(false)
             .HasConversion(
-                v => v!.Value.ToString(),
+                v => v!.ToString(),
                 v => BillId.FromString(v))
             .HasColumnType("varchar(26)");
 

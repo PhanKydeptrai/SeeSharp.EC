@@ -15,7 +15,7 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
         builder.Property(x => x.FeedbackId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
+                v => v.ToString(),
                 v => FeedbackId.FromString(v))
             .HasColumnType("varchar(26)");
 
