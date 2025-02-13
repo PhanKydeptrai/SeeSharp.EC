@@ -1,9 +1,9 @@
 ﻿using Domain.Entities.Customers;
 using Domain.Entities.Employees;
 using Domain.Entities.Users;
+using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MySql.EntityFrameworkCore.Extensions;
 
 namespace Persistence.Database.MySQL.Configurations;
 
@@ -16,10 +16,11 @@ internal sealed class UserConfigurationForMySQL : IEntityTypeConfiguration<User>
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => UserId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => UserId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(a => a.UserName)
             .IsRequired()
@@ -27,8 +28,8 @@ internal sealed class UserConfigurationForMySQL : IEntityTypeConfiguration<User>
                 v => v.Value,
                 v => UserName.FromString(v)
             )
-            .HasColumnType("varchar(50)")
-            .ForMySQLHasCharset("utf8mb4");
+            .HasColumnType("varchar(50)");
+            
 
         builder.Property(a => a.Email)
             .IsRequired()

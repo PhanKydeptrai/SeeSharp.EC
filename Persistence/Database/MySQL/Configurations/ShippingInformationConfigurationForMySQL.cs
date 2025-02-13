@@ -1,6 +1,7 @@
 ﻿using Domain.Entities.Customers;
 using Domain.Entities.ShippingInformations;
 using Domain.Entities.Users;
+using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,18 +15,20 @@ internal sealed class ShippingInformationConfigurationForMySQL : IEntityTypeConf
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => ShippingInformationId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => ShippingInformationId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => CustomerId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.FullName)
             .IsRequired()

@@ -1,3 +1,4 @@
+using Domain.Entities.Categories;
 using Domain.Entities.Customers;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +14,20 @@ internal sealed class CustomerConfigurationForMySQL : IEntityTypeConfiguration<C
         builder.Property(a => a.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => CustomerId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => UserId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => UserId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(a => a.CustomerStatus)
             .IsRequired()

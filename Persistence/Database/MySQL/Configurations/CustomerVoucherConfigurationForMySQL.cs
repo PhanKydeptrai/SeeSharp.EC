@@ -14,23 +14,29 @@ internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfigur
         builder.Property(x => x.CustomerVoucherId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => CustomerVoucherId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => CustomerVoucherId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.VoucherId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => VoucherId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => VoucherId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => CustomerId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.Quantity)
             .IsRequired()

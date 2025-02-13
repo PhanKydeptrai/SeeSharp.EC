@@ -5,10 +5,9 @@ using Domain.Entities.Users;
 using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MySql.EntityFrameworkCore.Extensions;
 
 namespace Persistence.Database.MySQL.Configurations;
-
+#pragma warning disable CS8602
 internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<OrderTransaction>
 {
     public void Configure(EntityTypeBuilder<OrderTransaction> builder)
@@ -17,24 +16,25 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.Property(a => a.OrderTransactionId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => OrderTransactionId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => OrderTransactionId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(a => a.PayerName)
             .IsRequired(false)
             .HasConversion(
-                v => v!.Value,
+                v => v.Value,
                 v => PayerName.FromString(v)
             )
-            .HasColumnType("varchar(50)")
-            .ForMySQLHasCharset("utf8mb4");
+            .HasColumnType("varchar(50)");
+            
 
         builder.Property(a => a.PayerEmail)
             .IsRequired(false)
             .HasConversion(
-                v => v!.Value,
+                v => v.Value,
                 v => Email.FromString(v)
             )
             .HasColumnType("varchar(200)");
@@ -67,28 +67,33 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
                 v => IsVoucherUsed.FromBoolean(v))
             .HasColumnType("tinyint(1)");
 
-        builder.Property(a => a.VoucherId)
+
+        builder.Property(a => a.VoucherId) 
             .IsRequired(false)
             .HasConversion(
-                v => v!.Value.ToString(),
-                v => VoucherId.FromString(v)
+                value => value.Value.ToGuid(), 
+                value => VoucherId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(a => a.OrderId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => OrderId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => OrderId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(a => a.BillId)
             .IsRequired(false)
             .HasConversion(
-                v => v!.ToString(),
-                v => BillId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => BillId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.HasOne(a => a.Voucher)
             .WithMany(a => a.OrderTransactions)

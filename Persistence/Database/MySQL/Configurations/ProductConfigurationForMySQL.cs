@@ -1,8 +1,8 @@
 ﻿using Domain.Entities.Categories;
 using Domain.Entities.Products;
+using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MySql.EntityFrameworkCore.Extensions;
 
 namespace Persistence.Database.MySQL.Configurations;
 
@@ -14,17 +14,19 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
         builder.Property(a => a.ProductId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => ProductId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => ProductId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(a => a.ProductName)
             .IsRequired()
             .HasConversion(
                 v => v.Value,
                 v => ProductName.FromString(v))
-            .HasColumnType("varchar(50)")
-            .ForMySQLHasCharset("utf8mb4");
+            .HasColumnType("varchar(50)");
+            
 
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)
@@ -32,8 +34,8 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
 
         builder.Property(a => a.Description)
             .IsRequired(false)
-            .HasColumnType("varchar(255)")
-            .ForMySQLHasCharset("utf8mb4");
+            .HasColumnType("varchar(255)");
+            
 
         builder.Property(a => a.ProductPrice)
             .IsRequired()
@@ -53,10 +55,11 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => CategoryId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => CategoryId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.HasMany(a => a.WishItems)
             .WithOne(a => a.Product)

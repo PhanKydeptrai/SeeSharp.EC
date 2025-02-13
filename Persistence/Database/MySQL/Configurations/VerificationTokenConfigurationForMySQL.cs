@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.Users;
 using Domain.Entities.VerificationTokens;
+using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,10 +14,11 @@ internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfig
         builder.Property(a => a.VerificationTokenId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => VerificationTokenId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => VerificationTokenId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
         builder.Property(a => a.Temporary)
             .IsRequired(false)
             .HasColumnType("varchar(64)");
@@ -32,9 +34,10 @@ internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfig
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => UserId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => UserId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
     }
 }

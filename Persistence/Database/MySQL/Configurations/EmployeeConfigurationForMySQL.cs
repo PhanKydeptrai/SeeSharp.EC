@@ -1,3 +1,4 @@
+using Domain.Entities.Customers;
 using Domain.Entities.Employees;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +14,20 @@ internal sealed class EmployeeConfigurationForMySQL : IEntityTypeConfiguration<E
         builder.Property(x => x.EmployeeId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => EmployeeId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => EmployeeId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.UserId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => UserId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => UserId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.EmployeeStatus)
             .IsRequired()

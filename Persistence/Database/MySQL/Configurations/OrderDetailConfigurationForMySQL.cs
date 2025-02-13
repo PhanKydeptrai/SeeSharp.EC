@@ -14,26 +14,29 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
         builder.Property(x => x.OrderDetailId)
             .IsRequired()
             .HasConversion(
-                x => x.ToString(),
-                x => OrderDetailId.FromString(x)
+                value => value.Value.ToGuid(),
+                value => OrderDetailId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                x => x.ToString(),
-                x => OrderId.FromString(x)
+                value => value.Value.ToGuid(),
+                value => OrderId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
             .HasConversion(
-                x => x.ToString(),
-                x => ProductId.FromString(x)
+                value => value.Value.ToGuid(),
+                value => ProductId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(x => x.Quantity)
             .IsRequired()

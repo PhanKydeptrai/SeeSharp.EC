@@ -1,7 +1,6 @@
 using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MySql.EntityFrameworkCore.Extensions;
 
 namespace Persistence.Database.MySQL.Configurations;
 
@@ -13,10 +12,11 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
-                value => value.ToString(),
-                value => CategoryId.FromString(value)
+                value => value.Value.ToGuid(),
+                value => CategoryId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(a => a.CategoryName)
             .IsRequired()
@@ -24,8 +24,8 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
                 value => value.Value,
                 value => CategoryName.FromString(value)
             )
-            .HasColumnType("varchar(50)")
-            .ForMySQLHasCharset("utf8mb4");
+            .HasColumnType("varchar(50)");
+            
 
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)

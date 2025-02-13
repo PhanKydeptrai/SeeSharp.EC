@@ -1,7 +1,6 @@
 ﻿using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MySql.EntityFrameworkCore.Extensions;
 
 namespace Persistence.Database.MySQL.Configurations;
 
@@ -13,10 +12,11 @@ internal sealed class VoucherConfigurationForMySQL : IEntityTypeConfiguration<Vo
         builder.Property(a => a.VoucherId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => VoucherId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => VoucherId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("UUID()");
 
         builder.Property(a => a.VoucherName)
             .IsRequired()
@@ -80,8 +80,8 @@ internal sealed class VoucherConfigurationForMySQL : IEntityTypeConfiguration<Vo
                 v => v.Value,
                 v => VoucherDescription.FromString(v)
             )
-            .HasColumnType("varchar(255)")
-            .ForMySQLHasCharset("utf8mb4");
+            .HasColumnType("varchar(255)");
+            
 
         builder.Property(a => a.Status)
             .IsRequired()
