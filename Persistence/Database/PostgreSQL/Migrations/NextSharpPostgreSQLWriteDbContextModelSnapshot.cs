@@ -2,54 +2,46 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Persistence.Database.MySQL;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Persistence.Database.PostgreSQL;
 
 #nullable disable
 
-namespace Persistence.Database.MySQL.Migrations
+namespace Persistence.Database.PostgreSQL.Migrations
 {
-    [DbContext(typeof(NextSharpMySQLDbContext))]
-    [Migration("20250213214841_NextSharpPrimary")]
-    partial class NextSharpPrimary
+    [DbContext(typeof(NextSharpPostgreSQLWriteDbContext))]
+    partial class NextSharpPostgreSQLWriteDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
                 {
                     b.Property<Guid>("BillId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMP");
 
                     b.Property<Guid>("CustomerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("ShippingInformationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.HasKey("BillId");
 
@@ -66,9 +58,7 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.Categories.Category", b =>
                 {
                     b.Property<Guid>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
@@ -89,22 +79,16 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.CustomerVouchers.CustomerVoucher", b =>
                 {
                     b.Property<Guid>("CustomerVoucherId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CustomerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("VoucherId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.HasKey("CustomerVoucherId");
 
@@ -118,9 +102,7 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.Customers.Customer", b =>
                 {
                     b.Property<Guid>("CustomerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CustomerStatus")
                         .IsRequired()
@@ -131,9 +113,7 @@ namespace Persistence.Database.MySQL.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.HasKey("CustomerId");
 
@@ -146,9 +126,7 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.Employees.Employee", b =>
                 {
                     b.Property<Guid>("EmployeeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("EmployeeStatus")
                         .IsRequired()
@@ -159,9 +137,7 @@ namespace Persistence.Database.MySQL.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.HasKey("EmployeeId");
 
@@ -174,22 +150,16 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.Feedbacks.Feedback", b =>
                 {
                     b.Property<Guid>("FeedbackId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CustomerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(255)");
 
                     b.Property<Guid>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<float>("RatingScore")
                         .HasColumnType("float");
@@ -210,19 +180,13 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.OrderDetails.OrderDetail", b =>
                 {
                     b.Property<Guid>("OrderDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -242,29 +206,23 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.OrderTransactions.OrderTransaction", b =>
                 {
                     b.Property<Guid>("OrderTransactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("BillId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsVoucherUsed")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("PayerEmail")
                         .HasColumnType("varchar(200)");
@@ -277,9 +235,7 @@ namespace Persistence.Database.MySQL.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<Guid?>("VoucherId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.HasKey("OrderTransactionId");
 
@@ -296,23 +252,17 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.Orders.Order", b =>
                 {
                     b.Property<Guid>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CustomerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("OrderStatus")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("OrderTransactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
@@ -331,14 +281,10 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.Products.Product", b =>
                 {
                     b.Property<Guid>("ProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .HasColumnType("varchar(255)");
@@ -367,14 +313,10 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.ShippingInformations.ShippingInformation", b =>
                 {
                     b.Property<Guid>("ShippingInformationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CustomerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("District")
                         .IsRequired()
@@ -385,7 +327,7 @@ namespace Persistence.Database.MySQL.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -413,24 +355,20 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.UserAuthenticationTokens.UserAuthenticationToken", b =>
                 {
                     b.Property<Guid>("UserAuthenticationTokenId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("ExpiredTime")
                         .HasColumnType("TIMESTAMP");
 
                     b.Property<bool>("IsBlackList")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("TokenType")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -446,9 +384,7 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.Users.User", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("TIMESTAMP");
@@ -465,9 +401,10 @@ namespace Persistence.Database.MySQL.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<bool>("IsVerify")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("varchar(64)");
 
                     b.Property<string>("PhoneNumber")
@@ -490,9 +427,7 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.VerificationTokens.VerificationToken", b =>
                 {
                     b.Property<Guid>("VerificationTokenId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMP");
@@ -504,23 +439,19 @@ namespace Persistence.Database.MySQL.Migrations
                         .HasColumnType("varchar(64)");
 
                     b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.HasKey("VerificationTokenId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("VerificationTokens");
+                    b.ToTable("VerificationToken");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>
                 {
                     b.Property<Guid>("VoucherId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -565,19 +496,13 @@ namespace Persistence.Database.MySQL.Migrations
             modelBuilder.Entity("Domain.Entities.WishItems.WishItem", b =>
                 {
                     b.Property<Guid>("WishItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CustomerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("UUID()");
+                        .HasColumnType("uuid");
 
                     b.HasKey("WishItemId");
 

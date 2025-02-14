@@ -18,7 +18,7 @@ internal sealed class BillConfigurationForMySQL : IEntityTypeConfiguration<Bill>
                 value => value.Value.ToGuid(),
                 value => BillId.FromGuid(value))
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
@@ -26,7 +26,7 @@ internal sealed class BillConfigurationForMySQL : IEntityTypeConfiguration<Bill>
                 value => value.Value.ToGuid(),
                 value => OrderId.FromGuid(value))
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
@@ -34,7 +34,7 @@ internal sealed class BillConfigurationForMySQL : IEntityTypeConfiguration<Bill>
                 value => value.Value.ToGuid(),
                 value => CustomerId.FromGuid(value))
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.CreatedDate)
             .IsRequired()
@@ -54,7 +54,7 @@ internal sealed class BillConfigurationForMySQL : IEntityTypeConfiguration<Bill>
                 value => value.Value.ToGuid(),
                 value => ShippingInformationId.FromGuid(value))
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.HasOne(a => a.ShippingInformation)
             .WithMany(a => a.Bills)

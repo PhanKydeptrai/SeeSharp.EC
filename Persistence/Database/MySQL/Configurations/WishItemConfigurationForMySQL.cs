@@ -18,7 +18,7 @@ internal sealed class WishItemConfigurationForMySQL : IEntityTypeConfiguration<W
                 value => WishItemId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
@@ -27,7 +27,7 @@ internal sealed class WishItemConfigurationForMySQL : IEntityTypeConfiguration<W
                 value => CustomerId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
@@ -36,7 +36,7 @@ internal sealed class WishItemConfigurationForMySQL : IEntityTypeConfiguration<W
                 value => ProductId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
     }
 }

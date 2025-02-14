@@ -1,4 +1,3 @@
-using Domain.Entities.Bills;
 using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

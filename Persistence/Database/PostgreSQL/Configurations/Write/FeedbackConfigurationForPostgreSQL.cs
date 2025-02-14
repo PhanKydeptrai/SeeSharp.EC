@@ -1,4 +1,3 @@
-using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Feedbacks;
 using Domain.Entities.Orders;

@@ -1,4 +1,3 @@
-using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.CustomerVouchers;
 using Domain.Entities.Vouchers;

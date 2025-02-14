@@ -16,7 +16,7 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
                 value => CategoryId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.CategoryName)
             .IsRequired()

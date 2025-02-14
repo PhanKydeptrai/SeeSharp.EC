@@ -1,6 +1,5 @@
 ﻿using Domain.Entities.Categories;
 using Domain.Entities.Products;
-using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,7 +17,7 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
                 value => ProductId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.ProductName)
             .IsRequired()
@@ -59,7 +58,7 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
                 value => CategoryId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.HasMany(a => a.WishItems)
             .WithOne(a => a.Product)

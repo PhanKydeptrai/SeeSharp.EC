@@ -1,4 +1,3 @@
-using Domain.Entities.Categories;
 using Domain.Entities.Customers;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,7 @@ internal sealed class CustomerConfigurationForMySQL : IEntityTypeConfiguration<C
                 value => CustomerId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.UserId)
             .IsRequired()
@@ -27,7 +26,7 @@ internal sealed class CustomerConfigurationForMySQL : IEntityTypeConfiguration<C
                 value => UserId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.CustomerStatus)
             .IsRequired()

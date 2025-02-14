@@ -1,4 +1,3 @@
-using Domain.Entities.Bills;
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;

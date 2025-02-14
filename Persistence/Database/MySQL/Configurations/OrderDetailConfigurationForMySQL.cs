@@ -18,7 +18,7 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
                 value => OrderDetailId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
@@ -27,7 +27,7 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
                 value => OrderId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
@@ -36,7 +36,7 @@ internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguratio
                 value => ProductId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.Quantity)
             .IsRequired()

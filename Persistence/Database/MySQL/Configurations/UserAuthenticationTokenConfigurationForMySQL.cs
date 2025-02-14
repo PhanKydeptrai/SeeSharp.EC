@@ -1,6 +1,5 @@
 ﻿using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.Users;
-using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,7 +17,7 @@ internal sealed class UserAuthenticationTokenConfigurationForMySQL : IEntityType
                 value => UserAuthenticationTokenId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.Value)
             .IsRequired()
@@ -51,6 +50,6 @@ internal sealed class UserAuthenticationTokenConfigurationForMySQL : IEntityType
                 value => UserId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
     }
 }

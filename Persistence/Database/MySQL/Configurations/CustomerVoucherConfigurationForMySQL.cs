@@ -18,7 +18,7 @@ internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfigur
                 value => CustomerVoucherId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.VoucherId)
             .IsRequired()
@@ -27,7 +27,7 @@ internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfigur
                 value => VoucherId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
@@ -36,7 +36,7 @@ internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfigur
                 value => CustomerId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.Quantity)
             .IsRequired()

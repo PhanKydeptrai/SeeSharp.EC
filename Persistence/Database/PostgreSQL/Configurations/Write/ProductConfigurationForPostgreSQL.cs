@@ -1,4 +1,3 @@
-using Domain.Entities.Bills;
 using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;

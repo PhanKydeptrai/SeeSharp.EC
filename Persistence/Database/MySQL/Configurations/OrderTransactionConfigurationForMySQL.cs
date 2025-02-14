@@ -20,7 +20,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
                 value => OrderTransactionId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.PayerName)
             .IsRequired(false)
@@ -75,7 +75,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
                 value => VoucherId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.OrderId)
             .IsRequired()
@@ -84,7 +84,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
                 value => OrderId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.BillId)
             .IsRequired(false)
@@ -93,7 +93,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
                 value => BillId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.HasOne(a => a.Voucher)
             .WithMany(a => a.OrderTransactions)

@@ -1,5 +1,4 @@
 using Domain.Entities.Customers;
-using Domain.Entities.Employees;
 using Domain.Entities.Feedbacks;
 using Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +19,7 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
                 value => FeedbackId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.Substance)
             .IsRequired(false)
@@ -47,7 +46,7 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
                 value => OrderId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
@@ -56,7 +55,7 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
                 value => CustomerId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         //Một order có một feedback
         builder.HasOne(x => x.Order)

@@ -18,7 +18,7 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    CategoryId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    CategoryId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     CategoryName = table.Column<string>(type: "varchar(50)", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(200)", nullable: true),
                     CategoryStatus = table.Column<string>(type: "varchar(20)", nullable: false)
@@ -33,7 +33,7 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     UserName = table.Column<string>(type: "varchar(50)", nullable: false),
                     Email = table.Column<string>(type: "varchar(200)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(20)", nullable: false),
@@ -54,7 +54,7 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "Vouchers",
                 columns: table => new
                 {
-                    VoucherId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    VoucherId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     VoucherName = table.Column<string>(type: "varchar(20)", nullable: false),
                     VoucherCode = table.Column<string>(type: "varchar(20)", nullable: false),
                     VoucherType = table.Column<string>(type: "varchar(20)", nullable: false),
@@ -76,13 +76,13 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     ProductName = table.Column<string>(type: "varchar(50)", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(255)", nullable: true),
                     Description = table.Column<string>(type: "varchar(255)", nullable: true),
                     ProductPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ProductStatus = table.Column<string>(type: "varchar(20)", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()")
+                    CategoryId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
                 },
                 constraints: table =>
                 {
@@ -100,8 +100,8 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     CustomerStatus = table.Column<string>(type: "varchar(20)", nullable: false),
                     CustomerType = table.Column<string>(type: "varchar(20)", nullable: false)
                 },
@@ -121,8 +121,8 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "Employees",
                 columns: table => new
                 {
-                    EmployeeId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    EmployeeId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     EmployeeStatus = table.Column<string>(type: "varchar(20)", nullable: false),
                     Role = table.Column<string>(type: "varchar(20)", nullable: false)
                 },
@@ -142,12 +142,12 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "UserAuthenticationTokens",
                 columns: table => new
                 {
-                    UserAuthenticationTokenId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    UserAuthenticationTokenId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     Value = table.Column<string>(type: "varchar(256)", nullable: false),
                     TokenType = table.Column<string>(type: "varchar(20)", nullable: false),
                     ExpiredTime = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
                     IsBlackList = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()")
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
                 },
                 constraints: table =>
                 {
@@ -165,9 +165,9 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "VerificationTokens",
                 columns: table => new
                 {
-                    VerificationTokenId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    VerificationTokenId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     Temporary = table.Column<string>(type: "varchar(64)", nullable: true),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     CreatedDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
                     ExpiredDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false)
                 },
@@ -187,9 +187,9 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "CustomerVouchers",
                 columns: table => new
                 {
-                    CustomerVoucherId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    VoucherId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    CustomerVoucherId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    VoucherId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     Quantity = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -214,12 +214,12 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaymentStatus = table.Column<string>(type: "varchar(20)", nullable: false),
                     OrderStatus = table.Column<string>(type: "varchar(20)", nullable: false),
-                    OrderTransactionId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()")
+                    OrderTransactionId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
                 },
                 constraints: table =>
                 {
@@ -237,8 +237,8 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "ShippingInformations",
                 columns: table => new
                 {
-                    ShippingInformationId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    ShippingInformationId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     FullName = table.Column<string>(type: "varchar(50)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(10)", nullable: false),
                     IsDefault = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -263,9 +263,9 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "WishItems",
                 columns: table => new
                 {
-                    WishItemId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()")
+                    WishItemId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
                 },
                 constraints: table =>
                 {
@@ -289,12 +289,12 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "Feedbacks",
                 columns: table => new
                 {
-                    FeedbackId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    FeedbackId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     Substance = table.Column<string>(type: "varchar(255)", nullable: true),
                     RatingScore = table.Column<float>(type: "float", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(255)", nullable: true),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()")
+                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
                 },
                 constraints: table =>
                 {
@@ -318,9 +318,9 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "OrderDetails",
                 columns: table => new
                 {
-                    OrderDetailId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    OrderDetailId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -346,12 +346,12 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "Bills",
                 columns: table => new
                 {
-                    BillId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    BillId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     CreatedDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
                     PaymentMethod = table.Column<string>(type: "varchar(20)", nullable: false),
-                    ShippingInformationId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()")
+                    ShippingInformationId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
                 },
                 constraints: table =>
                 {
@@ -381,16 +381,16 @@ namespace Persistence.Database.MySQL.Migrations
                 name: "OrderTransactions",
                 columns: table => new
                 {
-                    OrderTransactionId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    OrderTransactionId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     PayerName = table.Column<string>(type: "varchar(50)", nullable: true),
                     PayerEmail = table.Column<string>(type: "varchar(200)", nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", nullable: false),
                     PaymentMethod = table.Column<string>(type: "varchar(50)", nullable: false),
                     IsVoucherUsed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    VoucherId = table.Column<Guid>(type: "char(36)", nullable: true, defaultValueSql: "UUID()"),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
-                    BillId = table.Column<Guid>(type: "char(36)", nullable: true, defaultValueSql: "UUID()")
+                    VoucherId = table.Column<Guid>(type: "char(36)", nullable: true, defaultValueSql: "(UUID())"),
+                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    BillId = table.Column<Guid>(type: "char(36)", nullable: true, defaultValueSql: "(UUID())")
                 },
                 constraints: table =>
                 {

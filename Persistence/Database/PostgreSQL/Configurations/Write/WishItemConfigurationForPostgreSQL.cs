@@ -1,4 +1,3 @@
-using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Products;
 using Domain.Entities.WishItems;

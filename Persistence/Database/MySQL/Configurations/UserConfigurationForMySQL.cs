@@ -1,7 +1,6 @@
 ﻿using Domain.Entities.Customers;
 using Domain.Entities.Employees;
 using Domain.Entities.Users;
-using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -20,7 +19,7 @@ internal sealed class UserConfigurationForMySQL : IEntityTypeConfiguration<User>
                 value => UserId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.UserName)
             .IsRequired()

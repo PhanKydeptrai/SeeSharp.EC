@@ -1,6 +1,5 @@
 ﻿using Domain.Entities.Users;
 using Domain.Entities.VerificationTokens;
-using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,7 +17,7 @@ internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfig
                 value => VerificationTokenId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
         builder.Property(a => a.Temporary)
             .IsRequired(false)
             .HasColumnType("varchar(64)");
@@ -38,6 +37,6 @@ internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfig
                 value => UserId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
     }
 }

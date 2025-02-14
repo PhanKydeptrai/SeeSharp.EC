@@ -16,7 +16,7 @@ internal sealed class VoucherConfigurationForMySQL : IEntityTypeConfiguration<Vo
                 value => VoucherId.FromGuid(value)
             )
             .HasColumnType("char(36)")
-            .HasDefaultValueSql("UUID()");
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.VoucherName)
             .IsRequired()
