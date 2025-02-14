@@ -15,9 +15,9 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(x => x.FeedbackId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => FeedbackId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => FeedbackId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.Substance)
             .IsRequired(false)
@@ -40,16 +40,16 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => OrderId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => OrderId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => CustomerId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value))
+            .HasColumnType("uuid");
 
         //Một order có một feedback
         builder.HasOne(x => x.Order)

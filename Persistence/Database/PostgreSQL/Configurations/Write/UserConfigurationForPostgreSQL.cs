@@ -15,10 +15,9 @@ internal sealed class UserConfigurationForPostgreSQL : IEntityTypeConfiguration<
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => UserId.FromString(v)
-            )
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => UserId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.UserName)
             .IsRequired()

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Persistence.Converter;
 using Domain.Database.PostgreSQL.ReadModels;
 
 namespace Domain.Database.PostgreSQL.Configurations.Read;
@@ -12,8 +11,8 @@ internal sealed class CategoryReadModelConfigurationForPostgreSQL : IEntityTypeC
         builder.HasKey(a => a.CategoryId);
         builder.Property(a => a.CategoryId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.CategoryName)
             .IsRequired()

@@ -24,27 +24,24 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
                 {
-                    b.Property<string>("BillId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("BillId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMP");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("OrderId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
-                    b.Property<string>("ShippingInformationId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("ShippingInformationId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("BillId");
 
@@ -60,8 +57,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Categories.Category", b =>
                 {
-                    b.Property<string>("CategoryId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
@@ -81,19 +78,17 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.CustomerVouchers.CustomerVoucher", b =>
                 {
-                    b.Property<string>("CustomerVoucherId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CustomerVoucherId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<string>("VoucherId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("VoucherId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("CustomerVoucherId");
 
@@ -106,8 +101,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Customers.Customer", b =>
                 {
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CustomerStatus")
                         .IsRequired()
@@ -117,9 +112,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("CustomerId");
 
@@ -131,8 +125,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Employees.Employee", b =>
                 {
-                    b.Property<string>("EmployeeId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("EmployeeStatus")
                         .IsRequired()
@@ -142,9 +136,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("EmployeeId");
 
@@ -156,19 +149,17 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Feedbacks.Feedback", b =>
                 {
-                    b.Property<string>("FeedbackId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("FeedbackId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("OrderId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
 
                     b.Property<float>("RatingScore")
                         .HasColumnType("float");
@@ -188,16 +179,14 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.OrderDetails.OrderDetail", b =>
                 {
-                    b.Property<string>("OrderDetailId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("OrderDetailId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("OrderId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -216,14 +205,14 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.OrderTransactions.OrderTransaction", b =>
                 {
-                    b.Property<string>("OrderTransactionId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("OrderTransactionId")
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("BillId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid?>("BillId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -232,9 +221,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<bool>("IsVoucherUsed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("OrderId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("PayerEmail")
                         .HasColumnType("varchar(200)");
@@ -246,8 +234,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("VoucherId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid?>("VoucherId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("OrderTransactionId");
 
@@ -263,20 +251,18 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Orders.Order", b =>
                 {
-                    b.Property<string>("OrderId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("OrderStatus")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
-                    b.Property<string>("OrderTransactionId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("OrderTransactionId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
@@ -294,12 +280,11 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Products.Product", b =>
                 {
-                    b.Property<string>("ProductId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("CategoryId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .HasColumnType("varchar(255)");
@@ -327,12 +312,11 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.ShippingInformations.ShippingInformation", b =>
                 {
-                    b.Property<string>("ShippingInformationId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("ShippingInformationId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("District")
                         .IsRequired()
@@ -370,8 +354,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.UserAuthenticationTokens.UserAuthenticationToken", b =>
                 {
-                    b.Property<string>("UserAuthenticationTokenId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("UserAuthenticationTokenId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("ExpiredTime")
                         .HasColumnType("TIMESTAMP");
@@ -383,9 +367,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -400,8 +383,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Users.User", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("TIMESTAMP");
@@ -443,8 +426,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.VerificationTokens.VerificationToken", b =>
                 {
-                    b.Property<string>("VerificationTokenId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("VerificationTokenId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMP");
@@ -455,9 +438,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<string>("Temporary")
                         .HasColumnType("varchar(64)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("VerificationTokenId");
 
@@ -468,8 +450,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>
                 {
-                    b.Property<string>("VoucherId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("VoucherId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -513,16 +495,14 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.WishItems.WishItem", b =>
                 {
-                    b.Property<string>("WishItemId")
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("WishItemId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("varchar(26)");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("WishItemId");
 

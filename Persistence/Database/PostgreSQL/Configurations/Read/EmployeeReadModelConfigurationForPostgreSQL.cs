@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Persistence.Converter;
 using Domain.Database.PostgreSQL.ReadModels;
 
 namespace Domain.Database.PostgreSQL.Configurations.Read;
@@ -12,13 +11,13 @@ internal sealed class EmployeeReadModelConfigurationForPostgreSQL : IEntityTypeC
         builder.HasKey(x => x.EmployeeId);
         builder.Property(x => x.EmployeeId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.UserId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.EmployeeStatus)
             .IsRequired()

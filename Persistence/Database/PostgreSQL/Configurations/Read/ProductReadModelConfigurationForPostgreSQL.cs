@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Persistence.Converter;
 using Domain.Database.PostgreSQL.ReadModels;
 
 namespace Domain.Database.PostgreSQL.Configurations.Read;
@@ -12,8 +11,8 @@ internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeCo
         builder.HasKey(a => a.ProductId);
         builder.Property(a => a.ProductId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.ProductName)
             .IsRequired()
@@ -37,8 +36,8 @@ internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeCo
 
         builder.Property(a => a.CategoryId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.HasMany(a => a.WishItemReadModels)
             .WithOne(a => a.ProductReadModel)

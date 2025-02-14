@@ -2,7 +2,6 @@ using Domain.Entities.Bills;
 using Domain.Entities.OrderTransactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Persistence.Converter;
 using Domain.Database.PostgreSQL.ReadModels;
 
 namespace Domain.Database.PostgreSQL.Configurations.Read;
@@ -15,13 +14,13 @@ internal sealed class OrderReadModelConfigurationForPostgreSQL : IEntityTypeConf
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.Total)
             .IsRequired()
@@ -37,8 +36,8 @@ internal sealed class OrderReadModelConfigurationForPostgreSQL : IEntityTypeConf
 
         builder.Property(x => x.OrderTransactionId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.HasMany(x => x.OrderDetailReadModels)
             .WithOne(x => x.OrderReadModel)

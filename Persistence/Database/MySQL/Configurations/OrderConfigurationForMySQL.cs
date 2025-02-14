@@ -16,18 +16,20 @@ internal sealed class OrderConfigurationForMySQL : IEntityTypeConfiguration<Orde
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => OrderId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => OrderId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => CustomerId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.Total)
             .IsRequired()
@@ -56,10 +58,11 @@ internal sealed class OrderConfigurationForMySQL : IEntityTypeConfiguration<Orde
         builder.Property(x => x.OrderTransactionId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => OrderTransactionId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => OrderTransactionId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
         builder.HasMany(x => x.OrderDetails)
             .WithOne(x => x.Order)

@@ -1,6 +1,6 @@
 ﻿using API.Extentions;
 using API.Infrastructure;
-using Application.Features.CategoryFeature.CreateCategory;
+using Application.Features.CategoryFeature.Commands.CreateCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

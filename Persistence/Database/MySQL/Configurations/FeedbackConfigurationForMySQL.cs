@@ -15,9 +15,11 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
         builder.Property(x => x.FeedbackId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => FeedbackId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => FeedbackId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.Substance)
             .IsRequired(false)
@@ -40,18 +42,20 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => OrderId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => OrderId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => CustomerId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
         //Một order có một feedback
         builder.HasOne(x => x.Order)

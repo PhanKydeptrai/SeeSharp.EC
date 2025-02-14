@@ -13,16 +13,20 @@ internal sealed class CustomerConfigurationForMySQL : IEntityTypeConfiguration<C
         builder.Property(a => a.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => CustomerId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => UserId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => UserId.FromGuid(value)
+            )
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.CustomerStatus)
             .IsRequired()

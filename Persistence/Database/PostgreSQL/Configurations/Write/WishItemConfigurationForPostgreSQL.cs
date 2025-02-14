@@ -14,24 +14,22 @@ internal sealed class WishItemConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(x => x.WishItemId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => WishItemId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => WishItemId.FromGuid(value))
+            .HasColumnType("uuid");
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => CustomerId.FromString(v)
-            )
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => ProductId.FromString(v)
-            )
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => ProductId.FromGuid(value))
+            .HasColumnType("uuid");
 
     }
 }

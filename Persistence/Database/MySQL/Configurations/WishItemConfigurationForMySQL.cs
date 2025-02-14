@@ -14,25 +14,29 @@ internal sealed class WishItemConfigurationForMySQL : IEntityTypeConfiguration<W
         builder.Property(x => x.WishItemId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => WishItemId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => WishItemId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
+
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => CustomerId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
             .HasConversion(
-                v => v.Value.ToString(),
-                v => ProductId.FromString(v)
+                value => value.Value.ToGuid(),
+                value => ProductId.FromGuid(value)
             )
-            .HasColumnType("varchar(26)");
+            .HasColumnType("char(36)")
+            .HasDefaultValueSql("(UUID())");
 
     }
 }

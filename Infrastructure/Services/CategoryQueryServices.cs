@@ -7,7 +7,6 @@ using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
-using SharedKernel;
 
 namespace Infrastructure.Services;
 

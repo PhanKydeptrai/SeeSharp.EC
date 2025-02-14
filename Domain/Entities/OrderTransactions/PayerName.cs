@@ -26,8 +26,8 @@ public sealed class PayerName : ValueObject
         return new PayerName(payerName);
     }
 
-    public static PayerName FromString(string payerName) => NewPayerName(payerName);
-    public static readonly PayerName Empty = new PayerName(string.Empty);
+    public static PayerName FromString(string payerName) => new(payerName);
+    public static readonly PayerName Empty = new(string.Empty);
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

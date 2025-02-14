@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Behaviors;
+using Application.Consumers.Category;
 using FluentValidation;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -44,7 +45,7 @@ public static class DependencyInjection
             });
 
             //* Đăng ký consumer
-            //busConfiguration.AddConsumer<CategoryCreatedEventConsumer>();
+            busConfiguration.AddConsumer<CategoryCreatedEventConsumer>();
 
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
