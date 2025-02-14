@@ -24,7 +24,9 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
         _eventBus = eventBus;
     }
 
-    public async Task<Result> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        CreateCategoryCommand request, 
+        CancellationToken cancellationToken)
     {
         //FIXME: Xử lý ảnh
         string imageUrl = string.Empty;
@@ -40,7 +42,10 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
         if (result > 0)
         {
             await _eventBus.PublishAsync(
-                new CategoryCreatedEvent(category), 
+                new CategoryCreatedEvent(
+                    category.CategoryId.Value, 
+                    category.CategoryName.Value, 
+                    category.ImageUrl ?? string.Empty),
                 cancellationToken);
 
             return Result.Success();

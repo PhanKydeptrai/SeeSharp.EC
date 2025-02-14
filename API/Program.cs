@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using API.Extentions;
+using API.Services;
 using Application;
+using Application.Abstractions.LinkService;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
@@ -16,6 +18,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết 
 builder.Services.AddHealthChecks();
+builder.Services.AddScoped<ILinkServices, LinkServices>(); //Hateoas
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 #region Dependency Injection

@@ -1,32 +1,57 @@
-﻿using Domain.IRepositories;
+﻿using Domain.Entities.Categories;
+using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.Utilities.Events.CategoryEvents;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
-namespace Application.Consumers.Category;
+namespace Application.Consumers.Categorys;
 
 internal sealed class CategoryCreatedEventConsumer : IConsumer<CategoryCreatedEvent>
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
-
+    private readonly ILogger<CategoryCreatedEventConsumer> _logger;
     public CategoryCreatedEventConsumer(
-        ICategoryRepository categoryRepository, 
-        IUnitOfWork unitOfWork)
+        ICategoryRepository categoryRepository,
+        IUnitOfWork unitOfWork,
+        ILogger<CategoryCreatedEventConsumer> logger)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
-
     public async Task Consume(ConsumeContext<CategoryCreatedEvent> context)
     {
-        await _categoryRepository.AddCategoryToPosgreSQL(context.Message.category);
+        _logger.LogInformation(
+            "Consuming CategoryCreatedEvent for categoryId: {CategoryId}", 
+            context.Message.categoryId);
 
+        var category = ConvertEventToCategory(context.Message);
+
+        await _categoryRepository.AddCategoryToPosgreSQL(category);
         var result = await _unitOfWork.SaveChangesAsync();
 
         if (result <= 0)
         {
+            _logger.LogError(
+                "Failed to consume CategoryCreatedEvent for categoryId: {CategoryId}", 
+                context.Message.categoryId);
+
             throw new Exception("Category created event consumed failed");
         }
+
+        _logger.LogInformation(
+            "Successfully consumed CategoryCreatedEvent for categoryId: {CategoryId}", 
+            context.Message.categoryId);
     }
+
+    private Category ConvertEventToCategory(CategoryCreatedEvent categoryCreatedEvent)
+    {
+        return Category.FromExisting(
+            CategoryId.FromUlid(categoryCreatedEvent.categoryId),
+            CategoryName.NewCategoryName(categoryCreatedEvent.categoryName),
+            categoryCreatedEvent.imageUrl
+        );
+    }   
 }

@@ -1,8 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.IRepositories;
+using Domain.IRepositories.CategoryRepositories;
+using Infrastructure.Repositories.CategoryRepositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
+using Persistence.Repositories;
+using Persistence.Repositories.CategoryRepositories;
 
 namespace Persistence;
 //FIXME: AddPersistnce
@@ -13,12 +19,25 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddPrimaryDatabase(configuration)
+            .AddRepository()
             .AddReadOnlyDatabase(configuration)
             .AddAbstractsDatabase(configuration);
 
         return services;
     }
+    //Add Repository
+    public static IServiceCollection AddRepository(this IServiceCollection services)
+    {
+        services.AddScoped<CategoryRepository>();
+        services.AddScoped<ICategoryRepository>(provider =>
+        {
+            var categoryRepository = provider.GetRequiredService<CategoryRepository>();
+            return new CategoryRepositoryCached(categoryRepository, provider.GetService<IDistributedCache>()!);
+        });
 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        return services;
+    }
     //Add Primary Database(MySQL)
     private static IServiceCollection AddPrimaryDatabase(
         this IServiceCollection services,

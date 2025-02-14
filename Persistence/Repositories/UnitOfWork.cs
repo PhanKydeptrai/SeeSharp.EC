@@ -2,7 +2,7 @@
 using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 
-namespace Infrastructure.Repositories;
+namespace Persistence.Repositories;
 
 internal class UnitOfWork : IUnitOfWork
 {

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 
-namespace Infrastructure.Repositories.CategoryRepositories;
+namespace Persistence.Repositories.CategoryRepositories;
 
 internal sealed class CategoryRepository : ICategoryRepository
 {

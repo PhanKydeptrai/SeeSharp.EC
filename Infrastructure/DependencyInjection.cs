@@ -3,13 +3,11 @@ using Application.IServices;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Infrastructure.MessageBroker;
-using Infrastructure.Repositories;
-using Infrastructure.Repositories.CategoryRepositories;
 using Infrastructure.Services;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using Persistence.Repositories;
 namespace Infrastructure;
 
 public static class DependencyInjection
@@ -21,7 +19,7 @@ public static class DependencyInjection
     {
         services.AddHealthCheck(configuration)
             .AddServices()
-            .AddRepository()
+            
             .AddEventBus()
             .AddRedisConfig(configuration);
 
@@ -58,22 +56,10 @@ public static class DependencyInjection
             var categoryQueryServices = provider.GetRequiredService<CategoryQueryServices>();
             return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!);
         });
-
-
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 
-    public static IServiceCollection AddRepository(this IServiceCollection services)
-    {
-        services.AddScoped<CategoryRepository>();
-        services.AddScoped<ICategoryRepository>(provider =>
-        {
-            var categoryRepository = provider.GetRequiredService<CategoryRepository>();
-            return new CategoryRepositoryCached(categoryRepository, provider.GetService<IDistributedCache>()!);
-        });
-        return services;
-    }
+    
 
     private static IServiceCollection AddEventBus(this IServiceCollection services)
     {

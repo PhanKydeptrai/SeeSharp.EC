@@ -32,4 +32,16 @@ public sealed class Category
             imageUrl ?? string.Empty, 
             CategoryStatus.Available);
     }
+
+    public static Category FromExisting(
+        CategoryId categoryId,
+        CategoryName categoryName,
+        string? imageUrl)
+    {
+        return new Category(
+            categoryId,
+            categoryName,
+            imageUrl ?? string.Empty,
+            CategoryStatus.Available);
+    }
 }

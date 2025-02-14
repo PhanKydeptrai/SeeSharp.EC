@@ -29,6 +29,14 @@ public abstract class BaseId<T> : ValueObject where T : BaseId<T> , new()
         id.Value = new Ulid(value);
         return id;
     }
+
+    public static T FromUlid(Ulid value)
+    {
+        var id = new T();
+        id.Value = value;
+        return id;
+    }
+
     public static readonly T Empty = CreateEmpty();
 
     private static T CreateEmpty()

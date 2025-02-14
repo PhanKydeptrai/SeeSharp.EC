@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Behaviors;
-using Application.Consumers.Category;
+using Application.Consumers.Categorys;
 using FluentValidation;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
