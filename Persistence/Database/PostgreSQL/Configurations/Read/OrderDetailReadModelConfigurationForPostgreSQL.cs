@@ -12,18 +12,18 @@ internal sealed class OrderDetailReadModelConfigurationForPostgreSQL : IEntityTy
         builder.HasKey(x => x.OrderDetailId);
         builder.Property(x => x.OrderDetailId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.Quantity)
             .IsRequired()

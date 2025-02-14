@@ -1,3 +1,4 @@
+using Domain.Entities.Bills;
 using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,9 +13,9 @@ internal sealed class CategoryConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
-                value => value.ToString(),
-                value => CategoryId.FromString(value))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => CategoryId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.CategoryName)
             .IsRequired()

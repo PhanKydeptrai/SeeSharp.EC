@@ -1,3 +1,4 @@
+using Domain.Entities.Bills;
 using Domain.Entities.Users;
 using Domain.Entities.VerificationTokens;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,9 @@ internal sealed class VerificationTokenConfigurationForPostgreSQL : IEntityTypeC
         builder.Property(a => a.VerificationTokenId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => VerificationTokenId.FromString(v)
-            )
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => VerificationTokenId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.Temporary)
             .IsRequired(false)
@@ -33,9 +33,8 @@ internal sealed class VerificationTokenConfigurationForPostgreSQL : IEntityTypeC
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => UserId.FromString(v)
-            )
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => UserId.FromGuid(value))
+            .HasColumnType("uuid");
     }
 }

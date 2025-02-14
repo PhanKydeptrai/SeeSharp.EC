@@ -14,8 +14,8 @@ internal sealed class FeedbackReadModelConfigurationForPostgreSQL : IEntityTypeC
 
         builder.Property(x => x.FeedbackId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.Substance)
             .IsRequired(false)
@@ -31,13 +31,13 @@ internal sealed class FeedbackReadModelConfigurationForPostgreSQL : IEntityTypeC
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         //Một order có một feedback
         builder.HasOne(x => x.OrderReadModel)

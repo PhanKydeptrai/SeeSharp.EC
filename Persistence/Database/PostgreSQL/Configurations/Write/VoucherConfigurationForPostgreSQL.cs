@@ -1,3 +1,4 @@
+using Domain.Entities.Bills;
 using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,10 +13,9 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.Property(a => a.VoucherId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => VoucherId.FromString(v)
-            )
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => VoucherId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.VoucherName)
             .IsRequired()

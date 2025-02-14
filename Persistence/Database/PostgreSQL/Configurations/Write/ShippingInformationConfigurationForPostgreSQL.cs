@@ -1,3 +1,4 @@
+using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.ShippingInformations;
 using Domain.Entities.Users;
@@ -14,18 +15,16 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => ShippingInformationId.FromString(v)
-            )
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => ShippingInformationId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => CustomerId.FromString(v)
-            )
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => CustomerId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(x => x.FullName)
             .IsRequired()

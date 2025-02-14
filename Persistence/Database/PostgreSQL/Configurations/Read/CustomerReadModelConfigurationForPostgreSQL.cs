@@ -13,13 +13,13 @@ internal sealed class CustomerReadModelConfigurationForPostgreSQL : IEntityTypeC
         builder.HasKey(a => a.CustomerId);
         builder.Property(a => a.CustomerId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion<UlidToStringConverter>()
-            .HasColumnType("varchar(26)");
+            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.CustomerStatus)
             .IsRequired()

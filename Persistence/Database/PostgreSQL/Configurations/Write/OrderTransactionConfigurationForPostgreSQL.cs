@@ -16,9 +16,9 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
         builder.Property(a => a.OrderTransactionId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => OrderTransactionId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => OrderTransactionId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.PayerName)
             .IsRequired(false)
@@ -66,23 +66,23 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
         builder.Property(a => a.VoucherId)
             .IsRequired(false)
             .HasConversion(
-                v => v!.ToString(),
-                v => VoucherId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value!.Value.ToGuid(),
+                value => VoucherId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.OrderId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => OrderId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => OrderId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.BillId)
             .IsRequired(false)
             .HasConversion(
-                v => v!.ToString(),
-                v => BillId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value!.Value.ToGuid(),
+                value => BillId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.HasOne(a => a.Voucher)
             .WithMany(a => a.OrderTransactions)

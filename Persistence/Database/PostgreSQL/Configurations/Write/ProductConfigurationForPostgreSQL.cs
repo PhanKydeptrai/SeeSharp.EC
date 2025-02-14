@@ -1,3 +1,4 @@
+using Domain.Entities.Bills;
 using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,9 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.Property(a => a.ProductId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => ProductId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => ProductId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.Property(a => a.ProductName)
             .IsRequired()
@@ -49,9 +50,9 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(),
-                v => CategoryId.FromString(v))
-            .HasColumnType("varchar(26)");
+                value => value.Value.ToGuid(),
+                value => CategoryId.FromGuid(value))
+            .HasColumnType("uuid");
 
         builder.HasMany(a => a.WishItems)
             .WithOne(a => a.Product)
