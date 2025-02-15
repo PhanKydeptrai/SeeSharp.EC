@@ -15,6 +15,7 @@ using Domain.Entities.VerificationTokens;
 using Domain.Entities.Vouchers;
 using Domain.Entities.WishItems;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Outbox;
 
 namespace Persistence.Database.MySQL;
 
@@ -37,6 +38,7 @@ public sealed class NextSharpMySQLDbContext : DbContext
     public DbSet<VerificationToken> VerificationTokens { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
     public DbSet<WishItem> WishItems { get; set; }
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

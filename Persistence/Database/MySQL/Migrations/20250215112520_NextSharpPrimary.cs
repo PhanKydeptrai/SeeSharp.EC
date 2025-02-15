@@ -30,6 +30,23 @@ namespace Persistence.Database.MySQL.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "OutboxMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    Status = table.Column<string>(type: "varchar(20)", nullable: false),
+                    Content = table.Column<string>(type: "JSON", nullable: false),
+                    OccurredOnUtc = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
+                    ProcessedOnUtc = table.Column<DateTime>(type: "TIMESTAMP", nullable: true),
+                    Error = table.Column<string>(type: "longtext", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutboxMessages", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -542,6 +559,9 @@ namespace Persistence.Database.MySQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderTransactions");
+
+            migrationBuilder.DropTable(
+                name: "OutboxMessages");
 
             migrationBuilder.DropTable(
                 name: "UserAuthenticationTokens");

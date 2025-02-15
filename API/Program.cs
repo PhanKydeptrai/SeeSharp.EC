@@ -18,13 +18,15 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết 
 builder.Services.AddHealthChecks();
-builder.Services.AddScoped<ILinkServices, LinkServices>(); //Hateoas
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 #region Dependency Injection
 builder.Services.AddApplication(builder.Configuration)
     .AddPersistnce(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
+
+//FIXME: Cần xem lại cách cấu hình
+//builder.Services.AddScoped<ILinkServices, LinkServices>(); //Hateoas 
 #endregion
 builder.Services.AddCustomProblemDetails();
 builder.Host.UseSerilog((context, loggerConfig) =>
@@ -52,12 +54,6 @@ app.MapHealthChecks("api/health", new HealthCheckOptions
 
 }); //Kiểm tra tình trạng hoạt động của api 
 #endregion
-
-
-
-
-
-
 
 #region Cấu hình Open Telemetry
 //TODO: Thêm cấu hình cho OpenTelemetry

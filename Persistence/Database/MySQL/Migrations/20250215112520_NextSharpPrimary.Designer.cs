@@ -11,7 +11,7 @@ using Persistence.Database.MySQL;
 namespace Persistence.Database.MySQL.Migrations
 {
     [DbContext(typeof(NextSharpMySQLDbContext))]
-    [Migration("20250214071056_NextSharpPrimary")]
+    [Migration("20250215112520_NextSharpPrimary")]
     partial class NextSharpPrimary
     {
         /// <inheritdoc />
@@ -586,6 +586,35 @@ namespace Persistence.Database.MySQL.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("WishItems");
+                });
+
+            modelBuilder.Entity("Persistence.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("JSON");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("OccurredOnUtc")
+                        .HasColumnType("TIMESTAMP");
+
+                    b.Property<DateTime?>("ProcessedOnUtc")
+                        .HasColumnType("TIMESTAMP");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages");
                 });
 
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
