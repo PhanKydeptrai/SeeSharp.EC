@@ -34,6 +34,7 @@ namespace Persistence.Database.MySQL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    Type = table.Column<string>(type: "varchar(50)", nullable: false),
                     Status = table.Column<string>(type: "varchar(20)", nullable: false),
                     Content = table.Column<string>(type: "JSON", nullable: false),
                     OccurredOnUtc = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),

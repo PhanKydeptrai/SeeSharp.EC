@@ -18,6 +18,10 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
+        builder.Property(a => a.Type)
+            .IsRequired()
+            .HasColumnType("varchar(50)");
+
         builder.Property(a => a.Status)
             .IsRequired()
             .HasConversion(

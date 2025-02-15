@@ -24,33 +24,33 @@ internal class OutBoxMessageServices : IOutBoxMessageServices
             .ExecuteDeleteAsync();
     }
 
-    public async Task<List<OutboxMessage>> GetFailedOutBoxMessagesAsync()
+    public async Task<List<OutboxMessage>> GetFailedOutBoxMessagesAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext.OutboxMessages
             .Where(a => a.Status == OutboxMessageStatus.Failed)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<OutboxMessage?> GetOutBoxMessageByIdAsync(Ulid id)
+    public async Task<OutboxMessage?> GetOutBoxMessageByIdAsync(Ulid id, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.OutboxMessages.FindAsync(id);
+        return await _dbContext.OutboxMessages.FindAsync(id, cancellationToken);
     }
 
-    public async Task<List<OutboxMessage>> GetPendingOutBoxMessagesAsync()
+    public async Task<List<OutboxMessage>> GetPendingOutBoxMessagesAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext.OutboxMessages
             .Where(a => a.Status == OutboxMessageStatus.Pending)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<OutboxMessage>> GetProcessedOutBoxMessagesAsync()
+    public async Task<List<OutboxMessage>> GetProcessedOutBoxMessagesAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext.OutboxMessages
             .Where(a => a.Status == OutboxMessageStatus.Processed)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task UpdateOutBoxMessageAsync(Ulid id, OutboxMessageStatus outboxMessageStatus)
+    public async Task UpdateOutStatusBoxMessageAsync(Ulid id, OutboxMessageStatus outboxMessageStatus)
     {
         await _dbContext.OutboxMessages
             .Where(a => a.Id == id)

@@ -3,10 +3,10 @@
 public interface IOutBoxMessageServices
 {
     Task AddNewOutBoxMessageAsync(OutboxMessage outBoxMessage);
-    Task UpdateOutBoxMessageAsync(Ulid id, OutboxMessageStatus outboxMessageStatus);
-    Task<List<OutboxMessage>> GetPendingOutBoxMessagesAsync();
-    Task<List<OutboxMessage>> GetFailedOutBoxMessagesAsync();
-    Task<List<OutboxMessage>> GetProcessedOutBoxMessagesAsync();
-    Task<OutboxMessage?> GetOutBoxMessageByIdAsync(Ulid id);
+    Task UpdateOutStatusBoxMessageAsync(Ulid id, OutboxMessageStatus outboxMessageStatus);
+    Task<List<OutboxMessage>> GetPendingOutBoxMessagesAsync(CancellationToken cancellationToken = default);
+    Task<List<OutboxMessage>> GetFailedOutBoxMessagesAsync(CancellationToken cancellationToken = default);
+    Task<List<OutboxMessage>> GetProcessedOutBoxMessagesAsync(CancellationToken cancellationToken = default);
+    Task<OutboxMessage?> GetOutBoxMessageByIdAsync(Ulid id, CancellationToken cancellationToken = default);
     Task DeleteOutBoxMessageAsync(Ulid id);
 }

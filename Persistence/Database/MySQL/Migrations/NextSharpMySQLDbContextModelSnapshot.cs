@@ -609,6 +609,10 @@ namespace Persistence.Database.MySQL.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
                     b.HasKey("Id");
 
                     b.ToTable("OutboxMessages");
