@@ -1,5 +1,4 @@
-﻿using Application.Abstractions.EventBus;
-using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Messaging;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
@@ -43,6 +42,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
 
         if (result > 0)
         {
+            //Publish event với MediatR Notification => 
             await _publisher.Publish(
                 new CategoryCreatedEvent(
                     category.CategoryId.Value,

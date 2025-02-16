@@ -5,17 +5,17 @@ using Domain.Utilities.Events.CategoryEvents;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Consumers.Categorys;
+namespace Infrastructure.Consumers.CategoryMessageConsumer;
 
-internal sealed class CategoryCreatedEventConsumer : IConsumer<CategoryCreatedEvent>
+internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreatedEvent>
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<CategoryCreatedEventConsumer> _logger;
-    public CategoryCreatedEventConsumer(
+    private readonly ILogger<CategoryCreatedMessageConsumer> _logger;
+    public CategoryCreatedMessageConsumer(
         ICategoryRepository categoryRepository,
         IUnitOfWork unitOfWork,
-        ILogger<CategoryCreatedEventConsumer> logger)
+        ILogger<CategoryCreatedMessageConsumer> logger)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;

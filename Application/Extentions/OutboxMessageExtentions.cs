@@ -3,7 +3,7 @@ using Domain.OutboxMessages.Services;
 using SharedKernel;
 using System.Text.Json;
 
-namespace Persistence.Outbox;
+namespace Application.Outbox;
 public static class OutboxMessageExtentions
 {
     public static async Task InsertOutboxMessageAsync<T>(

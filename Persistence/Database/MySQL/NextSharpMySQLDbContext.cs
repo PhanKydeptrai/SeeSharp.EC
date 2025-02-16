@@ -50,5 +50,5 @@ public sealed class NextSharpMySQLDbContext : DbContext
     }
 
     private static bool WriteConfigurationsFilter(Type type) =>
-        type.FullName?.Contains("Database.MySQL.Configurations") ?? false;
+        type.FullName?.Contains("Database.MySQL.Configurations.Writte") ?? false;
 }

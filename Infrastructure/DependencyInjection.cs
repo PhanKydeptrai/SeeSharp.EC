@@ -1,15 +1,17 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.IServices;
 using Infrastructure.BackgoundJob;
+using Infrastructure.Consumers.CategoryMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Services.CategoryServices;
+using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Outbox;
 using Quartz;
-namespace Infrastructure;
 
+namespace Infrastructure;
 public static class DependencyInjection
 {
     //FIXME: AddInfrastructure
@@ -20,10 +22,11 @@ public static class DependencyInjection
 
         services.AddHealthCheck(configuration)
             .AddServices()
-            .AddScoped<OutboxProcessor>()
+            .AddScoped<OutboxProcessor>() //Đăng ký OutboxProcessor
             .AddEventBus()
             .AddRedisConfig(configuration)
-            .AddBackgoundJob();
+            .AddBackgoundJob()
+            .AddMassTransitConfiguration(configuration);
 
         return services;
     }
@@ -61,7 +64,41 @@ public static class DependencyInjection
         return services;
     }
 
-    
+    private static IServiceCollection AddMassTransitConfiguration(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddMassTransit(busConfiguration =>
+        {
+            busConfiguration.SetKebabCaseEndpointNameFormatter();
+            //* NOTE: Message Broker in memory
+            busConfiguration.UsingInMemory((context, config) =>
+            {
+                config.ConfigureEndpoints(context);
+            });
+
+            //* Đăng ký consumer
+            busConfiguration.AddConsumer<CategoryCreatedMessageConsumer>();
+
+            //* FIXME: Config RabbitMQ
+            #region Config RabbitMQ
+            // busConfiguration.UsingRabbitMq((context, cfg) =>
+            // {
+            //     MessageBrokerSetting messageBrokerSetting = context.GetRequiredService<MessageBrokerSetting>();
+            //     cfg.Host(new Uri(messageBrokerSetting.Host), h =>
+            //     {
+            //         h.Username(messageBrokerSetting.Username);
+            //         h.Password(messageBrokerSetting.Password);
+            //     });
+            // });
+            #endregion
+
+        });
+
+        return services;
+    }
+
+
 
     private static IServiceCollection AddEventBus(this IServiceCollection services)
     {

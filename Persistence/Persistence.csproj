@@ -13,4 +13,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Application\Application.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Database\MySQL\Configurations\Read\" />
+	</ItemGroup>
 </Project>
