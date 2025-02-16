@@ -10,7 +10,7 @@ using Persistence.Database.MySQL;
 
 namespace Persistence.Database.MySQL.Migrations
 {
-    [DbContext(typeof(NextSharpMySQLDbContext))]
+    [DbContext(typeof(NextSharpMySQLWriteDbContext))]
     [Migration("20250216110614_NextSharpPrimary")]
     partial class NextSharpPrimary
     {

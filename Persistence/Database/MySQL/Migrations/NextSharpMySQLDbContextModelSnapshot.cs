@@ -9,7 +9,7 @@ using Persistence.Database.MySQL;
 
 namespace Persistence.Database.MySQL.Migrations
 {
-    [DbContext(typeof(NextSharpMySQLDbContext))]
+    [DbContext(typeof(NextSharpMySQLWriteDbContext))]
     partial class NextSharpMySQLDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

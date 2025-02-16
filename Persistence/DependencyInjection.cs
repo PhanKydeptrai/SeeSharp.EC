@@ -56,11 +56,19 @@ public static class DependencyInjection
 
         string connectionString = configuration.GetConnectionString("PrimaryDatabase")
             ?? throw new Exception("MySQL connection string is null");
-        services.AddDbContext<NextSharpMySQLDbContext>(options =>
+
+        //Dbcontext để ghi
+        services.AddDbContext<NextSharpMySQLWriteDbContext>(options =>
         {
             options.UseMySQL(connectionString);
         });
 
+        //Dbcontext để đọc
+        services.AddDbContext<NextSharpMySQLReadDbContext>((sp, options) =>
+        {
+            options.UseNpgsql(connectionString)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
 
         return services;
     }

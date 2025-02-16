@@ -9,12 +9,12 @@ namespace Persistence.Repositories.CategoryRepositories;
 
 internal sealed class CategoryRepository : ICategoryRepository
 {
-    private readonly NextSharpMySQLDbContext _mySQLDbContext;
+    private readonly NextSharpMySQLWriteDbContext _mySQLDbContext;
     private readonly NextSharpPostgreSQLReadDbContext _postgreSQLReadDbContext;
     private readonly NextSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
 
     public CategoryRepository(
-        NextSharpMySQLDbContext mySQLDbContext, 
+        NextSharpMySQLWriteDbContext mySQLDbContext, 
         NextSharpPostgreSQLReadDbContext postgreSQLReadDbContext, 
         NextSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
     {

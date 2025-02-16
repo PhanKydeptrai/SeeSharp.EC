@@ -7,9 +7,9 @@ namespace Persistence.Outbox;
 
 internal class OutBoxMessageServices : IOutBoxMessageServices
 {
-    private readonly NextSharpMySQLDbContext _dbContext;
+    private readonly NextSharpMySQLWriteDbContext _dbContext;
 
-    public OutBoxMessageServices(NextSharpMySQLDbContext dbContext)
+    public OutBoxMessageServices(NextSharpMySQLWriteDbContext dbContext)
     {
         _dbContext = dbContext;
     }

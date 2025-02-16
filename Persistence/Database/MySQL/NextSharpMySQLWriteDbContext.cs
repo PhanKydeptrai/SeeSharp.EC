@@ -19,9 +19,10 @@ using SharedKernel;
 
 namespace Persistence.Database.MySQL;
 
-public sealed class NextSharpMySQLDbContext : DbContext
+public sealed class NextSharpMySQLWriteDbContext : DbContext
 {
-    public NextSharpMySQLDbContext(DbContextOptions<NextSharpMySQLDbContext> options) : base(options) { }
+    public NextSharpMySQLWriteDbContext(DbContextOptions<NextSharpMySQLWriteDbContext> options) 
+        : base(options) { }
     public DbSet<Bill> Bills { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Customer> Customers { get; set; }
@@ -43,12 +44,12 @@ public sealed class NextSharpMySQLDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(
-            typeof(NextSharpMySQLDbContext).Assembly,
+            typeof(NextSharpMySQLWriteDbContext).Assembly,
             WriteConfigurationsFilter);
 
         base.OnModelCreating(modelBuilder);
     }
 
     private static bool WriteConfigurationsFilter(Type type) =>
-        type.FullName?.Contains("Database.MySQL.Configurations.Writte") ?? false;
+        type.FullName?.Contains("Database.MySQL.Configurations.Write") ?? false;
 }

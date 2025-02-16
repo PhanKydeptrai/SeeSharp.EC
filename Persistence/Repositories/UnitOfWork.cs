@@ -6,10 +6,10 @@ namespace Persistence.Repositories;
 
 internal class UnitOfWork : IUnitOfWork
 {
-    private readonly NextSharpMySQLDbContext _nextSharpMySQLDbContext;
+    private readonly NextSharpMySQLWriteDbContext _nextSharpMySQLDbContext;
     private readonly NextSharpPostgreSQLWriteDbContext _nextSharpPostgreSQLWriteDbContext;
     public UnitOfWork(
-        NextSharpMySQLDbContext nextSharpMySQLDbContext, 
+        NextSharpMySQLWriteDbContext nextSharpMySQLDbContext, 
         NextSharpPostgreSQLWriteDbContext nextSharpPostgreSQLWriteDbContext)
     {
         _nextSharpMySQLDbContext = nextSharpMySQLDbContext;
