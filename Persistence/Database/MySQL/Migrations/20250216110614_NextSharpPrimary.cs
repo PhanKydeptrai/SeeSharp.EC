@@ -39,7 +39,7 @@ namespace Persistence.Database.MySQL.Migrations
                     Content = table.Column<string>(type: "JSON", nullable: false),
                     OccurredOnUtc = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
                     ProcessedOnUtc = table.Column<DateTime>(type: "TIMESTAMP", nullable: true),
-                    Error = table.Column<string>(type: "longtext", nullable: true)
+                    Error = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

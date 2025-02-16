@@ -4,16 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Persistence.Database.PostgreSQL;
+using Persistence.Database.MySQL;
 
 #nullable disable
 
-namespace Persistence.Database.PostgreSQL.Migrations
+namespace Persistence.Database.MySQL.Migrations
 {
-    [DbContext(typeof(NextSharpPostgreSQLWriteDbContext))]
-    [Migration("20250214071033_NextSharpReadOnly")]
-    partial class NextSharpReadOnly
+    [DbContext(typeof(NextSharpMySQLDbContext))]
+    [Migration("20250216110614_NextSharpPrimary")]
+    partial class NextSharpPrimary
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,30 +20,36 @@ namespace Persistence.Database.PostgreSQL.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
                 {
                     b.Property<Guid>("BillId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMP");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("ShippingInformationId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.HasKey("BillId");
 
@@ -61,7 +66,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.Categories.Category", b =>
                 {
                     b.Property<Guid>("CategoryId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
@@ -82,16 +89,22 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.CustomerVouchers.CustomerVoucher", b =>
                 {
                     b.Property<Guid>("CustomerVoucherId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("VoucherId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.HasKey("CustomerVoucherId");
 
@@ -105,7 +118,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.Customers.Customer", b =>
                 {
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("CustomerStatus")
                         .IsRequired()
@@ -116,7 +131,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.HasKey("CustomerId");
 
@@ -129,7 +146,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.Employees.Employee", b =>
                 {
                     b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("EmployeeStatus")
                         .IsRequired()
@@ -140,7 +159,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.HasKey("EmployeeId");
 
@@ -153,16 +174,22 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.Feedbacks.Feedback", b =>
                 {
                     b.Property<Guid>("FeedbackId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(255)");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<float>("RatingScore")
                         .HasColumnType("float");
@@ -183,13 +210,19 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.OrderDetails.OrderDetail", b =>
                 {
                     b.Property<Guid>("OrderDetailId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -209,23 +242,29 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.OrderTransactions.OrderTransaction", b =>
                 {
                     b.Property<Guid>("OrderTransactionId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("BillId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsVoucherUsed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("PayerEmail")
                         .HasColumnType("varchar(200)");
@@ -238,7 +277,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<Guid?>("VoucherId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.HasKey("OrderTransactionId");
 
@@ -255,17 +296,23 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.Orders.Order", b =>
                 {
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("OrderStatus")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("OrderTransactionId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
@@ -284,10 +331,14 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.Products.Product", b =>
                 {
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("CategoryId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("Description")
                         .HasColumnType("varchar(255)");
@@ -316,10 +367,14 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.ShippingInformations.ShippingInformation", b =>
                 {
                     b.Property<Guid>("ShippingInformationId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("District")
                         .IsRequired()
@@ -330,7 +385,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -358,20 +413,24 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.UserAuthenticationTokens.UserAuthenticationToken", b =>
                 {
                     b.Property<Guid>("UserAuthenticationTokenId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<DateTime>("ExpiredTime")
                         .HasColumnType("TIMESTAMP");
 
                     b.Property<bool>("IsBlackList")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("TokenType")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -387,7 +446,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.Users.User", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("TIMESTAMP");
@@ -404,10 +465,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<bool>("IsVerify")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("varchar(64)");
 
                     b.Property<string>("PhoneNumber")
@@ -430,7 +490,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.VerificationTokens.VerificationToken", b =>
                 {
                     b.Property<Guid>("VerificationTokenId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMP");
@@ -442,19 +504,23 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(64)");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.HasKey("VerificationTokenId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("VerificationToken");
+                    b.ToTable("VerificationTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>
                 {
                     b.Property<Guid>("VoucherId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -499,13 +565,19 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.WishItems.WishItem", b =>
                 {
                     b.Property<Guid>("WishItemId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
 
                     b.HasKey("WishItemId");
 
@@ -514,6 +586,39 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("WishItems");
+                });
+
+            modelBuilder.Entity("Persistence.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("(UUID())");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("JSON");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("OccurredOnUtc")
+                        .HasColumnType("TIMESTAMP");
+
+                    b.Property<DateTime?>("ProcessedOnUtc")
+                        .HasColumnType("TIMESTAMP");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages");
                 });
 
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>

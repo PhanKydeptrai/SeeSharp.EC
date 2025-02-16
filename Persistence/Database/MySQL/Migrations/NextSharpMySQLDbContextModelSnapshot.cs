@@ -597,7 +597,7 @@ namespace Persistence.Database.MySQL.Migrations
                         .HasColumnType("JSON");
 
                     b.Property<string>("Error")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("OccurredOnUtc")
                         .HasColumnType("TIMESTAMP");

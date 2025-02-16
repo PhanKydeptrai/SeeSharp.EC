@@ -30,6 +30,10 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
             )
             .HasColumnType("varchar(20)");
 
+        builder.Property(a => a.Error)
+            .IsRequired(false)
+            .HasColumnType("TEXT");
+
         builder.Property(a => a.Content)
             .IsRequired()
             .HasColumnType("JSON");

@@ -50,13 +50,20 @@ internal class OutBoxMessageServices : IOutBoxMessageServices
             .ToListAsync(cancellationToken);
     }
 
-    public async Task UpdateOutStatusBoxMessageAsync(Ulid id, OutboxMessageStatus outboxMessageStatus)
+    public async Task UpdateOutStatusBoxMessageAsync(
+        Ulid id, 
+        OutboxMessageStatus outboxMessageStatus,
+        string? error,
+        DateTime processedOnUtc)
     {
         await _dbContext.OutboxMessages
             .Where(a => a.Id == id)
             .ExecuteUpdateAsync(
                 a => a.SetProperty(
                     p => p.Status, 
-                    outboxMessageStatus));
+                    outboxMessageStatus)
+                .SetProperty(
+                    a => a.ProcessedOnUtc, processedOnUtc)
+                .SetProperty(a => a.Error, error));
     }
 }

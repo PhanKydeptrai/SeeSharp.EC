@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
+using Persistence.Outbox.Services;
 using Persistence.Repositories;
 using Persistence.Repositories.CategoryRepositories;
 
@@ -23,6 +24,7 @@ public static class DependencyInjection
             .AddReadOnlyDatabase(configuration)
             .AddAbstractsDatabase(configuration);
 
+        services.AddScoped<IOutBoxMessageServices, OutBoxMessageServices>();
         return services;
     }
     //Add Repository

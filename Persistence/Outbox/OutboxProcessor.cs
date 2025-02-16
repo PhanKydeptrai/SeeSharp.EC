@@ -8,7 +8,7 @@ namespace Persistence.Outbox;
 
 //TODO: Thêm Batch size cho việc xử lý Outbox
 // Thêm thứ tự cho các message
-internal sealed class OutboxProcessor
+public sealed class OutboxProcessor
 {
     private readonly IEventBus _eventBus;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
@@ -39,16 +39,19 @@ internal sealed class OutboxProcessor
                 //Update status
                 await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     outboxMessage.Id,
-                    OutboxMessageStatus.Processed);
+                    OutboxMessageStatus.Processed,
+                    string.Empty,
+                    DateTime.UtcNow);
 
                 await _unitOfWork.Commit();
             }
             catch (Exception ex)
             {
-                //TODO: Ghi nhận thời gian thực hiện, lỗi của message
                 await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     outboxMessage.Id,
-                    OutboxMessageStatus.Failed);
+                    OutboxMessageStatus.Failed,
+                    ex.ToString(),
+                    DateTime.UtcNow);
 
                 await _unitOfWork.Commit();
             }

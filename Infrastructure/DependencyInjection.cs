@@ -2,12 +2,16 @@
 using Application.IServices;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
+using Infrastructure.BackgoundJob;
 using Infrastructure.MessageBroker;
 using Infrastructure.Services;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Persistence.Outbox;
+using Persistence.Outbox.Services;
 using Persistence.Repositories;
+using Quartz;
 namespace Infrastructure;
 
 public static class DependencyInjection
@@ -17,11 +21,13 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
+
         services.AddHealthCheck(configuration)
             .AddServices()
-            
+            .AddScoped<OutboxProcessor>()
             .AddEventBus()
-            .AddRedisConfig(configuration);
+            .AddRedisConfig(configuration)
+            .AddBackgoundJob();
 
         return services;
     }
@@ -79,6 +85,27 @@ public static class DependencyInjection
             redisOptions.Configuration = connection;
         });
 
+        return services;
+    }
+
+
+    private static IServiceCollection AddBackgoundJob(this IServiceCollection services)
+    {
+        services.AddQuartz(options =>
+        {
+            //options.UseMicrosoftDependencyInjectionJobFactory();
+
+            var jobKey_OutboxBackgroundService = JobKey.Create(nameof(OutboxBackgroundService));
+
+            options.AddJob<OutboxBackgroundService>(jobKey_OutboxBackgroundService)
+                    .AddTrigger(trigger =>
+                        trigger.ForJob(jobKey_OutboxBackgroundService)
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(1)
+                    .RepeatForever()));
+
+        });
+
+        services.AddQuartzHostedService();
         return services;
     }
 }
