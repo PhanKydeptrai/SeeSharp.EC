@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.OutboxMessages.Services;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Database.MySQL;
+using SharedKernel;
 
-namespace Persistence.Outbox.Services;
+namespace Persistence.Outbox;
 
 internal class OutBoxMessageServices : IOutBoxMessageServices
 {
@@ -51,7 +53,7 @@ internal class OutBoxMessageServices : IOutBoxMessageServices
     }
 
     public async Task UpdateOutStatusBoxMessageAsync(
-        Ulid id, 
+        Ulid id,
         OutboxMessageStatus outboxMessageStatus,
         string? error,
         DateTime processedOnUtc)
@@ -60,7 +62,7 @@ internal class OutBoxMessageServices : IOutBoxMessageServices
             .Where(a => a.Id == id)
             .ExecuteUpdateAsync(
                 a => a.SetProperty(
-                    p => p.Status, 
+                    p => p.Status,
                     outboxMessageStatus)
                 .SetProperty(
                     a => a.ProcessedOnUtc, processedOnUtc)

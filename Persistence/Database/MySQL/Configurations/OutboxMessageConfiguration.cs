@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Persistence.Outbox;
+using SharedKernel;
 
 namespace Persistence.Database.MySQL.Configurations;
 

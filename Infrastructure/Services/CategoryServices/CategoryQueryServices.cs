@@ -8,7 +8,7 @@ using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
 
-namespace Infrastructure.Services;
+namespace Infrastructure.Services.CategoryServices;
 
 internal class CategoryQueryServices : ICategoryQueryServices
 {
@@ -20,7 +20,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
     }
 
     public async Task<CategoryResponse?> GetById(
-        CategoryId categoryId, 
+        CategoryId categoryId,
         CancellationToken cancellationToken)
     {
         return await _context.Categories.Where(a => a.CategoryId == categoryId.Value)
@@ -33,11 +33,11 @@ internal class CategoryQueryServices : ICategoryQueryServices
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(
-        string? filter, 
-        string? searchTerm, 
-        string? sortColumn, 
-        string? sortOrder, 
-        int? page = 1, 
+        string? filter,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page = 1,
         int? pageSize = 10)
     {
         var categoriesQuery = _context.Categories.AsQueryable();

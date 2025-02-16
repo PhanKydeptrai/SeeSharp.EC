@@ -5,6 +5,7 @@ using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.CategoryEvents;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.CreateCategory;
@@ -13,15 +14,16 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IEventBus _eventBus;
+    private readonly IPublisher _publisher; //MediatR Notification
+
     public CreateCategoryCommandHandler(
         ICategoryRepository categoryRepository,
         IUnitOfWork unitOfWork,
-        IEventBus eventBus)
+        IPublisher publisher)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
-        _eventBus = eventBus;
+        _publisher = publisher;
     }
 
     public async Task<Result> Handle(
@@ -41,12 +43,19 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
 
         if (result > 0)
         {
-            await _eventBus.PublishAsync(
+            await _publisher.Publish(
                 new CategoryCreatedEvent(
-                    category.CategoryId.Value, 
-                    category.CategoryName.Value, 
+                    category.CategoryId.Value,
+                    category.CategoryName.Value,
                     category.ImageUrl ?? string.Empty),
                 cancellationToken);
+
+            //await _eventBus.PublishAsync(
+            //    new CategoryCreatedEvent(
+            //        category.CategoryId.Value, 
+            //        category.CategoryName.Value, 
+            //        category.ImageUrl ?? string.Empty),
+            //    cancellationToken);
 
             return Result.Success();
         }

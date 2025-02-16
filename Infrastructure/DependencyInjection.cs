@@ -1,16 +1,12 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.IServices;
-using Domain.IRepositories;
-using Domain.IRepositories.CategoryRepositories;
 using Infrastructure.BackgoundJob;
 using Infrastructure.MessageBroker;
-using Infrastructure.Services;
+using Infrastructure.Services.CategoryServices;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Outbox;
-using Persistence.Outbox.Services;
-using Persistence.Repositories;
 using Quartz;
 namespace Infrastructure;
 

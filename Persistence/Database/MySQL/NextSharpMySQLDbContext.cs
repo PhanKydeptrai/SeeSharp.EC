@@ -15,7 +15,7 @@ using Domain.Entities.VerificationTokens;
 using Domain.Entities.Vouchers;
 using Domain.Entities.WishItems;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Outbox;
+using SharedKernel;
 
 namespace Persistence.Database.MySQL;
 

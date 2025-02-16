@@ -1,11 +1,12 @@
 ﻿using Domain.IRepositories;
-using Persistence.Outbox.Services;
+using Domain.OutboxMessages.Services;
+using SharedKernel;
 using System.Text.Json;
 
 namespace Persistence.Outbox;
-internal static class OutboxMessageExtentions
+public static class OutboxMessageExtentions
 {
-    internal static async Task InsertOutboxMessageAsync<T>(
+    public static async Task InsertOutboxMessageAsync<T>(
         T message, IOutBoxMessageServices outBoxMessageServices,
         IUnitOfWork unitOfWork) where T: notnull
     {

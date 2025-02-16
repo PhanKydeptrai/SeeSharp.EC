@@ -5,7 +5,7 @@ using Domain.Entities.Categories;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace Infrastructure.Services;
+namespace Infrastructure.Services.CategoryServices;
 
 internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 {
@@ -13,7 +13,7 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 
     private readonly IDistributedCache _cache;
     public CategoryQueryServicesDecorated(
-        ICategoryQueryServices decorated, 
+        ICategoryQueryServices decorated,
         IDistributedCache cache)
     {
         _decorated = decorated;
@@ -46,11 +46,11 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(
-        string? filter, 
-        string? searchTerm, 
-        string? sortColumn, 
-        string? sortOrder, 
-        int? page, 
+        string? filter,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
         int? pageSize)
     {
         return await _decorated.PagedList(filter, searchTerm, sortColumn, sortOrder, page, pageSize);

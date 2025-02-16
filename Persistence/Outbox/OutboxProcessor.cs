@@ -1,7 +1,8 @@
 ﻿using Application.Abstractions.EventBus;
 using Domain.IRepositories;
+using Domain.OutboxMessages.Services;
 using MassTransit;
-using Persistence.Outbox.Services;
+using SharedKernel;
 using System.Text.Json;
 
 namespace Persistence.Outbox;

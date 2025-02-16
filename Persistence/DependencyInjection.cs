@@ -1,5 +1,6 @@
 ﻿using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
+using Domain.OutboxMessages.Services;
 using Infrastructure.Repositories.CategoryRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
-using Persistence.Outbox.Services;
+using Persistence.Outbox;
 using Persistence.Repositories;
 using Persistence.Repositories.CategoryRepositories;
 
@@ -22,9 +23,9 @@ public static class DependencyInjection
         services.AddPrimaryDatabase(configuration)
             .AddRepository()
             .AddReadOnlyDatabase(configuration)
-            .AddAbstractsDatabase(configuration);
+            .AddAbstractsDatabase(configuration)
+            .AddOutBoxMessageServices();
 
-        services.AddScoped<IOutBoxMessageServices, OutBoxMessageServices>();
         return services;
     }
     //Add Repository
@@ -38,6 +39,13 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        return services;
+    }
+
+    //Add OutBoxMessageServices
+    public static IServiceCollection AddOutBoxMessageServices(this IServiceCollection services)
+    {
+        services.AddScoped<IOutBoxMessageServices, OutBoxMessageServices>();
         return services;
     }
     //Add Primary Database(MySQL)

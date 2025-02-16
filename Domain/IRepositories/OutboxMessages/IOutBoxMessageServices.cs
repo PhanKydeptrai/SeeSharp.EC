@@ -1,4 +1,6 @@
-﻿namespace Persistence.Outbox.Services;
+﻿using SharedKernel;
+
+namespace Domain.OutboxMessages.Services;
 
 public interface IOutBoxMessageServices
 {
