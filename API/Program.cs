@@ -26,7 +26,9 @@ builder.Services.AddApplication(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
 
 //FIXME: Cần xem lại cách cấu hình
-//builder.Services.AddScoped<ILinkServices, LinkServices>(); //Hateoas 
+builder.Services.AddScoped<ILinkServices, LinkServices>(); //Hateoas 
+builder.Services.AddHttpContextAccessor();
+
 #endregion
 builder.Services.AddCustomProblemDetails();
 builder.Host.UseSerilog((context, loggerConfig) =>

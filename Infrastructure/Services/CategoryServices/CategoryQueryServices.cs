@@ -6,30 +6,49 @@ using Application.IServices;
 using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 
 namespace Infrastructure.Services.CategoryServices;
 
 internal class CategoryQueryServices : ICategoryQueryServices
 {
-    private readonly NextSharpPostgreSQLReadDbContext _context;
+    private readonly NextSharpPostgreSQLReadDbContext _contextPostgreSQL;
+    private readonly NextSharpMySQLReadDbContext _contextMySQL;
 
-    public CategoryQueryServices(NextSharpPostgreSQLReadDbContext context)
+    public CategoryQueryServices(
+        NextSharpPostgreSQLReadDbContext contextPostgreSQL, 
+        NextSharpMySQLReadDbContext contextMySQL)
     {
-        _context = context;
+        _contextPostgreSQL = contextPostgreSQL;
+        _contextMySQL = contextMySQL;
     }
 
     public async Task<CategoryResponse?> GetById(
         CategoryId categoryId,
         CancellationToken cancellationToken)
     {
-        return await _context.Categories.Where(a => a.CategoryId == categoryId.Value)
-                    .Select(a => new CategoryResponse(
-                        a.CategoryId,
-                        a.CategoryName,
-                        a.ImageUrl,
-                        a.CategoryStatus))
-                    .FirstOrDefaultAsync();
+        var categoryResponse = await _contextPostgreSQL.Categories
+            .Where(a => a.CategoryId == categoryId.Value)
+            .Select(a => new CategoryResponse(
+                a.CategoryId,
+                a.CategoryName,
+                a.ImageUrl,
+                a.CategoryStatus))
+            .FirstOrDefaultAsync();
+
+        if(categoryResponse is null)
+        {
+            categoryResponse = await _contextMySQL.Categories
+                .Where(a => a.CategoryId == categoryId.Value)
+                .Select(a => new CategoryResponse(
+                    a.CategoryId,
+                    a.CategoryName,
+                    a.ImageUrl,
+                    a.CategoryStatus))
+                .FirstOrDefaultAsync();
+        }
+        return categoryResponse;
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(
@@ -40,7 +59,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
         int? page = 1,
         int? pageSize = 10)
     {
-        var categoriesQuery = _context.Categories.AsQueryable();
+        var categoriesQuery = _contextPostgreSQL.Categories.AsQueryable();
         //Search
         if (!string.IsNullOrEmpty(searchTerm))
         {

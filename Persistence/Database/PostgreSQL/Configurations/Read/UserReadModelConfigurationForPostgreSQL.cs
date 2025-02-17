@@ -56,11 +56,11 @@ internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfi
         //* Forign Key
         builder.HasOne(a => a.CustomerReadModel)
             .WithOne(a => a.UserReadModel)
-            .HasForeignKey<Customer>(a => a.UserId);
+            .HasForeignKey<CustomerReadModel>(a => a.UserId);
 
         builder.HasOne(a => a.EmployeeReadModel)
             .WithOne(a => a.UserReadModel)
-            .HasForeignKey<Employee>(a => a.UserId);
+            .HasForeignKey<EmployeeReadModel>(a => a.UserId);
 
         builder.HasMany(a => a.UserAuthenticationTokenReadModels)
             .WithOne(a => a.UserReadModel)

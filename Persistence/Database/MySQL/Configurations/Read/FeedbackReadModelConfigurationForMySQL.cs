@@ -44,7 +44,7 @@ internal sealed class FeedbackReadModelConfigurationForMySQL : IEntityTypeConfig
         //Một order có một feedback
         builder.HasOne(x => x.OrderReadModel)
             .WithOne(x => x.FeedbackReadModel)
-            .HasForeignKey<Feedback>(x => x.OrderId);
+            .HasForeignKey<FeedbackReadModel>(x => x.OrderId);
 
     }
 }

@@ -18,9 +18,9 @@ internal sealed class LinkServices : ILinkServices
     {
         return new Link(
             _linkGenerator.GetUriByName(
-                _httpContextAccessor.HttpContext, 
+                _httpContextAccessor.HttpContext!, 
                 endpointName, 
-                routeValue), 
+                routeValue)!, 
                 rel, 
                 method);
     }
