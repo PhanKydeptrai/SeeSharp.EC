@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.Database.PostgreSQL.ReadModels;
 
-namespace Domain.Database.MySQL.Configurations.Read;
+namespace Persistence.Database.MySQL.Configurations.Read;
 
 internal sealed class CustomerVoucherReadModelConfigurationForMySQL : IEntityTypeConfiguration<CustomerVoucherReadModel>
 {

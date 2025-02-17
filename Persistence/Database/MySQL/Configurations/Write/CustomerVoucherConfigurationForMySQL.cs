@@ -4,7 +4,7 @@ using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Persistence.Database.MySQL.Configurations;
+namespace Persistence.Database.MySQL.Configurations.Write;
 
 internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfiguration<CustomerVoucher>
 {

@@ -6,7 +6,7 @@ using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Persistence.Database.MySQL.Configurations;
+namespace Persistence.Database.MySQL.Configurations.Write;
 #pragma warning disable CS8602
 internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<OrderTransaction>
 {

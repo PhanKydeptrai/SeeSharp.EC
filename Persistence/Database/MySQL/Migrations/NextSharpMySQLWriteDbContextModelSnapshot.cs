@@ -10,7 +10,7 @@ using Persistence.Database.MySQL;
 namespace Persistence.Database.MySQL.Migrations
 {
     [DbContext(typeof(NextSharpMySQLWriteDbContext))]
-    partial class NextSharpMySQLDbContextModelSnapshot : ModelSnapshot
+    partial class NextSharpMySQLWriteDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -585,7 +585,7 @@ namespace Persistence.Database.MySQL.Migrations
                     b.ToTable("WishItems");
                 });
 
-            modelBuilder.Entity("Persistence.Outbox.OutboxMessage", b =>
+            modelBuilder.Entity("SharedKernel.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

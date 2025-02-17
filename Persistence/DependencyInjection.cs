@@ -64,9 +64,9 @@ public static class DependencyInjection
         });
 
         //Dbcontext để đọc
-        services.AddDbContext<NextSharpMySQLReadDbContext>((sp, options) =>
+        services.AddDbContext<NextSharpMySQLReadDbContext>((options) =>
         {
-            options.UseNpgsql(connectionString)
+            options.UseMySQL(connectionString)
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
@@ -88,7 +88,7 @@ public static class DependencyInjection
         });
 
         //Dbcontext để đọc
-        services.AddDbContext<NextSharpPostgreSQLReadDbContext>((sp, options) =>
+        services.AddDbContext<NextSharpPostgreSQLReadDbContext>((options) =>
         {
             options.UseNpgsql(connectionString)
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedKernel;
 
-namespace Persistence.Database.MySQL.Configurations;
+namespace Persistence.Database.MySQL.Configurations.Write;
 
 public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {

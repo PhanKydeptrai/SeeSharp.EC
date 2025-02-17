@@ -5,7 +5,7 @@ using Domain.Entities.ShippingInformations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Persistence.Database.MySQL.Configurations;
+namespace Persistence.Database.MySQL.Configurations.Write;
 
 internal sealed class BillConfigurationForMySQL : IEntityTypeConfiguration<Bill>
 {

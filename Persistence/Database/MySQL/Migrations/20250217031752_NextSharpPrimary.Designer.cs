@@ -11,7 +11,7 @@ using Persistence.Database.MySQL;
 namespace Persistence.Database.MySQL.Migrations
 {
     [DbContext(typeof(NextSharpMySQLWriteDbContext))]
-    [Migration("20250216110614_NextSharpPrimary")]
+    [Migration("20250217031752_NextSharpPrimary")]
     partial class NextSharpPrimary
     {
         /// <inheritdoc />
@@ -588,7 +588,7 @@ namespace Persistence.Database.MySQL.Migrations
                     b.ToTable("WishItems");
                 });
 
-            modelBuilder.Entity("Persistence.Outbox.OutboxMessage", b =>
+            modelBuilder.Entity("SharedKernel.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

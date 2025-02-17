@@ -4,7 +4,7 @@ using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Persistence.Database.MySQL.Configurations;
+namespace Persistence.Database.MySQL.Configurations.Write;
 
 internal sealed class OrderDetailConfigurationForMySQL : IEntityTypeConfiguration<OrderDetail>
 {

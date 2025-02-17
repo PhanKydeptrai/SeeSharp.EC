@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Behaviors;
 using FluentValidation;
-using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

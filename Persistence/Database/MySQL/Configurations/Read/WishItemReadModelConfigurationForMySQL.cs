@@ -2,7 +2,7 @@ using Domain.Database.PostgreSQL.ReadModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Domain.Database.MySQL.Configurations.Read;
+namespace Persistence.Database.MySQL.Configurations.Read;
 
 internal sealed class WishItemReadModelConfigurationForMySQL : IEntityTypeConfiguration<WishItemReadModel>
 {
