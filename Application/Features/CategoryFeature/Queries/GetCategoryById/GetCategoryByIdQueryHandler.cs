@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.LinkService;
+using Application.Abstractions.Messaging;
 using Application.DTOs.Category;
 using Application.IServices;
 using Domain.Entities.Categories;
@@ -10,10 +11,13 @@ namespace Application.Features.CategoryFeature.Queries.GetCategoryById;
 internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, CategoryResponse>
 {
     private readonly ICategoryQueryServices _categoryQueryServices;
-
-    public GetCategoryByIdQueryHandler(ICategoryQueryServices categoryQueryServices)
+    private readonly ILinkServices _linkServices;
+    public GetCategoryByIdQueryHandler(
+        ICategoryQueryServices categoryQueryServices, 
+        ILinkServices linkServices)
     {
         _categoryQueryServices = categoryQueryServices;
+        _linkServices = linkServices;
     }
 
     public async Task<Result<CategoryResponse>> Handle(
@@ -32,6 +36,17 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
                         request.categoryId)));
         }
 
+        AddLinkForCategory(category);
+
         return Result.Success(category);
+    }
+
+    private void AddLinkForCategory(CategoryResponse categoryResponse)
+    {
+        categoryResponse.links.Add(_linkServices.Generate(
+            "GetCategoryById", 
+            new { id = categoryResponse.categoryId }, 
+            "self", 
+            "GET"));
     }
 }

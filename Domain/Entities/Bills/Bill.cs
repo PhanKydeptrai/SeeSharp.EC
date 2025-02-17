@@ -6,11 +6,11 @@ namespace Domain.Entities.Bills;
 public sealed class Bill
 {
     public BillId BillId { get; private set; } = null!;
-    public OrderId OrderId { get; set; } = null!;
-    public CustomerId CustomerId { get; set; } = null!;
-    public DateTime CreatedDate { get; set; } 
-    public PaymentMethod PaymentMethod { get; set; }
-    public ShippingInformationId ShippingInformationId { get; set; } = null!;
+    public OrderId OrderId { get; private set; } = null!;
+    public CustomerId CustomerId { get; private set; } = null!;
+    public DateTime CreatedDate { get; private set; } 
+    public PaymentMethod PaymentMethod { get; private set; }
+    public ShippingInformationId ShippingInformationId { get; private set; } = null!;
 
     //* Foreign key
     public Order Order { get; set; } = null!;

@@ -4,9 +4,6 @@
 		<PackageReference Include="MediatR" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="Serilog.AspNetCore" />
-		<PackageReference Include="MassTransit" />
-		<PackageReference Include="MassTransit.AspNetCore" />
-		<PackageReference Include="MassTransit.RabbitMQ" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Domain\Domain.csproj" />

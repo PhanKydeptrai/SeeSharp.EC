@@ -1,0 +1,71 @@
+﻿using Domain.OutboxMessages.Services;
+using Microsoft.EntityFrameworkCore;
+using Persistence.Database.MySQL;
+using SharedKernel;
+
+namespace Persistence.Outbox;
+
+internal class OutBoxMessageServices : IOutBoxMessageServices
+{
+    private readonly NextSharpMySQLWriteDbContext _dbContext;
+
+    public OutBoxMessageServices(NextSharpMySQLWriteDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task AddNewOutBoxMessageAsync(OutboxMessage outBoxMessage)
+    {
+        await _dbContext.OutboxMessages.AddAsync(outBoxMessage);
+    }
+
+    public async Task DeleteOutBoxMessageAsync(Ulid id)
+    {
+        await _dbContext.OutboxMessages
+            .Where(a => a.Id == id)
+            .ExecuteDeleteAsync();
+    }
+
+    public async Task<List<OutboxMessage>> GetFailedOutBoxMessagesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.OutboxMessages
+            .Where(a => a.Status == OutboxMessageStatus.Failed)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<OutboxMessage?> GetOutBoxMessageByIdAsync(Ulid id, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.OutboxMessages.FindAsync(id, cancellationToken);
+    }
+
+    public async Task<List<OutboxMessage>> GetPendingOutBoxMessagesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.OutboxMessages
+            .Where(a => a.Status == OutboxMessageStatus.Pending)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<OutboxMessage>> GetProcessedOutBoxMessagesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.OutboxMessages
+            .Where(a => a.Status == OutboxMessageStatus.Processed)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task UpdateOutStatusBoxMessageAsync(
+        Ulid id,
+        OutboxMessageStatus outboxMessageStatus,
+        string? error,
+        DateTime processedOnUtc)
+    {
+        await _dbContext.OutboxMessages
+            .Where(a => a.Id == id)
+            .ExecuteUpdateAsync(
+                a => a.SetProperty(
+                    p => p.Status,
+                    outboxMessageStatus)
+                .SetProperty(
+                    a => a.ProcessedOnUtc, processedOnUtc)
+                .SetProperty(a => a.Error, error));
+    }
+}

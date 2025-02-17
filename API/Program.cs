@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using API.Extentions;
+using API.Services;
 using Application;
+using Application.Abstractions.LinkService;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
@@ -22,6 +24,11 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 builder.Services.AddApplication(builder.Configuration)
     .AddPersistnce(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
+
+//FIXME: Cần xem lại cách cấu hình
+builder.Services.AddScoped<ILinkServices, LinkServices>(); //Hateoas 
+builder.Services.AddHttpContextAccessor();
+
 #endregion
 builder.Services.AddCustomProblemDetails();
 builder.Host.UseSerilog((context, loggerConfig) =>
@@ -49,12 +56,6 @@ app.MapHealthChecks("api/health", new HealthCheckOptions
 
 }); //Kiểm tra tình trạng hoạt động của api 
 #endregion
-
-
-
-
-
-
 
 #region Cấu hình Open Telemetry
 //TODO: Thêm cấu hình cho OpenTelemetry

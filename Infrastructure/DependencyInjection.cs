@@ -1,17 +1,17 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.IServices;
-using Domain.IRepositories;
-using Domain.IRepositories.CategoryRepositories;
+using Infrastructure.BackgoundJob;
+using Infrastructure.Consumers.CategoryMessageConsumer;
 using Infrastructure.MessageBroker;
-using Infrastructure.Repositories;
-using Infrastructure.Repositories.CategoryRepositories;
-using Infrastructure.Services;
+using Infrastructure.Services.CategoryServices;
+using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Persistence.Outbox;
+using Quartz;
 
 namespace Infrastructure;
-
 public static class DependencyInjection
 {
     //FIXME: AddInfrastructure
@@ -19,11 +19,14 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
+
         services.AddHealthCheck(configuration)
             .AddServices()
-            .AddRepository()
+            .AddScoped<OutboxProcessor>() //Đăng ký OutboxProcessor
             .AddEventBus()
-            .AddRedisConfig(configuration);
+            .AddRedisConfig(configuration)
+            .AddBackgoundJob()
+            .AddMassTransitConfiguration(configuration);
 
         return services;
     }
@@ -58,22 +61,44 @@ public static class DependencyInjection
             var categoryQueryServices = provider.GetRequiredService<CategoryQueryServices>();
             return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!);
         });
-
-
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 
-    public static IServiceCollection AddRepository(this IServiceCollection services)
+    private static IServiceCollection AddMassTransitConfiguration(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        services.AddScoped<CategoryRepository>();
-        services.AddScoped<ICategoryRepository>(provider =>
+        services.AddMassTransit(busConfiguration =>
         {
-            var categoryRepository = provider.GetRequiredService<CategoryRepository>();
-            return new CategoryRepositoryCached(categoryRepository, provider.GetService<IDistributedCache>()!);
+            busConfiguration.SetKebabCaseEndpointNameFormatter();
+            //* NOTE: Message Broker in memory
+            busConfiguration.UsingInMemory((context, config) =>
+            {
+                config.ConfigureEndpoints(context);
+            });
+
+            //* Đăng ký consumer
+            busConfiguration.AddConsumer<CategoryCreatedMessageConsumer>();
+
+            //* FIXME: Config RabbitMQ
+            #region Config RabbitMQ
+            // busConfiguration.UsingRabbitMq((context, cfg) =>
+            // {
+            //     MessageBrokerSetting messageBrokerSetting = context.GetRequiredService<MessageBrokerSetting>();
+            //     cfg.Host(new Uri(messageBrokerSetting.Host), h =>
+            //     {
+            //         h.Username(messageBrokerSetting.Username);
+            //         h.Password(messageBrokerSetting.Password);
+            //     });
+            // });
+            #endregion
+
         });
+
         return services;
     }
+
+
 
     private static IServiceCollection AddEventBus(this IServiceCollection services)
     {
@@ -93,6 +118,27 @@ public static class DependencyInjection
             redisOptions.Configuration = connection;
         });
 
+        return services;
+    }
+
+
+    private static IServiceCollection AddBackgoundJob(this IServiceCollection services)
+    {
+        services.AddQuartz(options =>
+        {
+            //options.UseMicrosoftDependencyInjectionJobFactory();
+
+            var jobKey_OutboxBackgroundService = JobKey.Create(nameof(OutboxBackgroundService));
+
+            options.AddJob<OutboxBackgroundService>(jobKey_OutboxBackgroundService)
+                    .AddTrigger(trigger =>
+                        trigger.ForJob(jobKey_OutboxBackgroundService)
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(1)
+                    .RepeatForever()));
+
+        });
+
+        services.AddQuartzHostedService();
         return services;
     }
 }

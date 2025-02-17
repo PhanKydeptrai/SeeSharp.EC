@@ -1,8 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.IRepositories;
+using Domain.IRepositories.CategoryRepositories;
+using Domain.OutboxMessages.Services;
+using Infrastructure.Repositories.CategoryRepositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
+using Persistence.Outbox;
+using Persistence.Repositories;
+using Persistence.Repositories.CategoryRepositories;
 
 namespace Persistence;
 //FIXME: AddPersistnce
@@ -13,12 +21,33 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddPrimaryDatabase(configuration)
+            .AddRepository()
             .AddReadOnlyDatabase(configuration)
-            .AddAbstractsDatabase(configuration);
+            .AddAbstractsDatabase(configuration)
+            .AddOutBoxMessageServices();
 
         return services;
     }
+    //Add Repository
+    public static IServiceCollection AddRepository(this IServiceCollection services)
+    {
+        services.AddScoped<CategoryRepository>();
+        services.AddScoped<ICategoryRepository>(provider =>
+        {
+            var categoryRepository = provider.GetRequiredService<CategoryRepository>();
+            return new CategoryRepositoryCached(categoryRepository, provider.GetService<IDistributedCache>()!);
+        });
 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        return services;
+    }
+
+    //Add OutBoxMessageServices
+    public static IServiceCollection AddOutBoxMessageServices(this IServiceCollection services)
+    {
+        services.AddScoped<IOutBoxMessageServices, OutBoxMessageServices>();
+        return services;
+    }
     //Add Primary Database(MySQL)
     private static IServiceCollection AddPrimaryDatabase(
         this IServiceCollection services,
@@ -27,11 +56,19 @@ public static class DependencyInjection
 
         string connectionString = configuration.GetConnectionString("PrimaryDatabase")
             ?? throw new Exception("MySQL connection string is null");
-        services.AddDbContext<NextSharpMySQLDbContext>(options =>
+
+        //Dbcontext để ghi
+        services.AddDbContext<NextSharpMySQLWriteDbContext>(options =>
         {
             options.UseMySQL(connectionString);
         });
 
+        //Dbcontext để đọc
+        services.AddDbContext<NextSharpMySQLReadDbContext>((options) =>
+        {
+            options.UseMySQL(connectionString)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
 
         return services;
     }
@@ -51,7 +88,7 @@ public static class DependencyInjection
         });
 
         //Dbcontext để đọc
-        services.AddDbContext<NextSharpPostgreSQLReadDbContext>((sp, options) =>
+        services.AddDbContext<NextSharpPostgreSQLReadDbContext>((options) =>
         {
             options.UseNpgsql(connectionString)
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

@@ -45,11 +45,11 @@ internal sealed class OrderReadModelConfigurationForPostgreSQL : IEntityTypeConf
 
         builder.HasOne(a => a.BillReadModel)
             .WithOne(a => a.Order)
-            .HasForeignKey<Bill>(a => a.OrderId);
+            .HasForeignKey<BillReadModel>(a => a.OrderId);
 
         builder.HasOne(a => a.OrderTransactionReadModel)
             .WithOne(a => a.OrderReadModel)
-            .HasForeignKey<OrderTransaction>(a => a.OrderId);
+            .HasForeignKey<OrderTransactionReadModel>(a => a.OrderId);
 
     }
 }

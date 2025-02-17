@@ -7,7 +7,7 @@ public sealed class NextSharpPostgreSQLReadDbContext : DbContext
 {
     public NextSharpPostgreSQLReadDbContext(DbContextOptions<NextSharpPostgreSQLReadDbContext> options)
         : base(options) { }
-    public DbSet<BillReadModel> BillReadModels { get; set; }
+    public DbSet<BillReadModel> Bills { get; set; }
     public DbSet<CategoryReadModel> Categories { get; set; }
     public DbSet<CustomerReadModel> Customers { get; set; }
     public DbSet<CustomerVoucherReadModel> CustomerVouchers { get; set; }
