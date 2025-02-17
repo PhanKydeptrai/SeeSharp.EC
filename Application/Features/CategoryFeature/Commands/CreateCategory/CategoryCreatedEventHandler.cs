@@ -23,7 +23,7 @@ internal sealed class CategoryCreatedEventHandler : INotificationHandler<Categor
     }
 
     public async Task Handle(CategoryCreatedEvent notification, CancellationToken cancellationToken)
-    {
+    { 
         try
         {
             _logger.LogInformation("Start add new CategoryCreatedEvent to Outbox Message");
@@ -34,7 +34,8 @@ internal sealed class CategoryCreatedEventHandler : INotificationHandler<Categor
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.ToString()); //FIXME: Chưa tối ưu kiểu dữ liệu
+            //FIXME: Chưa tối ưu kiểu dữ liệu
+            _logger.LogError(ex.ToString()); 
         }
         
     }

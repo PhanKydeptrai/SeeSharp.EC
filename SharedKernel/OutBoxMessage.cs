@@ -8,7 +8,7 @@ public sealed class OutboxMessage
     public required string Content { get; init; }
     public DateTime OccurredOnUtc { get; init; }
     public DateTime? ProcessedOnUtc { get; init; }
-    public string? Error { get; init; }
+    public string? Error { get; init; } = string.Empty;
 }
 
 public enum OutboxMessageStatus

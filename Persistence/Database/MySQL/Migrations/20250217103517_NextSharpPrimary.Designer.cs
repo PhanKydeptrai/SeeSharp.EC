@@ -11,7 +11,7 @@ using Persistence.Database.MySQL;
 namespace Persistence.Database.MySQL.Migrations
 {
     [DbContext(typeof(NextSharpMySQLWriteDbContext))]
-    [Migration("20250217031752_NextSharpPrimary")]
+    [Migration("20250217103517_NextSharpPrimary")]
     partial class NextSharpPrimary
     {
         /// <inheritdoc />
@@ -614,7 +614,7 @@ namespace Persistence.Database.MySQL.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

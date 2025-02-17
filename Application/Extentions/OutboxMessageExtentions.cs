@@ -15,6 +15,7 @@ public static class OutboxMessageExtentions
             Id = Ulid.NewUlid(),
             Type = message.GetType().FullName!,
             Content = JsonSerializer.Serialize(message),
+            Error = string.Empty,
             OccurredOnUtc = DateTime.UtcNow,
             Status = OutboxMessageStatus.Pending                
         };

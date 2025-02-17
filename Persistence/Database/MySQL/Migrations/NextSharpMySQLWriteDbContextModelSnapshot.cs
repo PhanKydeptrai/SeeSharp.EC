@@ -611,7 +611,7 @@ namespace Persistence.Database.MySQL.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

@@ -20,7 +20,7 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
 
         builder.Property(a => a.Type)
             .IsRequired()
-            .HasColumnType("varchar(50)");
+            .HasColumnType("TEXT");
 
         builder.Property(a => a.Status)
             .IsRequired()
