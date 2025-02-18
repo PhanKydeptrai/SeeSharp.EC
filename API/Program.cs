@@ -25,8 +25,7 @@ builder.Services.AddApplication(builder.Configuration)
     .AddPersistnce(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
 
-//FIXME: Cần xem lại cách cấu hình
-builder.Services.AddScoped<ILinkServices, LinkServices>(); //Hateoas 
+builder.Services.AddScoped<ILinkServices, LinkServices>(); //* Hateoas 
 builder.Services.AddHttpContextAccessor();
 
 #endregion

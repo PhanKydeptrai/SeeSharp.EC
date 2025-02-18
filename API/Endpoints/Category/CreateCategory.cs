@@ -9,17 +9,19 @@ internal sealed class CreateCategory : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/categories", 
-        async (
+        app.MapPost("api/categories", async (
             [FromForm] string categoryName,
             [FromForm] IFormFile? image,
-            [FromServices] ISender sender) =>
+            LinkGenerator linkGenerator,
+            HttpContext httpContext,
+            ISender sender) =>
         {
             var command = new CreateCategoryCommand(categoryName, image);
             var result = await sender.Send(command);
-            return result.Match(Results.Created, CustomResults.Problem);
+            return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags("Category");
+        .WithTags("Category")
+        .WithName("CreateCategory");
     }
 }

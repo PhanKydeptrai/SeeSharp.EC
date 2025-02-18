@@ -10,7 +10,6 @@ namespace Infrastructure.Services.CategoryServices;
 internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 {
     private readonly ICategoryQueryServices _decorated;
-
     private readonly IDistributedCache _cache;
     public CategoryQueryServicesDecorated(
         ICategoryQueryServices decorated,

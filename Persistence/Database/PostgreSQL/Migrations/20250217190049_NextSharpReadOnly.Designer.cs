@@ -12,7 +12,7 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(NextSharpPostgreSQLWriteDbContext))]
-    [Migration("20250217031828_NextSharpReadOnly")]
+    [Migration("20250217190049_NextSharpReadOnly")]
     partial class NextSharpReadOnly
     {
         /// <inheritdoc />

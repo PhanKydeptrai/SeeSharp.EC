@@ -9,7 +9,7 @@ using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.CreateCategory;
 
-internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand>
+internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, CategoryId>
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -25,7 +25,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
         _publisher = publisher;
     }
 
-    public async Task<Result> Handle(
+    public async Task<Result<CategoryId>> Handle(
         CreateCategoryCommand request, 
         CancellationToken cancellationToken)
     {
@@ -42,7 +42,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
 
         if (result > 0)
         {
-            //Publish event với MediatR Notification => 
+            //Publish event with MediatR Notification
             await _publisher.Publish(
                 new CategoryCreatedEvent(
                     category.CategoryId.Value,
@@ -50,16 +50,9 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
                     category.ImageUrl ?? string.Empty),
                 cancellationToken);
 
-            //await _eventBus.PublishAsync(
-            //    new CategoryCreatedEvent(
-            //        category.CategoryId.Value, 
-            //        category.CategoryName.Value, 
-            //        category.ImageUrl ?? string.Empty),
-            //    cancellationToken);
-
-            return Result.Success();
+            return Result.Success(category.CategoryId);
         }
 
-        return Result.Failure(CategoryErrors.Problem(category.CategoryId));
+        return Result.Failure<CategoryId>(CategoryErrors.Problem(category.CategoryId));
     }
 }

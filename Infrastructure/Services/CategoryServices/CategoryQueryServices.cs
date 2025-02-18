@@ -37,7 +37,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.CategoryStatus))
             .FirstOrDefaultAsync();
 
-        if(categoryResponse is null)
+        if(categoryResponse is null) //Get from MySQL when not synchronized
         {
             categoryResponse = await _contextMySQL.Categories
                 .Where(a => a.CategoryId == categoryId.Value)
@@ -56,8 +56,8 @@ internal class CategoryQueryServices : ICategoryQueryServices
         string? searchTerm,
         string? sortColumn,
         string? sortOrder,
-        int? page = 1,
-        int? pageSize = 10)
+        int? page,
+        int? pageSize)
     {
         var categoriesQuery = _contextPostgreSQL.Categories.AsQueryable();
         //Search
@@ -96,7 +96,8 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.CategoryName,
                 a.ImageUrl,
                 a.CategoryStatus)).AsQueryable();
-        var categoriesList = await PagedList<CategoryResponse>.CreateAsync(categories, page ?? 1, pageSize ?? 10);
+        var categoriesList = await PagedList<CategoryResponse>
+            .CreateAsync(categories, page ?? 1, pageSize ?? 10);
 
         return categoriesList;
     }

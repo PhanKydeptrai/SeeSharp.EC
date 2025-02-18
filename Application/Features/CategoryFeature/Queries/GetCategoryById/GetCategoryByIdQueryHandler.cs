@@ -48,5 +48,18 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
             new { id = categoryResponse.categoryId }, 
             "self", 
             "GET"));
+        
+        categoryResponse.links.Add(_linkServices.Generate(
+            "GetCategoryById", 
+            new { id = categoryResponse.categoryId }, 
+            "update-category", 
+            "PUT"));
+        
+        categoryResponse.links.Add(_linkServices.Generate(
+            "GetCategoryById", 
+            new { id = categoryResponse.categoryId }, 
+            "delete-category", 
+            "DELETE"));
+        
     }
 }
