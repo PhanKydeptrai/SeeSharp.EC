@@ -1,4 +1,3 @@
-
 using Application.Features.CategoryFeature.Queries.GetAllCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +15,7 @@ internal sealed class GetAllCategory : IEndpoint
             [FromQuery] string? sortOrder,
             [FromQuery] int? page,
             [FromQuery] int? pageSize,
-            ISender sender,
-            LinkGenerator linkGenerator,
-            HttpContext httpContext) =>
+            ISender sender) =>
         {
             var result = await sender.Send(
                 new GetAllCategoryQuery(

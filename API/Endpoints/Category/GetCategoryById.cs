@@ -12,9 +12,7 @@ internal sealed class GetCategoryById : IEndpoint
     {
         app.MapGet("api/categories/{id}", async (
             [FromRoute] string id,
-            ISender sender,
-            LinkGenerator linkGenerator,
-            HttpContext httpContext) =>
+            ISender sender) =>
         {
             var result = await sender.Send(new GetCategoryByIdQuery(id));
             return result.Match(Results.Ok, CustomResults.Problem);

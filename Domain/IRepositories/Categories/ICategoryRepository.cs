@@ -1,8 +1,8 @@
-﻿using Domain.Database.PostgreSQL.ReadModels;
-using Domain.Entities.Categories;
+﻿using Domain.Entities.Categories;
 
 namespace Domain.IRepositories.CategoryRepositories;
 
+//* No cache in this place ok?
 public interface ICategoryRepository
 {
     #region Write
@@ -10,6 +10,8 @@ public interface ICategoryRepository
     Task AddCategoryToPosgreSQL(Category category);
     Task DeleteCategoryFromMySQL(CategoryId categoryId);
     Task DeleteCategoryFromPosgreSQL(CategoryId categoryId);
+    Task UpdateCategoryToMySQL(Category category);
+    Task UpdateCategoryToPosgreSQL(Category category);
     #endregion
 
     #region Validation
@@ -18,9 +20,9 @@ public interface ICategoryRepository
     #endregion
 
     #region Read
-    Task<Category?> GetCategoryById(CategoryId categoryId,
-        CancellationToken cancellationToken = default); //Without cache
-    Task<CategoryReadModel?> GetCategoryByIdCached(CategoryId categoryId,
-        CancellationToken cancellationToken = default); //With cache
+    Task<Category?> GetCategoryByIdFromMySQL(CategoryId categoryId,
+        CancellationToken cancellationToken = default);
+    Task<Category?> GetCategoryByIdFromPostgreSQL(CategoryId categoryId,
+    CancellationToken cancellationToken = default); 
     #endregion
 }

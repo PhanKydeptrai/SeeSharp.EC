@@ -12,8 +12,6 @@ internal sealed class CreateCategory : IEndpoint
         app.MapPost("api/categories", async (
             [FromForm] string categoryName,
             [FromForm] IFormFile? image,
-            LinkGenerator linkGenerator,
-            HttpContext httpContext,
             ISender sender) =>
         {
             var command = new CreateCategoryCommand(categoryName, image);
