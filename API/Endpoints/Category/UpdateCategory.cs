@@ -17,6 +17,11 @@ internal sealed class UpdateCategory : IEndpoint
             ISender sender) =>
         {
             var result = await sender.Send(new UpdateCategoryCommand(categoryId, categoryName, image));
+            // if(result.IsSuccess)
+            // {
+            //     return Results.Ok();
+            // }
+            // return CustomResults.Problem(result);
             return result.Match(
                 Results.NoContent, 
                 CustomResults.Problem);

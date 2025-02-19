@@ -48,7 +48,13 @@ internal class CategoryQueryServices : ICategoryQueryServices
                     a.CategoryStatus))
                 .FirstOrDefaultAsync();
         }
+
         return categoryResponse;
+    }
+
+    public async Task<bool> IsCategoryExist(CategoryId categoryId, CancellationToken cancellationToken = default)
+    {
+        return await _contextMySQL.Categories.AnyAsync(a => a.CategoryId == categoryId.Value, cancellationToken);
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(

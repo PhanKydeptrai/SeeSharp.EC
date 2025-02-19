@@ -14,7 +14,7 @@ internal sealed class UpdateCategoryCommandValidator : AbstractValidator<UpdateC
             .Must(a => Ulid.TryParse(a, out _))
             .WithMessage("CategoryId is not in the correct format");
 
-        RuleFor(x => x.categoryName)
+        RuleFor(x => x.categoryName) //!FIXME: Move to handler
             .NotEmpty()
             .WithMessage("CategoryName is required")
             .MaximumLength(50)

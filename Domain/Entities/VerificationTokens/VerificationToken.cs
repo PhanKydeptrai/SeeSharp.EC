@@ -1,7 +1,7 @@
 using Domain.Entities.Users;
 
 namespace Domain.Entities.VerificationTokens;
-//NOTE: Create factory method
+
 public sealed class VerificationToken
 {
     public VerificationTokenId VerificationTokenId { get; private set; } = null!;
