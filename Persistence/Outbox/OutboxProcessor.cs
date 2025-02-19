@@ -40,25 +40,24 @@ public sealed class OutboxProcessor
                 var deserializedMessage = JsonSerializer.Deserialize(outboxMessage.Content, messageType)!;
                 //Publish message
                 //await _eventBus.PublishAsync(deserializedMessage, cancellation);
+
                 await _publishEndpoint.Publish(deserializedMessage, messageType, cancellation);
+
                 //Update status
                 await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     outboxMessage.Id,
-                    OutboxMessageStatus.Processed,
+                    OutboxMessageStatus.Published,
                     string.Empty,
                     DateTime.UtcNow);
 
-                await _unitOfWork.Commit();
             }
-            catch (Exception ex)
+            catch (Exception ex) //cant publish message => update status to failed
             {
                 await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     outboxMessage.Id,
-                    OutboxMessageStatus.Pending,//NOTE: Change to Failed
+                    OutboxMessageStatus.Failed,
                     ex.ToString(),
                     DateTime.UtcNow);
-
-                await _unitOfWork.Commit();
             }
         }
 

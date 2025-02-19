@@ -10,11 +10,11 @@ internal sealed class GetCategoryById : IEndpoint
 {   
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/categories/{id}", async (
-            [FromRoute] string id,
+        app.MapGet("api/categories/{categoryId}", async (
+            [FromRoute] string categoryId,
             ISender sender) =>
         {
-            var result = await sender.Send(new GetCategoryByIdQuery(id));
+            var result = await sender.Send(new GetCategoryByIdQuery(categoryId));
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()

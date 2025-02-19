@@ -47,7 +47,8 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
                 new CategoryCreatedEvent(
                     category.CategoryId.Value,
                     category.CategoryName.Value,
-                    category.ImageUrl ?? string.Empty),
+                    category.ImageUrl ?? string.Empty,
+                    Ulid.NewUlid()),
                 cancellationToken);
 
             return Result.Success(category.CategoryId);

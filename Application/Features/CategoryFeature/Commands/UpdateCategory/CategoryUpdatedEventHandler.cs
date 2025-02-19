@@ -1,19 +1,19 @@
-﻿using Application.Outbox;
+using Application.Outbox;
 using Domain.IRepositories;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.CategoryEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.CategoryFeature.Commands.CreateCategory;
+namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
 
-internal sealed class CategoryCreatedEventHandler : INotificationHandler<CategoryCreatedEvent>
+public class CategoryUpdatedEventHandler : INotificationHandler<CategoryUpdatedEvent>
 {
-    private readonly ILogger<CategoryCreatedEventHandler> _logger;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<CategoryUpdatedEventHandler> _logger;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
-    public CategoryCreatedEventHandler(
-        ILogger<CategoryCreatedEventHandler> logger,
+    private readonly IUnitOfWork _unitOfWork;
+    public CategoryUpdatedEventHandler(
+        ILogger<CategoryUpdatedEventHandler> logger,
         IUnitOfWork unitOfWork,
         IOutBoxMessageServices outBoxMessageServices)
     {
@@ -22,25 +22,24 @@ internal sealed class CategoryCreatedEventHandler : INotificationHandler<Categor
         _outBoxMessageServices = outBoxMessageServices;
     }
 
-    public async Task Handle(CategoryCreatedEvent notification, CancellationToken cancellationToken)
-    { 
+    public async Task Handle(CategoryUpdatedEvent notification, CancellationToken cancellationToken)
+    {
         try
         {
-            _logger.LogInformation("Start add new CategoryCreatedEvent to Outbox Message");
+            _logger.LogInformation("Start add new CategoryUpdatedEvent to Outbox Message");
 
             await OutboxMessageExtentions.InsertOutboxMessageAsync(
                 notification.messageId, 
                 notification, 
                 _outBoxMessageServices, 
                 _unitOfWork);
-            
-            _logger.LogInformation("End add new CategoryCreatedEvent to Outbox Message");
+
+            _logger.LogInformation("End add new CategoryUpdatedEvent to Outbox Message");
         }
         catch (Exception ex)
         {
             //FIXME: Chưa tối ưu kiểu dữ liệu
-            _logger.LogError(ex.ToString()); 
+            _logger.LogError(ex.ToString());
         }
-        
     }
 }

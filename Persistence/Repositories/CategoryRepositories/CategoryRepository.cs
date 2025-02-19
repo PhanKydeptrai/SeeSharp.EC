@@ -29,74 +29,90 @@ internal sealed class CategoryRepository : ICategoryRepository
         await _postgreSQLWriteDbContext.Categories.AddAsync(category);
     }
 
-    public async Task DeleteCategoryFromMySQL(CategoryId categoryId)
+    public async Task<int> DeleteCategoryFromMySQL(CategoryId categoryId)
     {
         // Cập nhật trạng thái của Category
-        await _mySQLDbContext.Categories
+        return await _mySQLDbContext.Categories
             .Where(a => a.CategoryId == categoryId)
             .ExecuteUpdateAsync(
                 a => a.SetProperty(
-                    a => a.CategoryStatus, 
+                    a => a.CategoryStatus,
                     CategoryStatus.Unavailable));
     }
 
-    public async Task DeleteCategoryFromPosgreSQL(CategoryId categoryId)
+    public async Task<int> DeleteCategoryFromPosgreSQL(CategoryId categoryId)
     {
         // Cập nhật trạng thái của Category
-        await _postgreSQLWriteDbContext.Categories
+        return await _postgreSQLWriteDbContext.Categories
             .Where(a => a.CategoryId == categoryId)
             .ExecuteUpdateAsync(
                 a => a.SetProperty(
-                    a => a.CategoryStatus, 
+                    a => a.CategoryStatus,
                     CategoryStatus.Unavailable));
     }
-    
+
     public async Task<Category?> GetCategoryByIdFromMySQL(
-        CategoryId categoryId, 
+        CategoryId categoryId,
         CancellationToken cancellationToken = default)
     {
         return await _mySQLDbContext.Categories.FindAsync(categoryId);
     }
 
     public async Task<Category?> GetCategoryByIdFromPostgreSQL(
-        CategoryId categoryId, 
+        CategoryId categoryId,
         CancellationToken cancellationToken = default)
     {
         return await _postgreSQLWriteDbContext.Categories.FindAsync(categoryId);
     }
 
     public async Task<bool> IsCategoryNameExist(
-        string categoryName, 
+        CategoryName categoryName,
         CancellationToken cancellationToken = default)
     {
-        return await _mySQLDbContext.Categories.AnyAsync(
-            a => a.CategoryName.Value == categoryName, 
-            cancellationToken);
+        return await _mySQLDbContext.Categories
+            .AsNoTracking()
+            .AnyAsync(
+                a => a.CategoryName == categoryName,
+                cancellationToken);
     }
 
-    public async Task UpdateCategoryToMySQL(Category category)
+    public Task<bool> IsCategoryNameExistWhenUpdate(
+        CategoryId categoryId, 
+        CategoryName categoryName, 
+        CancellationToken cancellationToken = default)
     {
-        await _mySQLDbContext.Categories
+        return _mySQLDbContext.Categories
+            .AsNoTracking()
+            .AnyAsync(
+                a => a.CategoryName == categoryName 
+                && a.CategoryId != categoryId, 
+                cancellationToken);
+        
+    }
+
+    public async Task<int> UpdateCategoryToMySQL(Category category)
+    {
+        return await _mySQLDbContext.Categories
             .Where(a => a.CategoryId == category.CategoryId)
             .ExecuteUpdateAsync(
                 a => a.SetProperty(
-                    a => a.CategoryName, 
+                    a => a.CategoryName,
                     category.CategoryName)
                     .SetProperty(
-                        a => a.ImageUrl, 
+                        a => a.ImageUrl,
                         category.ImageUrl));
     }
 
-    public async Task UpdateCategoryToPosgreSQL(Category category)
+    public async Task<int> UpdateCategoryToPosgreSQL(Category category)
     {
-        await _mySQLDbContext.Categories
+        return await _postgreSQLWriteDbContext.Categories
             .Where(a => a.CategoryId == category.CategoryId)
             .ExecuteUpdateAsync(
                 a => a.SetProperty(
-                    a => a.CategoryName, 
+                    a => a.CategoryName,
                     category.CategoryName)
                     .SetProperty(
-                        a => a.ImageUrl, 
+                        a => a.ImageUrl,
                         category.ImageUrl));
     }
 }

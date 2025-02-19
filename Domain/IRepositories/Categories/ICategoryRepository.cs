@@ -8,14 +8,19 @@ public interface ICategoryRepository
     #region Write
     Task AddCategoryToMySQL(Category category);
     Task AddCategoryToPosgreSQL(Category category);
-    Task DeleteCategoryFromMySQL(CategoryId categoryId);
-    Task DeleteCategoryFromPosgreSQL(CategoryId categoryId);
-    Task UpdateCategoryToMySQL(Category category);
-    Task UpdateCategoryToPosgreSQL(Category category);
+    Task<int> DeleteCategoryFromMySQL(CategoryId categoryId);
+    Task<int> DeleteCategoryFromPosgreSQL(CategoryId categoryId);
+    Task<int> UpdateCategoryToMySQL(Category category);
+    Task<int> UpdateCategoryToPosgreSQL(Category category);
     #endregion
 
     #region Validation
-    Task<bool> IsCategoryNameExist(string categoryName,
+    Task<bool> IsCategoryNameExist(CategoryName categoryName,
+        CancellationToken cancellationToken = default);
+    //Check if category name exists when update
+    Task<bool> IsCategoryNameExistWhenUpdate(
+        CategoryId categoryId, 
+        CategoryName categoryName,
         CancellationToken cancellationToken = default);
     #endregion
 

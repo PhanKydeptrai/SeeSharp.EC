@@ -1,9 +1,11 @@
 ﻿using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
+using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.CategoryEvents;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using SharedKernel;
 
 namespace Infrastructure.Consumers.CategoryMessageConsumer;
 
@@ -11,15 +13,18 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IOutBoxMessageServices _outBoxMessageServices;
     private readonly ILogger<CategoryCreatedMessageConsumer> _logger;
     public CategoryCreatedMessageConsumer(
         ICategoryRepository categoryRepository,
         IUnitOfWork unitOfWork,
-        ILogger<CategoryCreatedMessageConsumer> logger)
+        ILogger<CategoryCreatedMessageConsumer> logger,
+        IOutBoxMessageServices outBoxMessageServices)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _outBoxMessageServices = outBoxMessageServices;
     }
     public async Task Consume(ConsumeContext<CategoryCreatedEvent> context)
     {
@@ -34,13 +39,29 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
 
         if (result <= 0)
         {
+            //Cập nhật trạng thái outbox message
+            await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
+                context.Message.messageId,
+                OutboxMessageStatus.Failed,
+                "Failed to consume CategoryCreatedEvent",
+                DateTime.UtcNow);
+
             _logger.LogError(
                 "Failed to consume CategoryCreatedEvent for categoryId: {CategoryId}", 
                 context.Message.categoryId);
-
+            
             throw new Exception("Category created event consumed failed");
         }
 
+        await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
+            context.Message.messageId,
+            OutboxMessageStatus.Processed,
+            string.Empty,
+            DateTime.UtcNow);
+
+        
+
+        //Log
         _logger.LogInformation(
             "Successfully consumed CategoryCreatedEvent for categoryId: {CategoryId}", 
             context.Message.categoryId);

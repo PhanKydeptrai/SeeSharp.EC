@@ -1,4 +1,7 @@
-﻿using MediatR;
+﻿using API.Extentions;
+using API.Infrastructure;
+using Application.Features.CategoryFeature.Commands.UpdateCategory;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Category;
@@ -13,7 +16,13 @@ internal sealed class UpdateCategory : IEndpoint
             [FromForm] IFormFile? image,
             ISender sender) =>
         {
-            
-        });
+            var result = await sender.Send(new UpdateCategoryCommand(categoryId, categoryName, image));
+            return result.Match(
+                Results.NoContent, 
+                CustomResults.Problem);
+        })
+        .DisableAntiforgery()
+        .WithTags("Category")
+        .WithName("UpdateCategory");
     }
 }
