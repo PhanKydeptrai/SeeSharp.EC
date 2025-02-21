@@ -56,6 +56,10 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
     }
 
     //* Private methods
+    private CategoryUpdatedEvent CreateCategoryUpdatedEvent()
+    {
+        throw new NotImplementedException();
+    }
     private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
     {
         var category = await _categoryRepository.GetCategoryByIdFromMySQL(categoryId);

@@ -22,7 +22,6 @@ public class OutboxBackgroundService : IJob
         {
             _logger.LogInformation("Starting OutboxBackgroundService...");
 
-
             using var scope = serviceScopeFactory.CreateScope();
 
             var outboxProcessor = scope.ServiceProvider.GetRequiredService<OutboxProcessor>();

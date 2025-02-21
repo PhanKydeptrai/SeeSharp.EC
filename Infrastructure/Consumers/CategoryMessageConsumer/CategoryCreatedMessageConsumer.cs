@@ -65,6 +65,8 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
             string.Empty,
             DateTime.UtcNow);
 
+        await _unitOfWork.Commit();
+
         //Log End
         _logger.LogInformation(
             "Successfully consumed CategoryCreatedEvent for categoryId: {CategoryId}", 

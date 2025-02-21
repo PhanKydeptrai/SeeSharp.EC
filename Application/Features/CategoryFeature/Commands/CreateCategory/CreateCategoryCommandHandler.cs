@@ -44,9 +44,9 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
             imageUrl);
 
         var message = CreateCategoryCreatedEvent(category);
-
+        //Add category to MySQL
         await _categoryRepository.AddCategoryToMySQL(category);
-
+        //Add Outbox message
         await OutboxMessageExtentions.InsertOutboxMessageAsync(
             message.messageId,
             message,

@@ -133,7 +133,7 @@ public static class DependencyInjection
             options.AddJob<OutboxBackgroundService>(jobKey_OutboxBackgroundService)
                     .AddTrigger(trigger =>
                         trigger.ForJob(jobKey_OutboxBackgroundService)
-                    .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(7)
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(1)
                     .RepeatForever()));
 
         });
