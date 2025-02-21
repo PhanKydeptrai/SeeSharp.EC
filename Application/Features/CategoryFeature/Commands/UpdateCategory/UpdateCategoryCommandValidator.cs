@@ -1,6 +1,6 @@
-using Domain.Entities.Categories;
 using Domain.IRepositories.CategoryRepositories;
 using FluentValidation;
+using NaughtyStrings;
 
 namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
 
@@ -14,15 +14,24 @@ internal sealed class UpdateCategoryCommandValidator : AbstractValidator<UpdateC
             .Must(a => Ulid.TryParse(a, out _))
             .WithMessage("CategoryId is not in the correct format");
 
-        RuleFor(x => x.categoryName) //!FIXME: Move to handler
+        RuleFor(x => x.categoryName)
             .NotEmpty()
             .WithMessage("CategoryName is required")
             .MaximumLength(50)
             .WithMessage("CategoryName must not exceed 50 characters")
-            .Must((id, name) => categoryRepository.IsCategoryNameExistWhenUpdate(
-                CategoryId.FromString(id.categoryId), 
-                CategoryName.FromString(name)).Result == false)
-            .WithMessage("CategoryName already exists");
-        
+            .Must(ValidateInput)
+            .WithMessage("Category name contains invalid characters");
+    }
+
+    private bool ValidateInput(string input)
+    {
+        foreach (var naughtyString in TheNaughtyStrings.All)
+        {
+            if (input.Contains(naughtyString))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

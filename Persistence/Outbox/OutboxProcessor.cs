@@ -9,6 +9,7 @@ using System.Text.Json;
 namespace Persistence.Outbox;
 
 //TODO: Thêm Batch size cho việc xử lý Outbox
+//!FIXME: Sửa phương thức update
 // Thêm thứ tự cho các message
 public sealed class OutboxProcessor
 {
@@ -38,9 +39,6 @@ public sealed class OutboxProcessor
                 //Lấy loại message để Deserialize
                 var messageType = AssemblyReference.Assembly.GetType(outboxMessage.Type)!;
                 var deserializedMessage = JsonSerializer.Deserialize(outboxMessage.Content, messageType)!;
-                //Publish message
-                //await _eventBus.PublishAsync(deserializedMessage, cancellation);
-
                 await _publishEndpoint.Publish(deserializedMessage, messageType, cancellation);
 
                 //Update status

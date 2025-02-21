@@ -33,6 +33,9 @@ public class CategoryUpdatedEventHandler : INotificationHandler<CategoryUpdatedE
                 notification, 
                 _outBoxMessageServices, 
                 _unitOfWork);
+            
+            //* Publish event to queue
+            
 
             _logger.LogInformation("End add new CategoryUpdatedEvent to Outbox Message");
         }

@@ -11,6 +11,7 @@ namespace Infrastructure.Consumers.CategoryMessageConsumer;
 
 internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreatedEvent>
 {
+    #region Dependency
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
@@ -25,9 +26,11 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
         _unitOfWork = unitOfWork;
         _logger = logger;
         _outBoxMessageServices = outBoxMessageServices;
-    }
+    } 
+    #endregion
     public async Task Consume(ConsumeContext<CategoryCreatedEvent> context)
     {
+        //Log start
         _logger.LogInformation(
             "Consuming CategoryCreatedEvent for categoryId: {CategoryId}", 
             context.Message.categoryId);
@@ -46,6 +49,9 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
                 "Failed to consume CategoryCreatedEvent",
                 DateTime.UtcNow);
 
+            await _unitOfWork.Commit();
+
+            //Log End
             _logger.LogError(
                 "Failed to consume CategoryCreatedEvent for categoryId: {CategoryId}", 
                 context.Message.categoryId);
@@ -59,9 +65,7 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
             string.Empty,
             DateTime.UtcNow);
 
-        
-
-        //Log
+        //Log End
         _logger.LogInformation(
             "Successfully consumed CategoryCreatedEvent for categoryId: {CategoryId}", 
             context.Message.categoryId);

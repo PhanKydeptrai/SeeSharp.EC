@@ -58,14 +58,10 @@ internal class OutBoxMessageServices : IOutBoxMessageServices
         string? error,
         DateTime processedOnUtc)
     {
-        await _dbContext.OutboxMessages
-            .Where(a => a.Id == id)
-            .ExecuteUpdateAsync(
-                a => a.SetProperty(
-                    p => p.Status,
-                    outboxMessageStatus)
-                .SetProperty(
-                    a => a.ProcessedOnUtc, processedOnUtc)
-                .SetProperty(a => a.Error, error));
+        var message = await _dbContext.OutboxMessages.FindAsync(id);
+        message!.Status = outboxMessageStatus;
+        message.ProcessedOnUtc = processedOnUtc;
+        message.Error = error;
+        
     }
 }

@@ -1,5 +1,4 @@
-﻿using Domain.IRepositories;
-using Domain.OutboxMessages.Services;
+﻿using Domain.OutboxMessages.Services;
 using SharedKernel;
 using System.Text.Json;
 
@@ -8,8 +7,7 @@ public static class OutboxMessageExtentions
 {
     public static async Task InsertOutboxMessageAsync<T>(
         Ulid messageId,
-        T message, IOutBoxMessageServices outBoxMessageServices,
-        IUnitOfWork unitOfWork) where T: notnull
+        T message, IOutBoxMessageServices outBoxMessageServices) where T: notnull
     {
         var outboxMessage = new OutboxMessage
         { 
@@ -22,7 +20,6 @@ public static class OutboxMessageExtentions
         };
 
         await outBoxMessageServices.AddNewOutBoxMessageAsync(outboxMessage);
-        await unitOfWork.Commit();
     }
 }
 

@@ -1,6 +1,7 @@
-﻿using Application.Abstractions.Messaging;
-using Application.IServices;
+﻿using Application.Abstractions.EventBus;
+using Application.Abstractions.Messaging;
 using Domain.Entities.Categories;
+using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.CategoryEvents;
@@ -12,51 +13,63 @@ namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
 public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand>
 {
     private readonly ICategoryRepository _categoryRepository;
-    private readonly ICategoryQueryServices _categoryQueryServices;
     private readonly IPublisher _publisher;
+    private readonly IUnitOfWork _unitOfWork;
     public UpdateCategoryCommandHandler(
         ICategoryRepository categoryRepository,
         IPublisher publisher,
-        ICategoryQueryServices categoryQueryServices)
+        IUnitOfWork unitOfWork)
     {
         _categoryRepository = categoryRepository;
         _publisher = publisher;
-        _categoryQueryServices = categoryQueryServices;
+        _unitOfWork = unitOfWork;
     }
 
-    //TODO: Xử lý lỗi id không tồn tại
-    //Thêm validator cho get by id
     public async Task<Result> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
-        var category = Category.FromExisting(
-            CategoryId.FromString(request.categoryId),
-            CategoryName.FromString(request.categoryName),
-            string.Empty); //TODO: Get image from request
+        var categoryId = CategoryId.FromString(request.categoryId);
 
-        if (!await IsCategoryExist(category.CategoryId, cancellationToken))
+        var (category, failure) = await GetCategoryByIdAsync(categoryId);
+
+        if (category is null)
         {
-            return Result.Failure(CategoryErrors.NotFound(category.CategoryId));
+            return failure!;
         }
 
-        var result = await _categoryRepository.UpdateCategoryToMySQL(category);
+        UpdateCategory(category, request);
 
-        if (result > 0)
+        int result = await _unitOfWork.Commit(cancellationToken);
+
+        if (result <= 0)
         {
-            await _publisher.Publish(
-                new CategoryUpdatedEvent(
-                    category.CategoryId.Value,
-                    category.CategoryName.Value,
-                    category.ImageUrl ?? string.Empty,
-                    Ulid.NewUlid()),
-                cancellationToken);
-
-            return Result.Success();
+            return Result.Failure(CategoryErrors.Failure(category.CategoryId));
         }
-        return Result.Failure(CategoryErrors.Failure(category.CategoryId));
+
+        var message = new CategoryUpdatedEvent(
+                category.CategoryId.Value,
+                category.CategoryName.Value,
+                category.ImageUrl ?? string.Empty,
+                Ulid.NewUlid());
+
+        await _publisher.Publish(message);
+        return Result.Success();
     }
 
-    private async Task<bool> IsCategoryExist(CategoryId categoryId, CancellationToken cancellationToken)
+    //* Private methods
+    private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
     {
-        return await _categoryQueryServices.IsCategoryExist(categoryId, cancellationToken);
+        var category = await _categoryRepository.GetCategoryByIdFromMySQL(categoryId);
+        if (category is null)
+        {
+            return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));
+        }
+        return (category, null);
+    }
+
+    private void UpdateCategory(Category category, UpdateCategoryCommand request)
+    {
+        Category.Update(category,
+                CategoryName.FromString(request.categoryName),
+                string.Empty); // TODO: Get image from request
     }
 }
