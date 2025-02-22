@@ -10,7 +10,8 @@ internal sealed class GetCategoryById : IEndpoint
 {   
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/categories/{categoryId}", async (
+        app.MapGet("api/categories/{categoryId}", 
+        async (
             [FromRoute] string categoryId,
             ISender sender) =>
         {

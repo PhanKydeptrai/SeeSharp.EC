@@ -80,6 +80,7 @@ public static class DependencyInjection
             //* Đăng ký consumer
             busConfiguration.AddConsumer<CategoryCreatedMessageConsumer>();
             busConfiguration.AddConsumer<CategoryUpdatedMessageConsumer>();
+            busConfiguration.AddConsumer<CategoryDeletedMessageConsumer>();
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
             // busConfiguration.UsingRabbitMq((context, cfg) =>
@@ -133,7 +134,7 @@ public static class DependencyInjection
             options.AddJob<OutboxBackgroundService>(jobKey_OutboxBackgroundService)
                     .AddTrigger(trigger =>
                         trigger.ForJob(jobKey_OutboxBackgroundService)
-                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(1)
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(7)
                     .RepeatForever()));
 
         });

@@ -100,8 +100,7 @@ internal sealed class CategoryRepository : ICategoryRepository
         var category = await _postgreSQLWriteDbContext.Categories.FindAsync(categoryId);
         if (category is not null)
         {
-            category.CategoryName = categoryName;
-            category.ImageUrl = imageUrl;
+            Category.Update(category, categoryName, imageUrl);
         }
     }
 
@@ -113,8 +112,7 @@ internal sealed class CategoryRepository : ICategoryRepository
         var category = await _mySQLDbContext.Categories.FindAsync(categoryId);
         if (category is not null)
         {
-            category.CategoryName = categoryName;
-            category.ImageUrl = imageUrl;
+            Category.Update(category, categoryName, imageUrl);
         }
     }
 }

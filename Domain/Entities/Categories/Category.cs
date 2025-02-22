@@ -5,9 +5,9 @@ namespace Domain.Entities.Categories;
 public sealed class Category
 {
     public CategoryId CategoryId { get; private set; }
-    public CategoryName CategoryName { get; set; } = CategoryName.Empty;
-    public string? ImageUrl { get; set; }
-    public CategoryStatus CategoryStatus { get; set; }
+    public CategoryName CategoryName { get; private set; } = CategoryName.Empty;
+    public string? ImageUrl { get; private set; }
+    public CategoryStatus CategoryStatus { get; private set; }
     public ICollection<Product>? Products { get; set; }
 
     private Category(
@@ -40,6 +40,11 @@ public sealed class Category
     {
         category.CategoryName = categoryName;
         category.ImageUrl = imageUrl;
+    }
+
+    public static void Delete(Category category)
+    {
+        category.CategoryStatus = CategoryStatus.Deleted;
     }
 
     public static Category FromExisting(

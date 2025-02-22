@@ -62,6 +62,5 @@ internal class OutBoxMessageServices : IOutBoxMessageServices
         message!.Status = outboxMessageStatus;
         message.ProcessedOnUtc = processedOnUtc;
         message.Error = error;
-        
     }
 }

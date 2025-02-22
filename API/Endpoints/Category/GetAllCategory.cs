@@ -8,7 +8,8 @@ internal sealed class GetAllCategory : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/categories", async (
+        app.MapGet("api/categories", 
+        async (
             [FromQuery] string? filter,
             [FromQuery] string? searchTerm,
             [FromQuery] string? sortColumn,
@@ -28,6 +29,7 @@ internal sealed class GetAllCategory : IEndpoint
 
             return Results.Ok(result.Value);
         })
+        .DisableAntiforgery()
         .WithTags("Category")
         .WithName("GetAllCategory");
     }

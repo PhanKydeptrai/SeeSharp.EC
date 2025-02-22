@@ -16,6 +16,7 @@ public interface ICategoryRepository
         CategoryId categoryId,
         CategoryName categoryName,
         string imageUrl);
+        
     #endregion
 
     #region Validation 

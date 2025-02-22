@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Categories;
+using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
@@ -10,57 +10,49 @@ using SharedKernel;
 
 namespace Infrastructure.Consumers.CategoryMessageConsumer;
 
-internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdatedEvent>
+internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeletedEvent>
 {
-    #region Dependency
-    private readonly ILogger<CategoryCreatedMessageConsumer> _logger;
+    private readonly ILogger<CategoryDeletedMessageConsumer> _logger;
     private readonly ICategoryRepository _categoryRepository;
-    private readonly IDistributedCache _distributedCache;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
-    public CategoryUpdatedMessageConsumer(
-        ILogger<CategoryCreatedMessageConsumer> logger,
+    private readonly IDistributedCache _distributedCache;
+    public CategoryDeletedMessageConsumer(
+        ILogger<CategoryDeletedMessageConsumer> logger,
         ICategoryRepository categoryRepository,
+        IUnitOfWork unitOfWork,
         IOutBoxMessageServices outBoxMessageServices,
-        IDistributedCache distributedCache,
-        IUnitOfWork unitOfWork)
+        IDistributedCache distributedCache)
     {
         _logger = logger;
         _categoryRepository = categoryRepository;
+        _unitOfWork = unitOfWork;
         _outBoxMessageServices = outBoxMessageServices;
         _distributedCache = distributedCache;
-        _unitOfWork = unitOfWork;
-    } 
-    #endregion
+    }
 
-    public async Task Consume(ConsumeContext<CategoryUpdatedEvent> context)
+    public async Task Consume(ConsumeContext<CategoryDeletedEvent> context)
     {
         _logger.LogInformation(
-            "Consuming CategoryUpdatedEvent for categoryId: {CategoryId}",
+            "Consuming CategoryDeletedEvent for categoryId: {CategoryId}",
             context.Message.categoryId);
 
-        var category = ConvertEventToCategory(context.Message);
-        
-        await _categoryRepository.UpdateCategoryPostgreSQL_ChangeTracking(
-            category.CategoryId, 
-            category.CategoryName, 
-            category.ImageUrl ?? string.Empty);
-        
-        int result = await _unitOfWork.SaveChangesAsync();
+        var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(CategoryId.FromUlid(context.Message.categoryId));
 
-        //FIXME: Failed khi update mà không có sư thay đổi
-        if (result <= 0) //Nếu không thành công 
+        Category.Delete(category!);
+
+        if(await _unitOfWork.SaveChangesAsync() <= 0) //Nếu không thành công
         {
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     context.Message.messageId,
                     OutboxMessageStatus.Failed,
-                    "Failed to consume CategoryUpdatedEvent",
+                    "Failed to consume CategoryDeletedEvent",
                     DateTime.UtcNow);
     
             await _unitOfWork.Commit();
 
             _logger.LogError(
-                "Failed to consume CategoryUpdatedEvent for categoryId: {CategoryId}",
+                "Failed to consume CategoryDeletedEvent for categoryId: {CategoryId}",
                 context.Message.categoryId);
 
             throw new Exception("Category updated event consumed failed");
@@ -70,26 +62,19 @@ internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdated
         await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
             context.Message.messageId,
             OutboxMessageStatus.Processed,
-            "Successfully consumed CategoryUpdatedEvent",
+            "Successfully consumed CategoryDeletedEvent",
             DateTime.UtcNow);
 
+        await _unitOfWork.Commit();
         //Ivalidating cache
         string cacheKey = $"CategoryResponse:{context.Message.categoryId}";
         await _distributedCache.RemoveAsync(cacheKey);
-
-        await _unitOfWork.Commit();
+        
         //Log End
         _logger.LogInformation(
-            "Successfully consumed CategoryUpdatedEvent for categoryId: {CategoryId}",
+            "Successfully consumed CategoryDeletedEvent for categoryId: {CategoryId}",
             context.Message.categoryId);
+        
     }
 
-    private Category ConvertEventToCategory(CategoryUpdatedEvent categoryCreatedEvent)
-    {
-        return Category.FromExisting(
-            CategoryId.FromUlid(categoryCreatedEvent.categoryId),
-            CategoryName.NewCategoryName(categoryCreatedEvent.categoryName),
-            categoryCreatedEvent.imageUrl
-        );
-    }
 }

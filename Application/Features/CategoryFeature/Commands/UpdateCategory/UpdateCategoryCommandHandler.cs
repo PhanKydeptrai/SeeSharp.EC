@@ -1,11 +1,12 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
+using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
+using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.CategoryEvents;
-using MediatR;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
@@ -13,18 +14,21 @@ namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
 public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand>
 {
     private readonly ICategoryRepository _categoryRepository;
-    private readonly IPublisher _publisher;
+    private readonly IEventBus _eventBus;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IOutBoxMessageServices _outboxservice;
     public UpdateCategoryCommandHandler(
         ICategoryRepository categoryRepository,
-        IPublisher publisher,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IEventBus eventBus,
+        IOutBoxMessageServices outboxservice)
     {
         _categoryRepository = categoryRepository;
-        _publisher = publisher;
         _unitOfWork = unitOfWork;
+        _eventBus = eventBus;
+        _outboxservice = outboxservice;
     }
-
+    //FLOW: Get category by id from database -> Update category -> Add Outbox message -> Commit -> Publish event
     public async Task<Result> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
         var categoryId = CategoryId.FromString(request.categoryId);
@@ -35,9 +39,15 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
         {
             return failure!;
         }
-
+        //Update category
         UpdateCategory(category, request);
-
+        var message = CreateCategoryUpdatedEvent(category);
+        //Add Outbox message
+        await OutboxMessageExtentions.InsertOutboxMessageAsync(
+            message.messageId,
+            message,
+            _outboxservice);
+            
         int result = await _unitOfWork.Commit(cancellationToken);
 
         if (result <= 0)
@@ -45,20 +55,18 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
             return Result.Failure(CategoryErrors.Failure(category.CategoryId));
         }
 
-        var message = new CategoryUpdatedEvent(
-                category.CategoryId.Value,
-                category.CategoryName.Value,
-                category.ImageUrl ?? string.Empty,
-                Ulid.NewUlid());
-
-        await _publisher.Publish(message);
+        await _eventBus.PublishAsync(message);
         return Result.Success();
     }
 
     //* Private methods
-    private CategoryUpdatedEvent CreateCategoryUpdatedEvent()
+    private CategoryUpdatedEvent CreateCategoryUpdatedEvent(Category category)
     {
-        throw new NotImplementedException();
+        return new CategoryUpdatedEvent(
+                category.CategoryId.Value,
+                category.CategoryName.Value,
+                category.ImageUrl ?? string.Empty,
+                Ulid.NewUlid());
     }
     private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
     {

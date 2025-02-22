@@ -14,14 +14,10 @@ internal sealed class UpdateCategory : IEndpoint
             [FromRoute] string categoryId,
             [FromForm] string categoryName,
             [FromForm] IFormFile? image,
+            HttpContext context,
             ISender sender) =>
         {
             var result = await sender.Send(new UpdateCategoryCommand(categoryId, categoryName, image));
-            // if(result.IsSuccess)
-            // {
-            //     return Results.Ok();
-            // }
-            // return CustomResults.Problem(result);
             return result.Match(
                 Results.NoContent, 
                 CustomResults.Problem);

@@ -31,7 +31,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
         _outboxservice = outboxservice;
     } 
     #endregion
-
+    //FLOW: Create category -> Add category to MySQL -> Add Outbox message -> Commit -> Publish event
     public async Task<Result<CategoryId>> Handle(
         CreateCategoryCommand request,
         CancellationToken cancellationToken)
