@@ -1,4 +1,5 @@
 ﻿using Domain.IRepositories;
+using Domain.IRepositories.Categories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Persistence.Database.PostgreSQL;
 using Persistence.Outbox;
 using Persistence.Repositories;
 using Persistence.Repositories.CategoryRepositories;
+using Persistence.Repositories.ProductRepositories;
 
 namespace Persistence;
 //FIXME: AddPersistnce
@@ -29,6 +31,7 @@ public static class DependencyInjection
     public static IServiceCollection AddRepository(this IServiceCollection services)
     {
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }

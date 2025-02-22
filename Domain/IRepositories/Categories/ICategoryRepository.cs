@@ -27,6 +27,8 @@ public interface ICategoryRepository
         CategoryId categoryId, 
         CategoryName categoryName,
         CancellationToken cancellationToken = default);
+
+    Task<bool> IsCategoryIdExist(CategoryId categoryId, CancellationToken cancellationToken = default);
     #endregion
 
     #region Read

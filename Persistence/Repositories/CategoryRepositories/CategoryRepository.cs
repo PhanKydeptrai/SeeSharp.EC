@@ -29,7 +29,7 @@ internal sealed class CategoryRepository : ICategoryRepository
         await _postgreSQLWriteDbContext.Categories.AddAsync(category);
     }
 
-    #region Delete
+    #region Delete -------------------------------------------------------
     //public async Task<int> DeleteCategoryFromMySQL(CategoryId categoryId)
     //{
     //    // Cập nhật trạng thái của Category
@@ -51,7 +51,7 @@ internal sealed class CategoryRepository : ICategoryRepository
     //                a => a.CategoryStatus,
     //                CategoryStatus.Unavailable));
     //}
-    #endregion
+    #endregion ------------------------------------------------------------
 
     public async Task<Category?> GetCategoryByIdFromMySQL(
         CategoryId categoryId,
@@ -65,6 +65,16 @@ internal sealed class CategoryRepository : ICategoryRepository
         CancellationToken cancellationToken = default)
     {
         return await _postgreSQLWriteDbContext.Categories.FindAsync(categoryId);
+    }
+
+    public async Task<bool> IsCategoryIdExist(CategoryId categoryId, CancellationToken cancellationToken = default)
+    {
+        return await _mySQLDbContext.Categories
+            .AsNoTracking()
+            .AnyAsync(
+            a => a.CategoryId == categoryId 
+            && a.CategoryStatus != CategoryStatus.Deleted, 
+            cancellationToken);
     }
 
     public async Task<bool> IsCategoryNameExist(

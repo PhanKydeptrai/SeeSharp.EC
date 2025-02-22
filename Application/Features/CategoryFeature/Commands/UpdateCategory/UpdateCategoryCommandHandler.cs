@@ -10,7 +10,7 @@ using Domain.Utilities.Events.CategoryEvents;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
-
+//TODO: Thêm xử lý cập nhật Product
 public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand>
 {
     private readonly ICategoryRepository _categoryRepository;
@@ -39,6 +39,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
         {
             return failure!;
         }
+
         //Update category
         UpdateCategory(category, request);
         var message = CreateCategoryUpdatedEvent(category);
@@ -66,6 +67,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
                 category.CategoryId.Value,
                 category.CategoryName.Value,
                 category.ImageUrl ?? string.Empty,
+                category.CategoryStatus,
                 Ulid.NewUlid());
     }
     private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
@@ -80,6 +82,11 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
 
     private void UpdateCategory(Category category, UpdateCategoryCommand request)
     {
+        //TODO: Xử lý ảnh
+        //--------------------
+
+
+        //--------------------
         Category.Update(category,
                 CategoryName.FromString(request.categoryName),
                 string.Empty); // TODO: Get image from request

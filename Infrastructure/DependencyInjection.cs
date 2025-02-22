@@ -2,6 +2,7 @@
 using Application.IServices;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CategoryMessageConsumer;
+using Infrastructure.Consumers.ProductMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Services.CategoryServices;
 using MassTransit;
@@ -81,6 +82,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CategoryCreatedMessageConsumer>();
             busConfiguration.AddConsumer<CategoryUpdatedMessageConsumer>();
             busConfiguration.AddConsumer<CategoryDeletedMessageConsumer>();
+            busConfiguration.AddConsumer<ProductCreatedMessageConsumer>();
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
             // busConfiguration.UsingRabbitMq((context, cfg) =>

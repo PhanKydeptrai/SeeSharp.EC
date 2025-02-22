@@ -50,12 +50,13 @@ public sealed class Category
     public static Category FromExisting(
         CategoryId categoryId,
         CategoryName categoryName,
-        string? imageUrl)
+        string? imageUrl,
+        CategoryStatus categoryStatus)
     {
         return new Category(
             categoryId,
             categoryName,
             imageUrl ?? string.Empty,
-            CategoryStatus.Available);
+            categoryStatus);
     }
 }

@@ -89,7 +89,8 @@ internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdated
         return Category.FromExisting(
             CategoryId.FromUlid(categoryCreatedEvent.categoryId),
             CategoryName.NewCategoryName(categoryCreatedEvent.categoryName),
-            categoryCreatedEvent.imageUrl
+            categoryCreatedEvent.imageUrl ?? string.Empty,
+            categoryCreatedEvent.categoryStatus
         );
     }
 }

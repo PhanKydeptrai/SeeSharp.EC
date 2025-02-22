@@ -36,8 +36,11 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
         CreateCategoryCommand request,
         CancellationToken cancellationToken)
     {
-        //!FIXME: Xử lý ảnh
+        //TODO: Xử lý ảnh
+        //--------------------
+
         string imageUrl = string.Empty;
+        //--------------------
 
         var category = Category.NewCategory(
             CategoryName.NewCategoryName(request.categoryName),
@@ -66,6 +69,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
             category.CategoryId.Value,
             category.CategoryName.Value,
             category.ImageUrl ?? string.Empty,
+            category.CategoryStatus,
             Ulid.NewUlid());
     }
 }

@@ -29,7 +29,8 @@ internal class CategoryQueryServices : ICategoryQueryServices
         CancellationToken cancellationToken)
     {
         var categoryResponse = await _contextPostgreSQL.Categories
-            .Where(a => a.CategoryId == categoryId.Value)
+            .Where(a => a.CategoryId == categoryId.Value 
+            && a.CategoryStatus != CategoryStatus.Deleted.ToString())
             .Select(a => new CategoryResponse(
                 a.CategoryId,
                 a.CategoryName,
@@ -69,7 +70,9 @@ internal class CategoryQueryServices : ICategoryQueryServices
         //Search
         if (!string.IsNullOrEmpty(searchTerm))
         {
-            categoriesQuery = categoriesQuery.Where(x => x.CategoryName.Contains(searchTerm));
+            categoriesQuery = categoriesQuery.Where(
+                x => x.CategoryName.Contains(searchTerm) 
+                && x.CategoryStatus != CategoryStatus.Deleted.ToString());
         }
 
         //Filter
