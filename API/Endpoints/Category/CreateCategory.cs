@@ -3,6 +3,7 @@ using API.Infrastructure;
 using Application.Features.CategoryFeature.Commands.CreateCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Constants;
 
 namespace API.Endpoints.Category;
 internal sealed class CreateCategory : IEndpoint
@@ -21,7 +22,7 @@ internal sealed class CreateCategory : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags("Category")
-        .WithName("CreateCategory");
+        .WithTags(EndpointTag.Category)
+        .WithName(EndpointName.Category.Create);
     }
 }

@@ -15,7 +15,6 @@ internal class CategoryQueryServices : ICategoryQueryServices
 {
     private readonly NextSharpPostgreSQLReadDbContext _contextPostgreSQL;
     private readonly NextSharpMySQLReadDbContext _contextMySQL;
-
     public CategoryQueryServices(
         NextSharpPostgreSQLReadDbContext contextPostgreSQL, 
         NextSharpMySQLReadDbContext contextMySQL)
@@ -38,18 +37,6 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.CategoryStatus))
             .FirstOrDefaultAsync();
 
-        if(categoryResponse is null) //Get from MySQL when not synchronized
-        {
-            categoryResponse = await _contextMySQL.Categories
-                .Where(a => a.CategoryId == categoryId.Value)
-                .Select(a => new CategoryResponse(
-                    a.CategoryId,
-                    a.CategoryName,
-                    a.ImageUrl,
-                    a.CategoryStatus))
-                .FirstOrDefaultAsync();
-        }
-
         return categoryResponse;
     }
 
@@ -71,8 +58,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
         if (!string.IsNullOrEmpty(searchTerm))
         {
             categoriesQuery = categoriesQuery.Where(
-                x => x.CategoryName.Contains(searchTerm) 
-                && x.CategoryStatus != CategoryStatus.Deleted.ToString());
+                x => x.CategoryName.Contains(searchTerm));
         }
 
         //Filter

@@ -7,7 +7,6 @@ using Domain.Utilities.Events.ProductEvents;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Infrastructure.Consumers.ProductMessageConsumer;
 
@@ -78,12 +77,12 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
     private Product ConvertOutboxMessageToProduct(ProductCreatedEvent productCreatedEvent)
     {
         return Product.FromExisting(
-            ProductId.FromUlid(productCreatedEvent.ProductId),
+            ProductId.FromGuid(productCreatedEvent.ProductId),
             ProductName.FromString(productCreatedEvent.ProductName),
             productCreatedEvent.ImageUrl,
             productCreatedEvent.Description,
             ProductPrice.FromDecimal(productCreatedEvent.Price),
             productCreatedEvent.ProductStatus,
-            CategoryId.FromUlid(productCreatedEvent.CategoryId));
+            CategoryId.FromGuid(productCreatedEvent.CategoryId));
     }
 }

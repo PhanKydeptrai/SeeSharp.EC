@@ -15,21 +15,21 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
         builder.Property(x => x.BillId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => BillId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => OrderId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerId.FromGuid(value))
             .HasColumnType("uuid");
 
@@ -47,7 +47,7 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => ShippingInformationId.FromGuid(value))
             .HasColumnType("uuid");
 

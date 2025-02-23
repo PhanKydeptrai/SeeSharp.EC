@@ -31,7 +31,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
     //FLOW: Get category by id from database -> Update category -> Add Outbox message -> Commit -> Publish event
     public async Task<Result> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
-        var categoryId = CategoryId.FromString(request.categoryId);
+        var categoryId = CategoryId.FromGuid(request.categoryId);
 
         var (category, failure) = await GetCategoryByIdAsync(categoryId);
 
@@ -68,7 +68,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
                 category.CategoryName.Value,
                 category.ImageUrl ?? string.Empty,
                 category.CategoryStatus,
-                Ulid.NewUlid());
+                Ulid.NewUlid().ToGuid());
     }
     private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
     {

@@ -16,14 +16,14 @@ internal sealed class OrderConfigurationForPostgreSQL : IEntityTypeConfiguration
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => OrderId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerId.FromGuid(value))
             .HasColumnType("uuid");
 
@@ -53,7 +53,7 @@ internal sealed class OrderConfigurationForPostgreSQL : IEntityTypeConfiguration
         builder.Property(x => x.OrderTransactionId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => OrderTransactionId.FromGuid(value))
             .HasColumnType("uuid");
 

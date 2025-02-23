@@ -11,7 +11,7 @@ internal sealed class VerificationTokenReadModelConfigurationForMySQL : IEntityT
         builder.HasKey(x => x.VerificationTokenId);
         builder.Property(a => a.VerificationTokenId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
@@ -29,7 +29,7 @@ internal sealed class VerificationTokenReadModelConfigurationForMySQL : IEntityT
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
     }

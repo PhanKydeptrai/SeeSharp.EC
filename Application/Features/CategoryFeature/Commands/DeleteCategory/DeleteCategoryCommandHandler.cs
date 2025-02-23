@@ -32,8 +32,8 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
 
     public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
-        var categoryId = CategoryId.FromString(request.categoryId);
-        var (category, failure) = await GetCategoryByIdAsync(CategoryId.FromUlid(categoryId));
+        var categoryId = CategoryId.FromGuid(request.categoryId);
+        var (category, failure) = await GetCategoryByIdAsync(CategoryId.FromGuid(categoryId));
 
         if (category is null)
         {
@@ -60,9 +60,9 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
 
     }
     //----------------------------------------------------------------
-    private CategoryDeletedEvent CreateCategoryDeletedEvent(Ulid categoryId)
+    private CategoryDeletedEvent CreateCategoryDeletedEvent(Guid categoryId)
     {
-        return new CategoryDeletedEvent(categoryId, Ulid.NewUlid());
+        return new CategoryDeletedEvent(categoryId, Ulid.NewUlid().ToGuid());
     }
 
     private void DeleteCategory(Category category)

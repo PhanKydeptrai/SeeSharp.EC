@@ -12,7 +12,7 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.Property(a => a.VoucherId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => VoucherId.FromGuid(value))
             .HasColumnType("uuid");
 

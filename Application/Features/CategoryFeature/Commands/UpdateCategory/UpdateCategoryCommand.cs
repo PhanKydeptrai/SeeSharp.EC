@@ -4,6 +4,6 @@ using Microsoft.AspNetCore.Http;
 namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
 
 public record UpdateCategoryCommand(
-    string categoryId,
+    Guid categoryId,
     string categoryName,
     IFormFile? categoryImage) : ICommand;

@@ -14,12 +14,12 @@ internal sealed class OrderReadModelConfigurationForPostgreSQL : IEntityTypeConf
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("uuid");
 
         builder.Property(x => x.Total)
@@ -36,7 +36,7 @@ internal sealed class OrderReadModelConfigurationForPostgreSQL : IEntityTypeConf
 
         builder.Property(x => x.OrderTransactionId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("uuid");
 
         builder.HasMany(x => x.OrderDetailReadModels)

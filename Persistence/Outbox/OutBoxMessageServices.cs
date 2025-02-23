@@ -19,7 +19,7 @@ internal class OutBoxMessageServices : IOutBoxMessageServices
         await _dbContext.OutboxMessages.AddAsync(outBoxMessage);
     }
 
-    public async Task DeleteOutBoxMessageAsync(Ulid id)
+    public async Task DeleteOutBoxMessageAsync(Guid id)
     {
         await _dbContext.OutboxMessages
             .Where(a => a.Id == id)
@@ -33,7 +33,7 @@ internal class OutBoxMessageServices : IOutBoxMessageServices
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<OutboxMessage?> GetOutBoxMessageByIdAsync(Ulid id, CancellationToken cancellationToken = default)
+    public async Task<OutboxMessage?> GetOutBoxMessageByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbContext.OutboxMessages.FindAsync(id, cancellationToken);
     }
@@ -53,7 +53,7 @@ internal class OutBoxMessageServices : IOutBoxMessageServices
     }
 
     public async Task UpdateOutStatusBoxMessageAsync(
-        Ulid id,
+        Guid id,
         OutboxMessageStatus outboxMessageStatus,
         string? error,
         DateTime processedOnUtc)

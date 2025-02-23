@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Messaging;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Features.ProductFeature.CreateProduct;
+namespace Application.Features.ProductFeature.Commands.CreateProduct;
 
 public record CreateProductCommand(
     string ProductName,

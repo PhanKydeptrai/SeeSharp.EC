@@ -2,7 +2,7 @@
 
 public class VoucherReadModel
 {
-    public Ulid VoucherId { get; set; }
+    public Guid VoucherId { get; set; }
     public string VoucherName { get; set; } = null!;
     public string VoucherCode { get; set; } = null!;
     public string VoucherType { get; set; } = null!;

@@ -1,8 +1,9 @@
 ﻿using API.Extentions;
 using API.Infrastructure;
-using Application.Features.ProductFeature.CreateProduct;
+using Application.Features.ProductFeature.Commands.CreateProduct;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Constants;
 
 namespace API.Endpoints.Product;
 
@@ -30,9 +31,8 @@ internal sealed class CreateProduct : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags("Product")
-        .WithName("CreateProduct");
-
+        .WithTags(EndpointTag.Product)
+        .WithName(EndpointName.Product.Create);
     }
 
 

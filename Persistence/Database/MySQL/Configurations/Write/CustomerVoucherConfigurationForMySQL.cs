@@ -14,7 +14,7 @@ internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfigur
         builder.Property(x => x.CustomerVoucherId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerVoucherId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -23,7 +23,7 @@ internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfigur
         builder.Property(x => x.VoucherId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => VoucherId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -32,7 +32,7 @@ internal sealed class CustomerVoucherConfigurationForMySQL : IEntityTypeConfigur
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerId.FromGuid(value)
             )
             .HasColumnType("char(36)")

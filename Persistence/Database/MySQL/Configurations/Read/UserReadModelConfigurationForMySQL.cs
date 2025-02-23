@@ -12,7 +12,7 @@ internal sealed class UserReadModelConfigurationForMySQL : IEntityTypeConfigurat
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

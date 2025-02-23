@@ -25,14 +25,14 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
         CancellationToken cancellationToken)
     {
         var category = await _categoryQueryServices.GetById(
-            CategoryId.FromString(request.categoryId),
+            CategoryId.FromGuid(request.categoryId),
             cancellationToken);
 
         if (category is null)
         {
             return Result.Failure<CategoryResponse>(
                 CategoryErrors.NotFound(
-                    CategoryId.FromString(
+                    CategoryId.FromGuid(
                         request.categoryId)));
         }
 

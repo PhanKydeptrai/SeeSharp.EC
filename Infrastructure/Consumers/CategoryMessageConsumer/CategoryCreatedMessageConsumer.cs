@@ -76,7 +76,7 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
     private Category ConvertEventToCategory(CategoryCreatedEvent categoryCreatedEvent)
     {
         return Category.FromExisting(
-            CategoryId.FromUlid(categoryCreatedEvent.categoryId),
+            CategoryId.FromGuid(categoryCreatedEvent.categoryId),
             CategoryName.NewCategoryName(categoryCreatedEvent.categoryName),
             categoryCreatedEvent.imageUrl,
             categoryCreatedEvent.categoryStatus

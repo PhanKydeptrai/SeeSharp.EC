@@ -6,7 +6,7 @@ namespace Application.Outbox;
 public static class OutboxMessageExtentions
 {
     public static async Task InsertOutboxMessageAsync<T>(
-        Ulid messageId,
+        Guid messageId,
         T message, IOutBoxMessageServices outBoxMessageServices) where T: notnull
     {
         var outboxMessage = new OutboxMessage

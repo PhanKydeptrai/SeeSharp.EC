@@ -37,7 +37,7 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
             "Consuming CategoryDeletedEvent for categoryId: {CategoryId}",
             context.Message.categoryId);
 
-        var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(CategoryId.FromUlid(context.Message.categoryId));
+        var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(CategoryId.FromGuid(context.Message.categoryId));
 
         Category.Delete(category!);
 

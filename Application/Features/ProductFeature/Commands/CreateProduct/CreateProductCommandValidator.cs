@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Application.Features.ProductFeature.CreateProduct;
+namespace Application.Features.ProductFeature.Commands.CreateProduct;
 
 internal sealed class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
 {

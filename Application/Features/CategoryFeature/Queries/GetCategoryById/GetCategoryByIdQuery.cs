@@ -3,4 +3,4 @@ using Application.DTOs.Category;
 
 namespace Application.Features.CategoryFeature.Queries.GetCategoryById;
 
-public sealed record GetCategoryByIdQuery(string categoryId) : IQuery<CategoryResponse>;
+public sealed record GetCategoryByIdQuery(Guid categoryId) : IQuery<CategoryResponse>;

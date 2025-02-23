@@ -11,7 +11,7 @@ using Domain.Utilities.Errors;
 using Domain.Utilities.Events.ProductEvents;
 using SharedKernel;
 
-namespace Application.Features.ProductFeature.CreateProduct;
+namespace Application.Features.ProductFeature.Commands.CreateProduct;
 
 internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProductCommand>
 {
@@ -71,7 +71,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
             product.ProductPrice.Value,
             product.ProductStatus,
             product.CategoryId.Value,
-            Ulid.NewUlid());
+            Ulid.NewUlid().ToGuid());
     }
     private async Task<(Product? category, Result? failure)> CreateNewProduct(
         CreateProductCommand command,

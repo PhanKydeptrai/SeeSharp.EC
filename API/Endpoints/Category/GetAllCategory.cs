@@ -1,6 +1,7 @@
 using Application.Features.CategoryFeature.Queries.GetAllCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Constants;
 
 namespace API.Endpoints.Category;
 
@@ -30,7 +31,7 @@ internal sealed class GetAllCategory : IEndpoint
             return Results.Ok(result.Value);
         })
         .DisableAntiforgery()
-        .WithTags("Category")
-        .WithName("GetAllCategory");
+        .WithTags(EndpointTag.Category)
+        .WithName(EndpointName.Category.GetAll);
     }
 }

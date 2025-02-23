@@ -4,8 +4,8 @@ using SharedKernel;
 namespace Domain.Utilities.Events.CategoryEvents;
 
 public sealed record CategoryCreatedEvent(
-    Ulid categoryId,
+    Guid categoryId,
     string categoryName,
     string imageUrl,
     CategoryStatus categoryStatus,
-    Ulid messageId) : IDomainEvent;
+    Guid messageId) : IDomainEvent;

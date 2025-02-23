@@ -70,6 +70,6 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
             category.CategoryName.Value,
             category.ImageUrl ?? string.Empty,
             category.CategoryStatus,
-            Ulid.NewUlid());
+            Ulid.NewUlid().ToGuid());
     }
 }

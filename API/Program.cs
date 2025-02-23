@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using API.Extentions;
+using API.Infrastructure;
 using API.Services;
 using Application;
 using Application.Abstractions.LinkService;
@@ -20,6 +21,10 @@ builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.ConstraintMap["ulid"] = typeof(UlidRouteConstraint);
+});
 #region Dependency Injection
 builder.Services.AddApplication(builder.Configuration)
     .AddPersistnce(builder.Configuration)
@@ -100,6 +105,10 @@ app.UseHttpsRedirection();
 
 
 #region Cấu hình minimal API
+app.MapGet("/api/convert/{id:guid}", (Guid id) =>
+{
+    return Results.Ok(new Ulid(id));
+});
 
 app.MapEndpoints(); 
 #endregion

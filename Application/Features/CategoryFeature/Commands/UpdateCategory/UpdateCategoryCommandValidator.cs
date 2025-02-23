@@ -10,9 +10,7 @@ internal sealed class UpdateCategoryCommandValidator : AbstractValidator<UpdateC
     {
         RuleFor(x => x.categoryId)
             .NotEmpty()
-            .WithMessage("CategoryId is required")
-            .Must(a => Ulid.TryParse(a, out _))
-            .WithMessage("CategoryId is not in the correct format");
+            .WithMessage("CategoryId is required");
 
         RuleFor(x => x.categoryName)
             .NotEmpty()

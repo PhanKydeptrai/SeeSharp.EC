@@ -13,7 +13,7 @@ internal sealed class VerificationTokenConfigurationForPostgreSQL : IEntityTypeC
         builder.Property(a => a.VerificationTokenId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => VerificationTokenId.FromGuid(value))
             .HasColumnType("uuid");
 
@@ -32,7 +32,7 @@ internal sealed class VerificationTokenConfigurationForPostgreSQL : IEntityTypeC
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => UserId.FromGuid(value))
             .HasColumnType("uuid");
     }

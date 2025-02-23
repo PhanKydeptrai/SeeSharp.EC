@@ -16,7 +16,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.Property(a => a.OrderTransactionId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => OrderTransactionId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -71,7 +71,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.Property(a => a.VoucherId) 
             .IsRequired(false)
             .HasConversion(
-                value => value.Value.ToGuid(), 
+                value => value.Value, 
                 value => VoucherId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -80,7 +80,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.Property(a => a.OrderId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => OrderId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -89,7 +89,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
         builder.Property(a => a.BillId)
             .IsRequired(false)
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => BillId.FromGuid(value)
             )
             .HasColumnType("char(36)")

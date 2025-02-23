@@ -11,7 +11,7 @@ internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeCo
         builder.HasKey(a => a.ProductId);
         builder.Property(a => a.ProductId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("uuid");
 
         builder.Property(a => a.ProductName)
@@ -36,7 +36,7 @@ internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeCo
 
         builder.Property(a => a.CategoryId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("uuid");
 
         builder.HasMany(a => a.WishItemReadModels)
