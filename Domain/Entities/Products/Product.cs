@@ -36,6 +36,24 @@ public sealed class Product
         CategoryId = categoryId;
     }
 
+    public static Product FromExisting(
+        ProductId productId,
+        ProductName productName,
+        string? imageUrl,
+        string? description,
+        ProductPrice productPrice,
+        ProductStatus productStatus,
+        CategoryId categoryId)
+    {
+        return new Product(
+            productId,
+            productName,
+            imageUrl ?? string.Empty,
+            description ?? string.Empty,
+            productPrice,
+            productStatus,
+            categoryId);
+    }
     public static Product NewProduct( 
         ProductName productName, 
         string? imageUrl, 

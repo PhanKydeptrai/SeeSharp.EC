@@ -15,7 +15,7 @@ internal sealed class UserConfigurationForMySQL : IEntityTypeConfiguration<User>
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => UserId.FromGuid(value)
             )
             .HasColumnType("char(36)")

@@ -2,7 +2,6 @@ using Domain.Entities.Customers;
 using Domain.Entities.Vouchers;
 
 namespace Domain.Entities.CustomerVouchers;
-//NOTE: Create factory method
 public sealed class CustomerVoucher
 {
     public CustomerVoucherId CustomerVoucherId { get; private set; } = null!;

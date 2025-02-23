@@ -15,7 +15,7 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(x => x.FeedbackId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => FeedbackId.FromGuid(value))
             .HasColumnType("uuid");
 
@@ -40,14 +40,14 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => OrderId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerId.FromGuid(value))
             .HasColumnType("uuid");
 

@@ -11,7 +11,7 @@ using Persistence.Database.MySQL;
 namespace Persistence.Database.MySQL.Migrations
 {
     [DbContext(typeof(NextSharpMySQLWriteDbContext))]
-    [Migration("20250217103517_NextSharpPrimary")]
+    [Migration("20250217190022_NextSharpPrimary")]
     partial class NextSharpPrimary
     {
         /// <inheritdoc />

@@ -13,7 +13,7 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
         builder.Property(a => a.UserAuthenticationTokenId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => UserAuthenticationTokenId.FromGuid(value))
             .HasColumnType("uuid");
 
@@ -44,7 +44,7 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => UserId.FromGuid(value))
             .HasColumnType("uuid");
 

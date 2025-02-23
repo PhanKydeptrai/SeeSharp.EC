@@ -1,8 +1,11 @@
-﻿using SharedKernel;
+﻿using Domain.Entities.Categories;
+using SharedKernel;
 
 namespace Domain.Utilities.Events.CategoryEvents;
 
 public sealed record CategoryCreatedEvent(
-    Ulid categoryId,
+    Guid categoryId,
     string categoryName,
-    string imageUrl) : IDomainEvent;
+    string imageUrl,
+    CategoryStatus categoryStatus,
+    Guid messageId) : IDomainEvent;

@@ -2,9 +2,9 @@
 
 public class OrderReadModel
 {
-    public Ulid OrderId { get; set; }
+    public Guid OrderId { get; set; }
 
-    public Ulid CustomerId { get; set; }
+    public Guid CustomerId { get; set; }
 
     public decimal Total { get; set; }
 
@@ -12,7 +12,7 @@ public class OrderReadModel
 
     public string OrderStatus { get; set; } = null!;
 
-    public Ulid OrderTransactionId { get; set; }
+    public Guid OrderTransactionId { get; set; }
 
     public BillReadModel? BillReadModel { get; set; }
 

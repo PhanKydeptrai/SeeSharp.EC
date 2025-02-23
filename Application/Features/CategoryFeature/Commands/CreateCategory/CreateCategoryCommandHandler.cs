@@ -1,65 +1,75 @@
-﻿using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.EventBus;
+using Application.Abstractions.Messaging;
+using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
+using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.CategoryEvents;
-using MediatR;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.CreateCategory;
 
-internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand>
+internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, CategoryId>
 {
+    #region Dependency
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IPublisher _publisher; //MediatR Notification
+    private readonly IEventBus _eventBus;
+    private readonly IOutBoxMessageServices _outboxservice;
 
     public CreateCategoryCommandHandler(
         ICategoryRepository categoryRepository,
         IUnitOfWork unitOfWork,
-        IPublisher publisher)
+        IEventBus eventBus,
+        IOutBoxMessageServices outboxservice)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
-        _publisher = publisher;
-    }
-
-    public async Task<Result> Handle(
-        CreateCategoryCommand request, 
+        _eventBus = eventBus;
+        _outboxservice = outboxservice;
+    } 
+    #endregion
+    //FLOW: Create category -> Add category to MySQL -> Add Outbox message -> Commit -> Publish event
+    public async Task<Result<CategoryId>> Handle(
+        CreateCategoryCommand request,
         CancellationToken cancellationToken)
     {
-        //FIXME: Xử lý ảnh
+        //TODO: Xử lý ảnh
+        //--------------------
+
         string imageUrl = string.Empty;
+        //--------------------
 
         var category = Category.NewCategory(
             CategoryName.NewCategoryName(request.categoryName),
             imageUrl);
 
+        var message = CreateCategoryCreatedEvent(category);
+        //Add category to MySQL
         await _categoryRepository.AddCategoryToMySQL(category);
+        //Add Outbox message
+        await OutboxMessageExtentions.InsertOutboxMessageAsync(
+            message.messageId,
+            message,
+            _outboxservice);
 
-        int result = await _unitOfWork.Commit(cancellationToken);
-
-        if (result > 0)
+        if (await _unitOfWork.Commit() > 0)
         {
-            //Publish event với MediatR Notification => 
-            await _publisher.Publish(
-                new CategoryCreatedEvent(
-                    category.CategoryId.Value,
-                    category.CategoryName.Value,
-                    category.ImageUrl ?? string.Empty),
-                cancellationToken);
-
-            //await _eventBus.PublishAsync(
-            //    new CategoryCreatedEvent(
-            //        category.CategoryId.Value, 
-            //        category.CategoryName.Value, 
-            //        category.ImageUrl ?? string.Empty),
-            //    cancellationToken);
-
-            return Result.Success();
+            await _eventBus.PublishAsync(message);
+            return Result.Success(category.CategoryId);
         }
-
-        return Result.Failure(CategoryErrors.Problem(category.CategoryId));
+        return Result.Failure<CategoryId>(CategoryErrors.Failure(category.CategoryId));
+    }
+    
+    private CategoryCreatedEvent CreateCategoryCreatedEvent(Category category)
+    {
+        return new CategoryCreatedEvent(
+            category.CategoryId.Value,
+            category.CategoryName.Value,
+            category.ImageUrl ?? string.Empty,
+            category.CategoryStatus,
+            Ulid.NewUlid().ToGuid());
     }
 }

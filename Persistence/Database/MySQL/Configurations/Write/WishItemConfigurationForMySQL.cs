@@ -13,7 +13,7 @@ internal sealed class WishItemConfigurationForMySQL : IEntityTypeConfiguration<W
         builder.Property(x => x.WishItemId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => WishItemId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -22,7 +22,7 @@ internal sealed class WishItemConfigurationForMySQL : IEntityTypeConfiguration<W
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -31,7 +31,7 @@ internal sealed class WishItemConfigurationForMySQL : IEntityTypeConfiguration<W
         builder.Property(x => x.ProductId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => ProductId.FromGuid(value)
             )
             .HasColumnType("char(36)")

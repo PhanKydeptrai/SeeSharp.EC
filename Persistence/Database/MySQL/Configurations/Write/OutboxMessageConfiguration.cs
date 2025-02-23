@@ -11,10 +11,6 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Id)
             .IsRequired()
-            .HasConversion(
-                value => value.ToGuid(),
-                value => new Ulid(value)
-            )
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

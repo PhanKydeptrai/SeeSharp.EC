@@ -13,7 +13,7 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
         builder.Property(a => a.ProductId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => ProductId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -54,7 +54,7 @@ internal sealed class ProductConfigurationForMySQL : IEntityTypeConfiguration<Pr
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CategoryId.FromGuid(value)
             )
             .HasColumnType("char(36)")

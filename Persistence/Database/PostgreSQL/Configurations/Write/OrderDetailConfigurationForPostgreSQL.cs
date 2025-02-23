@@ -14,21 +14,21 @@ internal sealed class OrderDetailConfigurationForPostgreSQL : IEntityTypeConfigu
         builder.Property(x => x.OrderDetailId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => OrderDetailId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => OrderId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => ProductId.FromGuid(value))
             .HasColumnType("uuid");
 

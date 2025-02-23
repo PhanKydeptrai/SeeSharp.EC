@@ -15,7 +15,6 @@ internal class CategoryQueryServices : ICategoryQueryServices
 {
     private readonly NextSharpPostgreSQLReadDbContext _contextPostgreSQL;
     private readonly NextSharpMySQLReadDbContext _contextMySQL;
-
     public CategoryQueryServices(
         NextSharpPostgreSQLReadDbContext contextPostgreSQL, 
         NextSharpMySQLReadDbContext contextMySQL)
@@ -29,7 +28,8 @@ internal class CategoryQueryServices : ICategoryQueryServices
         CancellationToken cancellationToken)
     {
         var categoryResponse = await _contextPostgreSQL.Categories
-            .Where(a => a.CategoryId == categoryId.Value)
+            .Where(a => a.CategoryId == categoryId.Value 
+            && a.CategoryStatus != CategoryStatus.Deleted.ToString())
             .Select(a => new CategoryResponse(
                 a.CategoryId,
                 a.CategoryName,
@@ -37,18 +37,12 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.CategoryStatus))
             .FirstOrDefaultAsync();
 
-        if(categoryResponse is null)
-        {
-            categoryResponse = await _contextMySQL.Categories
-                .Where(a => a.CategoryId == categoryId.Value)
-                .Select(a => new CategoryResponse(
-                    a.CategoryId,
-                    a.CategoryName,
-                    a.ImageUrl,
-                    a.CategoryStatus))
-                .FirstOrDefaultAsync();
-        }
         return categoryResponse;
+    }
+
+    public async Task<bool> IsCategoryExist(CategoryId categoryId, CancellationToken cancellationToken = default)
+    {
+        return await _contextMySQL.Categories.AnyAsync(a => a.CategoryId == categoryId.Value, cancellationToken);
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(
@@ -56,14 +50,15 @@ internal class CategoryQueryServices : ICategoryQueryServices
         string? searchTerm,
         string? sortColumn,
         string? sortOrder,
-        int? page = 1,
-        int? pageSize = 10)
+        int? page,
+        int? pageSize)
     {
         var categoriesQuery = _contextPostgreSQL.Categories.AsQueryable();
         //Search
         if (!string.IsNullOrEmpty(searchTerm))
         {
-            categoriesQuery = categoriesQuery.Where(x => x.CategoryName.Contains(searchTerm));
+            categoriesQuery = categoriesQuery.Where(
+                x => x.CategoryName.Contains(searchTerm));
         }
 
         //Filter
@@ -96,7 +91,8 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.CategoryName,
                 a.ImageUrl,
                 a.CategoryStatus)).AsQueryable();
-        var categoriesList = await PagedList<CategoryResponse>.CreateAsync(categories, page ?? 1, pageSize ?? 10);
+        var categoriesList = await PagedList<CategoryResponse>
+            .CreateAsync(categories, page ?? 1, pageSize ?? 10);
 
         return categoriesList;
     }

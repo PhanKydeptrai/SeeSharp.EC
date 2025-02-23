@@ -11,19 +11,16 @@ internal sealed class WishItemReadModelConfigurationForMySQL : IEntityTypeConfig
         builder.HasKey(x => x.WishItemId);
         builder.Property(x => x.WishItemId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

@@ -14,14 +14,14 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => ShippingInformationId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerId.FromGuid(value))
             .HasColumnType("uuid");
 

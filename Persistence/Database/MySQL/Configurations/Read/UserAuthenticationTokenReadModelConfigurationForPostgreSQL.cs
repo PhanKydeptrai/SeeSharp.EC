@@ -11,7 +11,7 @@ internal sealed class UserAuthenticationTokenReadModelConfigurationForMySQL : IE
         builder.HasKey(a => a.UserAuthenticationTokenId);
         builder.Property(a => a.UserAuthenticationTokenId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
@@ -33,7 +33,7 @@ internal sealed class UserAuthenticationTokenReadModelConfigurationForMySQL : IE
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

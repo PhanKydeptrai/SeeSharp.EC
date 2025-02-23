@@ -2,11 +2,11 @@
 
 public partial class OrderDetailReadModel
 {
-    public Ulid OrderDetailId { get; set; }
+    public Guid OrderDetailId { get; set; }
 
-    public Ulid OrderId { get; set; }
+    public Guid OrderId { get; set; }
 
-    public Ulid ProductId { get; set; }
+    public Guid ProductId { get; set; }
 
     public int Quantity { get; set; }
 

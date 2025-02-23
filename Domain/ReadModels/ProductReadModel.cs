@@ -2,7 +2,7 @@
 
 public class ProductReadModel
 {
-    public Ulid ProductId { get; set; }
+    public Guid ProductId { get; set; }
 
     public string ProductName { get; set; } = null!;
 
@@ -14,7 +14,7 @@ public class ProductReadModel
 
     public string ProductStatus { get; set; } = null!;
 
-    public Ulid CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
 
     public CategoryReadModel CategoryReadModel { get; set; } = null!;
 

@@ -3,6 +3,7 @@ using API.Infrastructure;
 using Application.Features.CategoryFeature.Commands.CreateCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Constants;
 
 namespace API.Endpoints.Category;
 internal sealed class CreateCategory : IEndpoint
@@ -13,13 +14,15 @@ internal sealed class CreateCategory : IEndpoint
         async (
             [FromForm] string categoryName,
             [FromForm] IFormFile? image,
-            [FromServices] ISender sender) =>
+            HttpContext context,
+            ISender sender) =>
         {
             var command = new CreateCategoryCommand(categoryName, image);
             var result = await sender.Send(command);
-            return result.Match(Results.Created, CustomResults.Problem);
+            return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags("Category");
+        .WithTags(EndpointTag.Category)
+        .WithName(EndpointName.Category.Create);
     }
 }

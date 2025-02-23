@@ -12,7 +12,7 @@ internal sealed class CategoryConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CategoryId.FromGuid(value))
             .HasColumnType("uuid");
 

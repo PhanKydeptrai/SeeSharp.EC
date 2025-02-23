@@ -3,25 +3,25 @@ using API.Infrastructure;
 using Application.Features.CategoryFeature.Queries.GetCategoryById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Constants;
 
 namespace API.Endpoints.Category;
 
 internal sealed class GetCategoryById : IEndpoint
-{
+{   
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/categories/{id}", async (
-            [FromRoute] string id,
-            ISender sender,
-            LinkGenerator linkGenerator,
-            HttpContext httpContext) =>
+        app.MapGet("api/categories/{categoryId:guid}", 
+        async (
+            [FromRoute] Guid categoryId,
+            ISender sender) =>
         {
-            var result = await sender.Send(new GetCategoryByIdQuery(id));
+            var result = await sender.Send(new GetCategoryByIdQuery(categoryId));
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags("Category")
-        .WithName("GetCategoryById");
+        .WithTags(EndpointTag.Category)
+        .WithName(EndpointName.Category.GetById);
 
     }
 }

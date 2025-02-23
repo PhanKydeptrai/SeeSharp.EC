@@ -12,13 +12,13 @@ internal sealed class CustomerReadModelConfigurationForMySQL : IEntityTypeConfig
         builder.HasKey(a => a.CustomerId);
         builder.Property(a => a.CustomerId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

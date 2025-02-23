@@ -12,4 +12,12 @@ public static class CategoryErrors
     public static Error Problem(CategoryId categoryId) => Error.Problem(
         "Category.Problem",
         $"Cant save category with the Id = '{categoryId}'");
+
+    public static Error Failure(CategoryId categoryId) => Error.Failure(
+        "Category.Conflict",
+        $"Failed to update category with the Id = '{categoryId}'");
+    
+    public static Error Deleted(CategoryId categoryId) => Error.Failure(
+        "Category.Deleted",
+        $"The category with the Id = '{categoryId}' was deleted");
 }

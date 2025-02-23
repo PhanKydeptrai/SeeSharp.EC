@@ -2,8 +2,10 @@
 using Application.IServices;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CategoryMessageConsumer;
+using Infrastructure.Consumers.ProductMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Services.CategoryServices;
+using Infrastructure.Services.ProductServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -61,6 +63,14 @@ public static class DependencyInjection
             var categoryQueryServices = provider.GetRequiredService<CategoryQueryServices>();
             return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!);
         });
+
+        services.AddScoped<ProductQueryServices>();
+        services.AddScoped<IProductQueryServices>(provider =>
+        {
+            var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
+            return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
+        });
+
         return services;
     }
 
@@ -79,7 +89,9 @@ public static class DependencyInjection
 
             //* Đăng ký consumer
             busConfiguration.AddConsumer<CategoryCreatedMessageConsumer>();
-
+            busConfiguration.AddConsumer<CategoryUpdatedMessageConsumer>();
+            busConfiguration.AddConsumer<CategoryDeletedMessageConsumer>();
+            busConfiguration.AddConsumer<ProductCreatedMessageConsumer>();
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
             // busConfiguration.UsingRabbitMq((context, cfg) =>
@@ -133,7 +145,7 @@ public static class DependencyInjection
             options.AddJob<OutboxBackgroundService>(jobKey_OutboxBackgroundService)
                     .AddTrigger(trigger =>
                         trigger.ForJob(jobKey_OutboxBackgroundService)
-                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(1)
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(7)
                     .RepeatForever()));
 
         });

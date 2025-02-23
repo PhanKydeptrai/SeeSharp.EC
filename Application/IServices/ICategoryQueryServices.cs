@@ -11,8 +11,9 @@ public interface ICategoryQueryServices
         string? searchTerm,
         string? sortColumn,
         string? sortOrder,
-        int? page = 1,
-        int? pageSize = 10);
+        int? page,
+        int? pageSize);
 
     Task<CategoryResponse?> GetById(CategoryId categoryId, CancellationToken cancellationToken = default);
+    Task<bool> IsCategoryExist(CategoryId categoryId, CancellationToken cancellationToken = default);
 }

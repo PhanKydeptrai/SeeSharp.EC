@@ -13,14 +13,14 @@ internal sealed class EmployeeConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(x => x.EmployeeId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => EmployeeId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.UserId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => UserId.FromGuid(value))
             .HasColumnType("uuid");
 

@@ -11,19 +11,19 @@ internal sealed class OrderDetailReadModelConfigurationForMySQL : IEntityTypeCon
         builder.HasKey(x => x.OrderDetailId);
         builder.Property(x => x.OrderDetailId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.ProductId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

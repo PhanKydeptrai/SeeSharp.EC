@@ -10,7 +10,6 @@ namespace Infrastructure.Services.CategoryServices;
 internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 {
     private readonly ICategoryQueryServices _decorated;
-
     private readonly IDistributedCache _cache;
     public CategoryQueryServicesDecorated(
         ICategoryQueryServices decorated,
@@ -43,6 +42,11 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
             return category;
         }
         return JsonConvert.DeserializeObject<CategoryResponse>(cachedCategory);
+    }
+
+    public async Task<bool> IsCategoryExist(CategoryId categoryId, CancellationToken cancellationToken = default)
+    {
+        return await _decorated.IsCategoryExist(categoryId, cancellationToken);
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(

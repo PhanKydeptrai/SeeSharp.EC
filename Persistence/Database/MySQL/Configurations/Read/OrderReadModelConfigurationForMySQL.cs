@@ -14,13 +14,13 @@ internal sealed class OrderReadModelConfigurationForMySQL : IEntityTypeConfigura
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
@@ -38,7 +38,7 @@ internal sealed class OrderReadModelConfigurationForMySQL : IEntityTypeConfigura
 
         builder.Property(x => x.OrderTransactionId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

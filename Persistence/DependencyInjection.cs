@@ -1,9 +1,8 @@
 ﻿using Domain.IRepositories;
+using Domain.IRepositories.Categories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
-using Infrastructure.Repositories.CategoryRepositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Database.MySQL;
@@ -11,6 +10,7 @@ using Persistence.Database.PostgreSQL;
 using Persistence.Outbox;
 using Persistence.Repositories;
 using Persistence.Repositories.CategoryRepositories;
+using Persistence.Repositories.ProductRepositories;
 
 namespace Persistence;
 //FIXME: AddPersistnce
@@ -23,7 +23,6 @@ public static class DependencyInjection
         services.AddPrimaryDatabase(configuration)
             .AddRepository()
             .AddReadOnlyDatabase(configuration)
-            .AddAbstractsDatabase(configuration)
             .AddOutBoxMessageServices();
 
         return services;
@@ -31,13 +30,8 @@ public static class DependencyInjection
     //Add Repository
     public static IServiceCollection AddRepository(this IServiceCollection services)
     {
-        services.AddScoped<CategoryRepository>();
-        services.AddScoped<ICategoryRepository>(provider =>
-        {
-            var categoryRepository = provider.GetRequiredService<CategoryRepository>();
-            return new CategoryRepositoryCached(categoryRepository, provider.GetService<IDistributedCache>()!);
-        });
-
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
@@ -95,17 +89,4 @@ public static class DependencyInjection
         });
         return services;
     }
-
-    //FIXME: Add Abstracts Database
-    //Add Abstracts Replica Database
-    private static IServiceCollection AddAbstractsDatabase(
-        this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        //services.AddScoped<INextSharpReadOnlyDbContext>(provider => provider.GetRequiredService<NextSharpReadOnlyDbContext>());
-        //services.AddScoped<INextSharpDbContext>(provider => provider.GetRequiredService<NextSharpDbContext>());
-        return services;
-    }
-
-
 }

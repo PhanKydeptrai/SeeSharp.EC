@@ -33,15 +33,30 @@ public sealed class Category
             CategoryStatus.Available);
     }
 
+    public static void Update(
+        Category category, 
+        CategoryName categoryName,
+        string imageUrl)
+    {
+        category.CategoryName = categoryName;
+        category.ImageUrl = imageUrl;
+    }
+
+    public static void Delete(Category category)
+    {
+        category.CategoryStatus = CategoryStatus.Deleted;
+    }
+
     public static Category FromExisting(
         CategoryId categoryId,
         CategoryName categoryName,
-        string? imageUrl)
+        string? imageUrl,
+        CategoryStatus categoryStatus)
     {
         return new Category(
             categoryId,
             categoryName,
             imageUrl ?? string.Empty,
-            CategoryStatus.Available);
+            categoryStatus);
     }
 }

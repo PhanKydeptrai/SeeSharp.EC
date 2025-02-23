@@ -25,14 +25,14 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
         CancellationToken cancellationToken)
     {
         var category = await _categoryQueryServices.GetById(
-            CategoryId.FromString(request.categoryId),
+            CategoryId.FromGuid(request.categoryId),
             cancellationToken);
 
         if (category is null)
         {
             return Result.Failure<CategoryResponse>(
                 CategoryErrors.NotFound(
-                    CategoryId.FromString(
+                    CategoryId.FromGuid(
                         request.categoryId)));
         }
 
@@ -45,8 +45,20 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
     {
         categoryResponse.links.Add(_linkServices.Generate(
             "GetCategoryById", 
-            new { id = categoryResponse.categoryId }, 
+            new { categoryId = categoryResponse.categoryId }, 
             "self", 
             "GET"));
+
+        categoryResponse.links.Add(_linkServices.Generate(
+            "UpdateCategory",
+            new { categoryId = categoryResponse.categoryId },
+            "update-category",
+            "PUT"));
+
+        categoryResponse.links.Add(_linkServices.Generate(
+            "GetCategoryById",
+            new { categoryId = categoryResponse.categoryId },
+            "delete-category",
+            "DELETE"));
     }
 }

@@ -11,7 +11,7 @@ internal sealed class VerificationTokenReadModelConfigurationForPostgreSQL : IEn
         builder.HasKey(x => x.VerificationTokenId);
         builder.Property(a => a.VerificationTokenId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("uuid");
 
         builder.Property(a => a.Temporary)
@@ -28,7 +28,7 @@ internal sealed class VerificationTokenReadModelConfigurationForPostgreSQL : IEn
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasConversion(value => value.ToGuid(), value => new Ulid(value))
+            
             .HasColumnType("uuid");
     }
 }

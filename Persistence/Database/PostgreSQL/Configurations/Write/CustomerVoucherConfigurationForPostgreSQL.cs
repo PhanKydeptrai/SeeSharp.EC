@@ -14,21 +14,21 @@ internal sealed class CustomerVoucherConfigurationForPostgreSQL : IEntityTypeCon
         builder.Property(x => x.CustomerVoucherId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerVoucherId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.VoucherId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => VoucherId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerId.FromGuid(value))
             .HasColumnType("uuid");
 

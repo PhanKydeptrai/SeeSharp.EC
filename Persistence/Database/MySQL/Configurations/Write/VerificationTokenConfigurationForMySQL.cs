@@ -13,7 +13,7 @@ internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfig
         builder.Property(a => a.VerificationTokenId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => VerificationTokenId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -33,7 +33,7 @@ internal sealed class VerificationTokenConfigurationForMySQL : IEntityTypeConfig
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => UserId.FromGuid(value)
             )
             .HasColumnType("char(36)")

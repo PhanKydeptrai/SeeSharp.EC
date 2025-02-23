@@ -14,14 +14,14 @@ internal sealed class CustomerConfigurationForPostgreSQL : IEntityTypeConfigurat
         builder.Property(a => a.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(a => a.UserId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => UserId.FromGuid(value))
             .HasColumnType("uuid");
 

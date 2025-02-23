@@ -13,7 +13,7 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.Property(a => a.ProductId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => ProductId.FromGuid(value))
             .HasColumnType("uuid");
 
@@ -49,7 +49,7 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CategoryId.FromGuid(value))
             .HasColumnType("uuid");
 

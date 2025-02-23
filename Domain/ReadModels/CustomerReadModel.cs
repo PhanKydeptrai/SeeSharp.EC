@@ -2,8 +2,8 @@
 
 public class CustomerReadModel
 {
-    public Ulid CustomerId { get; set; } 
-    public Ulid UserId { get; set; }
+    public Guid CustomerId { get; set; } 
+    public Guid UserId { get; set; }
     public string CustomerStatus { get; set; } = null!;
     public string CustomerType { get; set; } = null!;
     public ICollection<BillReadModel> BillReadModels { get; set; } = new List<BillReadModel>();

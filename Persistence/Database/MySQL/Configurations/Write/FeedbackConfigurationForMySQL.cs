@@ -15,7 +15,7 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
         builder.Property(x => x.FeedbackId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => FeedbackId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -42,7 +42,7 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
         builder.Property(x => x.OrderId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => OrderId.FromGuid(value)
             )
             .HasColumnType("char(36)")
@@ -51,7 +51,7 @@ internal sealed class FeedbackConfigurationForMySQL : IEntityTypeConfiguration<F
         builder.Property(x => x.CustomerId)
             .IsRequired()
             .HasConversion(
-                value => value.Value.ToGuid(),
+                value => value.Value,
                 value => CustomerId.FromGuid(value)
             )
             .HasColumnType("char(36)")
