@@ -87,5 +87,15 @@ public sealed class Product
         product.ProductStatus = productStatus;
         product.CategoryId = categoryId;
     }
+
+    public static void Delete(Product product)
+    {
+        if(product.ProductStatus == ProductStatus.Discontinued)
+        {
+            throw new InvalidOperationException("Product is already deleted");
+        }
+        
+        product.ProductStatus = ProductStatus.Discontinued;
+    }
 }
 

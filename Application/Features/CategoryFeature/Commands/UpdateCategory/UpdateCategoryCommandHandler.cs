@@ -84,6 +84,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
         //--------------------
         Category.Update(category,
                 CategoryName.FromString(request.categoryName),
+                category.CategoryStatus,
                 string.Empty); // TODO: Get image from request
     }
 }

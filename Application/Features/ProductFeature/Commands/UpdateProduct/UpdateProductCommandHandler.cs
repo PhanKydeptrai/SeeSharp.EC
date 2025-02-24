@@ -30,9 +30,7 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
         _eventBus = eventBus;
     }
     //FLOW: Get product by id -> Update product -> Add Outbox message -> Commit -> Publish event
-    public async Task<Result> Handle(
-        UpdateProductCommand request, 
-        CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
         var productId = ProductId.FromGuid(request.ProductId);
         var (product, failure) = await GetProductById(productId);

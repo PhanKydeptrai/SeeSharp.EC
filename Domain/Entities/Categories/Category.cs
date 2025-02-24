@@ -36,9 +36,11 @@ public sealed class Category
     public static void Update(
         Category category, 
         CategoryName categoryName,
+        CategoryStatus categoryStatus,
         string imageUrl)
     {
         category.CategoryName = categoryName;
+        category.CategoryStatus = categoryStatus;
         category.ImageUrl = imageUrl;
     }
 

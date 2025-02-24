@@ -14,13 +14,10 @@ internal class CategoryQueryServices : ICategoryQueryServices
 {
     #region Dependency
     private readonly NextSharpPostgreSQLReadDbContext _contextPostgreSQL;
-    private readonly NextSharpMySQLReadDbContext _contextMySQL;
     public CategoryQueryServices(
-        NextSharpPostgreSQLReadDbContext contextPostgreSQL,
-        NextSharpMySQLReadDbContext contextMySQL)
+        NextSharpPostgreSQLReadDbContext contextPostgreSQL)
     {
         _contextPostgreSQL = contextPostgreSQL;
-        _contextMySQL = contextMySQL;
     }
     #endregion
     public async Task<CategoryResponse?> GetById(
@@ -47,13 +44,13 @@ internal class CategoryQueryServices : ICategoryQueryServices
     {
         if(categoryId is not null)
         {
-            return await _contextMySQL.Categories
+            return await _contextPostgreSQL.Categories
                 .AnyAsync(
                     a => a.CategoryName == categoryName.Value 
-                    && a.CategoryId.ToGuid() != categoryId.Value);
+                    && a.CategoryId != new Ulid(categoryId.Value));
         }
 
-        return await _contextMySQL.Categories
+        return await _contextPostgreSQL.Categories
             .AnyAsync(a => a.CategoryName == categoryName.Value);
 
     }

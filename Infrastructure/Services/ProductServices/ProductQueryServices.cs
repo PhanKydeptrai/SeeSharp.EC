@@ -5,7 +5,6 @@ using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 using System.Linq.Expressions;
 
@@ -14,13 +13,10 @@ namespace Infrastructure.Services.ProductServices;
 internal sealed class ProductQueryServices : IProductQueryServices
 {
     private readonly NextSharpPostgreSQLReadDbContext _postgreSQLdbContext;
-    private readonly NextSharpMySQLReadDbContext _mySQLDbContext;
     public ProductQueryServices(
-        NextSharpPostgreSQLReadDbContext postgreSQLdbContext, 
-        NextSharpMySQLReadDbContext mySQLDbContext)
+        NextSharpPostgreSQLReadDbContext postgreSQLdbContext)
     {
         _postgreSQLdbContext = postgreSQLdbContext;
-        _mySQLDbContext = mySQLDbContext;
     }
 
     public async Task<ProductResponse?> GetById(
@@ -28,7 +24,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
         CancellationToken cancellationToken = default)
     {
         return await _postgreSQLdbContext.Products
-            .Where(x => x.ProductId.ToGuid() == productId.Value)
+            .Where(x => x.ProductId == new Ulid(productId.Value))
             .Select(x => new ProductResponse(
                 x.ProductId.ToGuid(),
                 x.ProductName,
