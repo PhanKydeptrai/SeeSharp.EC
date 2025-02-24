@@ -2,8 +2,8 @@
 
 public class ShippingInformationReadModel
 {
-    public Guid ShippingInformationId { get; set; }
-    public Guid CustomerId { get; set; }
+    public Ulid ShippingInformationId { get; set; }
+    public Ulid CustomerId { get; set; }
     public string FullName { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public bool IsDefault { get; set; }

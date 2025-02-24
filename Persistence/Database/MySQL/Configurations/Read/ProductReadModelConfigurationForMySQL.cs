@@ -1,6 +1,6 @@
+using Domain.Database.PostgreSQL.ReadModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.Database.PostgreSQL.ReadModels;
 
 namespace Persistence.Database.MySQL.Configurations.Read;
 
@@ -11,7 +11,9 @@ internal sealed class ProductReadModelConfigurationForMySQL : IEntityTypeConfigu
         builder.HasKey(a => a.ProductId);
         builder.Property(a => a.ProductId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
@@ -37,7 +39,9 @@ internal sealed class ProductReadModelConfigurationForMySQL : IEntityTypeConfigu
 
         builder.Property(a => a.CategoryId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

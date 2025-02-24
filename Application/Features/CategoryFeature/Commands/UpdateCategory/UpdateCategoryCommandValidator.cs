@@ -23,7 +23,8 @@ internal sealed class UpdateCategoryCommandValidator : AbstractValidator<UpdateC
 
     private bool ValidateInput(string input)
     {
-        foreach (var naughtyString in TheNaughtyStrings.All)
+        
+        foreach (var naughtyString in TheNaughtyStrings.iOSVulnerabilities)
         {
             if (input.Contains(naughtyString))
             {

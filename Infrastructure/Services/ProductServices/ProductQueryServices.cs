@@ -18,12 +18,14 @@ internal sealed class ProductQueryServices : IProductQueryServices
         _dbContext = dbContext;
     }
 
-    public async Task<ProductResponse?> GetById(ProductId productId, CancellationToken cancellationToken = default)
+    public async Task<ProductResponse?> GetById(
+        ProductId productId, 
+        CancellationToken cancellationToken = default)
     {
         return await _dbContext.Products
-            .Where(x => x.ProductId == productId)
+            .Where(x => x.ProductId.ToGuid() == productId.Value)
             .Select(x => new ProductResponse(
-                x.ProductId,
+                x.ProductId.ToGuid(),
                 x.ProductName,
                 x.ImageUrl,
                 x.Description,
@@ -58,7 +60,8 @@ internal sealed class ProductQueryServices : IProductQueryServices
 
         if (!string.IsNullOrWhiteSpace(filterCategory))
         {
-            productsQuery = productsQuery.Where(x => x.CategoryId == CategoryId.FromString(filterCategory));
+            productsQuery = productsQuery.Where(
+                x => x.CategoryId.ToGuid() == CategoryId.FromString(filterCategory));
         }
 
         //sort
@@ -81,7 +84,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
         //paged
         var products = productsQuery
             .Select(x => new ProductResponse(
-                x.ProductId,
+                x.ProductId.ToGuid(),
                 x.ProductName,
                 x.ImageUrl,
                 x.Description,

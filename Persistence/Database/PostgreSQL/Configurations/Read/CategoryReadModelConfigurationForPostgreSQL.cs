@@ -11,7 +11,9 @@ internal sealed class CategoryReadModelConfigurationForPostgreSQL : IEntityTypeC
         builder.HasKey(a => a.CategoryId);
         builder.Property(a => a.CategoryId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(a => a.CategoryName)

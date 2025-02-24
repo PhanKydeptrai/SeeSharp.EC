@@ -45,6 +45,11 @@ public abstract class BaseId<T> : ValueObject where T : BaseId<T> , new()
         id.Value = Guid.Empty;
         return id;
     }
+    public static Ulid ToUlid(T value)
+    {
+        var id = new T();
+        return new Ulid(id.Value);
+    }
 
     public override IEnumerable<object> GetAtomicValues()
     {
@@ -55,4 +60,6 @@ public abstract class BaseId<T> : ValueObject where T : BaseId<T> , new()
     {
         return Value.ToString();
     }
+
+
 }

@@ -11,17 +11,23 @@ internal sealed class CustomerVoucherReadModelConfigurationForPostgreSQL : IEnti
         builder.HasKey(x => x.CustomerVoucherId);
         builder.Property(x => x.CustomerVoucherId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.VoucherId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.Quantity)

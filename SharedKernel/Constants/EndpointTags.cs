@@ -19,12 +19,18 @@ public static class EndpointName
         public const string Update = "UpdateCategory";
         public const string Delete = "DeleteCategory";
     }
+}
 
-
+public static class EndpointMethod
+{
+    public const string POST = "POST";
+    public const string GET = "GET";
+    public const string PUT = "PUT";
+    public const string DELETE = "DELETE";
 }
 
 public static class EndpointTag
 {
-    public const string Category = "Customer";
+    public const string Category = "Category";
     public const string Product = "Product";
 }

@@ -22,12 +22,5 @@ internal sealed class CreateProductCommandValidator : AbstractValidator<CreatePr
             .WithErrorCode("Price.MustGreaterThanZero")
             .WithMessage("Price is lower than 0");
 
-        RuleFor(x => x.CategoryId)
-            .NotEmpty()
-            .WithErrorCode("CategoryId.IsRequied")
-            .WithMessage("Category id is required")
-            .Must(a => Ulid.TryParse(a, out _))
-            .WithMessage("CategoryId is not in the correct format");
-
     }
 }

@@ -5,6 +5,7 @@ using Application.IServices;
 using Domain.Entities.Categories;
 using Domain.Utilities.Errors;
 using SharedKernel;
+using SharedKernel.Constants;
 
 namespace Application.Features.CategoryFeature.Queries.GetCategoryById;
 
@@ -47,18 +48,18 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
             "GetCategoryById", 
             new { categoryId = categoryResponse.categoryId }, 
             "self", 
-            "GET"));
+            EndpointMethod.GET));
 
         categoryResponse.links.Add(_linkServices.Generate(
             "UpdateCategory",
             new { categoryId = categoryResponse.categoryId },
             "update-category",
-            "PUT"));
+            EndpointMethod.PUT));
 
         categoryResponse.links.Add(_linkServices.Generate(
             "GetCategoryById",
             new { categoryId = categoryResponse.categoryId },
             "delete-category",
-            "DELETE"));
+            EndpointMethod.DELETE));
     }
 }

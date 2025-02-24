@@ -48,16 +48,16 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
             EndpointName.Product.GetById,
             new { productId = productResponse.ProductId },
             "self",
-            "GET"));
+            EndpointMethod.GET));
         productResponse.links.Add(_linkServices.Generate(
             EndpointName.Product.Update,
             new { productId = productResponse.ProductId },
             "update-product",
-            "PUT"));
+            EndpointMethod.PUT));
         productResponse.links.Add(_linkServices.Generate(
             EndpointName.Product.Delete,
             new { productId = productResponse.ProductId },
             "delete-product",
-            "DELETE"));
+            EndpointMethod.DELETE));
     }
 }
