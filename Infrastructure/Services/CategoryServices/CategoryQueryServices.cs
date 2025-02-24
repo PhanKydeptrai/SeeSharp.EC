@@ -12,6 +12,7 @@ namespace Infrastructure.Services.CategoryServices;
 
 internal class CategoryQueryServices : ICategoryQueryServices
 {
+    #region Dependency
     private readonly NextSharpPostgreSQLReadDbContext _contextPostgreSQL;
     private readonly NextSharpMySQLReadDbContext _contextMySQL;
     public CategoryQueryServices(
@@ -21,7 +22,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
         _contextPostgreSQL = contextPostgreSQL;
         _contextMySQL = contextMySQL;
     }
-
+    #endregion
     public async Task<CategoryResponse?> GetById(
         CategoryId categoryId,
         CancellationToken cancellationToken)
@@ -38,6 +39,25 @@ internal class CategoryQueryServices : ICategoryQueryServices
 
         return categoryResponse;
     }
+
+    public async Task<bool> IsCategoryNameExist(
+        CategoryId? categoryId, 
+        CategoryName categoryName, 
+        CancellationToken cancellationToken = default)
+    {
+        if(categoryId is not null)
+        {
+            return await _contextMySQL.Categories
+                .AnyAsync(
+                    a => a.CategoryName == categoryName.Value 
+                    && a.CategoryId.ToGuid() != categoryId.Value);
+        }
+
+        return await _contextMySQL.Categories
+            .AnyAsync(a => a.CategoryName == categoryName.Value);
+
+    }
+
     public async Task<PagedList<CategoryResponse>> PagedList(
         string? filter,
         string? searchTerm,

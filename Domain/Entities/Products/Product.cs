@@ -70,5 +70,22 @@ public sealed class Product
             ProductStatus.InStock, 
             categoryId);
     }
+
+    public static void Update(
+        Product product,
+        ProductName productName,
+        string? imageUrl,
+        string? description,
+        ProductPrice productPrice,
+        ProductStatus productStatus,
+        CategoryId categoryId)
+    {
+        product.ProductName = productName;
+        product.ImageUrl = imageUrl;
+        product.Description = description;
+        product.ProductPrice = productPrice;
+        product.ProductStatus = productStatus;
+        product.CategoryId = categoryId;
+    }
 }
 

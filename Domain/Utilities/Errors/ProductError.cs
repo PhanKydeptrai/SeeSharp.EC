@@ -13,7 +13,7 @@ public static class ProductError
         $"Cant save Product with the Id = '{ProductId}'");
 
     public static Error Failure(ProductId ProductId) => Error.Failure(
-        "Product.Conflict",
+        "Product.Failure", 
         $"Failed to update Product with the Id = '{ProductId}'");
 
     public static Error Deleted(ProductId ProductId) => Error.Failure(

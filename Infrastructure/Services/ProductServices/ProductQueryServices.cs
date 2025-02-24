@@ -5,6 +5,7 @@ using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 using System.Linq.Expressions;
 
@@ -12,17 +13,21 @@ namespace Infrastructure.Services.ProductServices;
 
 internal sealed class ProductQueryServices : IProductQueryServices
 {
-    private readonly NextSharpPostgreSQLReadDbContext _dbContext;
-    public ProductQueryServices(NextSharpPostgreSQLReadDbContext dbContext)
+    private readonly NextSharpPostgreSQLReadDbContext _postgreSQLdbContext;
+    private readonly NextSharpMySQLReadDbContext _mySQLDbContext;
+    public ProductQueryServices(
+        NextSharpPostgreSQLReadDbContext postgreSQLdbContext, 
+        NextSharpMySQLReadDbContext mySQLDbContext)
     {
-        _dbContext = dbContext;
+        _postgreSQLdbContext = postgreSQLdbContext;
+        _mySQLDbContext = mySQLDbContext;
     }
 
     public async Task<ProductResponse?> GetById(
-        ProductId productId, 
+        ProductId productId,
         CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Products
+        return await _postgreSQLdbContext.Products
             .Where(x => x.ProductId.ToGuid() == productId.Value)
             .Select(x => new ProductResponse(
                 x.ProductId.ToGuid(),
@@ -35,16 +40,34 @@ internal sealed class ProductQueryServices : IProductQueryServices
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<bool> IsProductNameExist(
+        ProductId? productId, 
+        ProductName productName, 
+        CancellationToken cancellationToken = default)
+    {
+        if (productId is not null)
+        {
+            return await _postgreSQLdbContext.Products
+                .AnyAsync(
+                x => x.ProductName == productName.Value 
+                && x.ProductId != new Ulid(productId.Value));
+        }
+
+        return await _postgreSQLdbContext.Products
+            .Where(x => x.ProductName == productName.Value)
+            .AnyAsync();
+    }
+
     public async Task<PagedList<ProductResponse>> PagedList(
-        string? filterProductStatus, 
-        string? filterCategory, 
-        string? searchTerm, 
-        string? sortColumn, 
-        string? sortOrder, 
-        int? page, 
+        string? filterProductStatus,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
         int? pageSize)
     {
-        var productsQuery = _dbContext.Products.AsQueryable();
+        var productsQuery = _postgreSQLdbContext.Products.AsQueryable();
         //Search
         if (!string.IsNullOrEmpty(searchTerm))
         {

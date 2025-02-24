@@ -26,21 +26,22 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
         _unitOfWork = unitOfWork;
         _logger = logger;
         _outBoxMessageServices = outBoxMessageServices;
-    } 
+    }
     #endregion
     public async Task Consume(ConsumeContext<CategoryCreatedEvent> context)
     {
         //Log start
         _logger.LogInformation(
-            "Consuming CategoryCreatedEvent for categoryId: {CategoryId}", 
+            "Consuming CategoryCreatedEvent for categoryId: {CategoryId}",
             context.Message.categoryId);
+        try
+        {
+            var category = ConvertEventToCategory(context.Message);
+            await _categoryRepository.AddCategoryToPosgreSQL(category);
+            var result = await _unitOfWork.SaveChangesAsync();
 
-        var category = ConvertEventToCategory(context.Message);
-
-        await _categoryRepository.AddCategoryToPosgreSQL(category);
-        var result = await _unitOfWork.SaveChangesAsync();
-
-        if (result <= 0)
+        }
+        catch (Exception ex)
         {
             //Cập nhật trạng thái outbox message
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
@@ -51,12 +52,13 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
 
             await _unitOfWork.Commit();
 
-            //Log End
+            //Log Error
             _logger.LogError(
-                "Failed to consume CategoryCreatedEvent for categoryId: {CategoryId}", 
+                ex,
+                "Failed to consume CategoryCreatedEvent for categoryId: {CategoryId}",
                 context.Message.categoryId);
-            
-            throw new Exception("Category created event consumed failed");
+
+            throw; // Re-throw exception to mark the message as failed
         }
 
         await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
@@ -69,7 +71,7 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
 
         //Log End
         _logger.LogInformation(
-            "Successfully consumed CategoryCreatedEvent for categoryId: {CategoryId}", 
+            "Successfully consumed CategoryCreatedEvent for categoryId: {CategoryId}",
             context.Message.categoryId);
     }
 
@@ -81,5 +83,5 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
             categoryCreatedEvent.imageUrl,
             categoryCreatedEvent.categoryStatus
         );
-    }   
+    }
 }

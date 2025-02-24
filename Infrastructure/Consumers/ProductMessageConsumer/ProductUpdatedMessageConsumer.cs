@@ -9,16 +9,16 @@ using Microsoft.Extensions.Logging;
 using SharedKernel;
 
 namespace Infrastructure.Consumers.ProductMessageConsumer;
-
-internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEvent>
+internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEvent>
 {
-    private readonly ILogger<ProductCreatedMessageConsumer> _logger;
+    #region Dependency
+    private readonly ILogger<ProductUpdatedMessageConsumer> _logger;
     private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
 
-    public ProductCreatedMessageConsumer(
-        ILogger<ProductCreatedMessageConsumer> logger,
+    public ProductUpdatedMessageConsumer(
+        ILogger<ProductUpdatedMessageConsumer> logger,
         IProductRepository productRepository,
         IUnitOfWork unitOfWork,
         IOutBoxMessageServices outBoxMessageServices)
@@ -28,18 +28,22 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
         _unitOfWork = unitOfWork;
         _outBoxMessageServices = outBoxMessageServices;
     }
-
-    public async Task Consume(ConsumeContext<ProductCreatedEvent> context)
+    #endregion
+    public async Task Consume(ConsumeContext<ProductUpdatedEvent> context)
     {
         //Log start
         _logger.LogInformation(
-            "Consuming ProductCreatedEvent for productid: {ProductId}",
+            "Consuming ProductUpdatedEvent for productid: {ProductId}",
             context.Message.ProductId);
 
         try
         {
-            var product = ConvertOutboxMessageToProduct(context.Message);
-            await _productRepository.AddProductToPosgreSQL(product);
+
+            var product = await _productRepository.GetProductFromPosgreSQL(
+                ProductId.FromGuid(context.Message.ProductId));
+
+            UpdateProduct(product!, context.Message);
+
             await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex)
@@ -47,7 +51,7 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     context.Message.MessageId,
                     OutboxMessageStatus.Failed,
-                    "Failed to consume ProductCreatedEvent",
+                    "Failed to consume ProductUpdatedEvent",
                     DateTime.UtcNow);
 
             await _unitOfWork.Commit();
@@ -55,37 +59,39 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
             //Log error
             _logger.LogError(
                 ex,
-                "Failed to consume ProductCreatedEvent for ProductId: {ProductId}",
+                "Failed to consume ProductUpdatedEvent for productid: {ProductId}",
                 context.Message.ProductId);
-
-            throw; //Stop the message
+                
+                throw; //Stop the message
         }
 
-        //Cập nhật trạng thái outbox message
+        //Cập nhật trạng thái hoàn thành outbox message
         await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
             context.Message.MessageId,
             OutboxMessageStatus.Processed,
-            "Successfully consumed ProductCreatedEvent",
+            "Successfully consumed ProductUpdatedEvent",
             DateTime.UtcNow);
 
         await _unitOfWork.Commit();
 
-        //Log End
+        //Log end
         _logger.LogInformation(
-            "Successfully consumed CategoryDeletedEvent for categoryId: {CategoryId}",
+            "Successfully consumed ProductUpdatedEvent for productid: {ProductId}",
             context.Message.ProductId);
+
     }
 
-    //------------------------------------------------------------------------------------- 
-    private Product ConvertOutboxMessageToProduct(ProductCreatedEvent productCreatedEvent)
+    //--------------------------------------------------------------------------------
+    private void UpdateProduct(Product product, ProductUpdatedEvent request)
     {
-        return Product.FromExisting(
-            ProductId.FromGuid(productCreatedEvent.ProductId),
-            ProductName.FromString(productCreatedEvent.ProductName),
-            productCreatedEvent.ImageUrl,
-            productCreatedEvent.Description,
-            ProductPrice.FromDecimal(productCreatedEvent.Price),
-            productCreatedEvent.ProductStatus,
-            CategoryId.FromGuid(productCreatedEvent.CategoryId));
+        Product.Update(
+            product,
+            ProductName.NewProductName(request.ProductName),
+            string.Empty, //TODO: Xử lý ảnh
+            request.Description,
+            ProductPrice.NewProductPrice(request.Price),
+            product.ProductStatus,
+            CategoryId.FromGuid(request.CategoryId));
     }
+
 }

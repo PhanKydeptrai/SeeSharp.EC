@@ -60,6 +60,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
             await _eventBus.PublishAsync(message);
             return Result.Success(category.CategoryId);
         }
+        
         return Result.Failure<CategoryId>(CategoryErrors.Failure(category.CategoryId));
     }
     

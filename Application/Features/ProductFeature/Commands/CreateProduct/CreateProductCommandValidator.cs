@@ -1,10 +1,12 @@
-﻿using FluentValidation;
+﻿using Application.IServices;
+using Domain.Entities.Products;
+using FluentValidation;
 
 namespace Application.Features.ProductFeature.Commands.CreateProduct;
 
 internal sealed class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
 {
-    public CreateProductCommandValidator()
+    public CreateProductCommandValidator(IProductQueryServices productQueryServices)
     {
         RuleFor(x => x.ProductName)
             .NotEmpty()
@@ -12,7 +14,10 @@ internal sealed class CreateProductCommandValidator : AbstractValidator<CreatePr
             .WithMessage("Product name is required")
             .MaximumLength(50)
             .WithErrorCode("ProductName.TooLong")
-            .WithMessage("Product name is too long");
+            .WithMessage("Product name is too long")
+            .Must(x => productQueryServices.IsProductNameExist(null,ProductName.FromString(x)).Result)
+            .WithErrorCode("ProductName.NotUnique")
+            .WithMessage("Product name must be unique");
 
         RuleFor(x => x.Price)
             .NotEmpty()

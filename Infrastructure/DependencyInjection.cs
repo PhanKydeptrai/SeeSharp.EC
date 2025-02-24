@@ -92,6 +92,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CategoryUpdatedMessageConsumer>();
             busConfiguration.AddConsumer<CategoryDeletedMessageConsumer>();
             busConfiguration.AddConsumer<ProductCreatedMessageConsumer>();
+            busConfiguration.AddConsumer<ProductUpdatedMessageConsumer>();
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
             // busConfiguration.UsingRabbitMq((context, cfg) =>

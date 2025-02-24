@@ -9,15 +9,15 @@ public static class CategoryErrors
         "Category.NotFound",
         $"The category with the Id = '{categoryId}' was not found");
 
-    public static Error Problem(CategoryId categoryId) => Error.Problem(
-        "Category.Problem",
-        $"Cant save category with the Id = '{categoryId}'");
-
     public static Error Failure(CategoryId categoryId) => Error.Failure(
-        "Category.Conflict",
-        $"Failed to update category with the Id = '{categoryId}'");
+        "Category.Failure",
+        $"Cant save category with the Id = '{categoryId}'"); //Lỗi hết cứu
+
+    public static Error NameConflict(CategoryName categoryName) => Error.Conflict(
+        "CategoryName.Conflict",
+        $"Failed to update category with the Id = '{categoryName.Value}'");
     
-    public static Error Deleted(CategoryId categoryId) => Error.Failure(
+    public static Error Deleted(CategoryId categoryId) => Error.Problem(
         "Category.Deleted",
         $"The category with the Id = '{categoryId}' was deleted");
 }

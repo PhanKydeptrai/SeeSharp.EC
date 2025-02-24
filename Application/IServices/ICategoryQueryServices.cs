@@ -17,4 +17,9 @@ public interface ICategoryQueryServices
     Task<CategoryResponse?> GetById(
         CategoryId categoryId, 
         CancellationToken cancellationToken = default);
+
+    Task<bool> IsCategoryNameExist(
+        CategoryId? categoryId,
+        CategoryName categoryName,
+        CancellationToken cancellationToken = default);
 }
