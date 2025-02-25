@@ -11,7 +11,9 @@ internal sealed class OrderTransactionReadModelConfigurationForPostgreSQL : IEnt
         builder.HasKey(x => x.OrderTransactionId);
         builder.Property(a => a.OrderTransactionId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(a => a.PayerName)
@@ -40,15 +42,23 @@ internal sealed class OrderTransactionReadModelConfigurationForPostgreSQL : IEnt
 
         builder.Property(a => a.VoucherId)
             .IsRequired(false)
+            .HasConversion(
+                value => value.HasValue ? value.Value.ToGuid() : (Guid?)null,
+                value => value.HasValue ? new Ulid(value.Value) : (Ulid?)null)
             .HasColumnType("uuid");
 
         builder.Property(a => a.OrderId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(a => a.BillId)
             .IsRequired(false)
+            .HasConversion(
+                value => value.HasValue ? value.Value.ToGuid() : (Guid?)null,
+                value => value.HasValue ? new Ulid(value.Value) : (Ulid?)null)
             .HasColumnType("uuid");
 
         builder.HasOne(a => a.VoucherReadModel)

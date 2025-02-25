@@ -11,17 +11,23 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
         builder.HasKey(x => x.BillId);
         builder.Property(x => x.BillId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.OrderId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CreatedDate)
@@ -34,7 +40,9 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
 
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.HasOne(a => a.ShippingInformation)

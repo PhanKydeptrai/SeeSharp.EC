@@ -36,12 +36,13 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
             "Consuming ProductCreatedEvent for productid: {ProductId}",
             context.Message.ProductId);
 
-        var product = ConvertOutboxMessageToProduct(context.Message);
-        await _productRepository.AddProductToPosgreSQL(product);
-
-        var result = await _unitOfWork.SaveChangesAsync();
-
-        if(result <= 0) //Nếu không thành công
+        try
+        {
+            var product = ConvertOutboxMessageToProduct(context.Message);
+            await _productRepository.AddProductToPosgreSQL(product);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch (Exception ex)
         {
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     context.Message.MessageId,
@@ -51,11 +52,13 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
 
             await _unitOfWork.Commit();
 
+            //Log error
             _logger.LogError(
+                ex,
                 "Failed to consume ProductCreatedEvent for ProductId: {ProductId}",
                 context.Message.ProductId);
 
-            throw new Exception("Product updated event consumed failed");
+            throw; //Stop the message
         }
 
         //Cập nhật trạng thái outbox message
@@ -69,11 +72,11 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
 
         //Log End
         _logger.LogInformation(
-            "Successfully consumed CategoryDeletedEvent for categoryId: {CategoryId}",
+            "Successfully consumed ProductCreatedEvent for categoryId: {CategoryId}",
             context.Message.ProductId);
     }
 
-
+    //------------------------------------------------------------------------------------- 
     private Product ConvertOutboxMessageToProduct(ProductCreatedEvent productCreatedEvent)
     {
         return Product.FromExisting(

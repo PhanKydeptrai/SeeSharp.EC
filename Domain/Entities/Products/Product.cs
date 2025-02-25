@@ -70,5 +70,32 @@ public sealed class Product
             ProductStatus.InStock, 
             categoryId);
     }
+
+    public static void Update(
+        Product product,
+        ProductName productName,
+        string? imageUrl,
+        string? description,
+        ProductPrice productPrice,
+        ProductStatus productStatus,
+        CategoryId categoryId)
+    {
+        product.ProductName = productName;
+        product.ImageUrl = imageUrl;
+        product.Description = description;
+        product.ProductPrice = productPrice;
+        product.ProductStatus = productStatus;
+        product.CategoryId = categoryId;
+    }
+
+    public static void Delete(Product product)
+    {
+        if(product.ProductStatus == ProductStatus.Discontinued)
+        {
+            throw new InvalidOperationException("Product is already deleted");
+        }
+        
+        product.ProductStatus = ProductStatus.Discontinued;
+    }
 }
 

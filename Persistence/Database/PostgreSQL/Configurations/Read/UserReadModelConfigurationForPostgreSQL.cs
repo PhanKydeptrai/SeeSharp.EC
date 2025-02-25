@@ -14,7 +14,9 @@ internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfi
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(a => a.UserName)

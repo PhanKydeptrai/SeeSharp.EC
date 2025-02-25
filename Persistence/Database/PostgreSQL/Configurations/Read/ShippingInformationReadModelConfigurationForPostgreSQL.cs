@@ -11,12 +11,16 @@ internal sealed class ShippingInformationReadModelConfigurationForPostgreSQL : I
         builder.HasKey(x => x.ShippingInformationId);
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.FullName)

@@ -29,30 +29,7 @@ internal sealed class CategoryRepository : ICategoryRepository
         await _postgreSQLWriteDbContext.Categories.AddAsync(category);
     }
 
-    #region Delete -------------------------------------------------------
-    //public async Task<int> DeleteCategoryFromMySQL(CategoryId categoryId)
-    //{
-    //    // Cập nhật trạng thái của Category
-    //    return await _mySQLDbContext.Categories
-    //        .Where(a => a.CategoryId == categoryId)
-    //        .ExecuteUpdateAsync(
-    //            a => a.SetProperty(
-    //                a => a.CategoryStatus,
-    //                CategoryStatus.Unavailable));
-    //}
-
-    //public async Task<int> DeleteCategoryFromPosgreSQL(CategoryId categoryId)
-    //{
-    //    // Cập nhật trạng thái của Category
-    //    return await _postgreSQLWriteDbContext.Categories
-    //        .Where(a => a.CategoryId == categoryId)
-    //        .ExecuteUpdateAsync(
-    //            a => a.SetProperty(
-    //                a => a.CategoryStatus,
-    //                CategoryStatus.Unavailable));
-    //}
-    #endregion ------------------------------------------------------------
-
+    
     public async Task<Category?> GetCategoryByIdFromMySQL(
         CategoryId categoryId,
         CancellationToken cancellationToken = default)
@@ -100,29 +77,5 @@ internal sealed class CategoryRepository : ICategoryRepository
                 && a.CategoryId != categoryId, 
                 cancellationToken);
         
-    }
-
-    public async Task UpdateCategoryPostgreSQL_ChangeTracking(
-        CategoryId categoryId,
-        CategoryName categoryName,
-        string imageUrl)
-    {
-        var category = await _postgreSQLWriteDbContext.Categories.FindAsync(categoryId);
-        if (category is not null)
-        {
-            Category.Update(category, categoryName, imageUrl);
-        }
-    }
-
-    public async Task UpdateCategoryToMySQL_ChangeTracking(
-        CategoryId categoryId,
-        CategoryName categoryName,
-        string imageUrl)
-    {
-        var category = await _mySQLDbContext.Categories.FindAsync(categoryId);
-        if (category is not null)
-        {
-            Category.Update(category, categoryName, imageUrl);
-        }
     }
 }

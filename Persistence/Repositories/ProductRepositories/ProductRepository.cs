@@ -28,5 +28,13 @@ internal sealed class ProductRepository : IProductRepository
         await _postgreSQLWriteDbContext.Products.AddAsync(product);
     }
 
+    public async Task<Product?> GetProductFromMySQL(ProductId id)
+    {
+        return await _mySQLDbContext.Products.FindAsync(id);
+    }
 
+    public async Task<Product?> GetProductFromPosgreSQL(ProductId id)
+    {
+        return await _postgreSQLWriteDbContext.Products.FindAsync(id);
+    }
 }

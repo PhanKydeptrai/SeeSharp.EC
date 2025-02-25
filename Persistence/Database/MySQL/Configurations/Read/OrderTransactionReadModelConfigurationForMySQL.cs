@@ -11,7 +11,9 @@ internal sealed class OrderTransactionReadModelConfigurationForMySQL : IEntityTy
         builder.HasKey(x => x.OrderTransactionId);
         builder.Property(a => a.OrderTransactionId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
@@ -41,17 +43,25 @@ internal sealed class OrderTransactionReadModelConfigurationForMySQL : IEntityTy
 
         builder.Property(a => a.VoucherId)
             .IsRequired(false)
+            .HasConversion(
+                value => value.HasValue ? value.Value.ToGuid() : (Guid?)null,
+                value => value.HasValue ? new Ulid(value.Value) : (Ulid?)null)
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.OrderId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 
         builder.Property(a => a.BillId)
             .IsRequired(false)
+            .HasConversion(
+                value => value.HasValue ? value.Value.ToGuid() : (Guid?)null,
+                value => value.HasValue ? new Ulid(value.Value) : (Ulid?)null)
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

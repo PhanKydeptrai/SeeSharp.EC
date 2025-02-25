@@ -12,18 +12,21 @@ namespace Infrastructure.Services.ProductServices;
 
 internal sealed class ProductQueryServices : IProductQueryServices
 {
-    private readonly NextSharpPostgreSQLReadDbContext _dbContext;
-    public ProductQueryServices(NextSharpPostgreSQLReadDbContext dbContext)
+    private readonly NextSharpPostgreSQLReadDbContext _postgreSQLdbContext;
+    public ProductQueryServices(
+        NextSharpPostgreSQLReadDbContext postgreSQLdbContext)
     {
-        _dbContext = dbContext;
+        _postgreSQLdbContext = postgreSQLdbContext;
     }
 
-    public async Task<ProductResponse?> GetById(ProductId productId, CancellationToken cancellationToken = default)
+    public async Task<ProductResponse?> GetById(
+        ProductId productId,
+        CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Products
-            .Where(x => x.ProductId == productId)
+        return await _postgreSQLdbContext.Products
+            .Where(x => x.ProductId == new Ulid(productId.Value))
             .Select(x => new ProductResponse(
-                x.ProductId,
+                x.ProductId.ToGuid(),
                 x.ProductName,
                 x.ImageUrl,
                 x.Description,
@@ -33,16 +36,34 @@ internal sealed class ProductQueryServices : IProductQueryServices
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<bool> IsProductNameExist(
+        ProductId? productId, 
+        ProductName productName, 
+        CancellationToken cancellationToken = default)
+    {
+        if (productId is not null)
+        {
+            return await _postgreSQLdbContext.Products
+                .AnyAsync(
+                x => x.ProductName == productName.Value 
+                && x.ProductId != new Ulid(productId.Value));
+        }
+
+        return await _postgreSQLdbContext.Products
+            .Where(x => x.ProductName == productName.Value)
+            .AnyAsync();
+    }
+
     public async Task<PagedList<ProductResponse>> PagedList(
-        string? filterProductStatus, 
-        string? filterCategory, 
-        string? searchTerm, 
-        string? sortColumn, 
-        string? sortOrder, 
-        int? page, 
+        string? filterProductStatus,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
         int? pageSize)
     {
-        var productsQuery = _dbContext.Products.AsQueryable();
+        var productsQuery = _postgreSQLdbContext.Products.AsQueryable();
         //Search
         if (!string.IsNullOrEmpty(searchTerm))
         {
@@ -58,7 +79,8 @@ internal sealed class ProductQueryServices : IProductQueryServices
 
         if (!string.IsNullOrWhiteSpace(filterCategory))
         {
-            productsQuery = productsQuery.Where(x => x.CategoryId == CategoryId.FromString(filterCategory));
+            productsQuery = productsQuery.Where(
+                x => x.CategoryId.ToGuid() == CategoryId.FromString(filterCategory));
         }
 
         //sort
@@ -81,7 +103,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
         //paged
         var products = productsQuery
             .Select(x => new ProductResponse(
-                x.ProductId,
+                x.ProductId.ToGuid(),
                 x.ProductName,
                 x.ImageUrl,
                 x.Description,

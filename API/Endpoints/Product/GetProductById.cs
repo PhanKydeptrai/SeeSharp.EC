@@ -7,7 +7,7 @@ using SharedKernel.Constants;
 
 namespace API.Endpoints.Product;
 
-public class GetProductById : IEndpoint
+internal sealed class GetProductById : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {

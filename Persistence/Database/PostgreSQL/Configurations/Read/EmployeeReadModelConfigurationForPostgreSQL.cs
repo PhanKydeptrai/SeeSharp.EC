@@ -11,12 +11,16 @@ internal sealed class EmployeeReadModelConfigurationForPostgreSQL : IEntityTypeC
         builder.HasKey(x => x.EmployeeId);
         builder.Property(x => x.EmployeeId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.UserId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.EmployeeStatus)

@@ -11,7 +11,9 @@ internal sealed class VoucherReadModelConfigurationForMySQL : IEntityTypeConfigu
         builder.HasKey(x => x.VoucherId);
         builder.Property(a => a.VoucherId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
 

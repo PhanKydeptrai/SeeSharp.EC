@@ -38,17 +38,14 @@ internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdated
         _logger.LogInformation(
             "Consuming CategoryUpdatedEvent for categoryId: {CategoryId}",
             context.Message.categoryId);
+        
+        var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(
+            CategoryId.FromGuid(context.Message.categoryId));
 
-        var category = ConvertEventToCategory(context.Message);
-        
-        await _categoryRepository.UpdateCategoryPostgreSQL_ChangeTracking(
-            category.CategoryId, 
-            category.CategoryName, 
-            category.ImageUrl ?? string.Empty);
-        
+        UpdateCategory(category!, context.Message);
+
         int result = await _unitOfWork.SaveChangesAsync();
 
-        //FIXME: Failed khi update mà không có sư thay đổi
         if (result <= 0) //Nếu không thành công 
         {
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
@@ -83,14 +80,14 @@ internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdated
             "Successfully consumed CategoryUpdatedEvent for categoryId: {CategoryId}",
             context.Message.categoryId);
     }
-
-    private Category ConvertEventToCategory(CategoryUpdatedEvent categoryCreatedEvent)
+    //-----------------------------------------------------------------------------------------
+    private void UpdateCategory(Category category, CategoryUpdatedEvent request)
     {
-        return Category.FromExisting(
-            CategoryId.FromGuid(categoryCreatedEvent.categoryId),
-            CategoryName.NewCategoryName(categoryCreatedEvent.categoryName),
-            categoryCreatedEvent.imageUrl ?? string.Empty,
-            categoryCreatedEvent.categoryStatus
+        Category.Update(
+            category,
+            CategoryName.NewCategoryName(request.categoryName),
+            category.CategoryStatus,
+            request.imageUrl ?? string.Empty
         );
     }
 }

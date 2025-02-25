@@ -15,4 +15,8 @@ public interface IProductQueryServices
         string? sortOrder,
         int? page,
         int? pageSize);
+    Task<bool> IsProductNameExist(
+        ProductId? productId, 
+        ProductName productName, 
+        CancellationToken cancellationToken = default);
 }

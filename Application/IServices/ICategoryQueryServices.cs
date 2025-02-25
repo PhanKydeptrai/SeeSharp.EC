@@ -14,6 +14,12 @@ public interface ICategoryQueryServices
         int? page,
         int? pageSize);
 
-    Task<CategoryResponse?> GetById(CategoryId categoryId, CancellationToken cancellationToken = default);
-    Task<bool> IsCategoryExist(CategoryId categoryId, CancellationToken cancellationToken = default);
+    Task<CategoryResponse?> GetById(
+        CategoryId categoryId, 
+        CancellationToken cancellationToken = default);
+
+    Task<bool> IsCategoryNameExist(
+        CategoryId? categoryId,
+        CategoryName categoryName,
+        CancellationToken cancellationToken = default);
 }

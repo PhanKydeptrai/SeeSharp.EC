@@ -1,6 +1,4 @@
-﻿
-using System.Linq.Expressions;
-using Application.DTOs.Category;
+﻿using Application.DTOs.Category;
 using Application.Features.Pages;
 using Application.IServices;
 using Domain.Database.PostgreSQL.ReadModels;
@@ -8,30 +6,29 @@ using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Services.CategoryServices;
 
 internal class CategoryQueryServices : ICategoryQueryServices
 {
+    #region Dependency
     private readonly NextSharpPostgreSQLReadDbContext _contextPostgreSQL;
-    private readonly NextSharpMySQLReadDbContext _contextMySQL;
     public CategoryQueryServices(
-        NextSharpPostgreSQLReadDbContext contextPostgreSQL, 
-        NextSharpMySQLReadDbContext contextMySQL)
+        NextSharpPostgreSQLReadDbContext contextPostgreSQL)
     {
         _contextPostgreSQL = contextPostgreSQL;
-        _contextMySQL = contextMySQL;
     }
-
+    #endregion
     public async Task<CategoryResponse?> GetById(
         CategoryId categoryId,
         CancellationToken cancellationToken)
     {
         var categoryResponse = await _contextPostgreSQL.Categories
-            .Where(a => a.CategoryId == categoryId.Value 
+            .Where(a => a.CategoryId.ToGuid() == categoryId
             && a.CategoryStatus != CategoryStatus.Deleted.ToString())
             .Select(a => new CategoryResponse(
-                a.CategoryId,
+                a.CategoryId.ToGuid(),
                 a.CategoryName,
                 a.ImageUrl,
                 a.CategoryStatus))
@@ -40,9 +37,22 @@ internal class CategoryQueryServices : ICategoryQueryServices
         return categoryResponse;
     }
 
-    public async Task<bool> IsCategoryExist(CategoryId categoryId, CancellationToken cancellationToken = default)
+    public async Task<bool> IsCategoryNameExist(
+        CategoryId? categoryId, 
+        CategoryName categoryName, 
+        CancellationToken cancellationToken = default)
     {
-        return await _contextMySQL.Categories.AnyAsync(a => a.CategoryId == categoryId.Value, cancellationToken);
+        if(categoryId is not null)
+        {
+            return await _contextPostgreSQL.Categories
+                .AnyAsync(
+                    a => a.CategoryName == categoryName.Value 
+                    && a.CategoryId != new Ulid(categoryId.Value));
+        }
+
+        return await _contextPostgreSQL.Categories
+            .AnyAsync(a => a.CategoryName == categoryName.Value);
+
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(
@@ -87,7 +97,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
         //paged
         var categories = categoriesQuery
             .Select(a => new CategoryResponse(
-                a.CategoryId,
+                a.CategoryId.ToGuid(),
                 a.CategoryName,
                 a.ImageUrl,
                 a.CategoryStatus)).AsQueryable();

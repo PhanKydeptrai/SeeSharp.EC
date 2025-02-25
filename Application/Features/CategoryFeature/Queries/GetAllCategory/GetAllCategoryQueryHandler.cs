@@ -4,6 +4,7 @@ using Application.DTOs.Category;
 using Application.Features.Pages;
 using Application.IServices;
 using SharedKernel;
+using SharedKernel.Constants;
 
 namespace Application.Features.CategoryFeature.Queries.GetAllCategory;
 
@@ -31,6 +32,7 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
             request.page,
             request.pageSize
         );
+
         AddLinks(request, pagedList);
 
         return Result.Success(pagedList);
@@ -39,7 +41,7 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
     private void AddLinks(GetAllCategoryQuery request, PagedList<CategoryResponse> pagedList)
     {
         pagedList.Links.Add(_linkService.Generate(
-            "GetAllCategory",
+            EndpointName.Category.GetAll,
             new
             {
                 filter = request.filter,
@@ -51,13 +53,13 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
 
             },
             "self",
-            "GET"
+            EndpointMethod.GET
         ));
 
         if (pagedList.HaspreviousPage)
         {
             pagedList.Links.Add(_linkService.Generate(
-                "GetAllCategory",
+                EndpointName.Category.GetAll,
                 new
                 {
                     filter = request.filter,
@@ -68,14 +70,14 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
                     pageSize = request.pageSize
                 },
                 "previous-page",
-                "GET"
+                EndpointMethod.GET
             ));
         }
 
         if (pagedList.HasNextPage)
         {
             pagedList.Links.Add(_linkService.Generate(
-                "GetAllCategory",
+                EndpointName.Category.GetAll,
                 new
                 {
                     filter = request.filter,
@@ -86,7 +88,7 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
                     pageSize = request.pageSize
                 },
                 "next-page",
-                "GET"
+                EndpointMethod.GET
             ));
         }
     }

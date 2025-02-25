@@ -12,6 +12,7 @@ namespace Infrastructure.Consumers.CategoryMessageConsumer;
 
 internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeletedEvent>
 {
+    #region Dependency
     private readonly ILogger<CategoryDeletedMessageConsumer> _logger;
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -30,34 +31,39 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
         _outBoxMessageServices = outBoxMessageServices;
         _distributedCache = distributedCache;
     }
+    #endregion
 
     public async Task Consume(ConsumeContext<CategoryDeletedEvent> context)
     {
+        //Log start
         _logger.LogInformation(
             "Consuming CategoryDeletedEvent for categoryId: {CategoryId}",
             context.Message.categoryId);
-
-        var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(CategoryId.FromGuid(context.Message.categoryId));
-
-        Category.Delete(category!);
-
-        if(await _unitOfWork.SaveChangesAsync() <= 0) //Nếu không thành công
+        try
+        {
+            var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(
+            CategoryId.FromGuid(context.Message.categoryId));
+            Category.Delete(category!);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch (Exception ex)
         {
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     context.Message.messageId,
                     OutboxMessageStatus.Failed,
                     "Failed to consume CategoryDeletedEvent",
                     DateTime.UtcNow);
-    
+
             await _unitOfWork.Commit();
 
             _logger.LogError(
+                ex,
                 "Failed to consume CategoryDeletedEvent for categoryId: {CategoryId}",
                 context.Message.categoryId);
 
-            throw new Exception("Category updated event consumed failed");
+            throw; //Stop the message
         }
-
+        
         //Cập nhật trạng thái outbox message
         await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
             context.Message.messageId,
@@ -66,15 +72,17 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
             DateTime.UtcNow);
 
         await _unitOfWork.Commit();
+
         //Ivalidating cache
         string cacheKey = $"CategoryResponse:{context.Message.categoryId}";
+
         await _distributedCache.RemoveAsync(cacheKey);
-        
+
         //Log End
         _logger.LogInformation(
             "Successfully consumed CategoryDeletedEvent for categoryId: {CategoryId}",
             context.Message.categoryId);
-        
+
     }
 
 }

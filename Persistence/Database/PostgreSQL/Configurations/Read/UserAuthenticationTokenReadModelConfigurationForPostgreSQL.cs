@@ -11,7 +11,9 @@ internal sealed class UserAuthenticationTokenReadModelConfigurationForPostgreSQL
         builder.HasKey(a => a.UserAuthenticationTokenId);
         builder.Property(a => a.UserAuthenticationTokenId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
         builder.Property(a => a.Value)
@@ -32,7 +34,9 @@ internal sealed class UserAuthenticationTokenReadModelConfigurationForPostgreSQL
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            
+            .HasConversion(
+                value => value.ToGuid(),
+                value => new Ulid(value))
             .HasColumnType("uuid");
 
     }

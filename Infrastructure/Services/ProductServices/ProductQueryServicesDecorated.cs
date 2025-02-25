@@ -42,6 +42,11 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
     }
 
+    public async Task<bool> IsProductNameExist(ProductId? productId, ProductName productName, CancellationToken cancellationToken = default)
+    {
+        return await _decorated.IsProductNameExist(productId, productName, cancellationToken);
+    }
+
     public async Task<PagedList<ProductResponse>> PagedList(
         string? filterProductStatus,
         string? filterCategory,

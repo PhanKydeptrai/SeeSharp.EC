@@ -44,9 +44,12 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         return JsonConvert.DeserializeObject<CategoryResponse>(cachedCategory);
     }
 
-    public async Task<bool> IsCategoryExist(CategoryId categoryId, CancellationToken cancellationToken = default)
+    public async Task<bool> IsCategoryNameExist(
+        CategoryId? categoryId, 
+        CategoryName categoryName, 
+        CancellationToken cancellationToken = default)
     {
-        return await _decorated.IsCategoryExist(categoryId, cancellationToken);
+        return await _decorated.IsCategoryNameExist(categoryId, categoryName, cancellationToken);
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(
