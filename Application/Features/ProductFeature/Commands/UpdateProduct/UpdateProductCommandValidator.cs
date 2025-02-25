@@ -29,7 +29,7 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
             {
                 return productQueryServices.IsProductNameExist(
                     ProductId.FromGuid(context.ProductId), 
-                    ProductName.FromString(productName)).Result == false;
+                    ProductName.FromString(productName)).Result == false; //TEST
             })
             .WithErrorCode("ProductName.NotUnique")
             .WithMessage("Prodyuct name must be unique")

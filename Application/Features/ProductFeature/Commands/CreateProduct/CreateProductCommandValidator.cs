@@ -15,7 +15,7 @@ internal sealed class CreateProductCommandValidator : AbstractValidator<CreatePr
             .MaximumLength(50)
             .WithErrorCode("ProductName.TooLong")
             .WithMessage("Product name is too long")
-            .Must(x => productQueryServices.IsProductNameExist(null,ProductName.FromString(x)).Result)
+            .Must(x => !productQueryServices.IsProductNameExist(null,ProductName.FromString(x)).Result)
             .WithErrorCode("ProductName.NotUnique")
             .WithMessage("Product name must be unique");
 

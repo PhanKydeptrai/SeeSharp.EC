@@ -37,6 +37,11 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddCustomProblemDetails();
 builder.Host.UseSerilog((context, loggerConfig) =>
 loggerConfig.ReadFrom.Configuration(context.Configuration));
+//Seq
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSeq();
+});
 builder.Services.Cors();
 
 #region Cấu hình Masstransit
@@ -81,11 +86,7 @@ app.UseSerilogRequestLogging(); //Serilog middleware
 
 app.UseRequestContextLogging(); //Middleware log thông tin request
 
-//Seq
-//builder.Services.AddLogging(loggingBuilder =>
-//{
-//    loggingBuilder.AddSeq();
-//});
+
 
 #endregion
 
@@ -110,7 +111,7 @@ app.MapGet("/api/convert/{id:guid}", (Guid id) =>
     return Results.Ok(new Ulid(id));
 });
 
-app.MapEndpoints(); 
+app.MapEndpoints();
 #endregion
 
 app.Run();

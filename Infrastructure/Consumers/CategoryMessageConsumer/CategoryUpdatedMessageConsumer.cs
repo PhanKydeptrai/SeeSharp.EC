@@ -86,6 +86,7 @@ internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdated
         Category.Update(
             category,
             CategoryName.NewCategoryName(request.categoryName),
+            category.CategoryStatus,
             request.imageUrl ?? string.Empty
         );
     }

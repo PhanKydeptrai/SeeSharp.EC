@@ -72,7 +72,7 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
 
         //Log End
         _logger.LogInformation(
-            "Successfully consumed CategoryDeletedEvent for categoryId: {CategoryId}",
+            "Successfully consumed ProductCreatedEvent for categoryId: {CategoryId}",
             context.Message.ProductId);
     }
 
