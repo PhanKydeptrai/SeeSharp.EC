@@ -48,11 +48,8 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
             message,
             _outboxservice);
             
-        int result = await _unitOfWork.Commit(cancellationToken);
+        await _unitOfWork.Commit(cancellationToken);
         
-        if (result <= 0) return Result.Failure(
-            CategoryErrors.Failure(category.CategoryId));
-
         await _eventBus.PublishAsync(message);
 
         return Result.Success();
@@ -82,7 +79,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
 
 
         //--------------------
-        Category.Update(category,
+        category.Update(
                 CategoryName.FromString(request.categoryName),
                 category.CategoryStatus,
                 string.Empty); // TODO: Get image from request

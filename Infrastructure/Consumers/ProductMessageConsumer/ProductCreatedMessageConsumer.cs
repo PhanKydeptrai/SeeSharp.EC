@@ -29,6 +29,8 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
         _outBoxMessageServices = outBoxMessageServices;
     }
 
+    
+
     public async Task Consume(ConsumeContext<ProductCreatedEvent> context)
     {
         //Log start
@@ -42,7 +44,7 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
             await _productRepository.AddProductToPosgreSQL(product);
             await _unitOfWork.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch (Exception ex)    
         {
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     context.Message.MessageId,

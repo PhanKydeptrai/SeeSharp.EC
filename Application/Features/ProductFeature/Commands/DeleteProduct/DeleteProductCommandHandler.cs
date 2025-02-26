@@ -34,7 +34,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
         var productId = ProductId.FromGuid(request.ProductId);
         var (product, failure) = await GetProductByIdAsync(productId);
         if (product is null) return failure!;
-        Product.Delete(product);
+        product.Delete();
 
         //Create outbox message
         var message = new ProductDeletedEvent(product.ProductId.Value, Ulid.NewUlid().ToGuid());

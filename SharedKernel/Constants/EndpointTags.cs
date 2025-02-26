@@ -9,6 +9,7 @@ public static class EndpointName
         public const string GetAll = "GetProducts";
         public const string Update = "UpdateProduct";
         public const string Delete = "DeleteProduct";
+        public const string Restore = "RestoreProduct";
     }   
 
     public class Category

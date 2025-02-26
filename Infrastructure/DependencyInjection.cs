@@ -28,7 +28,7 @@ public static class DependencyInjection
             .AddEventBus()
             .AddRedisConfig(configuration)
             .AddBackgoundJob()
-            .AddMassTransitConfiguration(configuration);
+            .AddMassTransitConfiguration();
 
         return services;
     }
@@ -75,8 +75,7 @@ public static class DependencyInjection
     }
 
     private static IServiceCollection AddMassTransitConfiguration(
-        this IServiceCollection services,
-        IConfiguration configuration)
+        this IServiceCollection services)
     {
         services.AddMassTransit(busConfiguration =>
         {
@@ -91,9 +90,11 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CategoryCreatedMessageConsumer>();
             busConfiguration.AddConsumer<CategoryUpdatedMessageConsumer>();
             busConfiguration.AddConsumer<CategoryDeletedMessageConsumer>();
+
             busConfiguration.AddConsumer<ProductCreatedMessageConsumer>();
             busConfiguration.AddConsumer<ProductUpdatedMessageConsumer>();
             busConfiguration.AddConsumer<ProductDeletedMessageConsumer>();
+            busConfiguration.AddConsumer<ProductRestoredMessageConsumer>();
             
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ

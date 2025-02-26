@@ -45,21 +45,15 @@ public abstract class BaseId<T> : ValueObject where T : BaseId<T> , new()
         id.Value = Guid.Empty;
         return id;
     }
-    public static Ulid ToUlid(T value)
-    {
-        var id = new T();
-        return new Ulid(id.Value);
-    }
+
 
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;
     }
 
-    public override string ToString()
-    {
-        return Value.ToString();
-    }
+    public Ulid ToUlid() => new Ulid(Value);
 
+    public override string ToString() => Value.ToString();
 
 }

@@ -2,4 +2,4 @@ using Application.Abstractions.Messaging;
 
 namespace Application.Features.CategoryFeature.Commands.DeleteCategory;
 
-public record DeleteCategoryCommand(Guid categoryId) : ICommand;
+public sealed record DeleteCategoryCommand(Guid categoryId) : ICommand;

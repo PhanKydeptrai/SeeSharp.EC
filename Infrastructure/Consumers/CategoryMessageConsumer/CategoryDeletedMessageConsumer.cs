@@ -43,7 +43,7 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
         {
             var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(
             CategoryId.FromGuid(context.Message.categoryId));
-            Category.Delete(category!);
+            category!.Delete();
             await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex)

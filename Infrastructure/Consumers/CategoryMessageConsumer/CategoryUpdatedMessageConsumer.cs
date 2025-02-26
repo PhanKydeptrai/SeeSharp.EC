@@ -83,8 +83,7 @@ internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdated
     //-----------------------------------------------------------------------------------------
     private void UpdateCategory(Category category, CategoryUpdatedEvent request)
     {
-        Category.Update(
-            category,
+        category.Update(
             CategoryName.NewCategoryName(request.categoryName),
             category.CategoryStatus,
             request.imageUrl ?? string.Empty

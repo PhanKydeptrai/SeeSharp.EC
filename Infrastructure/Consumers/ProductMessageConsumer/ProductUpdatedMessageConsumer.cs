@@ -84,8 +84,7 @@ internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEv
     //--------------------------------------------------------------------------------
     private void UpdateProduct(Product product, ProductUpdatedEvent request)
     {
-        Product.Update(
-            product,
+        product.Update(
             ProductName.NewProductName(request.ProductName),
             string.Empty, //TODO: Xử lý ảnh
             request.Description,

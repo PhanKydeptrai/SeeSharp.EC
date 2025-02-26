@@ -33,20 +33,19 @@ public sealed class Category
             CategoryStatus.Available);
     }
 
-    public static void Update(
-        Category category, 
+    public void Update(
         CategoryName categoryName,
         CategoryStatus categoryStatus,
         string imageUrl)
     {
-        category.CategoryName = categoryName;
-        category.CategoryStatus = categoryStatus;
-        category.ImageUrl = imageUrl;
+        CategoryName = categoryName;
+        CategoryStatus = categoryStatus;
+        ImageUrl = imageUrl;
     }
 
-    public static void Delete(Category category)
+    public void Delete()
     {
-        category.CategoryStatus = CategoryStatus.Deleted;
+        CategoryStatus = CategoryStatus.Deleted;
     }
 
     public static Category FromExisting(

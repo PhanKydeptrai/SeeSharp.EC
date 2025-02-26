@@ -39,7 +39,7 @@ internal sealed class ProductDeletedMessageConsumer : IConsumer<ProductDeletedEv
         {
             var product = await _productRepository.GetProductFromPosgreSQL(
                ProductId.FromGuid(context.Message.ProductId));
-            Product.Delete(product!);
+            product!.Delete();
             await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex)

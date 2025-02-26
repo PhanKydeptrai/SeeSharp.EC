@@ -40,7 +40,7 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
             return failure!;
         }
 
-        DeleteCategory(category);
+        category.Delete();
 
         var message = CreateCategoryDeletedEvent(category.CategoryId);
 
@@ -49,25 +49,18 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
             message,
             _oubBoxService);
 
-        int result = await _unitOfWork.Commit();
+        await _unitOfWork.Commit();
+    
+        await _eventBus.PublishAsync(message);
+        
+        return Result.Success();
 
-        if (result > 0)
-        {
-            await _eventBus.PublishAsync(message);
-            return Result.Success();
-        }
-        return Result.Failure(CategoryErrors.Failure(category.CategoryId));
 
     }
     //----------------------------------------------------------------
     private CategoryDeletedEvent CreateCategoryDeletedEvent(Guid categoryId)
     {
         return new CategoryDeletedEvent(categoryId, Ulid.NewUlid().ToGuid());
-    }
-
-    private void DeleteCategory(Category category)
-    {
-        Category.Delete(category);
     }
 
     private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
