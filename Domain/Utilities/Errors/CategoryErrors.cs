@@ -20,4 +20,8 @@ public static class CategoryErrors
     public static Error Deleted(CategoryId categoryId) => Error.Problem(
         "Category.Deleted",
         $"The category with the Id = '{categoryId}' was deleted");
+
+    public static Error NotDeleted(CategoryId categoryId) => Error.Problem(
+        "Category.NotDeleted",
+        $"The category with the Id = '{categoryId}' was not deleted");
 }

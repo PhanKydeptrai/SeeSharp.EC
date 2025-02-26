@@ -44,7 +44,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
             message,
             _outboxService);
 
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
 
         await _eventBus.PublishAsync(message);
 

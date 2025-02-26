@@ -16,8 +16,6 @@ internal sealed class RestoreProduct : IEndpoint
             ISender sender) =>
         {
             var result = await sender.Send(new RestoreProductCommand(productId));
-            // if(result.IsSuccess) return Results.NoContent();
-            // return Results.BadRequest(result.Error);
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .DisableAntiforgery()

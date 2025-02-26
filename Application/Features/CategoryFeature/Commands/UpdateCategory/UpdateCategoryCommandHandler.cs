@@ -10,7 +10,6 @@ using Domain.Utilities.Events.CategoryEvents;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
-//TODO: Thêm xử lý cập nhật Product
 public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand>
 {
     private readonly ICategoryRepository _categoryRepository;
@@ -48,7 +47,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
             message,
             _outboxservice);
             
-        await _unitOfWork.Commit(cancellationToken);
+        await _unitOfWork.SaveToMySQL(cancellationToken);
         
         await _eventBus.PublishAsync(message);
 

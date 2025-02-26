@@ -39,7 +39,7 @@ internal sealed class RestoreProductCommandHandler : ICommandHandler<RestoreProd
         product.Restore();
         var message = new ProductRestoredEvent(product.ProductId.Value, Ulid.NewUlid().ToGuid());
         await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outboxService);
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
 
         //Publish event
         await _eventBus.PublishAsync(message);

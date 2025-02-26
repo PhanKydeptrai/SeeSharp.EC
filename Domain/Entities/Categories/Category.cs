@@ -42,9 +42,14 @@ public sealed class Category
         CategoryStatus = categoryStatus;
         ImageUrl = imageUrl;
     }
-
+    public void Restore()
+    {
+        if (CategoryStatus != CategoryStatus.Deleted) throw new InvalidOperationException("Category is not deleted");
+        CategoryStatus = CategoryStatus.Available;
+    }
     public void Delete()
     {
+        if (CategoryStatus == CategoryStatus.Deleted) throw new InvalidOperationException("Category is already deleted");
         CategoryStatus = CategoryStatus.Deleted;
     }
 

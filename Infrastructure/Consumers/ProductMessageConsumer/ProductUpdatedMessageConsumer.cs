@@ -39,12 +39,12 @@ internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEv
         try
         {
 
-            var product = await _productRepository.GetProductFromPosgreSQL(
+            var product = await _productRepository.GetProductFromPostgreSQL(
                 ProductId.FromGuid(context.Message.ProductId));
 
             UpdateProduct(product!, context.Message);
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveToPostgreSQL();
         }
         catch (Exception ex)
         {
@@ -54,7 +54,7 @@ internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEv
                     "Failed to consume ProductUpdatedEvent",
                     DateTime.UtcNow);
 
-            await _unitOfWork.Commit();
+            await _unitOfWork.SaveToMySQL();
 
             //Log error
             _logger.LogError(
@@ -72,7 +72,7 @@ internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEv
             "Successfully consumed ProductUpdatedEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
 
         //Log end
         _logger.LogInformation(

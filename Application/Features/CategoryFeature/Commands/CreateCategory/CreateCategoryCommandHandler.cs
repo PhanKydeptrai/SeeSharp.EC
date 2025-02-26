@@ -55,7 +55,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
             message,
             _outboxservice);
 
-        if (await _unitOfWork.Commit() > 0)
+        if (await _unitOfWork.SaveToMySQL() > 0)
         {
             await _eventBus.PublishAsync(message);
             return Result.Success(category.CategoryId);

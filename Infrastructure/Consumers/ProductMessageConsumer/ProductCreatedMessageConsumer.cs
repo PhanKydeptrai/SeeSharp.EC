@@ -41,8 +41,8 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
         try
         {
             var product = ConvertOutboxMessageToProduct(context.Message);
-            await _productRepository.AddProductToPosgreSQL(product);
-            await _unitOfWork.SaveChangesAsync();
+            await _productRepository.AddProductToPostgreSQL(product);
+            await _unitOfWork.SaveToPostgreSQL();
         }
         catch (Exception ex)    
         {
@@ -52,7 +52,7 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
                     "Failed to consume ProductCreatedEvent",
                     DateTime.UtcNow);
 
-            await _unitOfWork.Commit();
+            await _unitOfWork.SaveToMySQL();
 
             //Log error
             _logger.LogError(
@@ -70,7 +70,7 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
             "Successfully consumed ProductCreatedEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
 
         //Log End
         _logger.LogInformation(

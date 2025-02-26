@@ -42,7 +42,7 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
             message.MessageId,
             message,
             _outboxService);
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
         
         await _eventBus.PublishAsync(message);
 

@@ -48,7 +48,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
             message,
             _outBoxMessageServices);
 
-        int result = await _unitOfWork.Commit();
+        int result = await _unitOfWork.SaveToMySQL();
 
         if (result > 0)
         {

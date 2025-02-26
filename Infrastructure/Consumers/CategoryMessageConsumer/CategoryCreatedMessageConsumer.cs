@@ -38,7 +38,7 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
         {
             var category = ConvertEventToCategory(context.Message);
             await _categoryRepository.AddCategoryToPosgreSQL(category);
-            var result = await _unitOfWork.SaveChangesAsync();
+            var result = await _unitOfWork.SaveToPostgreSQL();
 
         }
         catch (Exception ex)
@@ -50,7 +50,7 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
                 "Failed to consume CategoryCreatedEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.Commit();
+            await _unitOfWork.SaveToMySQL();
 
             //Log Error
             _logger.LogError(
@@ -67,7 +67,7 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
             string.Empty,
             DateTime.UtcNow);
 
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
 
         //Log End
         _logger.LogInformation(

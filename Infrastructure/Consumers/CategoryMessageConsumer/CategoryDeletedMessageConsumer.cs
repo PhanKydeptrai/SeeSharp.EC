@@ -1,5 +1,6 @@
 using Domain.Entities.Categories;
 using Domain.IRepositories;
+using Domain.IRepositories.Categories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.CategoryEvents;
@@ -15,6 +16,7 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
     #region Dependency
     private readonly ILogger<CategoryDeletedMessageConsumer> _logger;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
     private readonly IDistributedCache _distributedCache;
@@ -23,18 +25,21 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
         ICategoryRepository categoryRepository,
         IUnitOfWork unitOfWork,
         IOutBoxMessageServices outBoxMessageServices,
-        IDistributedCache distributedCache)
+        IDistributedCache distributedCache,
+        IProductRepository productRepository)
     {
         _logger = logger;
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
         _outBoxMessageServices = outBoxMessageServices;
         _distributedCache = distributedCache;
+        _productRepository = productRepository;
     }
     #endregion
 
     public async Task Consume(ConsumeContext<CategoryDeletedEvent> context)
     {
+        using var transaction = await _unitOfWork.BeginPostgreSQLTransaction();
         //Log start
         _logger.LogInformation(
             "Consuming CategoryDeletedEvent for categoryId: {CategoryId}",
@@ -44,17 +49,22 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
             var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(
             CategoryId.FromGuid(context.Message.categoryId));
             category!.Delete();
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveToPostgreSQL();
+            await _productRepository.DeleteProductByCategoryFromMySQL(category.CategoryId);
+            transaction.Commit();
         }
         catch (Exception ex)
         {
+            transaction.Rollback();
+
+            //Failed to consume CategoryDeletedEvent => Update outbox message status
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     context.Message.messageId,
                     OutboxMessageStatus.Failed,
                     "Failed to consume CategoryDeletedEvent",
                     DateTime.UtcNow);
 
-            await _unitOfWork.Commit();
+            await _unitOfWork.SaveToMySQL();
 
             _logger.LogError(
                 ex,
@@ -71,11 +81,10 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
             "Successfully consumed CategoryDeletedEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
 
         //Ivalidating cache
-        string cacheKey = $"CategoryResponse:{context.Message.categoryId}";
-
+        string cacheKey = $"CategoryResponse:{context.Message.categoryId}"; 
         await _distributedCache.RemoveAsync(cacheKey);
 
         //Log End
