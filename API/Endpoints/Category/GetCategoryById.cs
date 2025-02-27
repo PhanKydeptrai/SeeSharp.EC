@@ -21,7 +21,8 @@ internal sealed class GetCategoryById : IEndpoint
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Category)
-        .WithName(EndpointName.Category.GetById);
+        .WithName(EndpointName.Category.GetById)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
 
     }
 }

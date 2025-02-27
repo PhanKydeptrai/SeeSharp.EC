@@ -25,6 +25,7 @@ internal sealed class UpdateCategory : IEndpoint
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Category)
-        .WithName(EndpointName.Category.Update);
+        .WithName(EndpointName.Category.Update)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }

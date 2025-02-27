@@ -5,6 +5,7 @@ using Infrastructure.Consumers.CategoryMessageConsumer;
 using Infrastructure.Consumers.ProductMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Services.CategoryServices;
+using Infrastructure.Services.CustomerServices;
 using Infrastructure.Services.ProductServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
@@ -57,6 +58,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        //NOTE: provider bị lỏ
         services.AddScoped<CategoryQueryServices>();
         services.AddScoped<ICategoryQueryServices>(provider =>
         {
@@ -71,6 +73,7 @@ public static class DependencyInjection
             return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
         });
 
+        services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
         return services;
     }
 

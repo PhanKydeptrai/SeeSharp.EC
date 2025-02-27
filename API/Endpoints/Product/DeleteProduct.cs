@@ -20,6 +20,7 @@ internal sealed class DeleteProduct : IEndpoint
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Product)
-        .WithName(EndpointName.Product.Delete);
+        .WithName(EndpointName.Product.Delete)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }

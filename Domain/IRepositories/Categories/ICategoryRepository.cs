@@ -2,7 +2,6 @@
 
 namespace Domain.IRepositories.CategoryRepositories;
 
-//* No cache in this place ok?
 public interface ICategoryRepository
 {
     #region Write

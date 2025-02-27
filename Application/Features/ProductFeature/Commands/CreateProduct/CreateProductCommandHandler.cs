@@ -78,7 +78,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         CreateProductCommand command,
         CancellationToken cancellationToken = default)
     {
-        CategoryId categoryId = CategoryId.FromGuid(DefaultCategory.Id);
+        CategoryId categoryId = CategoryId.DefaultCategoryId;
         if (command.CategoryId is not null)
         {
             categoryId = CategoryId.FromGuid(command.CategoryId.Value);

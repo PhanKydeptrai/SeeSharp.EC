@@ -32,7 +32,8 @@ internal sealed class CreateProduct : IEndpoint
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Product)
-        .WithName(EndpointName.Product.Create);
+        .WithName(EndpointName.Product.Create)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 
 

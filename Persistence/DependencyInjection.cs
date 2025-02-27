@@ -11,6 +11,10 @@ using Persistence.Outbox;
 using Persistence.Repositories;
 using Persistence.Repositories.CategoryRepositories;
 using Persistence.Repositories.ProductRepositories;
+using Domain.IRepositories.Customers;
+using Persistence.Repositories.CustomerRepositories;
+using Persistence.Repositories.UserRepositories;
+using Domain.IRepositories.Users;
 
 namespace Persistence;
 //FIXME: AddPersistnce
@@ -33,6 +37,8 @@ public static class DependencyInjection
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }
 

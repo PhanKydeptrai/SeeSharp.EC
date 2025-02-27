@@ -48,7 +48,7 @@ internal sealed class CategoryConfigurationForPostgreSQL : IEntityTypeConfigurat
         // Seed Data
         builder.HasData(
             Category.FromExisting(
-                CategoryId.FromString("019546cc-2909-1710-9a1b-36df36d9a7ae"),
+                CategoryId.DefaultCategoryId,
                 CategoryName.FromString("General"),
                 string.Empty,
                 CategoryStatus.Available,

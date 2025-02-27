@@ -1,3 +1,4 @@
+using API.Infrastructure;
 using Application.Features.CategoryFeature.Queries.GetAllCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,7 @@ internal sealed class GetAllCategory : IEndpoint
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Category)
-        .WithName(EndpointName.Category.GetAll);
+        .WithName(EndpointName.Category.GetAll)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }

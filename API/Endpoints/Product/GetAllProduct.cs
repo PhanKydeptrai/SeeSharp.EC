@@ -1,4 +1,5 @@
 ﻿
+using API.Infrastructure;
 using Application.Features.ProductFeature.Queries.GetAllProduct;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,7 @@ public class GetAllProduct : IEndpoint
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Product)
-        .WithName(EndpointName.Product.GetAll);
+        .WithName(EndpointName.Product.GetAll)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }
