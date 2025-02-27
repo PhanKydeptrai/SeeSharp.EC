@@ -42,6 +42,11 @@ public sealed class Category
         CategoryStatus categoryStatus,
         string imageUrl)
     {
+        if (IsDefault)
+        {
+            throw new InvalidOperationException("Cannot update default category");
+        }
+
         CategoryName = categoryName;
         CategoryStatus = categoryStatus;
         ImageUrl = imageUrl;
@@ -57,10 +62,16 @@ public sealed class Category
     }
     public void Delete()
     {
-        if (CategoryStatus == CategoryStatus.Deleted)
+        if (IsDefault)
+        {
+            throw new InvalidOperationException("Cannot delete default category");
+        }
+
+        if (CategoryStatus is CategoryStatus.Deleted)
         {
             throw new InvalidOperationException("Category is already deleted");
         }
+
         CategoryStatus = CategoryStatus.Deleted;
     }
     public static Category FromExisting(

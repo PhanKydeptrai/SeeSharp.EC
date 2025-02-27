@@ -8,4 +8,4 @@ public record CreateProductCommand(
     IFormFile? ProductImage,
     string? Description,
     decimal Price,
-    string CategoryId) : ICommand;
+    Guid? CategoryId) : ICommand;

@@ -61,7 +61,7 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
         //Delete all products in this category
         await _productRepository.DeleteProductByCategoryFromMySQL(category.CategoryId);
         transaction.Commit();
-        
+
         //Publish event
         await _eventBus.PublishAsync(message);
         return Result.Success();
@@ -81,6 +81,11 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
         if (category is null)
         {
             return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));
+        }
+
+        if (category.IsDefault)
+        {
+            return (null, Result.Failure(CategoryErrors.IsDefault(categoryId)));
         }
 
         if (category.CategoryStatus == CategoryStatus.Deleted)

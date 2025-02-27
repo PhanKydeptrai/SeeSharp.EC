@@ -10,6 +10,7 @@ using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.ProductEvents;
 using SharedKernel;
+using SharedKernel.Constants;
 
 namespace Application.Features.ProductFeature.Commands.CreateProduct;
 
@@ -77,7 +78,12 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         CreateProductCommand command,
         CancellationToken cancellationToken = default)
     {
-        var categoryId = CategoryId.FromString(command.CategoryId);
+        CategoryId categoryId = CategoryId.FromGuid(DefaultCategory.Id);
+        if (command.CategoryId is not null)
+        {
+            categoryId = CategoryId.FromGuid(command.CategoryId.Value);
+        }
+        
         if (!await _categoryRepository.IsCategoryIdExist(categoryId, cancellationToken))
         {
             return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));

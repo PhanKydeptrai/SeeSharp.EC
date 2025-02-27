@@ -9,6 +9,13 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
     public void Configure(EntityTypeBuilder<Category> builder)
     {
         builder.HasKey(a => a.CategoryId);
+
+        builder.HasIndex(a => a.CategoryName) //Unique Index
+            .IsUnique();
+
+        builder.HasIndex(a => a.CategoryStatus)
+            .IsUnique();
+
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(
@@ -49,8 +56,8 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
         // Seed Data
         builder.HasData(
             Category.FromExisting(
-                CategoryId.New(),
-                CategoryName.FromString("Default Category"),
+                CategoryId.FromString("019546cc-2909-1710-9a1b-36df36d9a7ae"),
+                CategoryName.FromString("General"),
                 string.Empty,
                 CategoryStatus.Available,
                 true));

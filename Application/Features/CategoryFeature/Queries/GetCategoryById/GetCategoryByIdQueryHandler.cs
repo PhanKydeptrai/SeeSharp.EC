@@ -50,29 +50,33 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
             "self",
             EndpointMethod.GET));
 
-        categoryResponse.links.Add(_linkServices.Generate(
+        if (!categoryResponse.isDefault)
+        {
+            categoryResponse.links.Add(_linkServices.Generate(
             EndpointName.Category.Update,
             new { categoryId = categoryResponse.categoryId },
             "update-category",
             EndpointMethod.PUT));
 
-        if (categoryResponse.categoryStatus == CategoryStatus.Deleted.ToString())
-        {
-            categoryResponse.links.Add(_linkServices.Generate(
-                        EndpointName.Category.Restore,
-                        new { categoryId = categoryResponse.categoryId },
-                        "restore-category",
-                        EndpointMethod.PUT));
+            if (categoryResponse.categoryStatus == CategoryStatus.Deleted.ToString())
+            {
+                categoryResponse.links.Add(_linkServices.Generate(
+                            EndpointName.Category.Restore,
+                            new { categoryId = categoryResponse.categoryId },
+                            "restore-category",
+                            EndpointMethod.PUT));
+            }
+
+            if (categoryResponse.categoryStatus == CategoryStatus.Available.ToString())
+            {
+                categoryResponse.links.Add(_linkServices.Generate(
+                            EndpointName.Category.Delete,
+                            new { categoryId = categoryResponse.categoryId },
+                            "delete-category",
+                            EndpointMethod.DELETE));
+            }
         }
 
-        if (categoryResponse.categoryStatus == CategoryStatus.Available.ToString())
-        {
-            categoryResponse.links.Add(_linkServices.Generate(
-                        EndpointName.Category.Delete,
-                        new { categoryId = categoryResponse.categoryId },
-                        "delete-category",
-                        EndpointMethod.DELETE));
-        }
 
     }
 }

@@ -76,13 +76,19 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.HasKey("CategoryId");
 
+                    b.HasIndex("CategoryName")
+                        .IsUnique();
+
+                    b.HasIndex("CategoryStatus")
+                        .IsUnique();
+
                     b.ToTable("Categories");
 
                     b.HasData(
                         new
                         {
                             CategoryId = new Guid("019546cc-2909-1710-9a1b-36df36d9a7ae"),
-                            CategoryName = "Default Category",
+                            CategoryName = "General",
                             CategoryStatus = "Available",
                             ImageUrl = "",
                             IsDefault = true

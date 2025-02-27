@@ -399,7 +399,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
             migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "CategoryId", "CategoryName", "CategoryStatus", "ImageUrl", "IsDefault" },
-                values: new object[] { new Guid("019546cc-2909-1710-9a1b-36df36d9a7ae"), "Default Category", "Available", "", true });
+                values: new object[] { new Guid("019546cc-2909-1710-9a1b-36df36d9a7ae"), "General", "Available", "", true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bills_CustomerId",
@@ -416,6 +416,18 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 name: "IX_Bills_ShippingInformationId",
                 table: "Bills",
                 column: "ShippingInformationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_CategoryName",
+                table: "Categories",
+                column: "CategoryName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_CategoryStatus",
+                table: "Categories",
+                column: "CategoryStatus",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_UserId",

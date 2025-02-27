@@ -29,7 +29,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
     }
     //FLOW: Get category by id from database -> Update category -> Add Outbox message -> Commit -> Publish event
     public async Task<Result> Handle(
-        UpdateCategoryCommand request, 
+        UpdateCategoryCommand request,
         CancellationToken cancellationToken)
     {
         var categoryId = CategoryId.FromGuid(request.categoryId);
@@ -46,9 +46,9 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
             message.messageId,
             message,
             _outboxservice);
-            
+
         await _unitOfWork.SaveToMySQL(cancellationToken);
-        
+
         await _eventBus.PublishAsync(message);
 
         return Result.Success();
@@ -68,7 +68,10 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
     {
         var category = await _categoryRepository.GetCategoryByIdFromMySQL(categoryId);
         if (category is null) return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));
-
+        if (category.IsDefault)
+        {
+            return (null, Result.Failure(CategoryErrors.DefaultCategoryCannotBeUpdated(categoryId)));
+        }
         return (category, null);
     }
     private void UpdateCategory(Category category, UpdateCategoryCommand request)
