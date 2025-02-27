@@ -12,7 +12,7 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(NextSharpPostgreSQLWriteDbContext))]
-    [Migration("20250217190049_NextSharpReadOnly")]
+    [Migration("20250227094540_NextSharpReadOnly")]
     partial class NextSharpReadOnly
     {
         /// <inheritdoc />
@@ -74,9 +74,22 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = new Guid("019546cc-2909-1710-9a1b-36df36d9a7ae"),
+                            CategoryName = "Default Category",
+                            CategoryStatus = "Available",
+                            ImageUrl = "",
+                            IsDefault = true
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.CustomerVouchers.CustomerVoucher", b =>

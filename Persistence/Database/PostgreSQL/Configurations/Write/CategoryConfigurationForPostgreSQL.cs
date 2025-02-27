@@ -34,6 +34,19 @@ internal sealed class CategoryConfigurationForPostgreSQL : IEntityTypeConfigurat
                 value => (CategoryStatus)Enum.Parse(typeof(CategoryStatus), value))
             .HasColumnType("varchar(20)");
 
+        builder.Property(a => a.IsDefault)
+            .IsRequired()
+            .HasColumnType("boolean");
+
+        // Seed Data
+        builder.HasData(
+            Category.FromExisting(
+                CategoryId.New(),
+                CategoryName.FromString("Default Category"),
+                string.Empty,
+                CategoryStatus.Available,
+                true));
+
         builder.HasMany(a => a.Products) // One to Many
             .WithOne(a => a.Category)
             .HasForeignKey(a => a.CategoryId);

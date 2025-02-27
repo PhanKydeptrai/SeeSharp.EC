@@ -1,5 +1,5 @@
 ﻿using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Microsoft.EntityFrameworkCore;

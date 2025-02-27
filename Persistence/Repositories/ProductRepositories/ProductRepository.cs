@@ -1,6 +1,6 @@
 ﻿using Domain.Entities.Categories;
 using Domain.Entities.Products;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;

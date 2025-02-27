@@ -8,4 +8,5 @@ public sealed record CategoryCreatedEvent(
     string categoryName,
     string imageUrl,
     CategoryStatus categoryStatus,
+    bool isDefault,
     Guid messageId) : IDomainEvent;

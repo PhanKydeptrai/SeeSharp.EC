@@ -3,7 +3,7 @@ using Application.Abstractions.Messaging;
 using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;

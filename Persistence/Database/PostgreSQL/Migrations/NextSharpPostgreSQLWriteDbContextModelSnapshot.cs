@@ -71,9 +71,22 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = new Guid("019546cc-2909-1710-9a1b-36df36d9a7ae"),
+                            CategoryName = "Default Category",
+                            CategoryStatus = "Available",
+                            ImageUrl = "",
+                            IsDefault = true
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.CustomerVouchers.CustomerVoucher", b =>

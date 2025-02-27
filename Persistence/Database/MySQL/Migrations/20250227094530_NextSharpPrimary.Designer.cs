@@ -11,7 +11,7 @@ using Persistence.Database.MySQL;
 namespace Persistence.Database.MySQL.Migrations
 {
     [DbContext(typeof(NextSharpMySQLWriteDbContext))]
-    [Migration("20250217190022_NextSharpPrimary")]
+    [Migration("20250227094530_NextSharpPrimary")]
     partial class NextSharpPrimary
     {
         /// <inheritdoc />
@@ -81,9 +81,22 @@ namespace Persistence.Database.MySQL.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<sbyte>("IsDefault")
+                        .HasColumnType("tinyint(0)");
+
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = new Guid("019546cc-029b-a4bc-5357-aea40ccd36c1"),
+                            CategoryName = "Default Category",
+                            CategoryStatus = "Available",
+                            ImageUrl = "",
+                            IsDefault = (sbyte)1
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.CustomerVouchers.CustomerVoucher", b =>

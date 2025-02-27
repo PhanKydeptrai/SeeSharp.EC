@@ -21,7 +21,8 @@ namespace Persistence.Database.MySQL.Migrations
                     CategoryId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     CategoryName = table.Column<string>(type: "varchar(50)", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(200)", nullable: true),
-                    CategoryStatus = table.Column<string>(type: "varchar(20)", nullable: false)
+                    CategoryStatus = table.Column<string>(type: "varchar(20)", nullable: false),
+                    IsDefault = table.Column<sbyte>(type: "tinyint(0)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -431,6 +432,11 @@ namespace Persistence.Database.MySQL.Migrations
                         principalColumn: "VoucherId");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "CategoryId", "CategoryName", "CategoryStatus", "ImageUrl", "IsDefault" },
+                values: new object[] { new Guid("019546cc-029b-a4bc-5357-aea40ccd36c1"), "Default Category", "Available", "", (sbyte)1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bills_CustomerId",

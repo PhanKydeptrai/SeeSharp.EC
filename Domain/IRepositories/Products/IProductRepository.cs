@@ -1,7 +1,7 @@
 ﻿using Domain.Entities.Categories;
 using Domain.Entities.Products;
 
-namespace Domain.IRepositories.Categories;
+namespace Domain.IRepositories.Products;
 
 public interface IProductRepository
 {

@@ -81,7 +81,8 @@ internal sealed class CategoryCreatedMessageConsumer : IConsumer<CategoryCreated
             CategoryId.FromGuid(categoryCreatedEvent.categoryId),
             CategoryName.NewCategoryName(categoryCreatedEvent.categoryName),
             categoryCreatedEvent.imageUrl,
-            categoryCreatedEvent.categoryStatus
+            categoryCreatedEvent.categoryStatus,
+            categoryCreatedEvent.isDefault
         );
     }
 }

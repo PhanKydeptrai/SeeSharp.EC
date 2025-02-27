@@ -1,7 +1,7 @@
 ﻿using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.ProductEvents;
 using MassTransit;

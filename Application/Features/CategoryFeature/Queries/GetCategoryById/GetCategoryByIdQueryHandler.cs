@@ -14,7 +14,7 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
     private readonly ICategoryQueryServices _categoryQueryServices;
     private readonly ILinkServices _linkServices;
     public GetCategoryByIdQueryHandler(
-        ICategoryQueryServices categoryQueryServices, 
+        ICategoryQueryServices categoryQueryServices,
         ILinkServices linkServices)
     {
         _categoryQueryServices = categoryQueryServices;
@@ -45,21 +45,34 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
     private void AddLinkForCategory(CategoryResponse categoryResponse)
     {
         categoryResponse.links.Add(_linkServices.Generate(
-            "GetCategoryById", 
-            new { categoryId = categoryResponse.categoryId }, 
-            "self", 
+            EndpointName.Category.GetById,
+            new { categoryId = categoryResponse.categoryId },
+            "self",
             EndpointMethod.GET));
 
         categoryResponse.links.Add(_linkServices.Generate(
-            "UpdateCategory",
+            EndpointName.Category.Update,
             new { categoryId = categoryResponse.categoryId },
             "update-category",
             EndpointMethod.PUT));
 
-        categoryResponse.links.Add(_linkServices.Generate(
-            "GetCategoryById",
-            new { categoryId = categoryResponse.categoryId },
-            "delete-category",
-            EndpointMethod.DELETE));
+        if (categoryResponse.categoryStatus == CategoryStatus.Deleted.ToString())
+        {
+            categoryResponse.links.Add(_linkServices.Generate(
+                        EndpointName.Category.Restore,
+                        new { categoryId = categoryResponse.categoryId },
+                        "restore-category",
+                        EndpointMethod.PUT));
+        }
+
+        if (categoryResponse.categoryStatus == CategoryStatus.Available.ToString())
+        {
+            categoryResponse.links.Add(_linkServices.Generate(
+                        EndpointName.Category.Delete,
+                        new { categoryId = categoryResponse.categoryId },
+                        "delete-category",
+                        EndpointMethod.DELETE));
+        }
+
     }
 }

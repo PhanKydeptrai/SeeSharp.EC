@@ -19,6 +19,7 @@ public static class EndpointName
         public const string GetAll = "GetCategories";
         public const string Update = "UpdateCategory";
         public const string Delete = "DeleteCategory";
+        public const string Restore = "RestoreCategory";
     }
 }
 

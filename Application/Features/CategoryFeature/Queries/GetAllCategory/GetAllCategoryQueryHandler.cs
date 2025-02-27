@@ -3,6 +3,7 @@ using Application.Abstractions.Messaging;
 using Application.DTOs.Category;
 using Application.Features.Pages;
 using Application.IServices;
+using Domain.Entities.Categories;
 using SharedKernel;
 using SharedKernel.Constants;
 
@@ -13,7 +14,7 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
     private readonly ICategoryQueryServices _categoryQueryServices;
     private readonly ILinkServices _linkService;
     public GetAllCategoryQueryHandler(
-        ICategoryQueryServices categoryQueryServices, 
+        ICategoryQueryServices categoryQueryServices,
         ILinkServices linkService)
     {
         _categoryQueryServices = categoryQueryServices;
@@ -21,7 +22,7 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
     }
 
     public async Task<Result<PagedList<CategoryResponse>>> Handle(
-        GetAllCategoryQuery request, 
+        GetAllCategoryQuery request,
         CancellationToken cancellationToken)
     {
         var pagedList = await _categoryQueryServices.PagedList(
@@ -32,6 +33,11 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
             request.page,
             request.pageSize
         );
+
+        foreach (var category in pagedList.Items)
+        {
+            AddLinkForCategory(category);
+        }
 
         AddLinks(request, pagedList);
 
@@ -91,5 +97,39 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
                 EndpointMethod.GET
             ));
         }
+    }
+
+    private void AddLinkForCategory(CategoryResponse categoryResponse)
+    {
+        categoryResponse.links.Add(_linkService.Generate(
+            EndpointName.Category.GetById,
+            new { categoryId = categoryResponse.categoryId },
+            "self",
+            EndpointMethod.GET));
+
+        categoryResponse.links.Add(_linkService.Generate(
+            EndpointName.Category.Update,
+            new { categoryId = categoryResponse.categoryId },
+            "update-category",
+            EndpointMethod.PUT));
+
+        if (categoryResponse.categoryStatus == CategoryStatus.Deleted.ToString())
+        {
+            categoryResponse.links.Add(_linkService.Generate(
+                        EndpointName.Category.Restore,
+                        new { categoryId = categoryResponse.categoryId },
+                        "restore-category",
+                        EndpointMethod.PUT));
+        }
+
+        if (categoryResponse.categoryStatus == CategoryStatus.Available.ToString())
+        {
+            categoryResponse.links.Add(_linkService.Generate(
+                        EndpointName.Category.Delete,
+                        new { categoryId = categoryResponse.categoryId },
+                        "delete-category",
+                        EndpointMethod.DELETE));
+        }
+
     }
 }

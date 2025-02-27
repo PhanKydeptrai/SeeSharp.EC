@@ -28,6 +28,10 @@ internal sealed class CategoryReadModelConfigurationForPostgreSQL : IEntityTypeC
             .IsRequired()
             .HasColumnType("varchar(20)");
 
+        builder.Property(a => a.IsDefault)
+            .IsRequired()
+            .HasColumnType("boolean");
+
         builder.HasMany(a => a.ProductReadModels) // One to Many
             .WithOne(a => a.CategoryReadModel)
             .HasForeignKey(a => a.CategoryId);

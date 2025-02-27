@@ -9,9 +9,7 @@ public interface ICategoryRepository
     Task AddCategoryToMySQL(Category category);
     Task AddCategoryToPosgreSQL(Category category);        
     #endregion
-
     Task<bool> IsCategoryIdExist(CategoryId categoryId, CancellationToken cancellationToken = default);
-
     #region Read
     Task<Category?> GetCategoryByIdFromMySQL(CategoryId categoryId,
         CancellationToken cancellationToken = default);

@@ -38,8 +38,22 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
                 value => (CategoryStatus)Enum.Parse(typeof(CategoryStatus), value))
             .HasColumnType("varchar(20)");
 
+        builder.Property(a => a.IsDefault)
+            .IsRequired()
+            .HasColumnType("tinyint(0)");
+
         builder.HasMany(a => a.Products) // One to Many
             .WithOne(a => a.Category)
             .HasForeignKey(a => a.CategoryId);
+        
+        // Seed Data
+        builder.HasData(
+            Category.FromExisting(
+                CategoryId.New(),
+                CategoryName.FromString("Default Category"),
+                string.Empty,
+                CategoryStatus.Available,
+                true));
+            
     }
 }

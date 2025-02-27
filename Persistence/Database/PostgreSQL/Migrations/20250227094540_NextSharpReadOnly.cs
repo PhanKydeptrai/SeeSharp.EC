@@ -18,7 +18,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
                     CategoryName = table.Column<string>(type: "varchar(50)", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(200)", nullable: true),
-                    CategoryStatus = table.Column<string>(type: "varchar(20)", nullable: false)
+                    CategoryStatus = table.Column<string>(type: "varchar(20)", nullable: false),
+                    IsDefault = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -394,6 +395,11 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         principalTable: "Vouchers",
                         principalColumn: "VoucherId");
                 });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "CategoryId", "CategoryName", "CategoryStatus", "ImageUrl", "IsDefault" },
+                values: new object[] { new Guid("019546cc-2909-1710-9a1b-36df36d9a7ae"), "Default Category", "Available", "", true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bills_CustomerId",
