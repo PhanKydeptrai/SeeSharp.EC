@@ -20,7 +20,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết 
 builder.Services.AddHealthChecks();
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
-
 builder.Services.Configure<RouteOptions>(options =>
 {
     options.ConstraintMap["ulid"] = typeof(UlidRouteConstraint);

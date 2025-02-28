@@ -1,7 +1,6 @@
 using Domain.Entities.Users;
 
 namespace Domain.Entities.UserAuthenticationTokens;
-//NOTE: Create factory method
 public sealed class UserAuthenticationToken
 {
     public UserAuthenticationTokenId UserAuthenticationTokenId { get; private set; } = null!;

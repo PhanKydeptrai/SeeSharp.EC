@@ -47,7 +47,7 @@ public sealed class User
     }
 
     //Factory Method
-    public User NewUser(
+    public static User NewUser(
         UserName userName,
         Email email,
         PhoneNumber? phoneNumber,

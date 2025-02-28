@@ -3,6 +3,7 @@
 		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
 		<PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
 		<PackageReference Include="AspNetCore.HealthChecks.Redis" />
+		<PackageReference Include="FluentEmail.Smtp" />
 		<PackageReference Include="MassTransit" />
 		<PackageReference Include="MassTransit.AspNetCore" />
 		<PackageReference Include="MassTransit.RabbitMQ" />

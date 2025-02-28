@@ -39,7 +39,23 @@ public sealed class Customer
         UserId userId,
         CustomerType customerType)
     {
-        return new Customer(CustomerId.New(), userId, CustomerStatus.Active, customerType);
+        return new Customer(
+            CustomerId.New(), 
+            userId, CustomerStatus.Active, 
+            customerType);
+    }
+
+    public static Customer FromExisting(
+        CustomerId customerId,
+        UserId userId,
+        CustomerStatus customerStatus,
+        CustomerType customerType)
+    {
+        return new Customer(
+            customerId, 
+            userId, 
+            customerStatus, 
+            customerType);
     }
 }
 

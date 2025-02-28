@@ -2,6 +2,7 @@
 using Application.IServices;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CategoryMessageConsumer;
+using Infrastructure.Consumers.CustomerMessageConsumer;
 using Infrastructure.Consumers.ProductMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Services.CategoryServices;
@@ -30,6 +31,16 @@ public static class DependencyInjection
             .AddRedisConfig(configuration)
             .AddBackgoundJob()
             .AddMassTransitConfiguration();
+
+        // Cấu hình FluentEmail
+
+        //Mail Test
+        services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
+                .AddSmtpSender(configuration["Email:Host"], int.Parse(configuration["Email:Port"]!));
+
+        //Mail Thật
+        // services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
+        //          .AddSmtpSender(new SmtpClient(configuration["Email:Host"], int.Parse(configuration["Email:Port"])));
 
         return services;
     }
@@ -93,11 +104,12 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CategoryCreatedMessageConsumer>();
             busConfiguration.AddConsumer<CategoryUpdatedMessageConsumer>();
             busConfiguration.AddConsumer<CategoryDeletedMessageConsumer>();
-
             busConfiguration.AddConsumer<ProductCreatedMessageConsumer>();
             busConfiguration.AddConsumer<ProductUpdatedMessageConsumer>();
             busConfiguration.AddConsumer<ProductDeletedMessageConsumer>();
             busConfiguration.AddConsumer<ProductRestoredMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerSignedUpMessageConsumer>();
+            busConfiguration.AddConsumer<AccountVerificationMessageConsumer>();
             
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
@@ -152,7 +164,7 @@ public static class DependencyInjection
             options.AddJob<OutboxBackgroundService>(jobKey_OutboxBackgroundService)
                     .AddTrigger(trigger =>
                         trigger.ForJob(jobKey_OutboxBackgroundService)
-                    .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(7)
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(5)
                     .RepeatForever()));
 
         });

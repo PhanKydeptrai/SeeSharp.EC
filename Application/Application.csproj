@@ -1,9 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
+		<PackageReference Include="FluentEmail.Smtp" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
 		<PackageReference Include="MediatR" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="NaughtyStrings" />
+		<PackageReference Include="NETCore.Encrypt" />
 		<PackageReference Include="Serilog.AspNetCore" />
 	</ItemGroup>
 	<ItemGroup>

@@ -15,6 +15,8 @@ using Domain.IRepositories.Customers;
 using Persistence.Repositories.CustomerRepositories;
 using Persistence.Repositories.UserRepositories;
 using Domain.IRepositories.Users;
+using Domain.IRepositories.VerificationTokens;
+using Persistence.Repositories.VerificationTokenRepositories;
 
 namespace Persistence;
 //FIXME: AddPersistnce
@@ -39,6 +41,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IVerificationTokenRepository, VerificationTokenRepository>();
         return services;
     }
 

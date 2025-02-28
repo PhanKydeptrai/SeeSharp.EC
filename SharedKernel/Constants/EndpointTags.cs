@@ -1,7 +1,28 @@
 ﻿namespace SharedKernel.Constants;
 
+public static class EndpointTag
+{
+    public const string Category = "Category";
+    public const string Product = "Product";
+    public const string Customer = "Customer";
+}
+
 public static class EndpointName
 {
+    public class Customer
+    {
+        public const string SignUp = "SignUp";
+        public const string Verify = "Verify";
+        // public const string SignIn = "SignIn";
+        // public const string SignOut = "SignOut";
+        // public const string GetProfile = "GetProfile";
+        // public const string UpdateProfile = "UpdateProfile";
+        // public const string ChangePassword = "ChangePassword";
+        // public const string ForgotPassword = "ForgotPassword";
+        // public const string ResetPassword = "ResetPassword";
+        // public const string ConfirmEmail = "ConfirmEmail";
+        // public const string ResendEmailConfirmation = "ResendEmailConfirmation";
+    }
     public class Product
     {
         public const string Create = "CreateProduct";
@@ -10,7 +31,7 @@ public static class EndpointName
         public const string Update = "UpdateProduct";
         public const string Delete = "DeleteProduct";
         public const string Restore = "RestoreProduct";
-    }   
+    }
 
     public class Category
     {
@@ -31,8 +52,3 @@ public static class EndpointMethod
     public const string DELETE = "DELETE";
 }
 
-public static class EndpointTag
-{
-    public const string Category = "Category";
-    public const string Product = "Product";
-}
