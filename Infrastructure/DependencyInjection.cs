@@ -5,6 +5,7 @@ using Infrastructure.Consumers.CategoryMessageConsumer;
 using Infrastructure.Consumers.CustomerMessageConsumer;
 using Infrastructure.Consumers.ProductMessageConsumer;
 using Infrastructure.MessageBroker;
+using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
 using Infrastructure.Services.ProductServices;
@@ -33,7 +34,7 @@ public static class DependencyInjection
             .AddMassTransitConfiguration();
 
         // Cấu hình FluentEmail
-
+        services.AddScoped<EmailVerificationLinkFactory>();
         //Mail Test
         services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
                 .AddSmtpSender(configuration["Email:Host"], int.Parse(configuration["Email:Port"]!));
@@ -42,6 +43,7 @@ public static class DependencyInjection
         // services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
         //          .AddSmtpSender(new SmtpClient(configuration["Email:Host"], int.Parse(configuration["Email:Port"])));
 
+        services.AddHttpContextAccessor();
         return services;
     }
 
@@ -109,7 +111,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<ProductDeletedMessageConsumer>();
             busConfiguration.AddConsumer<ProductRestoredMessageConsumer>();
             busConfiguration.AddConsumer<CustomerSignedUpMessageConsumer>();
-            busConfiguration.AddConsumer<AccountVerificationMessageConsumer>();
+            busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
             
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ

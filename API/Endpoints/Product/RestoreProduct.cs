@@ -11,7 +11,7 @@ internal sealed class RestoreProduct : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("api/products/{productId:guid}/restore", async (
+        app.MapPatch("api/products/{productId:guid}/restore", async (
             [FromRoute] Guid productId,
             ISender sender) =>
         {

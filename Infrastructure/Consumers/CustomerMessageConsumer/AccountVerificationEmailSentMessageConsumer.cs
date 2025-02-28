@@ -3,25 +3,26 @@ using Domain.IRepositories;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.CustomerEvents;
 using FluentEmail.Core;
+using Infrastructure.Services;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
 namespace Infrastructure.Consumers.CustomerMessageConsumer;
 
-internal sealed class AccountVerificationMessageConsumer : IConsumer<AccountVerificationEmailSentEvent>
+internal sealed class AccountVerificationEmailSentMessageConsumer : IConsumer<AccountVerificationEmailSentEvent>
 {
     private readonly ILogger<AccountVerificationEmailSentEvent> _logger;
     private readonly IFluentEmail _fluentEmail;
-    private readonly ILinkServices _linkServices;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
-    public AccountVerificationMessageConsumer(
+    private readonly EmailVerificationLinkFactory _linkServices;
+    public AccountVerificationEmailSentMessageConsumer(
         ILogger<AccountVerificationEmailSentEvent> logger,
         IFluentEmail fluentEmail,
         IUnitOfWork unitOfWork,
         IOutBoxMessageServices outBoxMessageServices,
-        ILinkServices linkServices)
+        EmailVerificationLinkFactory linkServices)
     {
         _logger = logger;
         _fluentEmail = fluentEmail;
@@ -40,17 +41,13 @@ internal sealed class AccountVerificationMessageConsumer : IConsumer<AccountVeri
 
         try
         {
-            // //Consume message
-            // Link link = _linkServices.Generate(
-            //     EndpointName.Customer.Verify,
-            //     new { token = context.Message.VerificationTokenId},
-            //     "Verify your account",
-            //     EndpointMethod.GET);
+            //Consume message
+            string? verificationLink = _linkServices.CreateLinkForEmailVerification(context.Message.VerificationTokenId);
                         
             await _fluentEmail
                .To(context.Message.Email)
                .Subject("Welcome to our system")
-               .Body($"<a>{context.Message.VerificationTokenId}</a>", true)
+               .Body($"<a href='{verificationLink}'>Click me to verify your account</a>", true)
                .SendAsync();
             //----------------------------------
         }

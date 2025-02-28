@@ -30,7 +30,8 @@ builder.Services.AddApplication(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<ILinkServices, LinkServices>(); //* Hateoas 
-builder.Services.AddHttpContextAccessor();
+
+// builder.Services.AddHttpContextAccessor();
 
 #endregion
 builder.Services.AddCustomProblemDetails();

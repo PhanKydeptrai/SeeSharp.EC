@@ -4,7 +4,6 @@ using Application.IServices;
 using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 using System.Linq.Expressions;
 
