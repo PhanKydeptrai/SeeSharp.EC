@@ -27,4 +27,14 @@ internal sealed class UserRepository : IUserRepository
     {
         await _postgreSQLDbContext.Users.AddAsync(user);
     }
+
+    public async Task<User?> GetUserFromMySQL(UserId userId)
+    {
+        return await _mySqlDbContext.Users.FindAsync(userId);
+    }
+
+    public async Task<User?> GetUserFromPostgreSQL(UserId userId)
+    {
+        return await _postgreSQLDbContext.Users.FindAsync(userId);
+    }
 }

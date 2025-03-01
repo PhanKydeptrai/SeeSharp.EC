@@ -124,6 +124,7 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
     {
         //FromExisting
         return User.NewUser(
+            UserId.FromGuid(request.UserId),
             UserName.FromString(request.UserName),
             Domain.Entities.Users.Email.FromString(request.Email),
             PhoneNumber.Empty,

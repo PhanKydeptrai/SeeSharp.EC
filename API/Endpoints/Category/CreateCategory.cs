@@ -10,8 +10,7 @@ internal sealed class CreateCategory : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/categories", 
-        async (
+        app.MapPost("api/categories", async (
             [FromForm] string categoryName,
             [FromForm] IFormFile? image,
             HttpContext context,

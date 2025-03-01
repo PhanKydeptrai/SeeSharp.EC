@@ -48,6 +48,7 @@ public sealed class User
 
     //Factory Method
     public static User NewUser(
+        UserId? userId,
         UserName userName,
         Email email,
         PhoneNumber? phoneNumber,
@@ -56,7 +57,7 @@ public sealed class User
         string? imageUrl)
     {
         return new User(
-            UserId.New(), 
+            userId ?? UserId.New(), 
             userName, 
             email, 
             phoneNumber ?? PhoneNumber.Empty, 
@@ -66,5 +67,12 @@ public sealed class User
             Gender.Unknown,
             dateOfBirth, 
             imageUrl ?? string.Empty);
+    }
+
+    
+
+    public void VerifyAccount()
+    {
+        IsVerify = IsVerify.True;
     }
 }

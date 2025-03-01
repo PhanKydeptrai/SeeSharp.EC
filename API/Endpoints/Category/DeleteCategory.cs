@@ -12,8 +12,7 @@ internal sealed class DeleteCategory : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("api/categories/{categoryId:guid}",
-        async (
+        app.MapDelete("api/categories/{categoryId:guid}", async (
             [FromRoute] Guid categoryId,
             HttpContext context,
             ISender sender) =>

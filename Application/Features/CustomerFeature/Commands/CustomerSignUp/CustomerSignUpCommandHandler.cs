@@ -58,16 +58,16 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
         await _verificationTokenRepository.AddVerificationTokenToMySQL(verificationToken);
 
         await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            message.MessageId, 
-            message, 
+            message.MessageId,
+            message,
             _outBoxMessageServices);
-    
+
         await _unitOfWork.SaveToMySQL();
 
         await _eventBus.PublishAsync(message);
         return Result.Success();
     }
-    
+
     private CustomerSignedUpEvent CreateCustomerSignedUpEvent(User user, Customer customer, VerificationToken verificationToken)
     {
         return new CustomerSignedUpEvent(
@@ -84,6 +84,7 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
     private User CreateNewUser(CustomerSignUpCommand request)
     {
         return User.NewUser(
+            null,
             UserName.NewUserName(request.UserName),
             Email.NewEmail(request.Email),
             PhoneNumber.Empty,

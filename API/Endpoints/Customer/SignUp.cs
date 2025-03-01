@@ -11,7 +11,7 @@ internal sealed class SignUp : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/customer/signup", async (
+        app.MapPost("api/customers/signup", async (
             [FromBody] CustomerSignUpCommand command,
             ISender sender) =>
         {
@@ -19,6 +19,7 @@ internal sealed class SignUp : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(EndpointTag.Customer)
-        .WithName(EndpointName.Customer.SignUp); 
+        .WithName(EndpointName.Customer.SignUp)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>(); 
     }
 }
