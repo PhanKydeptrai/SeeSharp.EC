@@ -62,7 +62,7 @@ public sealed class User
             email, 
             phoneNumber ?? PhoneNumber.Empty, 
             passwordHash ?? PasswordHash.Empty, 
-            UserStatus.Inactive, 
+            UserStatus.InActive,
             IsVerify.False, 
             Gender.Unknown,
             dateOfBirth, 
@@ -73,6 +73,17 @@ public sealed class User
 
     public void VerifyAccount()
     {
+        if (IsVerify == IsVerify.True)
+        {
+            throw new InvalidOperationException("User is already verified");
+        }
+
+        if (UserStatus == UserStatus.Deleted)
+        {
+            throw new InvalidOperationException("User is deleted");
+        }
+        
         IsVerify = IsVerify.True;
+        UserStatus = UserStatus.Active;
     }
 }
