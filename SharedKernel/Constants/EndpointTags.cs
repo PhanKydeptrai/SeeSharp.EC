@@ -12,6 +12,7 @@ public static class EndpointName
     public class Customer
     {
         public const string SignUp = "SignUp";
+        public const string SignIn = "SignIn";
         public const string Verify = "Verify";
         // public const string SignIn = "SignIn";
         // public const string SignOut = "SignOut";

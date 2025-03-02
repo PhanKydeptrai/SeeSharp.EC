@@ -13,5 +13,7 @@ public static class CustomerError
         "Customer.TokenExpired",
         $"The VerificationToken with the Id = '{verificationTokenId}' has expired");
     
-
+    public static Error LoginFailed() => Error.Problem(
+        "Customer.LoginFailed",
+        "The login failed. Please check your email and password");
 }

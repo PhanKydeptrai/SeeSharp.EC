@@ -1,3 +1,4 @@
+using Application.DTOs.Customer;
 using Application.IServices;
 using Domain.Entities.Customers;
 using Domain.Entities.Users;
@@ -30,5 +31,19 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
         return await _dbContext.Customers.AnyAsync(
                 a => a.UserReadModel.Email == email.Value, cancellationToken);
         
+    }
+
+    public async Task<CustomerAuthenticationResponse?> IsCustomerSignInSuccess(
+        Email email, PasswordHash password)
+    {
+        return await _dbContext.Customers.Where(
+            a => a.UserReadModel.Email == email.Value 
+            && a.UserReadModel.PasswordHash == password.Value)
+            .Select(a => new CustomerAuthenticationResponse(
+                a.UserReadModel.UserId,
+                a.UserReadModel.Email,
+                a.UserReadModel.UserStatus,
+                a.CustomerType))
+            .FirstOrDefaultAsync();
     }
 }

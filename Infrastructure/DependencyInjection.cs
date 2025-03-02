@@ -1,10 +1,12 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.IServices;
+using Application.Security;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CategoryMessageConsumer;
 using Infrastructure.Consumers.CustomerMessageConsumer;
 using Infrastructure.Consumers.ProductMessageConsumer;
 using Infrastructure.MessageBroker;
+using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
@@ -38,11 +40,14 @@ public static class DependencyInjection
         //Mail Test
         services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
                 .AddSmtpSender(configuration["Email:Host"], int.Parse(configuration["Email:Port"]!));
-
+                
         //Mail Thật
         // services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
         //          .AddSmtpSender(new SmtpClient(configuration["Email:Host"], int.Parse(configuration["Email:Port"])));
 
+        //Add TokenProvider
+        services.AddScoped<ITokenProvider, TokenProvider>();
+        
         services.AddHttpContextAccessor();
         return services;
     }

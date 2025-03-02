@@ -40,6 +40,7 @@ public sealed class UserAuthenticationToken
                 "Expired time must be greater than current time", 
                 nameof(expiredTime));
         }
+        
         return new UserAuthenticationToken(
             UserAuthenticationTokenId.New(),
             value,

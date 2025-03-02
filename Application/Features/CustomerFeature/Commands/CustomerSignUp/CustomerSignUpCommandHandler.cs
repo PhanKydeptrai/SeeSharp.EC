@@ -68,7 +68,8 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
         return Result.Success();
     }
 
-    private CustomerSignedUpEvent CreateCustomerSignedUpEvent(User user, Customer customer, VerificationToken verificationToken)
+    private CustomerSignedUpEvent CreateCustomerSignedUpEvent(
+        User user, Customer customer, VerificationToken verificationToken)
     {
         return new CustomerSignedUpEvent(
             user.UserId,

@@ -51,7 +51,7 @@ builder.Services.Configure<RouteOptions>(options =>
     options.ConstraintMap["ulid"] = typeof(UlidRouteConstraint);
 });
 #region Dependency Injection
-builder.Services.AddApplication(builder.Configuration)
+builder.Services.AddApplication()
     .AddPersistnce(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
 

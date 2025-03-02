@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Behaviors;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -8,8 +7,7 @@ namespace Application;
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(
-        this IServiceCollection services,
-        IConfiguration configuration)
+        this IServiceCollection services)
     {
         services.AddMediatR(config =>
         {
