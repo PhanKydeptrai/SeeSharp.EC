@@ -1,7 +1,11 @@
-﻿namespace Domain.IRepositories;
+﻿using System.Data;
+
+namespace Domain.IRepositories;
 
 public interface IUnitOfWork
 {
-    Task<int> Commit(CancellationToken cancellationToken = default);
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task<int> SaveToMySQL(CancellationToken cancellationToken = default);
+    Task<int> SaveToPostgreSQL(CancellationToken cancellationToken = default);
+    Task<IDbTransaction> BeginMySQLTransaction();
+    Task<IDbTransaction> BeginPostgreSQLTransaction();
 }

@@ -3,7 +3,7 @@ using Application.Abstractions.Messaging;
 using Application.Outbox;
 using Domain.Entities.Products;
 using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.ProductEvents;
@@ -34,7 +34,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
         var productId = ProductId.FromGuid(request.ProductId);
         var (product, failure) = await GetProductByIdAsync(productId);
         if (product is null) return failure!;
-        Product.Delete(product);
+        product.Delete();
 
         //Create outbox message
         var message = new ProductDeletedEvent(product.ProductId.Value, Ulid.NewUlid().ToGuid());
@@ -44,7 +44,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
             message,
             _outboxService);
 
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
 
         await _eventBus.PublishAsync(message);
 

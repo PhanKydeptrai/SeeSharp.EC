@@ -1,6 +1,6 @@
 using Domain.Entities.Products;
 using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.ProductEvents;
 using MassTransit;
@@ -37,10 +37,10 @@ internal sealed class ProductDeletedMessageConsumer : IConsumer<ProductDeletedEv
 
         try
         {
-            var product = await _productRepository.GetProductFromPosgreSQL(
+            var product = await _productRepository.GetProductFromPostgreSQL(
                ProductId.FromGuid(context.Message.ProductId));
-            Product.Delete(product!);
-            await _unitOfWork.SaveChangesAsync();
+            product!.Delete();
+            await _unitOfWork.SaveToPostgreSQL();
         }
         catch (Exception ex)
         {
@@ -50,7 +50,7 @@ internal sealed class ProductDeletedMessageConsumer : IConsumer<ProductDeletedEv
                 "Failed to consume ProductDeletedEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.Commit();
+            await _unitOfWork.SaveToMySQL();
 
             //Log error
             _logger.LogError(
@@ -68,7 +68,7 @@ internal sealed class ProductDeletedMessageConsumer : IConsumer<ProductDeletedEv
             "Successfully consumed ProductDeletedEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
         //Log end
         _logger.LogInformation(
             "Consumed ProductDeletedEvent for productid: {ProductId}",

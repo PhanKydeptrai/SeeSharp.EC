@@ -11,8 +11,7 @@ internal sealed class UpdateCategory : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("api/categories/{categoryId:guid}", 
-        async (
+        app.MapPut("api/categories/{categoryId:guid}", async (
             [FromRoute] Guid categoryId,
             [FromForm] string categoryName,
             [FromForm] IFormFile? image,
@@ -25,6 +24,7 @@ internal sealed class UpdateCategory : IEndpoint
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Category)
-        .WithName(EndpointName.Category.Update);
+        .WithName(EndpointName.Category.Update)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }

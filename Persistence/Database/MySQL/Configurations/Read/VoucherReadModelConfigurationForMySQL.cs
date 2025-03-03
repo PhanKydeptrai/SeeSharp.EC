@@ -19,15 +19,15 @@ internal sealed class VoucherReadModelConfigurationForMySQL : IEntityTypeConfigu
 
         builder.Property(a => a.VoucherName)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.VoucherCode)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.VoucherType)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.PercentageDiscount)
             .IsRequired()
@@ -55,6 +55,6 @@ internal sealed class VoucherReadModelConfigurationForMySQL : IEntityTypeConfigu
 
         builder.Property(a => a.Status)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
     }
 }

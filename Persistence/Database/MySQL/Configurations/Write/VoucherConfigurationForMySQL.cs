@@ -36,11 +36,7 @@ internal sealed class VoucherConfigurationForMySQL : IEntityTypeConfiguration<Vo
 
         builder.Property(a => a.VoucherType)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (VoucherType)Enum.Parse(typeof(VoucherType), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
 
         builder.Property(a => a.PercentageDiscount)
             .IsRequired()
@@ -48,7 +44,7 @@ internal sealed class VoucherConfigurationForMySQL : IEntityTypeConfiguration<Vo
                 v => v.Value,
                 v => PercentageDiscount.FromInt(v)
             )
-            .HasColumnType("integer");
+            .HasColumnType("int");
 
         builder.Property(a => a.MaximumDiscountAmount)
             .IsRequired()
@@ -85,10 +81,6 @@ internal sealed class VoucherConfigurationForMySQL : IEntityTypeConfiguration<Vo
 
         builder.Property(a => a.Status)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (Status)Enum.Parse(typeof(Status), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
     }
 }

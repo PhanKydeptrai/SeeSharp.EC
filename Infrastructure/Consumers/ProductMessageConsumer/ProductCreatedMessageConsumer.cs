@@ -1,7 +1,7 @@
 ﻿using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.ProductEvents;
 using MassTransit;
@@ -29,6 +29,8 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
         _outBoxMessageServices = outBoxMessageServices;
     }
 
+    
+
     public async Task Consume(ConsumeContext<ProductCreatedEvent> context)
     {
         //Log start
@@ -39,10 +41,10 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
         try
         {
             var product = ConvertOutboxMessageToProduct(context.Message);
-            await _productRepository.AddProductToPosgreSQL(product);
-            await _unitOfWork.SaveChangesAsync();
+            await _productRepository.AddProductToPostgreSQL(product);
+            await _unitOfWork.SaveToPostgreSQL();
         }
-        catch (Exception ex)
+        catch (Exception ex)    
         {
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                     context.Message.MessageId,
@@ -50,7 +52,7 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
                     "Failed to consume ProductCreatedEvent",
                     DateTime.UtcNow);
 
-            await _unitOfWork.Commit();
+            await _unitOfWork.SaveToMySQL();
 
             //Log error
             _logger.LogError(
@@ -68,7 +70,7 @@ internal sealed class ProductCreatedMessageConsumer : IConsumer<ProductCreatedEv
             "Successfully consumed ProductCreatedEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
 
         //Log End
         _logger.LogInformation(

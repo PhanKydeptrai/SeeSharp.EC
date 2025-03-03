@@ -34,11 +34,11 @@ internal sealed class OrderReadModelConfigurationForMySQL : IEntityTypeConfigura
 
         builder.Property(x => x.PaymentStatus)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(x => x.OrderStatus)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(x => x.OrderTransactionId)
             .IsRequired()

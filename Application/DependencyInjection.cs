@@ -1,7 +1,5 @@
 ﻿using Application.Abstractions.Behaviors;
-using Application.Abstractions.LinkService;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -9,8 +7,7 @@ namespace Application;
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(
-        this IServiceCollection services,
-        IConfiguration configuration)
+        this IServiceCollection services)
     {
         services.AddMediatR(config =>
         {
@@ -24,8 +21,6 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
         //Cấu hình FluentValidation
         ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
-
-        
         return services;
     }
 

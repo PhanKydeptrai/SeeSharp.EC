@@ -33,6 +33,7 @@ internal sealed class UpdateProduct : IEndpoint
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Product)
-        .WithName(EndpointName.Product.Update);
+        .WithName(EndpointName.Product.Update)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }

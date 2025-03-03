@@ -27,7 +27,11 @@ internal sealed class CategoryReadModelConfigurationForMySQL : IEntityTypeConfig
 
         builder.Property(a => a.CategoryStatus)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
+
+        builder.Property(a => a.IsDefault)
+            .IsRequired()
+            .HasColumnType("tinyint(0)");
 
         builder.HasMany(a => a.ProductReadModels) // One to Many
             .WithOne(a => a.CategoryReadModel)

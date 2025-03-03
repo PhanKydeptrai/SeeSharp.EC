@@ -6,7 +6,8 @@ public record CategoryResponse(
     Guid categoryId,
     string categoryName,
     string? imageUrl,
-    string categoryStatus)
+    string categoryStatus,
+    bool isDefault)
 {
     public List<Link> links { get; set; } = new();
 }

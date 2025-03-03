@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 
@@ -42,6 +43,49 @@ internal static class ServiceCollectionExtensions
             };
 
             o.AddSecurityRequirement(securityRequirement);
+
+
+            //Cấu hình swagger sử dụng ap key
+            o.AddSecurityDefinition("X-Api-Key", new OpenApiSecurityScheme()
+            {
+                Description = "API Key",
+                Type = SecuritySchemeType.ApiKey,
+                Name = "X-Api-Key",
+                In = ParameterLocation.Header,
+                Scheme = "ApiKeyScheme"
+            });
+
+            var scheme = new OpenApiSecurityScheme()
+            {
+                Reference = new OpenApiReference()
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "X-Api-Key"
+
+                },
+                In = ParameterLocation.Header
+            };
+
+            var requirement = new OpenApiSecurityRequirement()
+            {
+                { scheme, new string[] { } }
+            };
+
+            o.AddSecurityRequirement(requirement);
+
+            o.MapType<DateOnly>(() => new OpenApiSchema
+            {
+                Type = "string",
+                Format = "date",
+                Example = new OpenApiString(DateTime.Today.ToString("yyyy-MM-dd"))
+            });
+
+            o.MapType<TimeOnly>(() => new OpenApiSchema
+            {
+                Type = "string",
+                Format = "time",
+                Example = new OpenApiString(DateTime.Now.ToString("HH:mm:ss"))
+            });
         });
 
         return services;

@@ -23,11 +23,7 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
 
         builder.Property(a => a.TokenType)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (TokenType)Enum.Parse(typeof(TokenType), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.ExpiredTime)
             .IsRequired()

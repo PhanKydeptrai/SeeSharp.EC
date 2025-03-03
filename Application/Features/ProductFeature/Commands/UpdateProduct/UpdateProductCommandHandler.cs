@@ -4,7 +4,7 @@ using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.ProductEvents;
@@ -42,10 +42,7 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
             message.MessageId,
             message,
             _outboxService);
-
-        int result = await _unitOfWork.Commit();
-
-        if (result <= 0) return Result.Failure(ProductError.Failure(product.ProductId));
+        await _unitOfWork.SaveToMySQL();
         
         await _eventBus.PublishAsync(message);
 
@@ -69,13 +66,11 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
     {
         var product = await _productRepository.GetProductFromMySQL(productId);
         if(product is null) return (null, Result.Failure(ProductError.NotFound(productId)));
-        
         return (product, null);
     }
     private void UpdateProduct(Product product, UpdateProductCommand request)
     {
-        Product.Update(
-            product,
+        product.Update(
             ProductName.NewProductName(request.ProductName),
             string.Empty,
             request.Description,

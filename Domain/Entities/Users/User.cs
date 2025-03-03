@@ -47,7 +47,8 @@ public sealed class User
     }
 
     //Factory Method
-    public User NewUser(
+    public static User NewUser(
+        UserId? userId,
         UserName userName,
         Email email,
         PhoneNumber? phoneNumber,
@@ -56,15 +57,33 @@ public sealed class User
         string? imageUrl)
     {
         return new User(
-            UserId.New(), 
+            userId ?? UserId.New(), 
             userName, 
             email, 
             phoneNumber ?? PhoneNumber.Empty, 
             passwordHash ?? PasswordHash.Empty, 
-            UserStatus.Inactive, 
+            UserStatus.InActive,
             IsVerify.False, 
             Gender.Unknown,
             dateOfBirth, 
             imageUrl ?? string.Empty);
+    }
+
+    
+
+    public void VerifyAccount()
+    {
+        if (IsVerify == IsVerify.True)
+        {
+            throw new InvalidOperationException("User is already verified");
+        }
+
+        if (UserStatus == UserStatus.Deleted)
+        {
+            throw new InvalidOperationException("User is deleted");
+        }
+        
+        IsVerify = IsVerify.True;
+        UserStatus = UserStatus.Active;
     }
 }

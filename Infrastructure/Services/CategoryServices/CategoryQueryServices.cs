@@ -4,7 +4,6 @@ using Application.IServices;
 using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Categories;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 using System.Linq.Expressions;
 
@@ -31,7 +30,8 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.CategoryId.ToGuid(),
                 a.CategoryName,
                 a.ImageUrl,
-                a.CategoryStatus))
+                a.CategoryStatus,
+                a.IsDefault))
             .FirstOrDefaultAsync();
 
         return categoryResponse;
@@ -100,7 +100,8 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.CategoryId.ToGuid(),
                 a.CategoryName,
                 a.ImageUrl,
-                a.CategoryStatus)).AsQueryable();
+                a.CategoryStatus,
+                a.IsDefault)).AsQueryable();
         var categoriesList = await PagedList<CategoryResponse>
             .CreateAsync(categories, page ?? 1, pageSize ?? 10);
 

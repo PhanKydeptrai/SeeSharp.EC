@@ -41,19 +41,11 @@ internal sealed class OrderConfigurationForMySQL : IEntityTypeConfiguration<Orde
 
         builder.Property(x => x.PaymentStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (OrderPaymentStatus)Enum.Parse(typeof(OrderPaymentStatus), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
 
         builder.Property(x => x.OrderStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (OrderStatus)Enum.Parse(typeof(OrderStatus), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
 
         builder.Property(x => x.OrderTransactionId)
             .IsRequired()

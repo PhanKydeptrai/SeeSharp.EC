@@ -50,11 +50,7 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
 
         builder.Property(a => a.PaymentMethod)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (PaymentMethod)Enum.Parse(typeof(PaymentMethod), v)
-            )
-            .HasColumnType("varchar(50)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.IsVoucherUsed)
             .IsRequired()

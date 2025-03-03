@@ -3,6 +3,7 @@ using Application.Abstractions.Messaging;
 using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
+using Domain.IRepositories.Products;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
@@ -15,59 +16,62 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
 {
     //FLOW: Get category by id from database -> Update category status -> Add Outbox message -> Commit -> Publish event
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IProductRepository _productRepository;
     private readonly IOutBoxMessageServices _oubBoxService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEventBus _eventBus;
+
     public DeleteCategoryCommandHandler(
         ICategoryRepository categoryRepository,
         IOutBoxMessageServices oubBoxService,
         IUnitOfWork unitOfWork,
-        IEventBus eventBus)
+        IEventBus eventBus,
+        IProductRepository productRepository)
     {
         _categoryRepository = categoryRepository;
         _oubBoxService = oubBoxService;
         _unitOfWork = unitOfWork;
         _eventBus = eventBus;
+        _productRepository = productRepository;
     }
 
     public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
+        //Start transaction
+        using var transaction = await _unitOfWork.BeginMySQLTransaction();
         var categoryId = CategoryId.FromGuid(request.categoryId);
-        var (category, failure) = await GetCategoryByIdAsync(CategoryId.FromGuid(categoryId));
 
+        //Process delete category
+        var (category, failure) = await GetCategoryByIdAsync(CategoryId.FromGuid(categoryId));
         if (category is null)
         {
+            transaction.Rollback();
             return failure!;
         }
+        category.Delete();
 
-        DeleteCategory(category);
-
+        //Insert outbox message
         var message = CreateCategoryDeletedEvent(category.CategoryId);
-
         await OutboxMessageExtentions.InsertOutboxMessageAsync(
             message.messageId,
             message,
             _oubBoxService);
+        await _unitOfWork.SaveToMySQL();
 
-        int result = await _unitOfWork.Commit();
+        //Delete all products in this category
+        await _productRepository.DeleteProductByCategoryFromMySQL(category.CategoryId);
+        transaction.Commit();
 
-        if (result > 0)
-        {
-            await _eventBus.PublishAsync(message);
-            return Result.Success();
-        }
-        return Result.Failure(CategoryErrors.Failure(category.CategoryId));
+        //Publish event
+        await _eventBus.PublishAsync(message);
+        return Result.Success();
+
 
     }
     //----------------------------------------------------------------
     private CategoryDeletedEvent CreateCategoryDeletedEvent(Guid categoryId)
     {
         return new CategoryDeletedEvent(categoryId, Ulid.NewUlid().ToGuid());
-    }
-
-    private void DeleteCategory(Category category)
-    {
-        Category.Delete(category);
     }
 
     private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
@@ -77,6 +81,11 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
         if (category is null)
         {
             return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));
+        }
+
+        if (category.IsDefault)
+        {
+            return (null, Result.Failure(CategoryErrors.IsDefault(categoryId)));
         }
 
         if (category.CategoryStatus == CategoryStatus.Deleted)

@@ -1,7 +1,7 @@
 ﻿using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.ProductEvents;
 using MassTransit;
@@ -39,12 +39,12 @@ internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEv
         try
         {
 
-            var product = await _productRepository.GetProductFromPosgreSQL(
+            var product = await _productRepository.GetProductFromPostgreSQL(
                 ProductId.FromGuid(context.Message.ProductId));
 
             UpdateProduct(product!, context.Message);
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveToPostgreSQL();
         }
         catch (Exception ex)
         {
@@ -54,7 +54,7 @@ internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEv
                     "Failed to consume ProductUpdatedEvent",
                     DateTime.UtcNow);
 
-            await _unitOfWork.Commit();
+            await _unitOfWork.SaveToMySQL();
 
             //Log error
             _logger.LogError(
@@ -72,7 +72,7 @@ internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEv
             "Successfully consumed ProductUpdatedEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.Commit();
+        await _unitOfWork.SaveToMySQL();
 
         //Log end
         _logger.LogInformation(
@@ -84,8 +84,7 @@ internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEv
     //--------------------------------------------------------------------------------
     private void UpdateProduct(Product product, ProductUpdatedEvent request)
     {
-        Product.Update(
-            product,
+        product.Update(
             ProductName.NewProductName(request.ProductName),
             string.Empty, //TODO: Xử lý ảnh
             request.Description,

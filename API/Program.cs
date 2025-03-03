@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Security.Claims;
 using API.Extentions;
 using API.Infrastructure;
 using API.Services;
@@ -7,31 +8,56 @@ using Application.Abstractions.LinkService;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-//Cấu hình Authen và Author
-builder.Services.AddAuthentication();
+//TODO: Move to external file
+//Cấu hình Authen và Author 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Audience"],
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["SigningKey"]!)),
+        ValidateLifetime = true, // Kiểm tra thời gian hết hạn của token
+        ClockSkew = TimeSpan.Zero, // Loại bỏ thời gian trễ mặc định
+                                   // Đảm bảo token chứa claim về vai trò
+        RoleClaimType = ClaimTypes.Role
+    };
+});
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết 
+builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
-
 builder.Services.Configure<RouteOptions>(options =>
 {
     options.ConstraintMap["ulid"] = typeof(UlidRouteConstraint);
 });
 #region Dependency Injection
-builder.Services.AddApplication(builder.Configuration)
+builder.Services.AddApplication()
     .AddPersistnce(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<ILinkServices, LinkServices>(); //* Hateoas 
-builder.Services.AddHttpContextAccessor();
+
+// builder.Services.AddHttpContextAccessor();
 
 #endregion
 builder.Services.AddCustomProblemDetails();

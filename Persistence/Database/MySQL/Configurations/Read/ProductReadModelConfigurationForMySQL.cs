@@ -35,7 +35,7 @@ internal sealed class ProductReadModelConfigurationForMySQL : IEntityTypeConfigu
 
         builder.Property(a => a.ProductStatus)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.CategoryId)
             .IsRequired()

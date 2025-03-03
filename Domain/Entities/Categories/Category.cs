@@ -8,57 +8,84 @@ public sealed class Category
     public CategoryName CategoryName { get; private set; } = CategoryName.Empty;
     public string? ImageUrl { get; private set; }
     public CategoryStatus CategoryStatus { get; private set; }
+    public bool IsDefault { get; private set; }
     public ICollection<Product>? Products { get; set; }
 
     private Category(
-        CategoryId categoryId, 
-        CategoryName categoryName, 
-        string imageUrl, 
-        CategoryStatus categoryStatus)
+        CategoryId categoryId,
+        CategoryName categoryName,
+        string imageUrl,
+        CategoryStatus categoryStatus,
+        bool isDefault)
     {
         CategoryId = categoryId;
         CategoryName = categoryName;
         ImageUrl = imageUrl;
         CategoryStatus = categoryStatus;
+        IsDefault = isDefault;
     }
 
     public static Category NewCategory(
-        CategoryName categoryName, 
+        CategoryName categoryName,
         string? imageUrl)
     {
         return new Category(
-            CategoryId.New(), 
-            categoryName, 
-            imageUrl ?? string.Empty, 
-            CategoryStatus.Available);
+            CategoryId.New(),
+            categoryName,
+            imageUrl ?? string.Empty,
+            CategoryStatus.Available,
+            false);
     }
 
-    public static void Update(
-        Category category, 
+    public void Update(
         CategoryName categoryName,
         CategoryStatus categoryStatus,
         string imageUrl)
     {
-        category.CategoryName = categoryName;
-        category.CategoryStatus = categoryStatus;
-        category.ImageUrl = imageUrl;
+        if (IsDefault)
+        {
+            throw new InvalidOperationException("Cannot update default category");
+        }
+
+        CategoryName = categoryName;
+        CategoryStatus = categoryStatus;
+        ImageUrl = imageUrl;
     }
 
-    public static void Delete(Category category)
+    public void Restore()
     {
-        category.CategoryStatus = CategoryStatus.Deleted;
+        if (CategoryStatus != CategoryStatus.Deleted)
+        {
+            throw new InvalidOperationException("Category is not deleted");
+        }
+        CategoryStatus = CategoryStatus.Available;
     }
+    public void Delete()
+    {
+        if (IsDefault)
+        {
+            throw new InvalidOperationException("Cannot delete default category");
+        }
 
+        if (CategoryStatus is CategoryStatus.Deleted)
+        {
+            throw new InvalidOperationException("Category is already deleted");
+        }
+
+        CategoryStatus = CategoryStatus.Deleted;
+    }
     public static Category FromExisting(
         CategoryId categoryId,
         CategoryName categoryName,
         string? imageUrl,
-        CategoryStatus categoryStatus)
+        CategoryStatus categoryStatus,
+        bool isDefault)
     {
         return new Category(
             categoryId,
             categoryName,
             imageUrl ?? string.Empty,
-            categoryStatus);
+            categoryStatus,
+            isDefault);
     }
 }

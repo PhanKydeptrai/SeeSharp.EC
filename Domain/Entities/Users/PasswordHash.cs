@@ -19,7 +19,7 @@ public sealed class PasswordHash : ValueObject
         {
             throw new ArgumentOutOfRangeException(nameof(value), $"Password hash must be {Length} char");
         }
-        return new PasswordHash(string.Empty);
+        return new PasswordHash(value);
     }
     public static PasswordHash FromString(string value) => new PasswordHash(value);
     public readonly static PasswordHash Empty = new PasswordHash(string.Empty);

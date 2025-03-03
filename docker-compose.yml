@@ -9,18 +9,6 @@ services:
       - "8001:8001"
     restart: unless-stopped
 
-  # rabbitmq:
-  #   image: rabbitmq:3.8-management-alpine
-  #   container_name: nextsharp-rabbit
-  #   hostname: my-rabbit
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: user
-  #     RABBITMQ_DEFAULT_PASS: password
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #   restart: unless-stopped
-
   seq:
     image: datalust/seq:latest
     container_name: nextsharp-seq
@@ -37,3 +25,24 @@ services:
       - "8080:80"
       - "25:25"
     restart: unless-stopped
+
+  mysql:
+    image: mysql:latest
+    container_name: NextSharp-MySql
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+    ports:
+      - "3307:3306" 
+    restart: unless-stopped
+
+# rabbitmq:
+#   image: rabbitmq:3.8-management-alpine
+#   container_name: nextsharp-rabbit
+#   hostname: my-rabbit
+#   environment:
+#     RABBITMQ_DEFAULT_USER: user
+#     RABBITMQ_DEFAULT_PASS: password
+#   ports:
+#     - "5672:5672"
+#     - "15672:15672"
+#   restart: unless-stopped

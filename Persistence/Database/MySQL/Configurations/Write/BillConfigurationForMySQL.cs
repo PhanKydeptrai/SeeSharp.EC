@@ -42,11 +42,7 @@ internal sealed class BillConfigurationForMySQL : IEntityTypeConfiguration<Bill>
 
         builder.Property(x => x.PaymentMethod)
             .IsRequired()
-            .HasConversion(
-                value => value.ToString(),
-                value => (PaymentMethod)Enum.Parse(typeof(PaymentMethod), value)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
 
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()

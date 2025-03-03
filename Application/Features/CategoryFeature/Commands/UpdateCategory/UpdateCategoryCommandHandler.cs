@@ -10,7 +10,6 @@ using Domain.Utilities.Events.CategoryEvents;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
-//TODO: Thêm xử lý cập nhật Product
 public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand>
 {
     private readonly ICategoryRepository _categoryRepository;
@@ -30,7 +29,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
     }
     //FLOW: Get category by id from database -> Update category -> Add Outbox message -> Commit -> Publish event
     public async Task<Result> Handle(
-        UpdateCategoryCommand request, 
+        UpdateCategoryCommand request,
         CancellationToken cancellationToken)
     {
         var categoryId = CategoryId.FromGuid(request.categoryId);
@@ -47,11 +46,8 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
             message.messageId,
             message,
             _outboxservice);
-            
-        int result = await _unitOfWork.Commit(cancellationToken);
-        
-        if (result <= 0) return Result.Failure(
-            CategoryErrors.Failure(category.CategoryId));
+
+        await _unitOfWork.SaveToMySQL(cancellationToken);
 
         await _eventBus.PublishAsync(message);
 
@@ -72,7 +68,10 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
     {
         var category = await _categoryRepository.GetCategoryByIdFromMySQL(categoryId);
         if (category is null) return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));
-
+        if (category.IsDefault)
+        {
+            return (null, Result.Failure(CategoryErrors.DefaultCategoryCannotBeUpdated(categoryId)));
+        }
         return (category, null);
     }
     private void UpdateCategory(Category category, UpdateCategoryCommand request)
@@ -82,7 +81,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
 
 
         //--------------------
-        Category.Update(category,
+        category.Update(
                 CategoryName.FromString(request.categoryName),
                 category.CategoryStatus,
                 string.Empty); // TODO: Get image from request

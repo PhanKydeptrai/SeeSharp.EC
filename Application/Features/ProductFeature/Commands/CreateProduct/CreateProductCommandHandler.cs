@@ -4,12 +4,13 @@ using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.ProductEvents;
 using SharedKernel;
+using SharedKernel.Constants;
 
 namespace Application.Features.ProductFeature.Commands.CreateProduct;
 
@@ -48,7 +49,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
             message,
             _outBoxMessageServices);
 
-        int result = await _unitOfWork.Commit();
+        int result = await _unitOfWork.SaveToMySQL();
 
         if (result > 0)
         {
@@ -77,7 +78,12 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         CreateProductCommand command,
         CancellationToken cancellationToken = default)
     {
-        var categoryId = CategoryId.FromString(command.CategoryId);
+        CategoryId categoryId = CategoryId.DefaultCategoryId;
+        if (command.CategoryId is not null)
+        {
+            categoryId = CategoryId.FromGuid(command.CategoryId.Value);
+        }
+        
         if (!await _categoryRepository.IsCategoryIdExist(categoryId, cancellationToken))
         {
             return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));

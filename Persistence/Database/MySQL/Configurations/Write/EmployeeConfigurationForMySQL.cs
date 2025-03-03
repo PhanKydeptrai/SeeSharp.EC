@@ -30,16 +30,10 @@ internal sealed class EmployeeConfigurationForMySQL : IEntityTypeConfiguration<E
 
         builder.Property(x => x.EmployeeStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (EmployeeStatus)Enum.Parse(typeof(EmployeeStatus), v))
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
 
         builder.Property(x => x.Role)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (Role)Enum.Parse(typeof(Role), v))
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
     }
 }

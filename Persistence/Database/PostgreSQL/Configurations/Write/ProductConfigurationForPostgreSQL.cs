@@ -41,10 +41,7 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
 
         builder.Property(a => a.ProductStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (ProductStatus)Enum.Parse(typeof(ProductStatus), v))
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.CategoryId)
             .IsRequired()

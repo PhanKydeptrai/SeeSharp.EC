@@ -12,8 +12,7 @@ internal sealed class DeleteCategory : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("api/categories/{categoryId:guid}",
-        async (
+        app.MapDelete("api/categories/{categoryId:guid}", async (
             [FromRoute] Guid categoryId,
             HttpContext context,
             ISender sender) =>
@@ -23,6 +22,7 @@ internal sealed class DeleteCategory : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(EndpointTag.Category)
-        .WithName(EndpointName.Category.Delete);
+        .WithName(EndpointName.Category.Delete)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }

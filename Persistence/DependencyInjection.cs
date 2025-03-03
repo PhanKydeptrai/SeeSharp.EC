@@ -1,5 +1,5 @@
 ﻿using Domain.IRepositories;
-using Domain.IRepositories.Categories;
+using Domain.IRepositories.Products;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +11,14 @@ using Persistence.Outbox;
 using Persistence.Repositories;
 using Persistence.Repositories.CategoryRepositories;
 using Persistence.Repositories.ProductRepositories;
+using Domain.IRepositories.Customers;
+using Persistence.Repositories.CustomerRepositories;
+using Persistence.Repositories.UserRepositories;
+using Domain.IRepositories.Users;
+using Domain.IRepositories.VerificationTokens;
+using Persistence.Repositories.VerificationTokenRepositories;
+using Domain.IRepositories.UserAuthenticationTokens;
+using Persistence.Repositories.UserAuthenticationTokenRepositories;
 
 namespace Persistence;
 //FIXME: AddPersistnce
@@ -32,7 +40,12 @@ public static class DependencyInjection
     {
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IVerificationTokenRepository, VerificationTokenRepository>();
+        services.AddScoped<IUserAuthenticationTokenRepository, UserAuthenticationTokenRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         return services;
     }
 

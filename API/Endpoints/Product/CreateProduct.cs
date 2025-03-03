@@ -17,7 +17,7 @@ internal sealed class CreateProduct : IEndpoint
             [FromForm] IFormFile? ProductImage,
             [FromForm] string? Description,
             [FromForm] decimal Price,
-            [FromForm] string CategoryId,
+            [FromForm] Guid? CategoryId,
             ISender sender) =>
         {
             var result = await sender.Send(
@@ -32,7 +32,8 @@ internal sealed class CreateProduct : IEndpoint
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Product)
-        .WithName(EndpointName.Product.Create);
+        .WithName(EndpointName.Product.Create)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 
 

@@ -20,11 +20,7 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
 
         builder.Property(a => a.Status)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (OutboxMessageStatus)Enum.Parse(typeof(OutboxMessageStatus), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
 
         builder.Property(a => a.Error)
             .IsRequired(false)

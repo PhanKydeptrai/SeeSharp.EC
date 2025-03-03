@@ -14,7 +14,7 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
     private readonly ILinkServices _linkServices;
     private readonly IProductQueryServices _productQueryServices;
     public GetProductByIdQueryHandler(
-        ILinkServices linkServices, 
+        ILinkServices linkServices,
         IProductQueryServices productQueryServices)
     {
         _linkServices = linkServices;
@@ -22,7 +22,7 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
     }
 
     public async Task<Result<ProductResponse>> Handle(
-        GetProductByIdQuery request, 
+        GetProductByIdQuery request,
         CancellationToken cancellationToken)
     {
         var product = await _productQueryServices.GetById(
@@ -49,15 +49,30 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
             new { productId = productResponse.ProductId },
             "self",
             EndpointMethod.GET));
+
         productResponse.links.Add(_linkServices.Generate(
             EndpointName.Product.Update,
             new { productId = productResponse.ProductId },
             "update-product",
             EndpointMethod.PUT));
-        productResponse.links.Add(_linkServices.Generate(
-            EndpointName.Product.Delete,
-            new { productId = productResponse.ProductId },
-            "delete-product",
-            EndpointMethod.DELETE));
+
+        if (productResponse.Status == ProductStatus.Discontinued.ToString())
+        {
+            productResponse.links.Add(_linkServices.Generate(
+                EndpointName.Product.Restore,
+                new { productId = productResponse.ProductId },
+                "restore-product",
+                EndpointMethod.PUT));
+        }
+
+        if (productResponse.Status != ProductStatus.Discontinued.ToString())
+        {
+            productResponse.links.Add(_linkServices.Generate(
+                EndpointName.Product.Delete,
+                new { productId = productResponse.ProductId },
+                "delete-product",
+                EndpointMethod.DELETE));
+        }
+
     }
 }

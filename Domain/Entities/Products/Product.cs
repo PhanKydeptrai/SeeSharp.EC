@@ -71,8 +71,7 @@ public sealed class Product
             categoryId);
     }
 
-    public static void Update(
-        Product product,
+    public void Update(
         ProductName productName,
         string? imageUrl,
         string? description,
@@ -80,22 +79,32 @@ public sealed class Product
         ProductStatus productStatus,
         CategoryId categoryId)
     {
-        product.ProductName = productName;
-        product.ImageUrl = imageUrl;
-        product.Description = description;
-        product.ProductPrice = productPrice;
-        product.ProductStatus = productStatus;
-        product.CategoryId = categoryId;
+        ProductName = productName;
+        ImageUrl = imageUrl;
+        Description = description;
+        ProductPrice = productPrice;
+        ProductStatus = productStatus;
+        CategoryId = categoryId;
     }
 
-    public static void Delete(Product product)
+    public void Delete()
     {
-        if(product.ProductStatus == ProductStatus.Discontinued)
+        if(this.ProductStatus == ProductStatus.Discontinued)
         {
             throw new InvalidOperationException("Product is already deleted");
         }
         
-        product.ProductStatus = ProductStatus.Discontinued;
+        this.ProductStatus = ProductStatus.Discontinued;
+    }
+
+    public void Restore()
+    {
+        if(this.ProductStatus == ProductStatus.InStock)
+        {
+            throw new InvalidOperationException("Product is already in stock");
+        }
+        
+        this.ProductStatus = ProductStatus.InStock;
     }
 }
 

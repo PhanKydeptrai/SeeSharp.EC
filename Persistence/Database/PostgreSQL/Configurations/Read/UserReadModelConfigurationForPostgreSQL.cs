@@ -29,7 +29,7 @@ internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfi
 
         builder.Property(a => a.PhoneNumber)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.PasswordHash)
             .IsRequired()
@@ -37,7 +37,7 @@ internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfi
 
         builder.Property(a => a.UserStatus)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.IsVerify)
             .IsRequired()

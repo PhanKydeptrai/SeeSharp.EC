@@ -1,10 +1,15 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.IServices;
+using Application.Security;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CategoryMessageConsumer;
+using Infrastructure.Consumers.CustomerMessageConsumer;
 using Infrastructure.Consumers.ProductMessageConsumer;
 using Infrastructure.MessageBroker;
+using Infrastructure.Security;
+using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
+using Infrastructure.Services.CustomerServices;
 using Infrastructure.Services.ProductServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
@@ -28,8 +33,22 @@ public static class DependencyInjection
             .AddEventBus()
             .AddRedisConfig(configuration)
             .AddBackgoundJob()
-            .AddMassTransitConfiguration(configuration);
+            .AddMassTransitConfiguration();
 
+        // Cấu hình FluentEmail
+        services.AddScoped<EmailVerificationLinkFactory>();
+        //Mail Test
+        services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
+                .AddSmtpSender(configuration["Email:Host"], int.Parse(configuration["Email:Port"]!));
+                
+        //Mail Thật
+        // services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
+        //          .AddSmtpSender(new SmtpClient(configuration["Email:Host"], int.Parse(configuration["Email:Port"])));
+
+        //Add TokenProvider
+        services.AddScoped<ITokenProvider, TokenProvider>();
+        
+        services.AddHttpContextAccessor();
         return services;
     }
 
@@ -57,6 +76,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        //NOTE: provider bị lỏ
         services.AddScoped<CategoryQueryServices>();
         services.AddScoped<ICategoryQueryServices>(provider =>
         {
@@ -71,12 +91,12 @@ public static class DependencyInjection
             return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
         });
 
+        services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
         return services;
     }
 
     private static IServiceCollection AddMassTransitConfiguration(
-        this IServiceCollection services,
-        IConfiguration configuration)
+        this IServiceCollection services)
     {
         services.AddMassTransit(busConfiguration =>
         {
@@ -94,6 +114,10 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<ProductCreatedMessageConsumer>();
             busConfiguration.AddConsumer<ProductUpdatedMessageConsumer>();
             busConfiguration.AddConsumer<ProductDeletedMessageConsumer>();
+            busConfiguration.AddConsumer<ProductRestoredMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerSignedUpMessageConsumer>();
+            busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerVerifiedEmailMessageConsumer>();
             
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
@@ -148,7 +172,7 @@ public static class DependencyInjection
             options.AddJob<OutboxBackgroundService>(jobKey_OutboxBackgroundService)
                     .AddTrigger(trigger =>
                         trigger.ForJob(jobKey_OutboxBackgroundService)
-                    .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(7)
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(5)
                     .RepeatForever()));
 
         });
