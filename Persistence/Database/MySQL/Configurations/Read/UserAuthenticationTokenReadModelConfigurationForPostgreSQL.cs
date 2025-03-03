@@ -23,7 +23,7 @@ internal sealed class UserAuthenticationTokenReadModelConfigurationForMySQL : IE
 
         builder.Property(a => a.TokenType)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.ExpiredTime)
             .IsRequired()

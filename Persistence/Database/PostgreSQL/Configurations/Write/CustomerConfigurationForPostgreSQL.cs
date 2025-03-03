@@ -27,17 +27,11 @@ internal sealed class CustomerConfigurationForPostgreSQL : IEntityTypeConfigurat
 
         builder.Property(a => a.CustomerStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (CustomerStatus)Enum.Parse(typeof(CustomerStatus), v))
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.CustomerType)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (CustomerType)Enum.Parse(typeof(CustomerType), v))
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
 
         builder.HasMany(a => a.ShippingInformations)

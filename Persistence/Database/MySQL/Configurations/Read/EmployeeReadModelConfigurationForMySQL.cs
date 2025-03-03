@@ -27,10 +27,10 @@ internal sealed class EmployeeReadModelConfigurationForMySQL : IEntityTypeConfig
 
         builder.Property(x => x.EmployeeStatus)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(x => x.Role)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
     }
 }

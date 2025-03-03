@@ -28,11 +28,11 @@ internal sealed class CustomerReadModelConfigurationForMySQL : IEntityTypeConfig
 
         builder.Property(a => a.CustomerStatus)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.CustomerType)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
 
         builder.HasMany(a => a.ShippingInformations)

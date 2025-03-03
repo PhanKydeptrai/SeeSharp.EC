@@ -39,10 +39,7 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
 
         builder.Property(x => x.PaymentMethod)
             .IsRequired()
-            .HasConversion(
-                value => value.ToString(),
-                value => (PaymentMethod)Enum.Parse(typeof(PaymentMethod), value))
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()

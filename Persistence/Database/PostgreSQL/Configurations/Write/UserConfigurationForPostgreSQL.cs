@@ -53,11 +53,7 @@ internal sealed class UserConfigurationForPostgreSQL : IEntityTypeConfiguration<
 
         builder.Property(a => a.UserStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (UserStatus)Enum.Parse(typeof(UserStatus), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.IsVerify)
             .IsRequired()

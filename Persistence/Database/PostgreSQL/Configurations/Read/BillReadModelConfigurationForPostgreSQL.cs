@@ -36,7 +36,7 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
 
         builder.Property(x => x.PaymentMethod)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(x => x.ShippingInformationId)
             .IsRequired()

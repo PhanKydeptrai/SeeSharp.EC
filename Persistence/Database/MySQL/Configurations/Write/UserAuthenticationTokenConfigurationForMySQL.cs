@@ -25,11 +25,7 @@ internal sealed class UserAuthenticationTokenConfigurationForMySQL : IEntityType
 
         builder.Property(a => a.TokenType)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (TokenType)Enum.Parse(typeof(TokenType), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
 
         builder.Property(a => a.ExpiredTime)
             .IsRequired()

@@ -36,19 +36,11 @@ internal sealed class OrderConfigurationForPostgreSQL : IEntityTypeConfiguration
 
         builder.Property(x => x.PaymentStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (OrderPaymentStatus)Enum.Parse(typeof(OrderPaymentStatus), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(x => x.OrderStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (OrderStatus)Enum.Parse(typeof(OrderStatus), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(x => x.OrderTransactionId)
             .IsRequired()

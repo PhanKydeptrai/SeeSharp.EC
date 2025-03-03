@@ -40,10 +40,7 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
 
         builder.Property(a => a.CategoryStatus)
             .IsRequired()
-            .HasConversion(
-                value => value.ToString(),
-                value => (CategoryStatus)Enum.Parse(typeof(CategoryStatus), value))
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
 
         builder.Property(a => a.IsDefault)
             .IsRequired()

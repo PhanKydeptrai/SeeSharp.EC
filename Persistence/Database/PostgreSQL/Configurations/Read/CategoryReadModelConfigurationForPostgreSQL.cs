@@ -26,7 +26,7 @@ internal sealed class CategoryReadModelConfigurationForPostgreSQL : IEntityTypeC
 
         builder.Property(a => a.CategoryStatus)
             .IsRequired()
-            .HasColumnType("varchar(20)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.IsDefault)
             .IsRequired()

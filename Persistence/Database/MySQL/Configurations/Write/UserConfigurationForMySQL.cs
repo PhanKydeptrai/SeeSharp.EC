@@ -56,11 +56,7 @@ internal sealed class UserConfigurationForMySQL : IEntityTypeConfiguration<User>
 
         builder.Property(a => a.UserStatus)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (UserStatus)Enum.Parse(typeof(UserStatus), v)
-            )
-            .HasColumnType("varchar(20)");
+            .HasColumnType("int");
 
         builder.Property(a => a.IsVerify)
             .IsRequired()
@@ -71,11 +67,7 @@ internal sealed class UserConfigurationForMySQL : IEntityTypeConfiguration<User>
 
         builder.Property(a => a.Gender)
             .IsRequired()
-            .HasConversion(
-                v => v.ToString(),
-                v => (Gender)Enum.Parse(typeof(Gender), v)
-            )
-            .HasColumnType("varchar(10)");
+            .HasColumnType("int");
 
         builder.Property(a => a.DateOfBirth)
             .IsRequired(false)
