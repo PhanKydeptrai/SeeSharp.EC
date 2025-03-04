@@ -19,7 +19,7 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
 
         builder.Property(a => a.Value)
             .IsRequired()
-            .HasColumnType("varchar(256)");
+            .HasColumnType("varchar(500)");
 
         builder.Property(a => a.TokenType)
             .IsRequired()

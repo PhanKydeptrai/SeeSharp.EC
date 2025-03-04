@@ -21,7 +21,7 @@ internal sealed class UserAuthenticationTokenConfigurationForMySQL : IEntityType
 
         builder.Property(a => a.Value)
             .IsRequired()
-            .HasColumnType("varchar(256)");
+            .HasColumnType("varchar(500)");
 
         builder.Property(a => a.TokenType)
             .IsRequired()
