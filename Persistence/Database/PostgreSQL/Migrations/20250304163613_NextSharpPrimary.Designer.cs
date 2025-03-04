@@ -12,7 +12,7 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(NextSharpPostgreSQLWriteDbContext))]
-    [Migration("20250304145949_NextSharpPrimary")]
+    [Migration("20250304163613_NextSharpPrimary")]
     partial class NextSharpPrimary
     {
         /// <inheritdoc />

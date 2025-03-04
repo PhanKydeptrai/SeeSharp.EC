@@ -42,8 +42,8 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
             .Select(a => new CustomerAuthenticationResponse(
                 a.UserReadModel.UserId,
                 a.UserReadModel.Email,
-                a.UserReadModel.UserStatus,
-                a.CustomerType))
+                a.UserReadModel.UserStatus.ToString(),
+                a.CustomerType.ToString()))
             .FirstOrDefaultAsync();
     }
 }

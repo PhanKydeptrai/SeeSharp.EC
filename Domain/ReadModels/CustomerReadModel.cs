@@ -1,11 +1,13 @@
-﻿namespace Domain.Database.PostgreSQL.ReadModels;
+﻿using Domain.Entities.Customers;
+
+namespace Domain.Database.PostgreSQL.ReadModels;
 
 public class CustomerReadModel
 {
-    public Ulid CustomerId { get; set; } 
+    public Ulid CustomerId { get; set; }
     public Ulid UserId { get; set; }
-    public string CustomerStatus { get; set; } = null!;
-    public string CustomerType { get; set; } = null!;
+    public CustomerStatus CustomerStatus { get; set; }
+    public CustomerType CustomerType { get; set; }
     public ICollection<BillReadModel> BillReadModels { get; set; } = new List<BillReadModel>();
     public ICollection<CustomerVoucherReadModel> CustomerVoucherReadModels { get; set; } = new List<CustomerVoucherReadModel>();
     public ICollection<FeedbackReadModel> FeedbackReadModels { get; set; } = new List<FeedbackReadModel>();

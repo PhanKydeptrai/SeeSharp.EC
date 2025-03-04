@@ -1,6 +1,6 @@
 ﻿namespace Domain.Database.PostgreSQL.ReadModels;
 
-public partial class OrderDetailReadModel
+public class OrderDetailReadModel
 {
     public Ulid OrderDetailId { get; set; }
 

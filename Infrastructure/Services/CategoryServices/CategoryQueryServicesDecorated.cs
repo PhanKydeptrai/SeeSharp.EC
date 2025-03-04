@@ -49,7 +49,7 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         CategoryName categoryName, 
         CancellationToken cancellationToken = default)
     {
-        return await _decorated.IsCategoryNameExist(categoryId, categoryName, cancellationToken);
+        return await _decorated.IsCategoryNameExist(categoryId ?? null, categoryName, cancellationToken);
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(

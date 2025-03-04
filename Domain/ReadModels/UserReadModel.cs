@@ -7,9 +7,9 @@ public sealed class UserReadModel
     public string Email { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public string PasswordHash { get; set; } = null!;
-    public string UserStatus { get; set; } = null!;
+    public int UserStatus { get; set; }
     public bool IsVerify { get; set; }
-    public string Gender { get; set; } = null!;
+    public int Gender { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public string? ImageUrl { get; set; }
     public CustomerReadModel? CustomerReadModel { get; set; }

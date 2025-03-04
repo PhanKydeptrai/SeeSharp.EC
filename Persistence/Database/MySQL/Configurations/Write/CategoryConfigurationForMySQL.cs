@@ -13,9 +13,6 @@ internal sealed class CategoryConfigurationForMySQL : IEntityTypeConfiguration<C
         builder.HasIndex(a => a.CategoryName) //Unique Index
             .IsUnique();
 
-        builder.HasIndex(a => a.CategoryStatus)
-            .IsUnique();
-
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(

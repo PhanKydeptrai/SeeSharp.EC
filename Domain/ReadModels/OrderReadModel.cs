@@ -1,4 +1,7 @@
-﻿namespace Domain.Database.PostgreSQL.ReadModels;
+﻿using Domain.Entities.Bills;
+using Domain.Entities.Orders;
+
+namespace Domain.Database.PostgreSQL.ReadModels;
 
 public class OrderReadModel
 {
@@ -8,10 +11,8 @@ public class OrderReadModel
 
     public decimal Total { get; set; }
 
-    public string PaymentStatus { get; set; } = null!;
-
-    public string OrderStatus { get; set; } = null!;
-
+    public PaymentMethod PaymentStatus { get; set; }
+    public OrderStatus OrderStatus { get; set; }
     public Ulid OrderTransactionId { get; set; }
 
     public BillReadModel? BillReadModel { get; set; }

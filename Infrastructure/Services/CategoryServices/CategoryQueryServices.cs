@@ -25,12 +25,12 @@ internal class CategoryQueryServices : ICategoryQueryServices
     {
         var categoryResponse = await _contextPostgreSQL.Categories
             .Where(a => a.CategoryId.ToGuid() == categoryId
-            && a.CategoryStatus != CategoryStatus.Deleted.ToString())
+            && a.CategoryStatus != CategoryStatus.Deleted)
             .Select(a => new CategoryResponse(
                 a.CategoryId.ToGuid(),
                 a.CategoryName,
                 a.ImageUrl,
-                a.CategoryStatus,
+                a.CategoryStatus.ToString(),
                 a.IsDefault))
             .FirstOrDefaultAsync();
 
@@ -74,7 +74,8 @@ internal class CategoryQueryServices : ICategoryQueryServices
         //Filter
         if (!string.IsNullOrEmpty(filter))
         {
-            categoriesQuery = categoriesQuery.Where(x => x.CategoryStatus == filter);
+            categoriesQuery = categoriesQuery
+                .Where(x => x.CategoryStatus == (CategoryStatus)Enum.Parse(typeof(CategoryStatus), filter));
         }
 
         //sort
@@ -100,7 +101,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.CategoryId.ToGuid(),
                 a.CategoryName,
                 a.ImageUrl,
-                a.CategoryStatus,
+                a.CategoryStatus.ToString(),
                 a.IsDefault)).AsQueryable();
         var categoriesList = await PagedList<CategoryResponse>
             .CreateAsync(categories, page ?? 1, pageSize ?? 10);
