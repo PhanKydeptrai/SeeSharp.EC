@@ -77,9 +77,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasIndex("CategoryName")
                         .IsUnique();
 
-                    b.HasIndex("CategoryStatus")
-                        .IsUnique();
-
                     b.ToTable("Categories");
 
                     b.HasData(
@@ -361,34 +358,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.ToTable("ShippingInformations");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserAuthenticationTokens.UserAuthenticationToken", b =>
-                {
-                    b.Property<Guid>("UserAuthenticationTokenId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ExpiredTime")
-                        .HasColumnType("TIMESTAMP");
-
-                    b.Property<bool>("IsBlackList")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("TokenType")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("varchar(500)");
-
-                    b.HasKey("UserAuthenticationTokenId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserAuthenticationTokens");
-                });
-
             modelBuilder.Entity("Domain.Entities.Users.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -429,30 +398,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Domain.Entities.VerificationTokens.VerificationToken", b =>
-                {
-                    b.Property<Guid>("VerificationTokenId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TIMESTAMP");
-
-                    b.Property<DateTime>("ExpiredDate")
-                        .HasColumnType("TIMESTAMP");
-
-                    b.Property<string>("Temporary")
-                        .HasColumnType("varchar(64)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("VerificationTokenId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("VerificationTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>
@@ -680,28 +625,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserAuthenticationTokens.UserAuthenticationToken", b =>
-                {
-                    b.HasOne("Domain.Entities.Users.User", "User")
-                        .WithMany("UserAuthenticationTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.VerificationTokens.VerificationToken", b =>
-                {
-                    b.HasOne("Domain.Entities.Users.User", "User")
-                        .WithMany("VerificationTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Domain.Entities.WishItems.WishItem", b =>
                 {
                     b.HasOne("Domain.Entities.Customers.Customer", "Customer")
@@ -770,10 +693,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Employee");
-
-                    b.Navigation("UserAuthenticationTokens");
-
-                    b.Navigation("VerificationTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>

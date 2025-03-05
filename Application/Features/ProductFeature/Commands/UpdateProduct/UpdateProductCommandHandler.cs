@@ -14,6 +14,7 @@ namespace Application.Features.ProductFeature.Commands.UpdateProduct;
 
 internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand>
 {
+    #region Dependencies
     private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOutBoxMessageServices _outboxService;
@@ -29,12 +30,13 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
         _outboxService = outboxService;
         _eventBus = eventBus;
     }
+    #endregion
     //FLOW: Get product by id -> Update product -> Add Outbox message -> Commit -> Publish event
     public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
         var productId = ProductId.FromGuid(request.ProductId);
         var (product, failure) = await GetProductById(productId);
-        if(product is null) return failure!;
+        if (product is null) return failure!;
         UpdateProduct(product, request);
 
         var message = CreateProductUpdatedEvent(product);
@@ -42,14 +44,15 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
             message.MessageId,
             message,
             _outboxService);
+
         await _unitOfWork.SaveToMySQL();
-        
+
         await _eventBus.PublishAsync(message);
 
         return Result.Success();
     }
 
-    //Private methods
+    #region Private method
     private ProductUpdatedEvent CreateProductUpdatedEvent(Product product)
     {
         return new ProductUpdatedEvent(
@@ -65,17 +68,25 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
     private async Task<(Product? product, Result? result)> GetProductById(ProductId productId)
     {
         var product = await _productRepository.GetProductFromMySQL(productId);
-        if(product is null) return (null, Result.Failure(ProductError.NotFound(productId)));
+        if (product is null) return (null, Result.Failure(ProductError.NotFound(productId)));
         return (product, null);
     }
     private void UpdateProduct(Product product, UpdateProductCommand request)
     {
+        var categoryId = CategoryId.DefaultCategoryId;
+
+        if (request.CategoryId is not null)
+        {
+            categoryId = CategoryId.FromGuid(request.CategoryId.Value);
+        }
+
         product.Update(
             ProductName.NewProductName(request.ProductName),
-            string.Empty,
+            string.Empty, //TODO: Update ImageUrl
             request.Description,
             ProductPrice.NewProductPrice(request.ProductPrice),
             product.ProductStatus,
-            CategoryId.FromGuid(request.CategoryId));
+            CategoryId.FromGuid(categoryId));
     }
+    #endregion
 }

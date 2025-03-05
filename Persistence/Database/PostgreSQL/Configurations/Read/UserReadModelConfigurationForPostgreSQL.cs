@@ -62,13 +62,13 @@ internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfi
             .WithOne(a => a.UserReadModel)
             .HasForeignKey<EmployeeReadModel>(a => a.UserId);
 
-        builder.HasMany(a => a.UserAuthenticationTokenReadModels)
-            .WithOne(a => a.UserReadModel)
-            .HasForeignKey(a => a.UserId);
+        // builder.HasMany(a => a.UserAuthenticationTokenReadModels)
+        //     .WithOne(a => a.UserReadModel)
+        //     .HasForeignKey(a => a.UserId);
 
-        builder.HasMany(a => a.VerificationTokenReadModels)
-            .WithOne(a => a.UserReadModel)
-            .HasForeignKey(a => a.UserId);
+        // builder.HasMany(a => a.VerificationTokenReadModels)
+        //     .WithOne(a => a.UserReadModel)
+        //     .HasForeignKey(a => a.UserId);
 
     }
 }

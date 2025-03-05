@@ -8,4 +8,4 @@ public record UpdateProductCommand(
     IFormFile? ProductImage,
     string? Description,
     decimal ProductPrice,
-    Guid CategoryId) : ICommand;
+    Guid? CategoryId) : ICommand;

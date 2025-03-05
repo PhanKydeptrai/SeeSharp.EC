@@ -9,7 +9,9 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
 {
     public void Configure(EntityTypeBuilder<UserAuthenticationToken> builder)
     {
+        
         builder.HasKey(a => a.UserAuthenticationTokenId);
+        
         builder.Property(a => a.UserAuthenticationTokenId)
             .IsRequired()
             .HasConversion(

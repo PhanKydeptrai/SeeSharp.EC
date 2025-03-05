@@ -52,6 +52,13 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         return await _decorated.IsCategoryNameExist(categoryId ?? null, categoryName, cancellationToken);
     }
 
+    public async Task<bool> IsCategoryStatusNotDeleted(
+        CategoryId categoryId, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _decorated.IsCategoryStatusNotDeleted(categoryId, cancellationToken);
+    }
+
     public async Task<PagedList<CategoryResponse>> PagedList(
         string? filter,
         string? searchTerm,

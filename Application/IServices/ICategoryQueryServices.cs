@@ -22,4 +22,8 @@ public interface ICategoryQueryServices
         CategoryId? categoryId,
         CategoryName categoryName,
         CancellationToken cancellationToken = default);
+    
+    Task<bool> IsCategoryStatusNotDeleted(
+        CategoryId categoryId,
+        CancellationToken cancellationToken = default);
 }

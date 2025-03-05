@@ -1,4 +1,5 @@
 ﻿using Application.IServices;
+using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using FluentValidation;
 using NaughtyStrings;
@@ -6,7 +7,9 @@ using NaughtyStrings;
 namespace Application.Features.ProductFeature.Commands.UpdateProduct;
 public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
 {
-    public UpdateProductCommandValidator(IProductQueryServices productQueryServices)
+    public UpdateProductCommandValidator(
+        IProductQueryServices productQueryServices, 
+        ICategoryQueryServices categoryQueryServices)
     {
         RuleFor(x => x.ProductId)
             .NotEmpty()
@@ -29,7 +32,7 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
             {
                 return productQueryServices.IsProductNameExist(
                     ProductId.FromGuid(context.ProductId), 
-                    ProductName.FromString(productName)).Result == false; //TEST
+                    ProductName.FromString(productName)).Result is false;
             })
             .WithErrorCode("ProductName.NotUnique")
             .WithMessage("Prodyuct name must be unique")
@@ -46,7 +49,13 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
             .NotEmpty()
             .WithErrorCode("ProductPrice.NotEmpty")
             .WithMessage("ProductPrice is required")
-            .Must(productPrice => productPrice > 0);
+            .Must(productPrice => productPrice > 0)
+            .WithErrorCode("ProductPrice.Invalid")
+            .WithMessage("ProductPrice must be greater than 0");
+
+        RuleFor(x => x.CategoryId)
+            .Must(x => categoryQueryServices.IsCategoryStatusNotDeleted(CategoryId.FromGuid(x!.Value)).Result is false)
+            .When(x => x.CategoryId is not null);
 
     }
     private bool ValidateInput(string input)

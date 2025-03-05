@@ -10,6 +10,6 @@ public record ProductUpdatedEvent(
     string? Description,
     decimal Price,
     ProductStatus ProductStatus,
-    Guid CategoryId,
+    Guid? CategoryId,
     Guid MessageId
     ) : IDomainEvent;

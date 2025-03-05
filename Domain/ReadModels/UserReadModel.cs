@@ -14,6 +14,6 @@ public sealed class UserReadModel
     public string? ImageUrl { get; set; }
     public CustomerReadModel? CustomerReadModel { get; set; }
     public EmployeeReadModel? EmployeeReadModel { get; set; }
-    public ICollection<UserAuthenticationTokenReadModel> UserAuthenticationTokenReadModels { get; set; } = new List<UserAuthenticationTokenReadModel>();
-    public ICollection<VerificationTokenReadModel> VerificationTokenReadModels { get; set; } = new List<VerificationTokenReadModel>();
+    // public ICollection<UserAuthenticationTokenReadModel> UserAuthenticationTokenReadModels { get; set; } = new List<UserAuthenticationTokenReadModel>();
+    // public ICollection<VerificationTokenReadModel> VerificationTokenReadModels { get; set; } = new List<VerificationTokenReadModel>();
 }

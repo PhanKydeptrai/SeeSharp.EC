@@ -17,6 +17,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 //TODO: Move to external file
 //Cấu hình Authen và Author 
+#region Need to move to external file
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -39,6 +40,7 @@ builder.Services.AddAuthentication(options =>
         RoleClaimType = ClaimTypes.Role
     };
 });
+#endregion
 
 builder.Services.AddAuthorization();
 
@@ -46,10 +48,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
-builder.Services.Configure<RouteOptions>(options =>
-{
-    options.ConstraintMap["ulid"] = typeof(UlidRouteConstraint);
-});
+
 #region Dependency Injection
 builder.Services.AddApplication()
     .AddPersistnce(builder.Configuration)

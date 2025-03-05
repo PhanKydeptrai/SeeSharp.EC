@@ -23,10 +23,10 @@ internal sealed class VerificationTokenRepository : IVerificationTokenRepository
         await _nextSharpMySQLWriteDbContext.VerificationTokens.AddAsync(token);
     }
 
-    public async Task AddVerificationTokenToPostgreSQL(VerificationToken token)
-    {
-        await _nextSharpPostgreSQLWriteDbContext.VerificationTokens.AddAsync(token);
-    }
+    // public async Task AddVerificationTokenToPostgreSQL(VerificationToken token)
+    // {
+    //     await _nextSharpPostgreSQLWriteDbContext.VerificationTokens.AddAsync(token);
+    // }
 
     public async Task<VerificationToken?> GetVerificationTokenFromMySQL(VerificationTokenId verificationTokenId)
     {
@@ -35,20 +35,20 @@ internal sealed class VerificationTokenRepository : IVerificationTokenRepository
                 .FirstOrDefaultAsync(a => a.VerificationTokenId == verificationTokenId);
     }
 
-    public async Task<VerificationToken?> GetVerificationTokenFromPostgreSQL(VerificationTokenId verificationTokenId)
-    {
-        return await _nextSharpPostgreSQLWriteDbContext.VerificationTokens
-                .Include(a => a.User)
-                .FirstOrDefaultAsync(a => a.VerificationTokenId == verificationTokenId);
-    }
+    // public async Task<VerificationToken?> GetVerificationTokenFromPostgreSQL(VerificationTokenId verificationTokenId)
+    // {
+    //     return await _nextSharpPostgreSQLWriteDbContext.VerificationTokens
+    //             .Include(a => a.User)
+    //             .FirstOrDefaultAsync(a => a.VerificationTokenId == verificationTokenId);
+    // }
 
     public void RemoveVerificationTokenFrommMySQL(VerificationToken token)
     {
         _nextSharpMySQLWriteDbContext.VerificationTokens.Remove(token);
     }
 
-    public void RemoveVerificationTokenFrommPostgreSQL(VerificationToken token)
-    {
-        _nextSharpPostgreSQLWriteDbContext.VerificationTokens.Remove(token);
-    }
+    // public void RemoveVerificationTokenFrommPostgreSQL(VerificationToken token)
+    // {
+    //     _nextSharpPostgreSQLWriteDbContext.VerificationTokens.Remove(token);
+    // }
 }

@@ -5,5 +5,4 @@ namespace Domain.IRepositories.UserAuthenticationTokens;
 public interface IUserAuthenticationTokenRepository
 {
     Task AddUserAuthenticationTokenToMySQL(UserAuthenticationToken accessToken, UserAuthenticationToken refreshToken);
-    Task AddUserAuthenticationTokenToPostgreSQL(UserAuthenticationToken accessToken, UserAuthenticationToken refreshToken);
 }
