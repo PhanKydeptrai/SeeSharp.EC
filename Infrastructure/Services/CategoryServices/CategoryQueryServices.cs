@@ -24,6 +24,21 @@ internal class CategoryQueryServices : ICategoryQueryServices
         CancellationToken cancellationToken)
     {
         var categoryResponse = await _contextPostgreSQL.Categories
+            .Where(a => a.CategoryId == new Ulid(categoryId))
+            .Select(a => new CategoryResponse(
+                a.CategoryId.ToGuid(),
+                a.CategoryName,
+                a.ImageUrl,
+                a.CategoryStatus.ToString(),
+                a.IsDefault))
+            .FirstOrDefaultAsync();
+
+        return categoryResponse;
+    }
+
+    public async Task<CategoryResponse?> GetCategoryDetail(CategoryId categoryId, CancellationToken cancellationToken = default)
+    {
+        var categoryResponse = await _contextPostgreSQL.Categories
             .Where(a => a.CategoryId == new Ulid(categoryId)
             && a.CategoryStatus != CategoryStatus.Deleted)
             .Select(a => new CategoryResponse(

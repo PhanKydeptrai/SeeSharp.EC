@@ -13,6 +13,11 @@ internal sealed class UserAuthenticationTokenRepository : IUserAuthenticationTok
         _nextSharpMySQLWriteDbContext = nextSharpMySQLWriteDbContext;
     }
 
+    public async Task AddRefreshTokenToMySQL(UserAuthenticationToken refreshToken)
+    {
+        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.AddAsync(refreshToken);
+    }
+
     public async Task AddUserAuthenticationTokenToMySQL(
         UserAuthenticationToken accessToken, 
         UserAuthenticationToken refreshToken)

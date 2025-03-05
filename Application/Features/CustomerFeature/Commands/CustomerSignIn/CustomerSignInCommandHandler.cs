@@ -45,11 +45,11 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         var signinResponse = CreateResponse(response!);
 
         //Save access token and refresh token to database
-        var accessToken = UserAuthenticationToken.NewUserAuthenticationToken(
-            signinResponse.accessToken,
-            TokenType.AccessToken,
-            DateTime.UtcNow.AddMinutes(15),
-            UserId.FromUlid(response!.UserId));
+        // var accessToken = UserAuthenticationToken.NewUserAuthenticationToken(
+        //     signinResponse.accessToken,
+        //     TokenType.AccessToken,
+        //     DateTime.UtcNow.AddMinutes(15),
+        //     UserId.FromUlid(response!.UserId));
 
         var refreshToken = UserAuthenticationToken.NewUserAuthenticationToken(
             signinResponse.refreshToken,
@@ -57,11 +57,8 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
             DateTime.UtcNow.AddDays(30),
             UserId.FromUlid(response!.UserId));
 
-        await _userAuthenticationTokenRepository.AddUserAuthenticationTokenToMySQL(accessToken, refreshToken);
+        await _userAuthenticationTokenRepository.AddRefreshTokenToMySQL(refreshToken);
         await _unitOfWork.SaveToMySQL();
-
-        //Publish event
-
         return Result.Success<CustomerSignInResponse>(signinResponse);
     }
 

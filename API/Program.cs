@@ -8,6 +8,7 @@ using Application.Abstractions.LinkService;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
@@ -20,11 +21,50 @@ var builder = WebApplication.CreateBuilder(args);
 #region Need to move to external file
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    #region JwtBearer authentication
+    // options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    // options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;    
+    #endregion
 
-}).AddJwtBearer(options =>
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+})
+// .AddCookie(options =>
+// {
+//     options.LoginPath = "/signin";
+//     options.LogoutPath = "/signout";
+//     // Bạn có thể cấu hình thêm các tùy chọn cookie khác nếu cần
+// })
+.AddJwtBearer(options =>
 {
+    // options.Events = new JwtBearerEvents
+    // {
+    //     OnMessageReceived = context =>
+    //     {
+    //         // Nếu request không có header Authorization, thử lấy token từ cookie
+    //         context.Token = context.Request.Cookies["access_token"];
+    //         return Task.CompletedTask;
+    //     }
+    // };
+
+    // options.Events = new JwtBearerEvents
+    // {
+    //     OnTokenValidated = context =>
+    //     {
+    //         var jti = context.Principal?.FindFirst("jti")?.Value;
+    //         if (jti != null)
+    //         {
+    //             var revocationService = context.HttpContext.RequestServices.GetRequiredService<ITokenRevocationService>();
+    //             if (revocationService.IsTokenRevoked(jti))
+    //             {
+    //                 context.Fail("Token đã bị thu hồi.");
+    //             }
+    //         }
+    //         return Task.CompletedTask;
+    //     }
+    // };
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
