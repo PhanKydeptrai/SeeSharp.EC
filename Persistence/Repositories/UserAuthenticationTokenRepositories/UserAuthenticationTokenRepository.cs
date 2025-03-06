@@ -1,5 +1,7 @@
 using Domain.Entities.UserAuthenticationTokens;
+using Domain.Entities.Users;
 using Domain.IRepositories.UserAuthenticationTokens;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Database.MySQL;
 
 namespace Persistence.Repositories.UserAuthenticationTokenRepositories;
@@ -17,11 +19,21 @@ internal sealed class UserAuthenticationTokenRepository : IUserAuthenticationTok
     {
         await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.AddAsync(refreshToken);
     }
-
-    public async Task AddUserAuthenticationTokenToMySQL(
-        UserAuthenticationToken accessToken, 
-        UserAuthenticationToken refreshToken)
+    public async Task RemoveRefreshTokenFromMySQL(UserId userId)
     {
-        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.AddRangeAsync(accessToken, refreshToken);
+        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens
+            .Where(x => x.UserId == userId)
+            .ExecuteDeleteAsync();
+    }
+
+    public async Task<UserAuthenticationToken?> GetAuthenticationTokenWithRefreshToken(string refreshToken)
+    {
+        var userAuthenticationToken = await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens
+            .Where(x => x.Value == refreshToken)
+            .Include(x => x.User)
+            .Include(x => x.User!.Customer)
+            .FirstOrDefaultAsync();
+        
+        return userAuthenticationToken;
     }
 }

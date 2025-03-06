@@ -49,4 +49,9 @@ public sealed class UserAuthenticationToken
             IsBlackList.False,
             userId);
     }
+
+    public void BlackList()
+    {
+        IsBlackList = IsBlackList.True;
+    }
 }

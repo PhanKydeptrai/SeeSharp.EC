@@ -20,7 +20,6 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
     private readonly ITokenProvider _tokenProvider;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
-    private readonly IEventBus _eventBus;
     public CustomerSignInCommandHandler(
         ITokenProvider tokenProvider,
         IUnitOfWork unitOfWork,
@@ -31,7 +30,6 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         _tokenProvider = tokenProvider;
         _unitOfWork = unitOfWork;
         _customerQueryServices = customerQueryServices;
-        _eventBus = eventBus;
         _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
     }
     #endregion
@@ -47,13 +45,13 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         // Save jti and refresh token to database
         var refreshToken = UserAuthenticationToken.NewUserAuthenticationToken(
             signinResponse.refreshToken,
-            string.Empty, // jti can empty
+            string.Empty, //NOTE: Empty because just record jti when access token revoked
             DateTime.UtcNow.AddDays(30),
             UserId.FromUlid(response!.UserId));
 
         await _userAuthenticationTokenRepository.AddRefreshTokenToMySQL(refreshToken);
         await _unitOfWork.SaveToMySQL();
-        return Result.Success<CustomerSignInResponse>(signinResponse);
+        return Result.Success(signinResponse);
     }
 
     #region Private method
@@ -71,7 +69,7 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
     private async Task<(CustomerAuthenticationResponse? response, Result<CustomerSignInResponse>? failure)> IsSignInSuccess(
         CustomerSignInCommand request)
     {
-        var response = await _customerQueryServices.IsCustomerSignInSuccess(
+        var response = await _customerQueryServices.AuthenticateCustomer(
             Email.NewEmail(request.Email),
             PasswordHash.NewPasswordHash(request.Password.SHA256()));
 

@@ -32,13 +32,13 @@ builder.Services.AddAuthentication(options =>
         OnTokenValidated = async context =>
         {
             var jti = context.Principal?.FindFirst("jti")?.Value;
-            if (jti != null)
+            if (jti is null)
             {
                 var revocationService = context.HttpContext.RequestServices
                     .GetRequiredService<ITokenRevocationService>();
-                if (await revocationService.IsTokenRevoked(jti))
+                if (await revocationService.IsTokenRevoked(jti!))
                 {
-                    context.Fail("Token đã bị thu hồi.");
+                    context.Fail("Token was revoked.");
                 }
             }
         }
