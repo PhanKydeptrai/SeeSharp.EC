@@ -4,8 +4,8 @@ namespace Domain.Entities.UserAuthenticationTokens;
 public sealed class UserAuthenticationToken
 {
     public UserAuthenticationTokenId UserAuthenticationTokenId { get; private set; } = null!;
-    public string Value { get; private set; } = null!;
-    public TokenType TokenType { get; private set; } 
+    public string Value { get; private set; } = string.Empty;
+    public string Jti { get; private set; } = string.Empty;
     public DateTime ExpiredTime { get; private set; }
     public IsBlackList IsBlackList { get; private set; } = null!;
     public UserId UserId { get; private set; } = null!;
@@ -14,14 +14,14 @@ public sealed class UserAuthenticationToken
     private UserAuthenticationToken(
         UserAuthenticationTokenId userAuthenticationTokenId,
         string value,
-        TokenType tokenType,
+        string jti,
         DateTime expiredTime,
         IsBlackList isBlackList,
         UserId userId)
     {
         UserAuthenticationTokenId = userAuthenticationTokenId;
         Value = value;
-        TokenType = tokenType;
+        Jti = jti;
         ExpiredTime = expiredTime;
         IsBlackList = isBlackList;
         UserId = userId;
@@ -30,7 +30,7 @@ public sealed class UserAuthenticationToken
     //Factory Method
     public static UserAuthenticationToken NewUserAuthenticationToken(
         string value,
-        TokenType tokenType,
+        string jti,
         DateTime expiredTime,
         UserId userId)
     {
@@ -44,7 +44,7 @@ public sealed class UserAuthenticationToken
         return new UserAuthenticationToken(
             UserAuthenticationTokenId.New(),
             value,
-            tokenType,
+            jti,
             expiredTime,
             IsBlackList.False,
             userId);

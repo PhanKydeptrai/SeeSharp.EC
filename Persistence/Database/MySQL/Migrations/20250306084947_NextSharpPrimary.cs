@@ -163,7 +163,7 @@ namespace Persistence.Database.MySQL.Migrations
                 {
                     UserAuthenticationTokenId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
                     Value = table.Column<string>(type: "varchar(500)", nullable: false),
-                    TokenType = table.Column<int>(type: "int", nullable: false),
+                    Jti = table.Column<string>(type: "varchar(36)", nullable: true),
                     ExpiredTime = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
                     IsBlackList = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")

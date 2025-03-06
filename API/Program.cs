@@ -1,14 +1,13 @@
 ﻿using System.Reflection;
 using System.Security.Claims;
 using API.Extentions;
-using API.Infrastructure;
 using API.Services;
 using Application;
 using Application.Abstractions.LinkService;
+using Application.Security;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
@@ -21,49 +20,29 @@ var builder = WebApplication.CreateBuilder(args);
 #region Need to move to external file
 builder.Services.AddAuthentication(options =>
 {
-    #region JwtBearer authentication
-    // options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    // options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;    
-    #endregion
 
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 
 })
-// .AddCookie(options =>
-// {
-//     options.LoginPath = "/signin";
-//     options.LogoutPath = "/signout";
-//     // Bạn có thể cấu hình thêm các tùy chọn cookie khác nếu cần
-// })
 .AddJwtBearer(options =>
 {
-    // options.Events = new JwtBearerEvents
-    // {
-    //     OnMessageReceived = context =>
-    //     {
-    //         // Nếu request không có header Authorization, thử lấy token từ cookie
-    //         context.Token = context.Request.Cookies["access_token"];
-    //         return Task.CompletedTask;
-    //     }
-    // };
-
-    // options.Events = new JwtBearerEvents
-    // {
-    //     OnTokenValidated = context =>
-    //     {
-    //         var jti = context.Principal?.FindFirst("jti")?.Value;
-    //         if (jti != null)
-    //         {
-    //             var revocationService = context.HttpContext.RequestServices.GetRequiredService<ITokenRevocationService>();
-    //             if (revocationService.IsTokenRevoked(jti))
-    //             {
-    //                 context.Fail("Token đã bị thu hồi.");
-    //             }
-    //         }
-    //         return Task.CompletedTask;
-    //     }
-    // };
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var jti = context.Principal?.FindFirst("jti")?.Value;
+            if (jti != null)
+            {
+                var revocationService = context.HttpContext.RequestServices
+                    .GetRequiredService<ITokenRevocationService>();
+                if (await revocationService.IsTokenRevoked(jti))
+                {
+                    context.Fail("Token đã bị thu hồi.");
+                }
+            }
+        }
+    };
 
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -83,7 +62,6 @@ builder.Services.AddAuthentication(options =>
 #endregion
 
 builder.Services.AddAuthorization();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
@@ -171,11 +149,6 @@ app.UseHttpsRedirection();
 
 
 #region Cấu hình minimal API
-app.MapGet("/api/convert/{id:guid}", (Guid id) =>
-{
-    return Results.Ok(new Ulid(id));
-});
-
 app.MapEndpoints();
 #endregion
 

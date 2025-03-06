@@ -426,8 +426,8 @@ namespace Persistence.Database.MySQL.Migrations
                     b.Property<bool>("IsBlackList")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("TokenType")
-                        .HasColumnType("int");
+                    b.Property<string>("Jti")
+                        .HasColumnType("varchar(36)");
 
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()

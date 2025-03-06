@@ -32,21 +32,6 @@ internal sealed class SignIn : IEndpoint
             ISender sender) =>
         {
             var result = await sender.Send(command);
-
-            httpContext.Response.Cookies.Append("access_token", result.Value.accessToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                Expires = DateTime.Now.AddMinutes(30)
-            });
-
-            httpContext.Response.Cookies.Append("refresh_token", result.Value.refreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                Expires = DateTime.Now.AddDays(7) 
-            });
-
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()

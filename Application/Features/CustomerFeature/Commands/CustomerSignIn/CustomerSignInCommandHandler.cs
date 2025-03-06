@@ -44,16 +44,10 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         if (failure is not null) return failure;
         var signinResponse = CreateResponse(response!);
 
-        //Save access token and refresh token to database
-        // var accessToken = UserAuthenticationToken.NewUserAuthenticationToken(
-        //     signinResponse.accessToken,
-        //     TokenType.AccessToken,
-        //     DateTime.UtcNow.AddMinutes(15),
-        //     UserId.FromUlid(response!.UserId));
-
+        // Save jti and refresh token to database
         var refreshToken = UserAuthenticationToken.NewUserAuthenticationToken(
             signinResponse.refreshToken,
-            TokenType.RefreshToken,
+            string.Empty, // jti can empty
             DateTime.UtcNow.AddDays(30),
             UserId.FromUlid(response!.UserId));
 
