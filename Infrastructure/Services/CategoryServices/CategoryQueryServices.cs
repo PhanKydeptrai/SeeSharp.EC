@@ -24,13 +24,28 @@ internal class CategoryQueryServices : ICategoryQueryServices
         CancellationToken cancellationToken)
     {
         var categoryResponse = await _contextPostgreSQL.Categories
-            .Where(a => a.CategoryId.ToGuid() == categoryId
-            && a.CategoryStatus != CategoryStatus.Deleted.ToString())
+            .Where(a => a.CategoryId == new Ulid(categoryId))
             .Select(a => new CategoryResponse(
                 a.CategoryId.ToGuid(),
                 a.CategoryName,
                 a.ImageUrl,
-                a.CategoryStatus,
+                a.CategoryStatus.ToString(),
+                a.IsDefault))
+            .FirstOrDefaultAsync();
+
+        return categoryResponse;
+    }
+
+    public async Task<CategoryResponse?> GetCategoryDetail(CategoryId categoryId, CancellationToken cancellationToken = default)
+    {
+        var categoryResponse = await _contextPostgreSQL.Categories
+            .Where(a => a.CategoryId == new Ulid(categoryId)
+            && a.CategoryStatus != CategoryStatus.Deleted)
+            .Select(a => new CategoryResponse(
+                a.CategoryId.ToGuid(),
+                a.CategoryName,
+                a.ImageUrl,
+                a.CategoryStatus.ToString(),
                 a.IsDefault))
             .FirstOrDefaultAsync();
 
@@ -38,21 +53,28 @@ internal class CategoryQueryServices : ICategoryQueryServices
     }
 
     public async Task<bool> IsCategoryNameExist(
-        CategoryId? categoryId, 
-        CategoryName categoryName, 
+        CategoryId? categoryId,
+        CategoryName categoryName,
         CancellationToken cancellationToken = default)
     {
-        if(categoryId is not null)
+        if (categoryId is not null)
         {
             return await _contextPostgreSQL.Categories
                 .AnyAsync(
-                    a => a.CategoryName == categoryName.Value 
+                    a => a.CategoryName == categoryName.Value
                     && a.CategoryId != new Ulid(categoryId.Value));
         }
 
         return await _contextPostgreSQL.Categories
             .AnyAsync(a => a.CategoryName == categoryName.Value);
 
+    }
+
+    public async Task<bool> IsCategoryStatusNotDeleted(CategoryId categoryId, CancellationToken cancellationToken = default)
+    {
+        return await _contextPostgreSQL.Categories
+            .AnyAsync(a => a.CategoryId == new Ulid(categoryId)
+            && a.CategoryStatus != CategoryStatus.Deleted);
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(
@@ -74,7 +96,8 @@ internal class CategoryQueryServices : ICategoryQueryServices
         //Filter
         if (!string.IsNullOrEmpty(filter))
         {
-            categoriesQuery = categoriesQuery.Where(x => x.CategoryStatus == filter);
+            categoriesQuery = categoriesQuery
+                .Where(x => x.CategoryStatus == (CategoryStatus)Enum.Parse(typeof(CategoryStatus), filter));
         }
 
         //sort
@@ -100,7 +123,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.CategoryId.ToGuid(),
                 a.CategoryName,
                 a.ImageUrl,
-                a.CategoryStatus,
+                a.CategoryStatus.ToString(),
                 a.IsDefault)).AsQueryable();
         var categoriesList = await PagedList<CategoryResponse>
             .CreateAsync(categories, page ?? 1, pageSize ?? 10);

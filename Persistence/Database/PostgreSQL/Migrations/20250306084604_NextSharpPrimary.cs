@@ -131,49 +131,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserAuthenticationTokens",
-                columns: table => new
-                {
-                    UserAuthenticationTokenId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Value = table.Column<string>(type: "varchar(500)", nullable: false),
-                    TokenType = table.Column<int>(type: "integer", nullable: false),
-                    ExpiredTime = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
-                    IsBlackList = table.Column<bool>(type: "boolean", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAuthenticationTokens", x => x.UserAuthenticationTokenId);
-                    table.ForeignKey(
-                        name: "FK_UserAuthenticationTokens_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "VerificationTokens",
-                columns: table => new
-                {
-                    VerificationTokenId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Temporary = table.Column<string>(type: "varchar(64)", nullable: true),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
-                    ExpiredDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VerificationTokens", x => x.VerificationTokenId);
-                    table.ForeignKey(
-                        name: "FK_VerificationTokens_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CustomerVouchers",
                 columns: table => new
                 {
@@ -424,12 +381,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_CategoryStatus",
-                table: "Categories",
-                column: "CategoryStatus",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Customers_UserId",
                 table: "Customers",
                 column: "UserId",
@@ -504,16 +455,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAuthenticationTokens_UserId",
-                table: "UserAuthenticationTokens",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_VerificationTokens_UserId",
-                table: "VerificationTokens",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_WishItems_CustomerId",
                 table: "WishItems",
                 column: "CustomerId");
@@ -541,12 +482,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderTransactions");
-
-            migrationBuilder.DropTable(
-                name: "UserAuthenticationTokens");
-
-            migrationBuilder.DropTable(
-                name: "VerificationTokens");
 
             migrationBuilder.DropTable(
                 name: "WishItems");

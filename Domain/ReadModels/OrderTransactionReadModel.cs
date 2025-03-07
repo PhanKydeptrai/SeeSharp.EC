@@ -1,4 +1,6 @@
-﻿namespace Domain.Database.PostgreSQL.ReadModels;
+﻿using Domain.Entities.Bills;
+
+namespace Domain.Database.PostgreSQL.ReadModels;
 
 public class OrderTransactionReadModel
 {
@@ -12,7 +14,7 @@ public class OrderTransactionReadModel
 
     public string Description { get; set; } = null!;
 
-    public string PaymentMethod { get; set; } = null!;
+    public PaymentMethod PaymentMethod { get; set; }
 
     public bool IsVoucherUsed { get; set; }
 

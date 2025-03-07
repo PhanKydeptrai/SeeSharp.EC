@@ -12,6 +12,7 @@ namespace Infrastructure.Consumers.CategoryMessageConsumer;
 
 internal sealed class CategoryRestoredMessageConsumer : IConsumer<CategoryRestoredEvent>
 {
+    #region Dependencies
     private readonly ILogger<CategoryRestoredMessageConsumer> _logger;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
     private readonly IUnitOfWork _unitOfWork;
@@ -30,6 +31,7 @@ internal sealed class CategoryRestoredMessageConsumer : IConsumer<CategoryRestor
         _categoryRepository = categoryRepository;
         _productRepository = productRepository;
     }
+    #endregion
 
     public async Task Consume(ConsumeContext<CategoryRestoredEvent> context)
     {
@@ -49,7 +51,7 @@ internal sealed class CategoryRestoredMessageConsumer : IConsumer<CategoryRestor
             await _unitOfWork.SaveToPostgreSQL();
             await _productRepository.RestoreProductByCategoryFromPostgreSQL(
                 CategoryId.FromGuid(context.Message.CategoryId));
-            
+
             transaction.Commit();
             //-----------------------------------
         }

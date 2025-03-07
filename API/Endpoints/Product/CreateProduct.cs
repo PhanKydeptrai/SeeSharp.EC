@@ -11,8 +11,7 @@ internal sealed class CreateProduct : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/products",
-        async (
+        app.MapPost("api/products", async (
             [FromForm] string ProductName,
             [FromForm] IFormFile? ProductImage,
             [FromForm] string? Description,

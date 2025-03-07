@@ -31,7 +31,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 x.ImageUrl,
                 x.Description,
                 x.ProductPrice,
-                x.ProductStatus,
+                x.ProductStatus.ToString(),
                 x.CategoryReadModel.CategoryName))
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -74,7 +74,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
         //Filter
         if (!string.IsNullOrWhiteSpace(filterProductStatus))
         {
-            productsQuery = productsQuery.Where(x => x.ProductStatus == filterProductStatus);
+            productsQuery = productsQuery.Where(x => x.ProductStatus == (ProductStatus)Enum.Parse(typeof(ProductStatus), filterProductStatus));
         }
 
         if (!string.IsNullOrWhiteSpace(filterCategory))
@@ -108,7 +108,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 x.ImageUrl,
                 x.Description,
                 x.ProductPrice,
-                x.ProductStatus,
+                x.ProductStatus.ToString(),
                 x.CategoryReadModel.CategoryName)).AsQueryable();
         var productsList = await PagedList<ProductResponse>
             .CreateAsync(products, page ?? 1, pageSize ?? 10);

@@ -16,4 +16,8 @@ public static class CustomerError
     public static Error LoginFailed() => Error.Problem(
         "Customer.LoginFailed",
         "The login failed. Please check your email and password");
+
+    public static Error RefreshTokenInvalid() => Error.Problem(
+        "Customer.RefreshTokenInvalid",
+        "The refresh token is invalid");
 }

@@ -9,13 +9,10 @@ internal sealed class CategoryConfigurationForPostgreSQL : IEntityTypeConfigurat
     public void Configure(EntityTypeBuilder<Category> builder)
     {
         builder.HasKey(a => a.CategoryId);
-        
+
         builder.HasIndex(a => a.CategoryName) //Unique Index
             .IsUnique();
 
-        builder.HasIndex(a => a.CategoryStatus)
-            .IsUnique();
-            
         builder.Property(a => a.CategoryId)
             .IsRequired()
             .HasConversion(

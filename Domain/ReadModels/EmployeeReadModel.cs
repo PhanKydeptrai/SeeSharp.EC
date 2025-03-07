@@ -1,10 +1,12 @@
-﻿namespace Domain.Database.PostgreSQL.ReadModels;
+﻿using Domain.Entities.Employees;
+
+namespace Domain.Database.PostgreSQL.ReadModels;
 
 public class EmployeeReadModel
 {
     public Ulid EmployeeId { get; set; }
     public Ulid UserId { get; set; }
-    public string EmployeeStatus { get; set; } = null!;
-    public string Role { get; set; } = null!;
+    public EmployeeStatus EmployeeStatus { get; set; }
+    public Role Role { get; set; }
     public UserReadModel UserReadModel { get; set; } = null!;
 }

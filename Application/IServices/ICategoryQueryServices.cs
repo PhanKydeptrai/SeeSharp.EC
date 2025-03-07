@@ -13,13 +13,22 @@ public interface ICategoryQueryServices
         string? sortOrder,
         int? page,
         int? pageSize);
-
+    // Lấy thông tin chi tiết của một danh mục theo id lấy cả những danh mục đã bị xóa
     Task<CategoryResponse?> GetById(
+        CategoryId categoryId, 
+        CancellationToken cancellationToken = default);
+
+    // Lấy thông tin chi tiết của một danh mục theo id trừ những danh mục đã bị xóa
+    Task<CategoryResponse?> GetCategoryDetail(
         CategoryId categoryId, 
         CancellationToken cancellationToken = default);
 
     Task<bool> IsCategoryNameExist(
         CategoryId? categoryId,
         CategoryName categoryName,
+        CancellationToken cancellationToken = default);
+    
+    Task<bool> IsCategoryStatusNotDeleted(
+        CategoryId categoryId,
         CancellationToken cancellationToken = default);
 }

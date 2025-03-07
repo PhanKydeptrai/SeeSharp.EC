@@ -19,29 +19,39 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         _cache = cache;
     }
 
-    public async Task<CategoryResponse?> GetById(CategoryId categoryId, CancellationToken cancellationToken = default)
+    public async Task<CategoryResponse?> GetById(
+        CategoryId categoryId, 
+        CancellationToken cancellationToken = default)
     {
+        var category = await _decorated.GetById(categoryId, cancellationToken);
+        return category;
+        // string cacheKey = $"CategoryResponse:{categoryId.Value}";
+        // string? cachedCategory = await _cache.GetStringAsync(cacheKey, cancellationToken);
+        // CategoryResponse? category;
+        // if (string.IsNullOrEmpty(cachedCategory))
+        // {
+        //     category = await _decorated.GetById(categoryId, cancellationToken);
 
-        string cacheKey = $"CategoryResponse:{categoryId.Value}";
-        string? cachedCategory = await _cache.GetStringAsync(cacheKey, cancellationToken);
-        CategoryResponse? category;
-        if (string.IsNullOrEmpty(cachedCategory))
-        {
-            category = await _decorated.GetById(categoryId, cancellationToken);
+        //     if (category is null)
+        //     {
+        //         return category;
+        //     }
 
-            if (category is null)
-            {
-                return category;
-            }
+        //     await _cache.SetStringAsync(
+        //         cacheKey,
+        //         JsonConvert.SerializeObject(category),
+        //         cancellationToken);
 
-            await _cache.SetStringAsync(
-                cacheKey,
-                JsonConvert.SerializeObject(category),
-                cancellationToken);
+        //     return category;
+        // }
+        // return JsonConvert.DeserializeObject<CategoryResponse>(cachedCategory);
+    }
 
-            return category;
-        }
-        return JsonConvert.DeserializeObject<CategoryResponse>(cachedCategory);
+    public async Task<CategoryResponse?> GetCategoryDetail(
+        CategoryId categoryId, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _decorated.GetCategoryDetail(categoryId, cancellationToken);
     }
 
     public async Task<bool> IsCategoryNameExist(
@@ -49,7 +59,14 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         CategoryName categoryName, 
         CancellationToken cancellationToken = default)
     {
-        return await _decorated.IsCategoryNameExist(categoryId, categoryName, cancellationToken);
+        return await _decorated.IsCategoryNameExist(categoryId ?? null, categoryName, cancellationToken);
+    }
+
+    public async Task<bool> IsCategoryStatusNotDeleted(
+        CategoryId categoryId, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _decorated.IsCategoryStatusNotDeleted(categoryId, cancellationToken);
     }
 
     public async Task<PagedList<CategoryResponse>> PagedList(

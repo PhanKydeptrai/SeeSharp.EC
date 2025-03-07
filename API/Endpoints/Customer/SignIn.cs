@@ -1,4 +1,3 @@
-
 using API.Extentions;
 using API.Infrastructure;
 using Application.Features.CustomerFeature.Commands.CustomerSignIn;
@@ -14,10 +13,10 @@ internal sealed class SignIn : IEndpoint
     {
         builder.MapPost("api/customers/signin", async (
             [FromBody] CustomerSignInCommand command,
+            HttpContext httpContext,
             ISender sender) =>
         {
             var result = await sender.Send(command);
-
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()

@@ -20,18 +20,15 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
     private readonly ITokenProvider _tokenProvider;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
-    private readonly IEventBus _eventBus;
     public CustomerSignInCommandHandler(
         ITokenProvider tokenProvider,
         IUnitOfWork unitOfWork,
         ICustomerQueryServices customerQueryServices,
-        IEventBus eventBus,
         IUserAuthenticationTokenRepository userAuthenticationTokenRepository)
     {
         _tokenProvider = tokenProvider;
         _unitOfWork = unitOfWork;
         _customerQueryServices = customerQueryServices;
-        _eventBus = eventBus;
         _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
     }
     #endregion
@@ -42,45 +39,36 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
     {
         var (response, failure) = await IsSignInSuccess(request);
         if (failure is not null) return failure;
-        var signinResponse = CreateResponse(response!);
 
-        //Save access token and refresh token to database
-        var accessToken = UserAuthenticationToken.NewUserAuthenticationToken(
-            signinResponse.accessToken,
-            TokenType.AccessToken,
-            DateTime.UtcNow.AddMinutes(15),
-            UserId.FromUlid(response!.UserId));
+        //Generate token
+        string jti = Ulid.NewUlid().ToGuid().ToString();
+        string accessToken = _tokenProvider.GenerateAccessToken(
+            UserId.FromUlid(response!.UserId),
+            Email.FromString(response.Email),
+            response.CustomerType,
+            jti);
 
-        var refreshToken = UserAuthenticationToken.NewUserAuthenticationToken(
-            signinResponse.refreshToken,
-            TokenType.RefreshToken,
+        string refreshToken = _tokenProvider.GenerateRefreshToken();
+
+        // Save jti and refresh token to database
+        var userAuthenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
+            refreshToken,
+            jti,
             DateTime.UtcNow.AddDays(30),
             UserId.FromUlid(response!.UserId));
 
-        await _userAuthenticationTokenRepository.AddUserAuthenticationTokenToMySQL(accessToken, refreshToken);
+        await _userAuthenticationTokenRepository.AddRefreshTokenToMySQL(userAuthenticationToken);
         await _unitOfWork.SaveToMySQL();
-
-        //Publish event
-
-        return Result.Success<CustomerSignInResponse>(signinResponse);
+        
+        //Success
+        return Result.Success(new CustomerSignInResponse(accessToken, refreshToken));
     }
 
     #region Private method
-    private CustomerSignInResponse CreateResponse(CustomerAuthenticationResponse response)
-    {
-        string accessToken = _tokenProvider.GenerateJwtToken(
-            UserId.FromUlid(response.UserId),
-            Email.FromString(response.Email),
-            response.CustomerType);
-
-        string refreshToken = _tokenProvider.GenerateRefreshToken();
-        return new CustomerSignInResponse(accessToken, refreshToken);
-    }
-
     private async Task<(CustomerAuthenticationResponse? response, Result<CustomerSignInResponse>? failure)> IsSignInSuccess(
         CustomerSignInCommand request)
     {
-        var response = await _customerQueryServices.IsCustomerSignInSuccess(
+        var response = await _customerQueryServices.AuthenticateCustomer(
             Email.NewEmail(request.Email),
             PasswordHash.NewPasswordHash(request.Password.SHA256()));
 

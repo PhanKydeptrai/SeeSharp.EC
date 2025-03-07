@@ -59,7 +59,7 @@ public sealed class Product
         string? imageUrl, 
         string? description, 
         ProductPrice productPrice,
-        CategoryId categoryId)
+        CategoryId? categoryId)
     {
         return new Product(
             ProductId.New(), 
@@ -68,7 +68,7 @@ public sealed class Product
             description ?? string.Empty, 
             productPrice, 
             ProductStatus.InStock, 
-            categoryId);
+            categoryId ?? CategoryId.DefaultCategoryId);
     }
 
     public void Update(
@@ -89,12 +89,12 @@ public sealed class Product
 
     public void Delete()
     {
-        if(this.ProductStatus == ProductStatus.Discontinued)
+        if(ProductStatus == ProductStatus.Discontinued)
         {
             throw new InvalidOperationException("Product is already deleted");
         }
         
-        this.ProductStatus = ProductStatus.Discontinued;
+        ProductStatus = ProductStatus.Discontinued;
     }
 
     public void Restore()

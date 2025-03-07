@@ -1,6 +1,4 @@
-﻿using Domain.Entities.Customers;
-using Domain.Entities.Employees;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.Database.PostgreSQL.ReadModels;
 
@@ -29,7 +27,7 @@ internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfi
 
         builder.Property(a => a.PhoneNumber)
             .IsRequired()
-            .HasColumnType("integer");
+            .HasColumnType("varchar(10)");
 
         builder.Property(a => a.PasswordHash)
             .IsRequired()
@@ -45,7 +43,7 @@ internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfi
 
         builder.Property(a => a.Gender)
             .IsRequired()
-            .HasColumnType("varchar(10)");
+            .HasColumnType("integer");
 
         builder.Property(a => a.DateOfBirth)
             .IsRequired(false)
@@ -64,13 +62,13 @@ internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfi
             .WithOne(a => a.UserReadModel)
             .HasForeignKey<EmployeeReadModel>(a => a.UserId);
 
-        builder.HasMany(a => a.UserAuthenticationTokenReadModels)
-            .WithOne(a => a.UserReadModel)
-            .HasForeignKey(a => a.UserId);
+        // builder.HasMany(a => a.UserAuthenticationTokenReadModels)
+        //     .WithOne(a => a.UserReadModel)
+        //     .HasForeignKey(a => a.UserId);
 
-        builder.HasMany(a => a.VerificationTokenReadModels)
-            .WithOne(a => a.UserReadModel)
-            .HasForeignKey(a => a.UserId);
+        // builder.HasMany(a => a.VerificationTokenReadModels)
+        //     .WithOne(a => a.UserReadModel)
+        //     .HasForeignKey(a => a.UserId);
 
     }
 }

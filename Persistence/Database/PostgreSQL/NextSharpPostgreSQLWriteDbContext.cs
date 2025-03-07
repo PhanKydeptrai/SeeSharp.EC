@@ -33,9 +33,9 @@ public sealed class NextSharpPostgreSQLWriteDbContext : DbContext
     public DbSet<OrderTransaction> OrderTransactions { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ShippingInformation> ShippingInformations { get; set; }
-    public DbSet<UserAuthenticationToken> UserAuthenticationTokens { get; set; }
+    // public DbSet<UserAuthenticationToken> UserAuthenticationTokens { get; set; }
     public DbSet<User> Users { get; set; }
-    public DbSet<VerificationToken> VerificationTokens { get; set; }
+    // public DbSet<VerificationToken> VerificationTokens { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
     public DbSet<WishItem> WishItems { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -43,7 +43,8 @@ public sealed class NextSharpPostgreSQLWriteDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(NextSharpPostgreSQLWriteDbContext).Assembly,
             WriteConfigurationsFilter);
-
+        modelBuilder.Ignore<UserAuthenticationToken>();
+        modelBuilder.Ignore<VerificationToken>();
         base.OnModelCreating(modelBuilder);
     }
 

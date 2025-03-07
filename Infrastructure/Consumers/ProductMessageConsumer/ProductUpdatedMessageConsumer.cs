@@ -90,7 +90,7 @@ internal sealed class ProductUpdatedMessageConsumer : IConsumer<ProductUpdatedEv
             request.Description,
             ProductPrice.NewProductPrice(request.Price),
             product.ProductStatus,
-            CategoryId.FromGuid(request.CategoryId));
+            CategoryId.FromGuid(request.CategoryId!.Value));
     }
 
 }

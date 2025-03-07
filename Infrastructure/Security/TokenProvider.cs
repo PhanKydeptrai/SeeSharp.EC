@@ -19,12 +19,13 @@ public class TokenProvider : ITokenProvider
         _config = config;
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["SigningKey"]!));
     }
-    public string GenerateJwtToken(UserId userId, Email email, string role)
+    public string GenerateAccessToken(UserId userId, Email email, string role, string jti)
     {
         var claims = new List<Claim>()
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email.ToString()),
+            new Claim(JwtRegisteredClaimNames.Jti, jti),
             new Claim(ClaimTypes.Role, role)
         };
         var tokenHandler = new JwtSecurityTokenHandler();

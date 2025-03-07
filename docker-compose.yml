@@ -26,25 +26,25 @@ services:
       - "25:25"
     restart: unless-stopped
 
-  mysql:
-    image: mysql:8.4
-    container_name: NextSharp-MySql
-    environment:
-      MYSQL_ROOT_PASSWORD: "123456"
-    ports:
-      - "3307:3306" 
-    restart: unless-stopped
+  # mysql:
+  #   image: mysql:8.4
+  #   container_name: NextSharp-MySql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: "123456"
+  #   ports:
+  #     - "3307:3306" 
+  #   restart: unless-stopped
 
-  postgres:
-    image: postgres:latest
-    container_name: NextSharp-Postgres
-    environment:
-      POSTGRES_PASSWORD: "123456"
-    ports:
-      - "5431:5432"
-    # volumes:
-    #   - postgres-data:/var/lib/postgresql/data
-    restart: unless-stopped
+  # postgres:
+  #   image: postgres:latest
+  #   container_name: NextSharp-Postgres
+  #   environment:
+  #     POSTGRES_PASSWORD: "123456"
+  #   ports:
+  #     - "5431:5432"
+  #   # volumes:
+  #   #   - postgres-data:/var/lib/postgresql/data
+  #   restart: unless-stopped
 
 # rabbitmq:
 #   image: rabbitmq:3.8-management-alpine

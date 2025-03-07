@@ -11,7 +11,7 @@ public interface ICustomerQueryServices
         Email email,
         CancellationToken cancellationToken = default);
 
-    Task<CustomerAuthenticationResponse?> IsCustomerSignInSuccess(
+    Task<CustomerAuthenticationResponse?> AuthenticateCustomer(
         Email email, 
         PasswordHash password);
 

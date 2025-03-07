@@ -1,10 +1,11 @@
-﻿using System.Reflection;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 using API.Extentions;
-using API.Infrastructure;
 using API.Services;
 using Application;
 using Application.Abstractions.LinkService;
+using Application.Security;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
@@ -17,13 +18,33 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 //TODO: Move to external file
 //Cấu hình Authen và Author 
+#region Need to move to external file
 builder.Services.AddAuthentication(options =>
 {
+
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 
-}).AddJwtBearer(options =>
+})
+.AddJwtBearer(options =>
 {
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            if (jti is not null)
+            {
+                var revocationService = context.HttpContext.RequestServices
+                    .GetRequiredService<ITokenRevocationService>();
+                if (await revocationService.IsTokenRevoked(jti))
+                {
+                    context.Fail("Token was revoked.");
+                }
+            }
+        }
+    };
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -39,17 +60,14 @@ builder.Services.AddAuthentication(options =>
         RoleClaimType = ClaimTypes.Role
     };
 });
+#endregion
 
 builder.Services.AddAuthorization();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
-builder.Services.Configure<RouteOptions>(options =>
-{
-    options.ConstraintMap["ulid"] = typeof(UlidRouteConstraint);
-});
+
 #region Dependency Injection
 builder.Services.AddApplication()
     .AddPersistnce(builder.Configuration)
@@ -132,11 +150,6 @@ app.UseHttpsRedirection();
 
 
 #region Cấu hình minimal API
-app.MapGet("/api/convert/{id:guid}", (Guid id) =>
-{
-    return Results.Ok(new Ulid(id));
-});
-
 app.MapEndpoints();
 #endregion
 

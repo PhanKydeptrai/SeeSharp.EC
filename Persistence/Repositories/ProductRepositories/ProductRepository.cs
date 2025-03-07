@@ -29,19 +29,26 @@ internal sealed class ProductRepository : IProductRepository
     {
         await _postgreSQLWriteDbContext.Products.AddAsync(product);
     }
-
     public async Task DeleteProductByCategoryFromMySQL(CategoryId id)
     {
+        // await _mySQLDbContext.Products
+        //     .Where(a => a.CategoryId == id && a.ProductStatus != ProductStatus.Discontinued)
+        //     .ExecuteUpdateAsync(a => a.SetProperty(a => a.ProductStatus, ProductStatus.Discontinued));
+
         await _mySQLDbContext.Products
-            .Where(a => a.CategoryId == id && a.ProductStatus != ProductStatus.Discontinued)
-            .ExecuteUpdateAsync(a => a.SetProperty(a => a.ProductStatus, ProductStatus.Discontinued));
+            .Where(a => a.CategoryId == id)
+            .ExecuteUpdateAsync(a => a.SetProperty(a => a.CategoryId, CategoryId.DefaultCategoryId));
     }
 
     public async Task DeleteProductByCategoryFromPosgreSQL(CategoryId id)
     {
+        // await _postgreSQLWriteDbContext.Products
+        //     .Where(a => a.CategoryId == id && a.ProductStatus != ProductStatus.Discontinued)
+        //     .ExecuteUpdateAsync(a => a.SetProperty(a => a.ProductStatus, ProductStatus.Discontinued));
+
         await _postgreSQLWriteDbContext.Products
-            .Where(a => a.CategoryId == id && a.ProductStatus != ProductStatus.Discontinued)
-            .ExecuteUpdateAsync(a => a.SetProperty(a => a.ProductStatus, ProductStatus.Discontinued));
+            .Where(a => a.CategoryId == id)
+            .ExecuteUpdateAsync(a => a.SetProperty(a => a.CategoryId, CategoryId.DefaultCategoryId));
     }
 
     public async Task<Product?> GetProductFromMySQL(ProductId id)

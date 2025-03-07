@@ -23,6 +23,7 @@ internal sealed class CreateCategory : IEndpoint
         .DisableAntiforgery()
         .WithTags(EndpointTag.Category)
         .WithName(EndpointName.Category.Create)
-        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
+        .RequireAuthorization();
     }
 }

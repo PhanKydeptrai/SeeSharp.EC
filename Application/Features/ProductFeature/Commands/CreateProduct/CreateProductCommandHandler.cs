@@ -10,7 +10,6 @@ using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.ProductEvents;
 using SharedKernel;
-using SharedKernel.Constants;
 
 namespace Application.Features.ProductFeature.Commands.CreateProduct;
 
@@ -35,7 +34,9 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         _eventBus = eventBus;
     }
     //FLOW: Add new product to the database -> Add Outbox message -> Commit -> Publish event
-    public async Task<Result> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        CreateProductCommand request, 
+        CancellationToken cancellationToken)
     {
         var (product, failure) = await CreateNewProduct(request);
 
@@ -49,14 +50,9 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
             message,
             _outBoxMessageServices);
 
-        int result = await _unitOfWork.SaveToMySQL();
-
-        if (result > 0)
-        {
-            await _eventBus.PublishAsync(message, cancellationToken);
-            return Result.Success(product.ProductId);
-        }
-        return Result.Failure(ProductError.Failure(product.ProductId));
+        await _unitOfWork.SaveToMySQL();
+        await _eventBus.PublishAsync(message, cancellationToken);
+        return Result.Success(product.ProductId);
     }
 
 
@@ -83,7 +79,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         {
             categoryId = CategoryId.FromGuid(command.CategoryId.Value);
         }
-        
+
         if (!await _categoryRepository.IsCategoryIdExist(categoryId, cancellationToken))
         {
             return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));

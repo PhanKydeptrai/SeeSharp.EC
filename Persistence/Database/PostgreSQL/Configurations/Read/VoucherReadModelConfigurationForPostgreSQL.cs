@@ -18,11 +18,11 @@ internal sealed class VoucherReadModelConfigurationForPostgreSQL : IEntityTypeCo
 
         builder.Property(a => a.VoucherName)
             .IsRequired()
-            .HasColumnType("integer");
+            .HasColumnType("varchar(20)");
 
         builder.Property(a => a.VoucherCode)
             .IsRequired()
-            .HasColumnType("integer");
+            .HasColumnType("varchar(20)");
 
         builder.Property(a => a.VoucherType)
             .IsRequired()

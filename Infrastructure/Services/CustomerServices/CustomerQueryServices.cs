@@ -3,6 +3,7 @@ using Application.IServices;
 using Domain.Entities.Customers;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 
 namespace Infrastructure.Services.CustomerServices;
@@ -10,10 +11,13 @@ namespace Infrastructure.Services.CustomerServices;
 internal sealed class CustomerQueryServices : ICustomerQueryServices
 {
     private readonly NextSharpPostgreSQLReadDbContext _dbContext;
-
-    public CustomerQueryServices(NextSharpPostgreSQLReadDbContext dbContext)
+    private readonly NextSharpMySQLWriteDbContext _mySQLDbContext;
+    public CustomerQueryServices(
+        NextSharpPostgreSQLReadDbContext dbContext, 
+        NextSharpMySQLWriteDbContext mySQLDbContext)
     {
         _dbContext = dbContext;
+        _mySQLDbContext = mySQLDbContext;
     }
 
     public async Task<bool> IsCustomerEmailExist(
@@ -33,7 +37,7 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
         
     }
 
-    public async Task<CustomerAuthenticationResponse?> IsCustomerSignInSuccess(
+    public async Task<CustomerAuthenticationResponse?> AuthenticateCustomer(
         Email email, PasswordHash password)
     {
         return await _dbContext.Customers.Where(
@@ -42,8 +46,8 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
             .Select(a => new CustomerAuthenticationResponse(
                 a.UserReadModel.UserId,
                 a.UserReadModel.Email,
-                a.UserReadModel.UserStatus,
-                a.CustomerType))
+                a.UserReadModel.UserStatus.ToString(),
+                a.CustomerType.ToString()))
             .FirstOrDefaultAsync();
     }
 }

@@ -1,33 +1,45 @@
 using Domain.Entities.UserAuthenticationTokens;
+using Domain.Entities.Users;
 using Domain.IRepositories.UserAuthenticationTokens;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Database.MySQL;
-using Persistence.Database.PostgreSQL;
 
 namespace Persistence.Repositories.UserAuthenticationTokenRepositories;
 
 internal sealed class UserAuthenticationTokenRepository : IUserAuthenticationTokenRepository
 {
     private readonly NextSharpMySQLWriteDbContext _nextSharpMySQLWriteDbContext;
-    private readonly NextSharpPostgreSQLWriteDbContext _nextSharpPostgreSQLWriteDbContext;
     public UserAuthenticationTokenRepository(
-        NextSharpMySQLWriteDbContext nextSharpMySQLWriteDbContext, 
-        NextSharpPostgreSQLWriteDbContext nextSharpPostgreSQLWriteDbContext)
+        NextSharpMySQLWriteDbContext nextSharpMySQLWriteDbContext)
     {
         _nextSharpMySQLWriteDbContext = nextSharpMySQLWriteDbContext;
-        _nextSharpPostgreSQLWriteDbContext = nextSharpPostgreSQLWriteDbContext;
     }
 
-    public async Task AddUserAuthenticationTokenToMySQL(
-        UserAuthenticationToken accessToken, 
-        UserAuthenticationToken refreshToken)
+    public async Task AddRefreshTokenToMySQL(UserAuthenticationToken refreshToken)
     {
-        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.AddRangeAsync(accessToken, refreshToken);
+        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.AddAsync(refreshToken);
+    }
+    public async Task<UserAuthenticationToken?> GetRefreshTokenFromMySQLByJti(string jti)
+    {
+        return await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens
+            .Where(x => x.Jti == jti)
+            .FirstOrDefaultAsync();
     }
 
-    public async Task AddUserAuthenticationTokenToPostgreSQL(
-        UserAuthenticationToken accessToken, 
-        UserAuthenticationToken refreshToken)
+    public async Task<UserAuthenticationToken?> GetAuthenticationTokenWithRefreshToken(string refreshToken)
     {
-        await _nextSharpPostgreSQLWriteDbContext.UserAuthenticationTokens.AddRangeAsync(accessToken, refreshToken);
+        var userAuthenticationToken = await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens
+            .Where(x => x.Value == refreshToken)
+            .Include(x => x.User)
+            .Include(x => x.User!.Customer)
+            .FirstOrDefaultAsync();
+        
+        return userAuthenticationToken;
+    }
+
+    public async Task RevokeAllTokenFromMySQLByUserId(UserId userId)
+    {
+        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.Where(x => x.UserId == userId)
+            .ExecuteUpdateAsync(a => a.SetProperty(a => a.IsBlackList, IsBlackList.True));
     }
 }

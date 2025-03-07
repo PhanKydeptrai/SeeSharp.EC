@@ -18,14 +18,18 @@ internal sealed class UserAuthenticationTokenConfigurationForMySQL : IEntityType
             )
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
+        
+        builder.Property(a => a.Jti)
+            .IsRequired(false)
+            .HasColumnType("varchar(36)");
 
         builder.Property(a => a.Value)
             .IsRequired()
             .HasColumnType("varchar(500)");
 
-        builder.Property(a => a.TokenType)
-            .IsRequired()
-            .HasColumnType("int");
+        // builder.Property(a => a.TokenType)
+        //     .IsRequired()
+        //     .HasColumnType("int");
 
         builder.Property(a => a.ExpiredTime)
             .IsRequired()

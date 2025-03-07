@@ -47,7 +47,7 @@ public static class DependencyInjection
 
         //Add TokenProvider
         services.AddScoped<ITokenProvider, TokenProvider>();
-        
+        services.AddScoped<ITokenRevocationService, TokenRevocationService>();
         services.AddHttpContextAccessor();
         return services;
     }
@@ -118,6 +118,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CustomerSignedUpMessageConsumer>();
             busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
             busConfiguration.AddConsumer<CustomerVerifiedEmailMessageConsumer>();
+            busConfiguration.AddConsumer<CategoryRestoredMessageConsumer>();
             
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
