@@ -24,7 +24,6 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         ITokenProvider tokenProvider,
         IUnitOfWork unitOfWork,
         ICustomerQueryServices customerQueryServices,
-        IEventBus eventBus,
         IUserAuthenticationTokenRepository userAuthenticationTokenRepository)
     {
         _tokenProvider = tokenProvider;
@@ -40,32 +39,32 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
     {
         var (response, failure) = await IsSignInSuccess(request);
         if (failure is not null) return failure;
-        var signinResponse = CreateResponse(response!);
+
+        //Generate token
+        string jti = Ulid.NewUlid().ToGuid().ToString();
+        string accessToken = _tokenProvider.GenerateAccessToken(
+            UserId.FromUlid(response!.UserId),
+            Email.FromString(response.Email),
+            response.CustomerType,
+            jti);
+
+        string refreshToken = _tokenProvider.GenerateRefreshToken();
 
         // Save jti and refresh token to database
-        var refreshToken = UserAuthenticationToken.NewUserAuthenticationToken(
-            signinResponse.refreshToken,
-            string.Empty, //NOTE: Empty because just record jti when access token revoked
+        var userAuthenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
+            refreshToken,
+            jti,
             DateTime.UtcNow.AddDays(30),
             UserId.FromUlid(response!.UserId));
 
-        await _userAuthenticationTokenRepository.AddRefreshTokenToMySQL(refreshToken);
+        await _userAuthenticationTokenRepository.AddRefreshTokenToMySQL(userAuthenticationToken);
         await _unitOfWork.SaveToMySQL();
-        return Result.Success(signinResponse);
+        
+        //Success
+        return Result.Success(new CustomerSignInResponse(accessToken, refreshToken));
     }
 
     #region Private method
-    private CustomerSignInResponse CreateResponse(CustomerAuthenticationResponse response)
-    {
-        string accessToken = _tokenProvider.GenerateJwtToken(
-            UserId.FromUlid(response.UserId),
-            Email.FromString(response.Email),
-            response.CustomerType);
-
-        string refreshToken = _tokenProvider.GenerateRefreshToken();
-        return new CustomerSignInResponse(accessToken, refreshToken);
-    }
-
     private async Task<(CustomerAuthenticationResponse? response, Result<CustomerSignInResponse>? failure)> IsSignInSuccess(
         CustomerSignInCommand request)
     {

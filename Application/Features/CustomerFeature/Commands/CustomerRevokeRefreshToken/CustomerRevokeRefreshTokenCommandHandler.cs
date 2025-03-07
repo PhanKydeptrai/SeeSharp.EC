@@ -2,6 +2,7 @@ using Application.Abstractions.Messaging;
 using Domain.Entities.Users;
 using Domain.IRepositories;
 using Domain.IRepositories.UserAuthenticationTokens;
+using Domain.Utilities.Errors;
 using SharedKernel;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerRevokeRefreshToken;
@@ -20,10 +21,16 @@ internal sealed class CustomerRevokeRefreshTokenCommandHandler : ICommandHandler
 
     public async Task<Result> Handle(CustomerRevokeRefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        using var transaction = await _unitOfWork.BeginMySQLTransaction();
-        await _userAuthenticationTokenRepository.RemoveRefreshTokenFromMySQL(UserId.FromGuid(request.UserId));
+        
+        var userAuthenticationToken = await _userAuthenticationTokenRepository
+            .GetRefreshTokenFromMySQLByUserId(UserId.FromGuid(request.UserId));
+
+        if (userAuthenticationToken is null)
+            return Result.Failure(CustomerError.RefreshTokenInvalid());
+        
+        userAuthenticationToken.BlackList();
         await _unitOfWork.SaveToMySQL();
-        transaction.Commit();
+        
         return Result.Success();
     }
 }

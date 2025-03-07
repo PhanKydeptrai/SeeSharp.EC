@@ -29,25 +29,31 @@ internal sealed class CustomerSignInWithRefreshTokenCommandHandler
         CustomerSignInWithRefreshTokenCommand request,
         CancellationToken cancellationToken)
     {
+        // Get refresh token from database and set it to blacklist
         var (userAuhenticationToken, failure) = await GetRefreshTokenFromMySQL(request);
         if (userAuhenticationToken is null)
         {
             return failure!;
         }
 
-        string accessToken = _tokenProvider.GenerateJwtToken(
+        userAuhenticationToken.BlackList();
+
+        // Generate token
+        string jti = Ulid.NewUlid().ToGuid().ToString();
+        string accessToken = _tokenProvider.GenerateAccessToken(
             userAuhenticationToken.UserId,
             userAuhenticationToken.User!.Email!,
-            userAuhenticationToken.User.Customer!.CustomerType.ToString());
+            userAuhenticationToken.User.Customer!.CustomerType.ToString(),
+            jti);
 
         string refreshToken = _tokenProvider.GenerateRefreshToken();
-        userAuhenticationToken.BlackList();
+        
         var response = new CustomerSignInResponse(accessToken, refreshToken);
 
         // Save jti and refresh token to database
         var newUserAuhenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
             response.refreshToken,
-            string.Empty, //NOTE: Empty because just record jti when access token revoked
+            jti,
             DateTime.UtcNow.AddDays(30),
             userAuhenticationToken.UserId);
 
@@ -65,21 +71,10 @@ internal sealed class CustomerSignInWithRefreshTokenCommandHandler
         var user = await _userAuthenticationTokenRepository
             .GetAuthenticationTokenWithRefreshToken(request.RefreshToken);
 
-        if (user is null)
+        if (user is null || user.ExpiredTime < DateTime.UtcNow || user.IsBlackList.Value)
         {
-            return (null, Result.Failure<CustomerSignInResponse>(CustomerError.RefreshTokenNotFound()));
+            return (null, Result.Failure<CustomerSignInResponse>(CustomerError.RefreshTokenInvalid()));
         }
-
-        if(user.ExpiredTime < DateTime.UtcNow)
-        {
-            return (null, Result.Failure<CustomerSignInResponse>(CustomerError.RefreshTokenExpired()));
-        }
-        
-        if (user.IsBlackList.Value)
-        {
-            return (null, Result.Failure<CustomerSignInResponse>(CustomerError.RefreshTokenIsBlackList()));
-        }
-
 
         return (user, null);
     }

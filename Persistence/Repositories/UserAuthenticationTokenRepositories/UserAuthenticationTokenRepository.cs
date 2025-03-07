@@ -19,11 +19,11 @@ internal sealed class UserAuthenticationTokenRepository : IUserAuthenticationTok
     {
         await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.AddAsync(refreshToken);
     }
-    public async Task RemoveRefreshTokenFromMySQL(UserId userId)
+    public async Task<UserAuthenticationToken?> GetRefreshTokenFromMySQLByUserId(UserId userId)
     {
-        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens
+        return await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens
             .Where(x => x.UserId == userId)
-            .ExecuteDeleteAsync();
+            .FirstOrDefaultAsync();
     }
 
     public async Task<UserAuthenticationToken?> GetAuthenticationTokenWithRefreshToken(string refreshToken)
