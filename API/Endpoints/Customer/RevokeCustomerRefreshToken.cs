@@ -1,9 +1,11 @@
 
+using System.IdentityModel.Tokens.Jwt;
 using API.Extentions;
 using API.Infrastructure;
 using Application.Features.CustomerFeature.Commands.CustomerRevokeRefreshToken;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Constants;
 
 namespace API.Endpoints.Customer;
 
@@ -19,17 +21,20 @@ internal sealed class RevokeCustomerRefreshToken : IEndpoint
         {
             string token = TokenExtentions.GetTokenFromHeader(httpContext);
             var claims = TokenExtentions.DecodeJwt(token);
-            claims.TryGetValue("sub", out var sub);
+            claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
+            claims.TryGetValue(JwtRegisteredClaimNames.Jti, out var jti);
 
             if (sub != userId.ToString()) 
             {
                 return Results.Unauthorized();
             }
 
-            var result = await sender.Send(new CustomerRevokeRefreshTokenCommand(userId));
+            var result = await sender.Send(new CustomerRevokeRefreshTokenCommand(jti!));
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .DisableAntiforgery()
+        .WithTags(EndpointTag.Customer)
+        .WithName(EndpointName.Customer.RevokeRefreshToken)
         .RequireAuthorization();
     }
 }

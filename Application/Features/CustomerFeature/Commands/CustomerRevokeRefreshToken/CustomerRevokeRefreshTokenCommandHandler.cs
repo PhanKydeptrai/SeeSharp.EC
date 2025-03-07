@@ -23,7 +23,7 @@ internal sealed class CustomerRevokeRefreshTokenCommandHandler : ICommandHandler
     {
         
         var userAuthenticationToken = await _userAuthenticationTokenRepository
-            .GetRefreshTokenFromMySQLByUserId(UserId.FromGuid(request.UserId));
+            .GetRefreshTokenFromMySQLByJti(request.jti);
 
         if (userAuthenticationToken is null)
             return Result.Failure(CustomerError.RefreshTokenInvalid());

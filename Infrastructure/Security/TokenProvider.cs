@@ -25,7 +25,7 @@ public class TokenProvider : ITokenProvider
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, jti),
+            new Claim("jti", jti),
             new Claim(ClaimTypes.Role, role)
         };
         var tokenHandler = new JwtSecurityTokenHandler();

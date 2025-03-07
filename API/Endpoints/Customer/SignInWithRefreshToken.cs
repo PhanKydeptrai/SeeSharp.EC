@@ -4,6 +4,7 @@ using API.Infrastructure;
 using Application.Features.CustomerFeature.Commands.CustomerSignInWithRefreshToken;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Constants;
 
 namespace API.Endpoints.Customer;
 
@@ -18,7 +19,9 @@ internal sealed class SignInWithRefreshToken : IEndpoint
             var result = await sender.Send(command);
             return result.Match(Results.Ok, CustomResults.Problem);
         })
-        .DisableAntiforgery();
+        .DisableAntiforgery()
+        .WithTags(EndpointTag.Customer)
+        .WithName(EndpointName.Customer.SignInWithRefreshToken);
     }
 }
 //NOTE:

@@ -13,6 +13,8 @@ public static class EndpointName
     {
         public const string SignUp = "SignUp";
         public const string SignIn = "SignIn";
+        public const string RevokeRefreshToken = "RevokeRefreshTokenForCustomer";
+        public const string SignInWithRefreshToken = "CustomerSignInWithRefreshToken";
         public const string Verify = "Verify";
         // public const string SignIn = "SignIn";
         // public const string SignOut = "SignOut";
