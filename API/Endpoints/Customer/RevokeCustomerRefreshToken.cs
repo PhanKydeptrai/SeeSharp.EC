@@ -14,8 +14,9 @@ internal sealed class RevokeCustomerRefreshToken : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder builder)
     {
         //Khi nào đăng xuất thì gọi cái này
-        builder.MapDelete("api/customers/{userId:guid}/refresh-token", async (
-            [FromRoute] Guid userId,
+        builder.MapDelete("api/customers/{userId:guid}/refresh-token", 
+        async (
+            [FromRoute] Guid userId,            
             HttpContext httpContext,
             ISender sender) =>
         {
@@ -38,3 +39,12 @@ internal sealed class RevokeCustomerRefreshToken : IEndpoint
         .RequireAuthorization();
     }
 }
+
+
+//NOTE:
+/*
+- Cần đăng nhập để có thể thu hồi token.
+- Endpoint này được gọi khi người dùng cần thu hồi token.
+- Endpoint xác định user cần thu hồi token bằng userId trong route và so sánh với sub trong Jwt.
+- Token được thu hồi theo jti (JWT ID) của access token.
+*/

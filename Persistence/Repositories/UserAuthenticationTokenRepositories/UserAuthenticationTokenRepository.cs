@@ -1,4 +1,5 @@
 using Domain.Entities.UserAuthenticationTokens;
+using Domain.Entities.Users;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.MySQL;
@@ -34,5 +35,11 @@ internal sealed class UserAuthenticationTokenRepository : IUserAuthenticationTok
             .FirstOrDefaultAsync();
         
         return userAuthenticationToken;
+    }
+
+    public async Task RevokeAllTokenFromMySQLByUserId(UserId userId)
+    {
+        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.Where(x => x.UserId == userId)
+            .ExecuteUpdateAsync(a => a.SetProperty(a => a.IsBlackList, IsBlackList.True));
     }
 }

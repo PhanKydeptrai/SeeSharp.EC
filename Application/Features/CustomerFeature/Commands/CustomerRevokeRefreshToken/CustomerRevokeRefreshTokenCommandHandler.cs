@@ -1,5 +1,4 @@
 using Application.Abstractions.Messaging;
-using Domain.Entities.Users;
 using Domain.IRepositories;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.Utilities.Errors;
@@ -7,7 +6,8 @@ using SharedKernel;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerRevokeRefreshToken;
 
-internal sealed class CustomerRevokeRefreshTokenCommandHandler : ICommandHandler<CustomerRevokeRefreshTokenCommand>
+internal sealed class CustomerRevokeRefreshTokenCommandHandler 
+    : ICommandHandler<CustomerRevokeRefreshTokenCommand>
 {
     private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -19,7 +19,9 @@ internal sealed class CustomerRevokeRefreshTokenCommandHandler : ICommandHandler
         _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
     }
 
-    public async Task<Result> Handle(CustomerRevokeRefreshTokenCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        CustomerRevokeRefreshTokenCommand request, 
+        CancellationToken cancellationToken)
     {
         
         var userAuthenticationToken = await _userAuthenticationTokenRepository

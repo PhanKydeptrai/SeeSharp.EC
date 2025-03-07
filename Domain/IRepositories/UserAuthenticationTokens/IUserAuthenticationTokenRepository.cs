@@ -9,5 +9,6 @@ public interface IUserAuthenticationTokenRepository
     Task AddRefreshTokenToMySQL(UserAuthenticationToken refreshToken);
     Task<UserAuthenticationToken?> GetAuthenticationTokenWithRefreshToken(string refreshToken);
     Task<UserAuthenticationToken?> GetRefreshTokenFromMySQLByJti(string jti);
+    Task RevokeAllTokenFromMySQLByUserId(UserId userId);
     // Task<string?> IsRefreshTokenStillCanBeUsed(UserId userId);
 }

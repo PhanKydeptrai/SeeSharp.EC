@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 using API.Extentions;
 using API.Services;
@@ -31,7 +32,7 @@ builder.Services.AddAuthentication(options =>
     {
         OnTokenValidated = async context =>
         {
-            var jti = context.Principal?.FindFirst("jti")?.Value;
+            var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
             if (jti is not null)
             {
                 var revocationService = context.HttpContext.RequestServices
