@@ -119,6 +119,8 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
             busConfiguration.AddConsumer<CustomerVerifiedEmailMessageConsumer>();
             busConfiguration.AddConsumer<CategoryRestoredMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerChangePasswordMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerConfirmChangePasswordMessageConsumer>();
             
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ

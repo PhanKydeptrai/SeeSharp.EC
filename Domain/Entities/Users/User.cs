@@ -67,7 +67,10 @@ public sealed class User
             imageUrl ?? string.Empty);
     }
 
-    
+    public void ChangePassword(PasswordHash passwordHash)
+    {
+        PasswordHash = passwordHash;
+    }
 
     public void VerifyAccount()
     {

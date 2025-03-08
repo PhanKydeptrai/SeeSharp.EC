@@ -29,4 +29,18 @@ internal sealed class EmailVerificationLinkFactory
 
         return $"{_baseUrl}{link}";
     }
+
+    public string CreateLinkForChangePassword(Guid verificationTokenId)
+    {
+        string? link = _linkGenerator.GetPathByRouteValues(
+            EndpointName.Customer.ChangePasswordConfirm,
+            new { verificationTokenId });
+
+        if (link == null)
+        {
+            throw new InvalidOperationException("Could not generate change password link.");
+        }
+
+        return $"{_baseUrl}{link}";
+    }
 }
