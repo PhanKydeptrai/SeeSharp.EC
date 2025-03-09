@@ -2,6 +2,7 @@ using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
 using Application.DTOs.Customer;
 using Application.IServices;
+using Application.Outbox;
 using Application.Security;
 using Domain.Entities.Customers;
 using Domain.Entities.UserAuthenticationTokens;
@@ -12,6 +13,7 @@ using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.IRepositories.Users;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
+using Domain.Utilities.Events.CustomerEvents;
 using Google.Apis.Auth;
 using SharedKernel;
 
@@ -26,9 +28,9 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
     private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOutBoxMessageServices _outboxMessageServices;
     private readonly ITokenProvider _tokenProvider;
     private readonly IEventBus _eventBus;
+    private readonly IOutBoxMessageServices _outboxMessageServices;
     public CustomerSignInWithGoogleCommandHandler(
         ICustomerRepository customerRepository,
         IUserRepository userRepository,
@@ -71,25 +73,13 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
 
                     customer!.VerifyAccount();
                 }
-
-                string jti = Ulid.NewUlid().ToGuid().ToString();
-                var accessToken = _tokenProvider.GenerateAccessToken(
-                    UserId.FromUlid(customerAuthResponse.UserId),
-                    Email.FromString(customerAuthResponse.Email),
-                    customerAuthResponse.CustomerType.ToString(), jti);
-
-                var refreshToken = _tokenProvider.GenerateRefreshToken();
-
-                // Save jti and refresh token to database
-                var userAuthenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
-                    refreshToken,
-                    jti,
-                    DateTime.UtcNow.AddDays(30),
-                    UserId.FromUlid(customerAuthResponse.UserId));
+                
+                var (userAuthenticationToken, response) = CreateAuthenticationToken(customerAuthResponse);
 
                 await _userAuthenticationTokenRepository.AddRefreshTokenToMySQL(userAuthenticationToken);
+                
                 await _unitOfWork.SaveToMySQL();
-                var response = new CustomerSignInResponse(accessToken, refreshToken);
+
                 return Result.Success(response);
             }
 
@@ -103,10 +93,13 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
                 null,
                 googleUser.Picture);
 
+            user.VerifyAccount();
+
             var newCustomer = Customer.NewCustomer(user.UserId, CustomerType.Subscribed);
+            
+            //Add customer to database
             await _userRepository.AddUserToMySQL(user);
             await _customerRepository.AddCustomerToMySQL(newCustomer);
-
 
             string newJti = Ulid.NewUlid().ToGuid().ToString();
 
@@ -127,7 +120,20 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
 
             await _userAuthenticationTokenRepository.AddRefreshTokenToMySQL(newUserAuthenticationToken);
 
+            var message = new CustomerSignedUpWithGoogleAccountEvent(
+                user.UserId, 
+                newCustomer.CustomerId, 
+                user.UserName.Value,
+                user.Email!.Value,
+                user.ImageUrl! ?? string.Empty,
+                Ulid.NewUlid().ToGuid());
+
+            await OutboxMessageExtentions.InsertOutboxMessageAsync(
+                message.MessageId ,message, _outboxMessageServices);
+            
             await _unitOfWork.SaveToMySQL();
+
+            await _eventBus.PublishAsync(message);
 
             return Result.Success(new CustomerSignInResponse(newAccessToken, newRefreshToken));
         }
@@ -137,7 +143,29 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
         }
 
     }
-    
 
-    
+
+    private (UserAuthenticationToken userAuthenticationToken, CustomerSignInResponse customerSignInResponse) CreateAuthenticationToken(
+        CustomerAuthenticationResponse customerAuthResponse)
+    {
+        string jti = Ulid.NewUlid().ToGuid().ToString();
+
+        var accessToken = _tokenProvider.GenerateAccessToken(
+            UserId.FromUlid(customerAuthResponse.UserId),
+            Email.FromString(customerAuthResponse.Email),
+            customerAuthResponse.CustomerType.ToString(), jti);
+
+        var refreshToken = _tokenProvider.GenerateRefreshToken();
+
+        // Save jti and refresh token to database
+        var userAuthenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
+            refreshToken,
+            jti,
+            DateTime.UtcNow.AddDays(30),
+            UserId.FromUlid(customerAuthResponse.UserId));
+
+
+        return (userAuthenticationToken, new CustomerSignInResponse(accessToken, refreshToken));
+
+    }
 }

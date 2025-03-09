@@ -1,3 +1,4 @@
+using Application.Abstractions.EventBus;
 using Application.Outbox;
 using Domain.Entities.Customers;
 using Domain.Entities.Users;
@@ -6,44 +7,46 @@ using Domain.IRepositories.Customers;
 using Domain.IRepositories.Users;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.CustomerEvents;
+using FluentEmail.Core;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
 namespace Infrastructure.Consumers.CustomerMessageConsumer;
 
-internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSignedUpEvent>
+internal sealed class CustomerSignedUpWithGoogleAccountMessageConsumer
+    : IConsumer<CustomerSignedUpWithGoogleAccountEvent>
 {
-    #region Dependencies
-    private readonly ILogger<CustomerSignedUpMessageConsumer> _logger;
-    private readonly IPublishEndpoint _publishEndpoint;
-    private readonly ICustomerRepository _customerRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly ILogger<CustomerSignedUpWithGoogleAccountMessageConsumer> _logger;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
-
-    public CustomerSignedUpMessageConsumer(
-        ILogger<CustomerSignedUpMessageConsumer> logger,
-        ICustomerRepository customerRepository,
+    private readonly IEventBus _eventBus;
+    private readonly IUserRepository _userRepository;
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IFluentEmail _fluentEmail;
+    public CustomerSignedUpWithGoogleAccountMessageConsumer(
+        ILogger<CustomerSignedUpWithGoogleAccountMessageConsumer> logger,
         IOutBoxMessageServices outBoxMessageServices,
         IUnitOfWork unitOfWork,
+        IEventBus eventBus,
         IUserRepository userRepository,
-        IPublishEndpoint publishEndpoint)
+        ICustomerRepository customerRepository,
+        IFluentEmail fluentEmail)
     {
         _logger = logger;
-        _customerRepository = customerRepository;
         _outBoxMessageServices = outBoxMessageServices;
         _unitOfWork = unitOfWork;
+        _eventBus = eventBus;
         _userRepository = userRepository;
-        _publishEndpoint = publishEndpoint;
+        _customerRepository = customerRepository;
+        _fluentEmail = fluentEmail;
     }
-    #endregion
 
-    public async Task Consume(ConsumeContext<CustomerSignedUpEvent> context)
+    public async Task Consume(ConsumeContext<CustomerSignedUpWithGoogleAccountEvent> context)
     {
         //Log start-----------------------------------------------------
         _logger.LogInformation(
-            "Consuming CustomerSignedUpEvent for customerId: {CustomerId}",
+            "Consuming CustomerSignedUpWithGoogleAccountEvent for customerId: {CustomerId}",
             context.Message.CustomerId);
         //--------------------------------------------------------------
 
@@ -63,7 +66,7 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                 context.Message.MessageId,
                 OutboxMessageStatus.Failed,
-                "Failed to consume CustomerSignedUpEvent",
+                "Failed to consume CustomerSignedUpWithGoogleAccountEvent",
                 DateTime.UtcNow);
 
             await _unitOfWork.SaveToMySQL();
@@ -72,7 +75,7 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
             //Log error-------------------------------------------------
             _logger.LogError(
                 ex,
-                "Failed to consume CustomerSignedUpEvent for customerId: {CustomerId}",
+                "Failed to consume CustomerSignedUpWithGoogleAccountEvent for customerId: {CustomerId}",
                 context.Message.CustomerId);
             //----------------------------------------------------------
             throw; //Stop the message
@@ -83,43 +86,21 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
         await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
             context.Message.MessageId,
             OutboxMessageStatus.Processed,
-            "Successfully consumed CustomerSignedUpEvent",
+            "Successfully consumed CustomerSignedUpWithGoogleAccountEvent",
             DateTime.UtcNow);
-        //----------------------------------------------------------
-
-        //Publish event-----------------------------------------------
-        var message = new AccountVerificationEmailSentEvent(
-            context.Message.UserId,
-            context.Message.VerificationTokenId,
-            context.Message.Email,
-            Ulid.NewUlid().ToGuid());
-
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            message.MessageId,
-            message,
-            _outBoxMessageServices);
 
         await _unitOfWork.SaveToMySQL();
-
-        await _publishEndpoint.Publish(message);
-
-
-        //------------------------------------------------------------
-
-
+        //----------------------------------------------------------
 
         //Log end------------------------------------------
         _logger.LogInformation(
-            "Consumed CustomerSignedUpEvent for customerId: {CustomerId}",
+            "Consumed CustomerSignedUpWithGoogleAccountEvent for customerId: {CustomerId}",
             context.Message.CustomerId);
         //-------------------------------------------------
-
-
     }
 
-
     #region Private methods
-    private User CreateNewUserFromEvent(CustomerSignedUpEvent request)
+    private User CreateNewUserFromEvent(CustomerSignedUpWithGoogleAccountEvent request)
     {
         //FromExisting
         return User.NewUser(
@@ -127,12 +108,12 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
             UserName.FromString(request.UserName),
             Domain.Entities.Users.Email.FromString(request.Email),
             PhoneNumber.Empty,
-            PasswordHash.FromString(request.PasswordHash),
+            PasswordHash.Empty,
             null,
-            string.Empty);
+            request.ImageUrl);
     }
 
-    private Customer CreateCustomerFromEvent(User user, CustomerSignedUpEvent context)
+    private Customer CreateCustomerFromEvent(User user, CustomerSignedUpWithGoogleAccountEvent context)
     {
         return Customer.FromExisting(
                 CustomerId.FromGuid(context.CustomerId),

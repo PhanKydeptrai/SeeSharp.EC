@@ -1,6 +1,9 @@
+using API.Extentions;
+using API.Infrastructure;
 using Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Constants;
+using MediatR;
 
 namespace API.Endpoints.Customer;
 
@@ -13,8 +16,11 @@ internal sealed class SignInWithGoogle : IEndpoint
             ISender sender) =>
         {
             var result = await sender.Send(new CustomerSignInWithGoogleCommand(token));
-
-            
-        });
+            return result.Match(Results.Ok, CustomResults.Problem);
+        })
+        .DisableAntiforgery()
+        .WithTags(EndpointTag.Customer)
+        .WithName(EndpointName.Customer.SignInWithGoogle)
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }

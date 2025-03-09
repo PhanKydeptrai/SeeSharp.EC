@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.IServices;
 using Application.Security;
+using Domain.Utilities.Events.CustomerEvents;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CategoryMessageConsumer;
 using Infrastructure.Consumers.CustomerMessageConsumer;
@@ -122,6 +123,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CustomerChangePasswordMessageConsumer>();
             busConfiguration.AddConsumer<CustomerConfirmChangePasswordMessageConsumer>();
             busConfiguration.AddConsumer<CustomerChangePasswordSuccessNotificationMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerSignedUpWithGoogleAccountMessageConsumer>();    
             
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ

@@ -1,5 +1,3 @@
-using Domain.Entities.Customers;
-
 namespace Domain.Utilities.Events.CustomerEvents;
 
 public record CustomerSignedUpEvent(
@@ -12,3 +10,10 @@ public record CustomerSignedUpEvent(
     Guid MessageId);
 
 
+public record CustomerSignedUpWithGoogleAccountEvent(
+    Guid UserId,
+    Guid CustomerId,
+    string UserName,
+    string Email,
+    string ImageUrl,
+    Guid MessageId);
