@@ -1,12 +1,10 @@
-using Domain.Entities.Users;
 using Domain.IRepositories;
-using Domain.IRepositories.Users;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.CustomerEvents;
 using FluentEmail.Core;
 using Infrastructure.Services;
-using MassTransit;
 using Microsoft.Extensions.Logging;
+using MassTransit;
 using SharedKernel;
 
 namespace Infrastructure.Consumers.CustomerMessageConsumer;
@@ -14,8 +12,8 @@ namespace Infrastructure.Consumers.CustomerMessageConsumer;
 internal sealed class CustomerChangePasswordMessageConsumer : IConsumer<CustomerChangePasswordEvent>
 {
     private readonly ILogger<CustomerChangePasswordMessageConsumer> _logger;
-    private readonly IFluentEmail _fluentEmail;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IFluentEmail _fluentEmail;
     private readonly EmailVerificationLinkFactory _emailVerificationLinkFactory;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
 
@@ -44,12 +42,13 @@ internal sealed class CustomerChangePasswordMessageConsumer : IConsumer<Customer
         try
         {
             //Consume message
-            string verificationLink = _emailVerificationLinkFactory.CreateLinkForChangePassword(context.Message.TokenId);
+            string verificationLink = _emailVerificationLinkFactory
+                .CreateLinkForChangePassword(context.Message.TokenId);
 
             await _fluentEmail
                 .To(context.Message.Email)
                 .Subject("Xác nhận thay đổi mật khẩu")
-                .Body("<a href={verificationLink}>Click me</a>", isHtml: true)
+                .Body($"<a href={verificationLink}>Click me</a>", isHtml: true)
                 .SendAsync();
             //---------------------------------------------------------------
         }

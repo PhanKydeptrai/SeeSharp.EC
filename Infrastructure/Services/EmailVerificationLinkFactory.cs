@@ -34,7 +34,7 @@ internal sealed class EmailVerificationLinkFactory
     {
         string? link = _linkGenerator.GetPathByRouteValues(
             EndpointName.Customer.ChangePasswordConfirm,
-            new { verificationTokenId });
+            new { token = verificationTokenId });
 
         if (link == null)
         {

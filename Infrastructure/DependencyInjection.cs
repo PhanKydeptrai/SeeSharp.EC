@@ -121,6 +121,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CategoryRestoredMessageConsumer>();
             busConfiguration.AddConsumer<CustomerChangePasswordMessageConsumer>();
             busConfiguration.AddConsumer<CustomerConfirmChangePasswordMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerChangePasswordSuccessNotificationMessageConsumer>();
             
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ

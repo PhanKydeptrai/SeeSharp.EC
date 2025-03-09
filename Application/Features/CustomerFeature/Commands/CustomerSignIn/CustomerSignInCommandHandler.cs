@@ -1,4 +1,3 @@
-using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
 using Application.DTOs.Customer;
 using Application.IServices;

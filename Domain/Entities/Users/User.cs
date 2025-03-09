@@ -83,6 +83,11 @@ public sealed class User
         {
             throw new InvalidOperationException("User is deleted");
         }
+
+        if (UserStatus == UserStatus.Blocked)
+        {
+            throw new InvalidOperationException("User is blocked");
+        }
         
         IsVerify = IsVerify.True;
         UserStatus = UserStatus.Active;

@@ -5,7 +5,6 @@ using Domain.IRepositories;
 using Domain.IRepositories.Users;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.CustomerEvents;
-using FluentEmail.Core;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
@@ -94,12 +93,6 @@ internal sealed class CustomerConfirmChangePasswordMessageConsumer
         await _unitOfWork.SaveToMySQL();
         
         await _eventBus.PublishAsync(message);
-        //TODO: Tạo Consumer để gửi mail
-        // await _fluentEmail
-        //     .To(user.Email!.Value)
-        //     .Subject("Đổi mật khẩu thành công")
-        //     .Body("Mật khẩu của bạn đã được thay đổi thành công!")
-        //     .SendAsync();
 
         //Log end------------------------------------------
         _logger.LogInformation(

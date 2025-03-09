@@ -4,7 +4,6 @@ using Application.Outbox;
 using Domain.Entities.Users;
 using Domain.Entities.VerificationTokens;
 using Domain.IRepositories;
-using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.IRepositories.Users;
 using Domain.IRepositories.VerificationTokens;
 using Domain.OutboxMessages.Services;
@@ -22,20 +21,17 @@ internal sealed class CustomerChangePasswordCommandHandler : ICommandHandler<Cus
     private readonly IOutBoxMessageServices _outBoxMessageServices;
     private readonly IVerificationTokenRepository _verificationTokenRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
     public CustomerChangePasswordCommandHandler(
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
         IEventBus eventBus,
         IOutBoxMessageServices outBoxMessageServices,
-        IUserAuthenticationTokenRepository userAuthenticationTokenRepository,
         IVerificationTokenRepository verificationTokenRepository)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _eventBus = eventBus;
         _outBoxMessageServices = outBoxMessageServices;
-        _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
         _verificationTokenRepository = verificationTokenRepository;
     }
 
@@ -72,9 +68,6 @@ internal sealed class CustomerChangePasswordCommandHandler : ICommandHandler<Cus
         await OutboxMessageExtentions.InsertOutboxMessageAsync(
             message.MessageId, 
             message, _outBoxMessageServices);
-
-        await _userAuthenticationTokenRepository.RevokeAllTokenFromMySQLByUserId(
-            UserId.FromGuid(request.userId));
 
         await _unitOfWork.SaveToMySQL();
 
