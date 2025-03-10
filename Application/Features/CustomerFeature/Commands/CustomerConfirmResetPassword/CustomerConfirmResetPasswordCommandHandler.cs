@@ -43,7 +43,7 @@ internal sealed class CustomerConfirmResetPasswordCommandHandler
         var user = await _verificationTokenRepository.GetVerificationTokenFromMySQL(
             VerificationTokenId.FromGuid(request.token));
         if(user is null) return Result.Failure(CustomerError.InValidToken());
-        string randomPass = _tokenProvider.GenerateRandomString(6);
+        string randomPass = _tokenProvider.GenerateRandomString(8);
 
         user.User!.ChangePassword(PasswordHash.FromString(randomPass.SHA256()));
         
