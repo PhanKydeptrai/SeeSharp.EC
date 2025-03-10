@@ -125,7 +125,8 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CustomerChangePasswordSuccessNotificationMessageConsumer>();
             busConfiguration.AddConsumer<CustomerSignedUpWithGoogleAccountMessageConsumer>();    
             busConfiguration.AddConsumer<CustomerResetPasswordEmailSendMessageConsumer>();  
-            
+            busConfiguration.AddConsumer<CustomerResetPasswordMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerResetPasswordSuccessNotificationMessageConsumer>();
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
             // busConfiguration.UsingRabbitMq((context, cfg) =>

@@ -42,13 +42,8 @@ internal sealed class VerificationTokenRepository : IVerificationTokenRepository
     //             .FirstOrDefaultAsync(a => a.VerificationTokenId == verificationTokenId);
     // }
 
-    public void RemoveVerificationTokenFrommMySQL(VerificationToken token)
+    public void RemoveVerificationTokenFromMySQL(VerificationToken token)
     {
         _nextSharpMySQLWriteDbContext.VerificationTokens.Remove(token);
     }
-
-    // public void RemoveVerificationTokenFrommPostgreSQL(VerificationToken token)
-    // {
-    //     _nextSharpPostgreSQLWriteDbContext.VerificationTokens.Remove(token);
-    // }
 }

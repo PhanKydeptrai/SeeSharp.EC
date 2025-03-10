@@ -40,7 +40,7 @@ internal sealed class EmailVerificationCommandHandler : ICommandHandler<EmailVer
         
         verificationToken.User!.VerifyAccount();
 
-        _verificationTokenRepository.RemoveVerificationTokenFrommMySQL(verificationToken);
+        _verificationTokenRepository.RemoveVerificationTokenFromMySQL(verificationToken);
         
         var message = new CustomerVerifiedEmailEvent(verificationToken.UserId.Value, Ulid.NewUlid().ToGuid());
         
