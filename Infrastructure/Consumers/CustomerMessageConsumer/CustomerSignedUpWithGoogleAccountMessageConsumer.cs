@@ -1,5 +1,4 @@
 using Application.Abstractions.EventBus;
-using Application.Outbox;
 using Domain.Entities.Customers;
 using Domain.Entities.Users;
 using Domain.IRepositories;

@@ -41,7 +41,11 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
         _verificationTokenRepository = verificationTokenRepository;
     }
     #endregion
-
+    //TODO:
+    /*
+    Kiểm tra trường hợp user đã đăng ký nhưng chưa xác thực email
+    => Nếu đã đăng ký nhưng chưa xác thực email thì gửi lại email xác thực
+    */
     public async Task<Result> Handle(
         CustomerSignUpCommand request,
         CancellationToken cancellationToken)

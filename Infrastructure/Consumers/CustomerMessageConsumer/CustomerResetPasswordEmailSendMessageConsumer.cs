@@ -1,53 +1,55 @@
-using Application.Abstractions.EventBus;
-using Application.Outbox;
-using Domain.Entities.Users;
 using Domain.IRepositories;
-using Domain.IRepositories.Users;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Events.CustomerEvents;
+using FluentEmail.Core;
+using Infrastructure.Services;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
 namespace Infrastructure.Consumers.CustomerMessageConsumer;
 
-internal sealed class CustomerConfirmChangePasswordMessageConsumer
-    : IConsumer<CustomerConfirmChangePasswordEvent>
+internal sealed class CustomerResetPasswordEmailSendMessageConsumer : IConsumer<CustomerResetPasswordEmailSendEvent>
 {
-    private readonly ILogger<CustomerConfirmChangePasswordMessageConsumer> _logger;
+    private readonly ILogger<CustomerResetPasswordEmailSendMessageConsumer> _logger;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
-    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IEventBus _eventBus;
-    public CustomerConfirmChangePasswordMessageConsumer(
-        ILogger<CustomerConfirmChangePasswordMessageConsumer> logger,
-        IUserRepository userRepository,
+    private readonly EmailVerificationLinkFactory _emailVerificationLinkFactory;
+    private readonly IFluentEmail _fluentEmail;
+    public CustomerResetPasswordEmailSendMessageConsumer(
+        ILogger<CustomerResetPasswordEmailSendMessageConsumer> logger,
         IOutBoxMessageServices outBoxMessageServices,
         IUnitOfWork unitOfWork,
-        IEventBus eventBus)
+        IFluentEmail fluentEmail,
+        EmailVerificationLinkFactory emailVerificationLinkFactory)
     {
         _logger = logger;
-        _userRepository = userRepository;
         _outBoxMessageServices = outBoxMessageServices;
         _unitOfWork = unitOfWork;
-        _eventBus = eventBus;
+        _fluentEmail = fluentEmail;
+        _emailVerificationLinkFactory = emailVerificationLinkFactory;
     }
 
-    public async Task Consume(ConsumeContext<CustomerConfirmChangePasswordEvent> context)
+    public async Task Consume(ConsumeContext<CustomerResetPasswordEmailSendEvent> context)
     {
         //Log start-----------------------------------------------------
         _logger.LogInformation(
-            "Consuming CustomerConfirmChangePasswordEvent for userId: {[id]}",
+            "Consuming CustomerResetPasswordEmailSendEvent for UserId: {UserId}",
             context.Message.UserId);
         //--------------------------------------------------------------
 
         try
         {
             //Consume message            
-            var user = await _userRepository.GetUserFromPostgreSQL(UserId.FromGuid(context.Message.UserId));
-            user!.ChangePassword(PasswordHash.FromString(context.Message.NewPassword));
+            string verificationLink = _emailVerificationLinkFactory
+                .CreateLinkForResetPassword(context.Message.VerificationTokenId);
 
-            await _unitOfWork.SaveToPostgreSQL();
+            await _fluentEmail
+                .To(context.Message.Email)
+                .Subject("Xác nhận đặt lại mật khẩu")
+                .Body($"<a href='{verificationLink}'>Click me</a>", isHtml: true)
+                .SendAsync();
+            
             //---------------------------------------------------------------
         }
         catch (Exception ex)
@@ -56,7 +58,7 @@ internal sealed class CustomerConfirmChangePasswordMessageConsumer
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                 context.Message.MessageId,
                 OutboxMessageStatus.Failed,
-                "Failed to consume CustomerConfirmChangePasswordEvent",
+                "Failed to consume CustomerResetPasswordEmailSendEvent",
                 DateTime.UtcNow);
 
             await _unitOfWork.SaveToMySQL();
@@ -65,7 +67,7 @@ internal sealed class CustomerConfirmChangePasswordMessageConsumer
             //Log error-------------------------------------------------
             _logger.LogError(
                 ex,
-                "Failed to consume CustomerConfirmChangePasswordEvent for userId: {[id]}",
+                "Failed to consume CustomerResetPasswordEmailSendEvent for UserId: {UserId}",
                 context.Message.UserId);
             //----------------------------------------------------------
             throw; //Stop the message
@@ -75,28 +77,15 @@ internal sealed class CustomerConfirmChangePasswordMessageConsumer
         await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
             context.Message.MessageId,
             OutboxMessageStatus.Processed,
-            "Successfully consumed CustomerConfirmChangePasswordEvent",
+            "Successfully consumed CustomerResetPasswordEmailSendEvent",
             DateTime.UtcNow);
 
         await _unitOfWork.SaveToMySQL();
         //----------------------------------------------------------
 
-        //Publish event notify user
-        var message = new CustomerChangePasswordSuccessNotificationEvent(
-            context.Message.Email, 
-            Ulid.NewUlid().ToGuid());
-
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            message.MessageId, 
-            message, _outBoxMessageServices);
-
-        await _unitOfWork.SaveToMySQL();
-        
-        await _eventBus.PublishAsync(message);
-
         //Log end------------------------------------------
         _logger.LogInformation(
-            "Consumed CustomerConfirmChangePasswordEvent for userId: {[id]}",
+            "Consumed CustomerResetPasswordEmailSendEvent for UserId: {UserId}",
             context.Message.UserId);
         //-------------------------------------------------
     }

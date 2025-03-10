@@ -19,6 +19,7 @@ public static class EndpointName
         public const string SignInWithRefreshToken = "CustomerSignInWithRefreshToken";
         public const string Verify = "Verify";
         public const string ChangePasswordConfirm = "ChangePasswordConfirm";
+        public const string ResetPasswordConfirm = "ResetPasswordConfirm";
         public const string ChangePassword = "ChangePassword";
 
         // public const string SignIn = "SignIn";

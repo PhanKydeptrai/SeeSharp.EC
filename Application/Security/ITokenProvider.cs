@@ -7,5 +7,5 @@ public interface ITokenProvider
 {
     string GenerateAccessToken(UserId userId, Email email, string role, string jti);
     string GenerateRefreshToken();
-    string GetTokenFromHeader(HttpContext header);
+    string GenerateRandomString(int length);
 }

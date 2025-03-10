@@ -21,6 +21,10 @@ public static class CustomerError
     public static Error PasswordNotMatch() => Error.Problem(
         "Customer.PasswordNotMatch",
         "The password does not match");
+
+    public static Error InValidInformation() => Error.NotFound(
+        "Customer.InValidInformation",
+        "The information is invalid");
     
     /// <summary>
     /// 

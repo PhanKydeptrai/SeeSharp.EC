@@ -15,4 +15,5 @@ public interface ICustomerQueryServices
         PasswordHash password);
 
     Task<CustomerAuthenticationResponse?> GetCustomerByEmail(Email email);
+    
 }

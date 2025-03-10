@@ -13,6 +13,8 @@ namespace Infrastructure.Security;
 public class TokenProvider : ITokenProvider
 {
     SymmetricSecurityKey _key;
+    private static readonly string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
     IConfiguration _config;
     public TokenProvider(IConfiguration config)
     {
@@ -49,8 +51,16 @@ public class TokenProvider : ITokenProvider
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 
-    public string GetTokenFromHeader(HttpContext header)
+    public string GenerateRandomString(int length)
     {
-        throw new NotImplementedException();
+        Random random = new Random();
+        StringBuilder result = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++)
+        {
+            result.Append(chars[random.Next(chars.Length)]);
+        }
+
+        return result.ToString();
     }
 }

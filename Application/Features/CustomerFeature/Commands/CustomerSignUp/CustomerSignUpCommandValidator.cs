@@ -17,7 +17,9 @@ internal sealed class CustomerSignUpCommandValidator : AbstractValidator<Custome
             .WithMessage("Email is invalid.")
             .Must(a => customerQueryServices.IsCustomerEmailExist(null, Email.NewEmail(a)).Result is false)
             .WithErrorCode("Email.Exist")
-            .WithMessage("Email already exists.");
+            .WithMessage("Email already exists.")
+            .MaximumLength(50)
+            .WithErrorCode("Email.MaximumLength");
 
         RuleFor(x => x.UserName)
             .NotEmpty()
