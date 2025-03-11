@@ -72,4 +72,21 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
                 a.CustomerType.ToString()))
             .FirstOrDefaultAsync();
     }
+
+    public async Task<CustomerProfileResponse?> GetCustomerProfileById(UserId userId)
+    {
+        return await _dbContext.Customers
+            .Where(a => a.UserId == new Ulid(userId.Value))
+            .Select(a => new CustomerProfileResponse(
+                a.UserId.ToGuid(),
+                a.UserReadModel.UserName,
+                a.UserReadModel.DateOfBirth,
+                a.UserReadModel.ImageUrl!,
+                a.UserReadModel.Gender.ToString(),
+                a.UserReadModel.PhoneNumber,
+                a.UserReadModel.Email,
+                a.CustomerType.ToString(),
+                a.CustomerStatus.ToString()))
+            .FirstOrDefaultAsync();
+    }
 }

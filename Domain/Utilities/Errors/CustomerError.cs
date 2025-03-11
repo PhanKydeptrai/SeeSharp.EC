@@ -1,3 +1,4 @@
+using Domain.Entities.Users;
 using Domain.Entities.VerificationTokens;
 using SharedKernel;
 
@@ -35,6 +36,10 @@ public static class CustomerError
         "Customer.TokenExpired",
         $"The VerificationToken with the Id = '{verificationTokenId}' has expired");
     
+    public static Error NotFoundCustomer() => Error.NotFound(
+        "Customer.NotFoundCustomer",
+        "The customer was not found");
+
     /// <summary>
     /// 
     /// </summary>

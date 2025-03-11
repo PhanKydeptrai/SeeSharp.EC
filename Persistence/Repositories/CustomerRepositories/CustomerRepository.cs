@@ -32,15 +32,13 @@ public class CustomerRepository : ICustomerRepository
     public async Task<Customer?> GetCustomerByEmailFromMySQL(Email email)
     {
         return await _mySQLWriteDbContext.Customers
-            .Where(a => a.User!.Email == email)
-            .FirstOrDefaultAsync();
+            .Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.User!.Email == email);
     }
 
     public async Task<Customer?> GetCustomerByEmailFromPostgreSQL(Email email)
     {
-        return await _postgreSQLWriteDbContext.Customers
-            .Where(a => a.User!.Email == email)
-            .FirstOrDefaultAsync();
+        return await _postgreSQLWriteDbContext.Customers.FirstOrDefaultAsync(a => a.User!.Email == email);
     }
 
     public async Task<Customer?> GetCustomerByFromMySQLByUserId(UserId userId)

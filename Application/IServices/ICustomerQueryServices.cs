@@ -17,5 +17,6 @@ public interface ICustomerQueryServices
     Task<CustomerAuthenticationResponse?> GetCustomerByEmail(Email email);
 
     Task<bool> IsCustomerAccountExist(Email email, CancellationToken cancellationToken = default);
-
+    Task<CustomerProfileResponse?> GetCustomerProfileById(UserId userId);
+    
 }
