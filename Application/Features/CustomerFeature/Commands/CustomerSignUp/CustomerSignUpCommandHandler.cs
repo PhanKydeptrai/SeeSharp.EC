@@ -47,7 +47,7 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
     {
         var account = await _customerRepository.GetCustomerByEmailFromMySQL(Email.FromString(request.Email));
 
-        if (account is not null && account.User.IsVerify == IsVerify.False)
+        if (account is not null && account.User!.IsVerify == IsVerify.False)
         {
             //TODO:
             /*

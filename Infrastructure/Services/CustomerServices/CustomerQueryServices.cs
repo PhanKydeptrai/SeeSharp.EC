@@ -54,6 +54,7 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
             && a.UserReadModel.UserStatus != (int)UserStatus.Blocked)
             .Select(a => new CustomerAuthenticationResponse(
                 a.UserReadModel.UserId,
+                a.CustomerId,
                 a.UserReadModel.Email,
                 a.UserReadModel.UserStatus.ToString(),
                 a.CustomerType.ToString()))
@@ -67,6 +68,7 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
             && a.UserReadModel.UserStatus != (int)UserStatus.Blocked)
             .Select(a => new CustomerAuthenticationResponse(
                 a.UserReadModel.UserId,
+                a.CustomerId,
                 a.UserReadModel.Email,
                 a.UserReadModel.UserStatus.ToString(),
                 a.CustomerType.ToString()))

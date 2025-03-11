@@ -2,6 +2,7 @@ using Application.Abstractions.Messaging;
 using Application.DTOs.Customer;
 using Application.IServices;
 using Application.Security;
+using Domain.Entities.Customers;
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.Users;
 using Domain.IRepositories;
@@ -43,6 +44,7 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         string jti = Ulid.NewUlid().ToGuid().ToString();
         string accessToken = _tokenProvider.GenerateAccessToken(
             UserId.FromUlid(response!.UserId),
+            CustomerId.FromUlid(response.CustomerId),
             Email.FromString(response.Email),
             response.CustomerType,
             jti);

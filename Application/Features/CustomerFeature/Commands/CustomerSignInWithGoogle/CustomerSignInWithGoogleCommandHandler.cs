@@ -105,6 +105,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
 
             var newAccessToken = _tokenProvider.GenerateAccessToken(
                 user.UserId,
+                newCustomer.CustomerId,
                 user.Email!,
                 CustomerType.Subscribed.ToString(),
                 newJti);
@@ -152,6 +153,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
 
         var accessToken = _tokenProvider.GenerateAccessToken(
             UserId.FromUlid(customerAuthResponse.UserId),
+            CustomerId.FromUlid(customerAuthResponse.CustomerId),
             Email.FromString(customerAuthResponse.Email),
             customerAuthResponse.CustomerType.ToString(), jti);
 

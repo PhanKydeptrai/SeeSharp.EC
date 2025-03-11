@@ -46,8 +46,9 @@ public sealed class Order
         OrderStatus orderStatus, 
         OrderTransactionId orderTransactionId)
     {
+        
         return new Order(
-            orderId, 
+            OrderId.New(), 
             customerId, 
             total, 
             paymentStatus, 
