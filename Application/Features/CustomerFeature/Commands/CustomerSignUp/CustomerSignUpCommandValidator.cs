@@ -15,11 +15,12 @@ internal sealed class CustomerSignUpCommandValidator : AbstractValidator<Custome
             .EmailAddress()
             .WithErrorCode("Email.Invalid")
             .WithMessage("Email is invalid.")
-            .Must(a => customerQueryServices.IsCustomerEmailExist(null, Email.NewEmail(a)).Result is false)
-            .WithErrorCode("Email.Exist")
-            .WithMessage("Email already exists.")
+            // .Must(a => customerQueryServices.IsCustomerEmailExist(null, Email.NewEmail(a)).Result is false)
+            // .WithErrorCode("Email.Exist")
+            // .WithMessage("Email already exists.")
             .MaximumLength(50)
-            .WithErrorCode("Email.MaximumLength");
+            .WithErrorCode("Email.MaximumLength")
+            .WithMessage("Email must not exceed 50 characters.");
 
         RuleFor(x => x.UserName)
             .NotEmpty()
@@ -35,6 +36,6 @@ internal sealed class CustomerSignUpCommandValidator : AbstractValidator<Custome
             .WithMessage("Password is required.")
             .MinimumLength(8)
             .WithErrorCode("Password.MinimumLength")
-            .WithMessage("Password must be at least 6 characters long.");
+            .WithMessage("Password must be at least 8 characters long.");
     }
 }

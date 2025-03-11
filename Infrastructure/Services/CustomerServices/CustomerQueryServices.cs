@@ -33,6 +33,16 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
         
     }
 
+    public async Task<bool> IsCustomerAccountExist(
+        Email email, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Customers.AnyAsync(
+                a => a.UserReadModel.Email == email.Value 
+                && a.UserReadModel.IsVerify == true,
+                cancellationToken);   
+    }
+
     public async Task<CustomerAuthenticationResponse?> AuthenticateCustomer(
         Email email, PasswordHash password)
     {

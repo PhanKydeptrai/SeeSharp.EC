@@ -41,15 +41,39 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
         _verificationTokenRepository = verificationTokenRepository;
     }
     #endregion
-    //TODO:
-    /*
-    Kiểm tra trường hợp user đã đăng ký nhưng chưa xác thực email
-    => Nếu đã đăng ký nhưng chưa xác thực email thì gửi lại email xác thực
-    */
-    public async Task<Result> Handle(
-        CustomerSignUpCommand request,
-        CancellationToken cancellationToken)
+
+
+    public async Task<Result> Handle(CustomerSignUpCommand request, CancellationToken cancellationToken)
     {
+        var account = await _customerRepository.GetCustomerByEmailFromMySQL(Email.FromString(request.Email));
+
+        if (account is not null && account.User!.IsVerify == IsVerify.False)
+        {
+            //TODO:
+            /*
+            Kiểm tra trường hợp user đã đăng ký nhưng chưa xác thực email
+            => Nếu đã đăng ký nhưng chưa xác thực email thì gửi lại email xác thực
+            */
+            var newVerificationToken = VerificationToken.NewVerificationToken(
+                string.Empty, account.UserId, DateTime.UtcNow.AddMinutes(5));
+
+            await _verificationTokenRepository.AddVerificationTokenToMySQL(newVerificationToken);
+
+            var newMessage = new AccountVerificationEmailSentEvent(
+                account.UserId, 
+                newVerificationToken.VerificationTokenId,
+                account.User.Email!.Value,
+                Ulid.NewUlid().ToGuid());
+
+            await OutboxMessageExtentions.InsertOutboxMessageAsync(
+                newMessage.MessageId, 
+                newMessage, _outBoxMessageServices);
+
+            await _unitOfWork.SaveToMySQL();
+            await _eventBus.PublishAsync(newMessage);
+            return Result.Success();
+        }
+
         var user = CreateNewUser(request);
         var customer = Customer.NewCustomer(user.UserId, CustomerType.Subscribed);
         var verificationToken = VerificationToken.NewVerificationToken(

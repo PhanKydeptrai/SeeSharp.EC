@@ -11,9 +11,11 @@ public interface ICustomerQueryServices
         Email email,
         CancellationToken cancellationToken = default);
     Task<CustomerAuthenticationResponse?> AuthenticateCustomer(
-        Email email, 
+        Email email,
         PasswordHash password);
 
     Task<CustomerAuthenticationResponse?> GetCustomerByEmail(Email email);
-    
+
+    Task<bool> IsCustomerAccountExist(Email email, CancellationToken cancellationToken = default);
+
 }

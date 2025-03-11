@@ -11,8 +11,7 @@ internal sealed class GetProductById : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/products/{productId:guid}",
-        async (
+        app.MapGet("/api/products/{productId:guid}", async (
             [FromRoute] Guid productid,
             ISender sender) =>
         {

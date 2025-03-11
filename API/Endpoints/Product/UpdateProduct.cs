@@ -11,8 +11,7 @@ internal sealed class UpdateProduct : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("api/products/{productId:guid}",
-        async (
+        app.MapPut("api/products/{productId:guid}", async (
             [FromRoute] Guid productId,
             [FromForm] string productName,
             [FromForm] IFormFile? productImage,
