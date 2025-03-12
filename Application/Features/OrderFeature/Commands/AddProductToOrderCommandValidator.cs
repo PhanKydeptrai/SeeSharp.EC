@@ -1,12 +1,11 @@
 using Application.IServices;
-using Domain.Entities.Products;
 using FluentValidation;
 
 namespace Application.Features.OrderFeature.Commands;
 
 internal sealed class AddProductToOrderCommandValidator : AbstractValidator<AddProductToOrderCommand>
 {
-    public AddProductToOrderCommandValidator(IProductQueryServices productQueryServices)
+    public AddProductToOrderCommandValidator()
     {   
         RuleFor(x => x.ProductId)
             .NotEmpty()

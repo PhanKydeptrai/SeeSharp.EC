@@ -49,5 +49,23 @@ public sealed class Order
             paymentStatus, 
             orderStatus);
     }
+
+    /// <summary>
+    /// Replace the current order total with the new one
+    /// </summary>
+    /// <param name="total"></param>
+    public void UpdateOrderTotal(OrderTotal total)
+    {
+        Total = total;
+    }
+
+    /// <summary>
+    /// Add new value to the current order total
+    /// </summary>
+    /// <param name="unitPrice"></param>
+    public void AddNewValueToOrderTotal(OrderDetailUnitPrice unitPrice)
+    {
+        Total = OrderTotal.FromDecimal(Total.Value + unitPrice.Value);
+    } 
 }
 

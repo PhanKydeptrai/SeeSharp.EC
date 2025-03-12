@@ -44,4 +44,9 @@ public sealed class OrderDetail
             quantity,
             unitPrice);
     }
+    public void UpdateQuantityProductPrice(OrderDetailQuantity quantity, ProductPrice productPrice)
+    {
+        Quantity = OrderDetailQuantity.FromInt(Quantity.Value + quantity.Value);
+        UnitPrice = OrderDetailUnitPrice.NewOrderDetailUnitPrice(productPrice.Value * Quantity.Value);
+    }
 }

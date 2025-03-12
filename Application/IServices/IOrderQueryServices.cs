@@ -6,4 +6,5 @@ namespace Application.IServices;
 public interface IOrderQueryServices
 {
     Task<OrderId?> CheckOrderAvailability(CustomerId customerId);
+    
 }

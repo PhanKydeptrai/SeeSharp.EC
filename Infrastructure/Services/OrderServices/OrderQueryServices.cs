@@ -1,7 +1,9 @@
 using System;
 using Application.IServices;
 using Domain.Entities.Customers;
+using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
+using Domain.Entities.Products;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
