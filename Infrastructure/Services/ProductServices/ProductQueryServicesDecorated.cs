@@ -42,6 +42,11 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
     }
 
+    public async Task<bool> CheckProductAvailability(ProductId productId)
+    {
+        return await _decorated.CheckProductAvailability(productId);
+    }
+
     public async Task<bool> IsProductNameExist(
         ProductId? productId, 
         ProductName productName, 

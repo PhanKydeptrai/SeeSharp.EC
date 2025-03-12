@@ -1,10 +1,12 @@
+using Application.IServices;
+using Domain.Entities.Products;
 using FluentValidation;
 
 namespace Application.Features.OrderFeature.Commands;
 
 internal sealed class AddProductToOrderCommandValidator : AbstractValidator<AddProductToOrderCommand>
 {
-    public AddProductToOrderCommandValidator()
+    public AddProductToOrderCommandValidator(IProductQueryServices productQueryServices)
     {   
         RuleFor(x => x.ProductId)
             .NotEmpty()
@@ -18,7 +20,7 @@ internal sealed class AddProductToOrderCommandValidator : AbstractValidator<AddP
             .GreaterThan(0)
             .WithErrorCode("Quantity.Invalid")
             .WithMessage("Quantity must be greater than 0");
-
+        
         
     }
 }

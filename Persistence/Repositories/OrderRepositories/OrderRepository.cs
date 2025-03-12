@@ -27,6 +27,4 @@ internal sealed class OrderRepository : IOrderRepository
     {
         await _postgreSQLWriteDbContext.Orders.AddAsync(order);
     }
-    
-
 }

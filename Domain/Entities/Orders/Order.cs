@@ -13,7 +13,6 @@ public sealed class Order
     public OrderTotal Total { get; private set; } = null!;
     public OrderPaymentStatus PaymentStatus { get; private set; }
     public OrderStatus OrderStatus { get; private set; }
-    public OrderTransactionId OrderTransactionId { get; private set; } 
     //* Foreign Key
     public ICollection<OrderDetail>? OrderDetails { get; set; } = null!;
     public OrderTransaction OrderTransaction { get; set; } = null!; 
@@ -27,24 +26,20 @@ public sealed class Order
         CustomerId customerId, 
         OrderTotal total, 
         OrderPaymentStatus paymentStatus, 
-        OrderStatus orderStatus, 
-        OrderTransactionId orderTransactionId)
+        OrderStatus orderStatus)
     {
         OrderId = orderId;
         CustomerId = customerId;
         Total = total;
         PaymentStatus = paymentStatus;
         OrderStatus = orderStatus;
-        OrderTransactionId = orderTransactionId;
     }
 
     public static Order NewOrder(
-        OrderId orderId, 
         CustomerId customerId, 
         OrderTotal total, 
         OrderPaymentStatus paymentStatus, 
-        OrderStatus orderStatus, 
-        OrderTransactionId orderTransactionId)
+        OrderStatus orderStatus)
     {
         
         return new Order(
@@ -52,8 +47,7 @@ public sealed class Order
             customerId, 
             total, 
             paymentStatus, 
-            orderStatus, 
-            orderTransactionId);
+            orderStatus);
     }
 }
 

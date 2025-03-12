@@ -31,8 +31,12 @@ public sealed class OrderDetail
         OrderId orderId,
         ProductId productId,
         OrderDetailQuantity quantity,
-        OrderDetailUnitPrice unitPrice)
+        ProductPrice productPrice)
     {
+        
+        var unitPrice = OrderDetailUnitPrice
+            .NewOrderDetailUnitPrice(productPrice.Value * quantity.Value);
+            
         return new OrderDetail(
             OrderDetailId.New(),
             orderId,

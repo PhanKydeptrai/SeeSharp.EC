@@ -11,6 +11,7 @@ using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
+using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
@@ -93,6 +94,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
+        services.AddScoped<IOrderQueryServices, OrderQueryServices>();
         return services;
     }
 

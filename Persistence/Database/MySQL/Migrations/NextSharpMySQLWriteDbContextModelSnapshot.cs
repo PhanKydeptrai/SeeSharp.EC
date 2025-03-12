@@ -269,9 +269,7 @@ namespace Persistence.Database.MySQL.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<Guid>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("(UUID())");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("PayerEmail")
                         .HasColumnType("varchar(200)");
@@ -313,11 +311,6 @@ namespace Persistence.Database.MySQL.Migrations
 
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
-
-                    b.Property<Guid>("OrderTransactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasDefaultValueSql("(UUID())");
 
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
