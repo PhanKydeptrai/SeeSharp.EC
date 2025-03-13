@@ -1,3 +1,4 @@
+using Domain.Entities.Customers;
 using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
@@ -70,10 +71,24 @@ internal sealed class OrderRepository : IOrderRepository
     {
         return await _mySqlWriteDbContext.Orders.FindAsync(orderId);
     }
-
+    /// <summary>
+    /// Get order by OrderId
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
     public async Task<Order?> GetOrderByIdFromPostgreSQL(OrderId orderId)
     {
         return await _postgreSQLWriteDbContext.Orders.FindAsync(orderId);
     }
+    /// <summary>
+    /// Get order by customer id
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    public async Task<Order?> GetOrderByCustomerIdFromMySQL(CustomerId customerId)
+    {
+        return await _mySqlWriteDbContext.Orders
+            .FirstOrDefaultAsync(x => x.CustomerId == customerId);
+    } 
 
 }

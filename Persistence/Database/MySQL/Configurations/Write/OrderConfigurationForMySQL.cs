@@ -49,7 +49,8 @@ internal sealed class OrderConfigurationForMySQL : IEntityTypeConfiguration<Orde
 
         builder.HasMany(x => x.OrderDetails)
             .WithOne(x => x.Order)
-            .HasForeignKey(x => x.OrderId);
+            .HasForeignKey(x => x.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);;
 
         builder.HasOne(a => a.Bill)
             .WithOne(a => a.Order)

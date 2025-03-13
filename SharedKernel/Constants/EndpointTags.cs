@@ -5,6 +5,7 @@ public static class EndpointTag
     public const string Category = "Category";
     public const string Product = "Product";
     public const string Customer = "Customer";
+    public const string Order = "Order";
 }
 
 public static class EndpointName
@@ -52,6 +53,12 @@ public static class EndpointName
         public const string Update = "UpdateCategory";
         public const string Delete = "DeleteCategory";
         public const string Restore = "RestoreCategory";
+    }
+
+    public class Order
+    {
+        public const string AddProductToOrder = "AddProductToOrder";
+        public const string GetById = "GetOrder";
     }
 }
 

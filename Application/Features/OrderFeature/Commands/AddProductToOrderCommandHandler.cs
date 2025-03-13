@@ -21,7 +21,6 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
     #region Dependencies
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductQueryServices _productQueryServices;
-    private readonly IOrderQueryServices _orderQueryServices;
     private readonly IOrderRepository _orderRepository;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
     private readonly IEventBus _eventBus;
@@ -29,14 +28,12 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
         IUnitOfWork unitOfWork,
         IEventBus eventBus,
         IOrderRepository orderRepository,
-        IOrderQueryServices orderQueryServices,
         IProductQueryServices productQueryServices,
         IOutBoxMessageServices outBoxMessageServices)
     {
         _unitOfWork = unitOfWork;
         _eventBus = eventBus;
         _orderRepository = orderRepository;
-        _orderQueryServices = orderQueryServices;
         _productQueryServices = productQueryServices;
         _outBoxMessageServices = outBoxMessageServices;
     }
@@ -45,7 +42,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
     public async Task<Result> Handle(AddProductToOrderCommand request, CancellationToken cancellationToken)
     {
 
-        var order = await GetOrCreateOrderAsync(request);
+        var order = await _orderRepository.GetOrderByCustomerIdFromMySQL(CustomerId.FromGuid(request.CustomerId));
 
         ProductId productId = ProductId.FromGuid(request.ProductId);
         var productPrice = await _productQueryServices.GetAvailableProductPrice(
@@ -68,8 +65,8 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                 // Update order total 
                 orderTotal = orderTotal + orderDetail.UnitPrice.Value;
                 order.UpdateOrderTotal(OrderTotal.FromDecimal(orderTotal));
-                
-                //Publish event 1
+
+                //Publish event 0
                 var message = new CustomerAddProductToOrderEvent(
                     order.OrderId,
                     orderDetail.OrderDetailId,
@@ -80,25 +77,43 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                     orderTotal,
                     Ulid.NewUlid().ToGuid(),
                     OrderMessageType.UpdateOrderDetailAndUpdateOrder);
-                await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
+                await OutboxMessageExtentions.InsertOutboxMessageAsync(
+                    message.MessageId, message, 
+                    _outBoxMessageServices);
                 await _unitOfWork.SaveToMySQL();
 
                 await _eventBus.PublishAsync(message);
                 return Result.Success();
             }
+            else
+            {
+                //* Order detail is not exist
+                var newOrderDetail = OrderDetail.NewOrderDetail(
+                   order.OrderId,
+                   ProductId.FromGuid(request.ProductId),
+                   OrderDetailQuantity.NewOrderDetailQuantity(request.Quantity),
+                   productPrice!);
 
-            //* Order detail is not exist
-            var newOrderDetail = OrderDetail.NewOrderDetail(
-               order.OrderId,
-               ProductId.FromGuid(request.ProductId),
-               OrderDetailQuantity.NewOrderDetailQuantity(request.Quantity),
-               productPrice!);
-
-            order.AddNewValueToOrderTotal(newOrderDetail.UnitPrice);
-            await _orderRepository.AddNewOrderDetailToMySQL(newOrderDetail);
-            //Publish event 2
-            await _unitOfWork.SaveToMySQL();
-            return Result.Success();
+                order.AddNewValueToOrderTotal(newOrderDetail.UnitPrice);
+                await _orderRepository.AddNewOrderDetailToMySQL(newOrderDetail);
+                //Publish event 1
+                var message = new CustomerAddProductToOrderEvent(
+                    order.OrderId,
+                    newOrderDetail.OrderDetailId,
+                    order.CustomerId.Value,
+                    productId,
+                    newOrderDetail.Quantity.Value,
+                    newOrderDetail.UnitPrice.Value,
+                    order.Total.Value,
+                    Ulid.NewUlid().ToGuid(),
+                    OrderMessageType.CreateOrderDetailAndUpdateOrder);
+                await OutboxMessageExtentions.InsertOutboxMessageAsync(
+                    message.MessageId, message, 
+                    _outBoxMessageServices);
+                await _unitOfWork.SaveToMySQL();
+                await _eventBus.PublishAsync(message);
+                return Result.Success();
+            }
         }
         else
         {
@@ -117,25 +132,24 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
 
             await _orderRepository.AddNewOrderToMySQL(newOrder);
             await _orderRepository.AddNewOrderDetailToMySQL(newOrderDetail);
-            //Publish event 3
 
+            //Publish event 2
+            var message = new CustomerAddProductToOrderEvent(
+                newOrder.OrderId,
+                newOrderDetail.OrderDetailId,
+                newOrder.CustomerId.Value,
+                productId,
+                newOrderDetail.Quantity.Value,
+                newOrderDetail.UnitPrice.Value,
+                newOrder.Total.Value,
+                Ulid.NewUlid().ToGuid(),
+                OrderMessageType.CreateAll);
+
+            await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
             await _unitOfWork.SaveToMySQL();
+            await _eventBus.PublishAsync(message);
             return Result.Success();
         }
     }
 
-    private async Task<Order?> GetOrCreateOrderAsync(AddProductToOrderCommand request)
-    {
-        var orderId = await _orderQueryServices.CheckOrderAvailability(CustomerId.FromGuid(request.CustomerId));
-        if (orderId is not null) return null;
-
-        // Create new order
-        var order = Order.NewOrder(
-            CustomerId.FromGuid(request.CustomerId),
-            OrderTotal.FromDecimal(0),
-            OrderPaymentStatus.Waiting,
-            OrderStatus.Waiting);
-
-        return order;
-    }
 }

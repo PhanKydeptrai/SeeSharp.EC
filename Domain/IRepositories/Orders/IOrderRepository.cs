@@ -1,3 +1,4 @@
+using Domain.Entities.Customers;
 using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
@@ -18,6 +19,7 @@ public interface IOrderRepository
     Task<OrderDetail?> GetOrderDetailByIdFromPostgreSQL(OrderDetailId orderDetailId);
     Task<Order?> GetOrderByIdFromMySQL(OrderId orderId);
     Task<Order?> GetOrderByIdFromPostgreSQL(OrderId orderId);
+    Task<Order?> GetOrderByCustomerIdFromMySQL(CustomerId customerId);
 }
 
 

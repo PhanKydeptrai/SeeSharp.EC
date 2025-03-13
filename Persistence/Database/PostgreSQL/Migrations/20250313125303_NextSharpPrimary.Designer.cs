@@ -12,7 +12,7 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(NextSharpPostgreSQLWriteDbContext))]
-    [Migration("20250312082305_NextSharpPrimary")]
+    [Migration("20250313125303_NextSharpPrimary")]
     partial class NextSharpPrimary
     {
         /// <inheritdoc />
@@ -672,8 +672,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Navigation("OrderDetails");
 
-                    b.Navigation("OrderTransaction")
-                        .IsRequired();
+                    b.Navigation("OrderTransaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.Products.Product", b =>

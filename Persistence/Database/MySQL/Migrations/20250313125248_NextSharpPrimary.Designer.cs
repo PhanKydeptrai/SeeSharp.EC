@@ -11,7 +11,7 @@ using Persistence.Database.MySQL;
 namespace Persistence.Database.MySQL.Migrations
 {
     [DbContext(typeof(NextSharpMySQLWriteDbContext))]
-    [Migration("20250312082250_NextSharpPrimary")]
+    [Migration("20250313125248_NextSharpPrimary")]
     partial class NextSharpPrimary
     {
         /// <inheritdoc />
@@ -845,8 +845,7 @@ namespace Persistence.Database.MySQL.Migrations
 
                     b.Navigation("OrderDetails");
 
-                    b.Navigation("OrderTransaction")
-                        .IsRequired();
+                    b.Navigation("OrderTransaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.Products.Product", b =>

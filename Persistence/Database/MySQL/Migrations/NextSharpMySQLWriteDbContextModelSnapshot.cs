@@ -842,8 +842,7 @@ namespace Persistence.Database.MySQL.Migrations
 
                     b.Navigation("OrderDetails");
 
-                    b.Navigation("OrderTransaction")
-                        .IsRequired();
+                    b.Navigation("OrderTransaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.Products.Product", b =>

@@ -73,4 +73,9 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             page, 
             pageSize);
     }
+
+    public async Task<ProductPrice?> GetAvailableProductPrice(ProductId productId)
+    {
+        return await _decorated.GetAvailableProductPrice(productId);    
+    }
 }
