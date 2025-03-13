@@ -56,4 +56,24 @@ internal sealed class OrderRepository : IOrderRepository
         return await _mySqlWriteDbContext.OrderDetails
             .FirstOrDefaultAsync(x => x.OrderId == orderId && x.ProductId == productId);
     }
+
+    public async Task<OrderDetail?> GetOrderDetailByIdFromMySQL(OrderDetailId orderDetailId)
+    {
+        return await _mySqlWriteDbContext.OrderDetails.FindAsync(orderDetailId);
+    }
+
+    public async Task<OrderDetail?> GetOrderDetailByIdFromPostgreSQL(OrderDetailId orderDetailId)
+    {
+        return await _postgreSQLWriteDbContext.OrderDetails.FindAsync(orderDetailId);
+    }
+    public async Task<Order?> GetOrderByIdFromMySQL(OrderId orderId)
+    {
+        return await _mySqlWriteDbContext.Orders.FindAsync(orderId);
+    }
+
+    public async Task<Order?> GetOrderByIdFromPostgreSQL(OrderId orderId)
+    {
+        return await _postgreSQLWriteDbContext.Orders.FindAsync(orderId);
+    }
+
 }

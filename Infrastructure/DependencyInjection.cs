@@ -5,6 +5,7 @@ using Domain.Utilities.Events.CustomerEvents;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CategoryMessageConsumer;
 using Infrastructure.Consumers.CustomerMessageConsumer;
+using Infrastructure.Consumers.OrderMessageConsumer;
 using Infrastructure.Consumers.ProductMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Security;
@@ -129,6 +130,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CustomerResetPasswordEmailSendMessageConsumer>();  
             busConfiguration.AddConsumer<CustomerResetPasswordMessageConsumer>();
             busConfiguration.AddConsumer<CustomerResetPasswordSuccessNotificationMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerAddProductToOrderMessageConsumer>();
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
             // busConfiguration.UsingRabbitMq((context, cfg) =>

@@ -41,11 +41,25 @@ public sealed class Order
         OrderPaymentStatus paymentStatus, 
         OrderStatus orderStatus)
     {
-        
         return new Order(
             OrderId.New(), 
             customerId, 
             total, 
+            paymentStatus, 
+            orderStatus);
+    }
+
+    public static Order FromExisting(
+        OrderId orderId, 
+        CustomerId customerId, 
+        OrderTotal total, 
+        OrderPaymentStatus paymentStatus, 
+        OrderStatus orderStatus)
+    {
+        return new Order(
+            orderId, 
+            customerId, 
+            total,
             paymentStatus, 
             orderStatus);
     }

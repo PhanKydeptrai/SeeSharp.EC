@@ -14,4 +14,10 @@ public interface IOrderRepository
     Task AddNewOrderTransactionToMySQL(OrderTransaction orderTransaction);
     Task AddNewOrderTransactionToPostgreSQL(OrderTransaction orderTransaction);
     Task<OrderDetail?> CheckProductAvailabilityInOrder(OrderId orderId, ProductId productId);
+    Task<OrderDetail?> GetOrderDetailByIdFromMySQL(OrderDetailId orderDetailId);
+    Task<OrderDetail?> GetOrderDetailByIdFromPostgreSQL(OrderDetailId orderDetailId);
+    Task<Order?> GetOrderByIdFromMySQL(OrderId orderId);
+    Task<Order?> GetOrderByIdFromPostgreSQL(OrderId orderId);
 }
+
+
