@@ -4,12 +4,14 @@ using Application.Security;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CategoryMessageConsumer;
 using Infrastructure.Consumers.CustomerMessageConsumer;
+using Infrastructure.Consumers.OrderMessageConsumer;
 using Infrastructure.Consumers.ProductMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
+using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
@@ -92,6 +94,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
+        services.AddScoped<IOrderQueryServices, OrderQueryServices>();
         return services;
     }
 
@@ -119,7 +122,15 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
             busConfiguration.AddConsumer<CustomerVerifiedEmailMessageConsumer>();
             busConfiguration.AddConsumer<CategoryRestoredMessageConsumer>();
-            
+            busConfiguration.AddConsumer<CustomerChangePasswordMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerConfirmChangePasswordMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerChangePasswordSuccessNotificationMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerSignedUpWithGoogleAccountMessageConsumer>();    
+            busConfiguration.AddConsumer<CustomerResetPasswordEmailSendMessageConsumer>();  
+            busConfiguration.AddConsumer<CustomerResetPasswordMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerResetPasswordSuccessNotificationMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerAddProductToOrderMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerUpdateOrderDetailMessageConsumer>();
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
             // busConfiguration.UsingRabbitMq((context, cfg) =>

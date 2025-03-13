@@ -19,6 +19,12 @@ internal sealed class ProductQueryServices : IProductQueryServices
         _postgreSQLdbContext = postgreSQLdbContext;
     }
 
+    public async Task<bool> CheckProductAvailability(ProductId productId)
+    {
+        return await _postgreSQLdbContext.Products.AnyAsync(
+            x => x.ProductId == new Ulid(productId.Value) && x.ProductStatus == ProductStatus.InStock);
+    }
+
     public async Task<ProductResponse?> GetById(
         ProductId productId,
         CancellationToken cancellationToken = default)
@@ -114,5 +120,13 @@ internal sealed class ProductQueryServices : IProductQueryServices
             .CreateAsync(products, page ?? 1, pageSize ?? 10);
 
         return productsList;
+    }
+
+    public async Task<ProductPrice?> GetAvailableProductPrice(ProductId productId) 
+    {
+        return await _postgreSQLdbContext.Products
+            .Where(x => x.ProductId == new Ulid(productId.Value) && x.ProductStatus == ProductStatus.InStock)
+            .Select(x => ProductPrice.FromDecimal(x.ProductPrice))
+            .FirstOrDefaultAsync();
     }
 }

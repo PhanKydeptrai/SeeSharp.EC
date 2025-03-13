@@ -42,13 +42,6 @@ internal sealed class OrderConfigurationForPostgreSQL : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("integer");
 
-        builder.Property(x => x.OrderTransactionId)
-            .IsRequired()
-            .HasConversion(
-                value => value.Value,
-                value => OrderTransactionId.FromGuid(value))
-            .HasColumnType("uuid");
-
         builder.HasMany(x => x.OrderDetails)
             .WithOne(x => x.Order)
             .HasForeignKey(x => x.OrderId);

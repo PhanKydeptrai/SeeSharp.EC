@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Persistence.Database.MySQL.Migrations
+namespace Persistence.Database.PostgreSQL.Migrations
 {
     /// <inheritdoc />
     public partial class NextSharpPrimary : Migration
@@ -11,97 +11,73 @@ namespace Persistence.Database.MySQL.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("MySQL:Charset", "utf8mb4");
-
             migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
-                    CategoryId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
                     CategoryName = table.Column<string>(type: "varchar(50)", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(200)", nullable: true),
-                    CategoryStatus = table.Column<int>(type: "int", nullable: false),
-                    IsDefault = table.Column<sbyte>(type: "tinyint(0)", nullable: false)
+                    CategoryStatus = table.Column<int>(type: "integer", nullable: false),
+                    IsDefault = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.CategoryId);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "OutboxMessages",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    Type = table.Column<string>(type: "TEXT", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Content = table.Column<string>(type: "JSON", nullable: false),
-                    OccurredOnUtc = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
-                    ProcessedOnUtc = table.Column<DateTime>(type: "TIMESTAMP", nullable: true),
-                    Error = table.Column<string>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OutboxMessages", x => x.Id);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserName = table.Column<string>(type: "varchar(50)", nullable: false),
                     Email = table.Column<string>(type: "varchar(200)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(20)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "varchar(64)", nullable: true),
-                    UserStatus = table.Column<int>(type: "int", nullable: false),
-                    IsVerify = table.Column<sbyte>(type: "tinyint", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
+                    PasswordHash = table.Column<string>(type: "varchar(64)", nullable: false),
+                    UserStatus = table.Column<int>(type: "integer", nullable: false),
+                    IsVerify = table.Column<bool>(type: "boolean", nullable: false),
+                    Gender = table.Column<string>(type: "varchar(10)", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "TIMESTAMP", nullable: true),
                     ImageUrl = table.Column<string>(type: "varchar(256)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Vouchers",
                 columns: table => new
                 {
-                    VoucherId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    VoucherId = table.Column<Guid>(type: "uuid", nullable: false),
                     VoucherName = table.Column<string>(type: "varchar(20)", nullable: false),
                     VoucherCode = table.Column<string>(type: "varchar(20)", nullable: false),
-                    VoucherType = table.Column<int>(type: "int", nullable: false),
-                    PercentageDiscount = table.Column<int>(type: "int", nullable: false),
-                    MaximumDiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    MinimumOrderAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    VoucherType = table.Column<int>(type: "integer", nullable: false),
+                    PercentageDiscount = table.Column<int>(type: "integer", nullable: false),
+                    MaximumDiscountAmount = table.Column<decimal>(type: "decimal", nullable: false),
+                    MinimumOrderAmount = table.Column<decimal>(type: "decimal", nullable: false),
                     StartDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
                     ExpiredDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vouchers", x => x.VoucherId);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
-                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
                     ProductName = table.Column<string>(type: "varchar(50)", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(255)", nullable: true),
                     Description = table.Column<string>(type: "varchar(255)", nullable: true),
-                    ProductPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ProductStatus = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
+                    ProductPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    ProductStatus = table.Column<int>(type: "integer", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,17 +88,16 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "Categories",
                         principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    CustomerStatus = table.Column<int>(type: "int", nullable: false),
-                    CustomerType = table.Column<int>(type: "int", nullable: false)
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerStatus = table.Column<int>(type: "integer", nullable: false),
+                    CustomerType = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -133,17 +108,16 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
-                    EmployeeId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    EmployeeStatus = table.Column<int>(type: "int", nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false)
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EmployeeStatus = table.Column<int>(type: "integer", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -154,61 +128,15 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "UserAuthenticationTokens",
-                columns: table => new
-                {
-                    UserAuthenticationTokenId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    Value = table.Column<string>(type: "varchar(500)", nullable: false),
-                    Jti = table.Column<string>(type: "varchar(36)", nullable: true),
-                    ExpiredTime = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
-                    IsBlackList = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAuthenticationTokens", x => x.UserAuthenticationTokenId);
-                    table.ForeignKey(
-                        name: "FK_UserAuthenticationTokens_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "VerificationTokens",
-                columns: table => new
-                {
-                    VerificationTokenId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    Temporary = table.Column<string>(type: "varchar(64)", nullable: true),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    CreatedDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
-                    ExpiredDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VerificationTokens", x => x.VerificationTokenId);
-                    table.ForeignKey(
-                        name: "FK_VerificationTokens_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "CustomerVouchers",
                 columns: table => new
                 {
-                    CustomerVoucherId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    VoucherId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    CustomerVoucherId = table.Column<Guid>(type: "uuid", nullable: false),
+                    VoucherId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -226,19 +154,17 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "Vouchers",
                         principalColumn: "VoucherId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
-                    OrderStatus = table.Column<int>(type: "int", nullable: false),
-                    OrderTransactionId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Total = table.Column<decimal>(type: "decimal", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "integer", nullable: false),
+                    OrderStatus = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -249,18 +175,17 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "Customers",
                         principalColumn: "CustomerId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "ShippingInformations",
                 columns: table => new
                 {
-                    ShippingInformationId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    ShippingInformationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     FullName = table.Column<string>(type: "varchar(50)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(10)", nullable: false),
-                    IsDefault = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsDefault = table.Column<bool>(type: "boolean", nullable: false),
                     SpecificAddress = table.Column<string>(type: "varchar(50)", nullable: false),
                     Province = table.Column<string>(type: "varchar(50)", nullable: false),
                     District = table.Column<string>(type: "varchar(50)", nullable: false),
@@ -275,16 +200,15 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "Customers",
                         principalColumn: "CustomerId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "WishItems",
                 columns: table => new
                 {
-                    WishItemId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
+                    WishItemId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -301,19 +225,18 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Feedbacks",
                 columns: table => new
                 {
-                    FeedbackId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    FeedbackId = table.Column<Guid>(type: "uuid", nullable: false),
                     Substance = table.Column<string>(type: "varchar(255)", nullable: true),
                     RatingScore = table.Column<float>(type: "float", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(255)", nullable: true),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -330,18 +253,17 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "Orders",
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "OrderDetails",
                 columns: table => new
                 {
-                    OrderDetailId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    OrderDetailId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    UnitPrice = table.Column<decimal>(type: "decimal", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -358,19 +280,18 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "Bills",
                 columns: table => new
                 {
-                    BillId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    BillId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
-                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
-                    ShippingInformationId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())")
+                    PaymentMethod = table.Column<int>(type: "integer", nullable: false),
+                    ShippingInformationId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -393,23 +314,22 @@ namespace Persistence.Database.MySQL.Migrations
                         principalTable: "ShippingInformations",
                         principalColumn: "ShippingInformationId",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "OrderTransactions",
                 columns: table => new
                 {
-                    OrderTransactionId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
+                    OrderTransactionId = table.Column<Guid>(type: "uuid", nullable: false),
                     PayerName = table.Column<string>(type: "varchar(50)", nullable: true),
                     PayerEmail = table.Column<string>(type: "varchar(200)", nullable: true),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", nullable: false),
-                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
-                    IsVoucherUsed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    VoucherId = table.Column<Guid>(type: "char(36)", nullable: true, defaultValueSql: "(UUID())"),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(UUID())"),
-                    BillId = table.Column<Guid>(type: "char(36)", nullable: true, defaultValueSql: "(UUID())")
+                    PaymentMethod = table.Column<int>(type: "integer", nullable: false),
+                    IsVoucherUsed = table.Column<bool>(type: "boolean", nullable: false),
+                    VoucherId = table.Column<Guid>(type: "uuid", nullable: true),
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BillId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -430,13 +350,12 @@ namespace Persistence.Database.MySQL.Migrations
                         column: x => x.VoucherId,
                         principalTable: "Vouchers",
                         principalColumn: "VoucherId");
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                });
 
             migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "CategoryId", "CategoryName", "CategoryStatus", "ImageUrl", "IsDefault" },
-                values: new object[] { new Guid("019546cc-2909-1710-9a1b-36df36d9a7ae"), "General", 0, "", (sbyte)1 });
+                values: new object[] { new Guid("019546cc-2909-1710-9a1b-36df36d9a7ae"), "General", 0, "", true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bills_CustomerId",
@@ -535,16 +454,6 @@ namespace Persistence.Database.MySQL.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAuthenticationTokens_UserId",
-                table: "UserAuthenticationTokens",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_VerificationTokens_UserId",
-                table: "VerificationTokens",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_WishItems_CustomerId",
                 table: "WishItems",
                 column: "CustomerId");
@@ -572,15 +481,6 @@ namespace Persistence.Database.MySQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderTransactions");
-
-            migrationBuilder.DropTable(
-                name: "OutboxMessages");
-
-            migrationBuilder.DropTable(
-                name: "UserAuthenticationTokens");
-
-            migrationBuilder.DropTable(
-                name: "VerificationTokens");
 
             migrationBuilder.DropTable(
                 name: "WishItems");

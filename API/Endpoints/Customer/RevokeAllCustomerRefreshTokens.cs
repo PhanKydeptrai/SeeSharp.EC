@@ -12,8 +12,7 @@ internal sealed class RevokeAllCustomerRefreshTokens : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder builder)
     {
-        builder.MapDelete("api/customers/{userId:guid}/refresh-tokens",
-        async (
+        builder.MapDelete("api/customers/{userId:guid}/refresh-tokens", async (
             [FromRoute] Guid userId,
             ISender sender,
             HttpContext httpContext) =>

@@ -73,16 +73,7 @@ internal class OrderTransactionConfigurationForMySQL : IEntityTypeConfiguration<
             )
             .HasColumnType("char(36)")
             .HasDefaultValueSql("(UUID())");
-
-        builder.Property(a => a.OrderId)
-            .IsRequired()
-            .HasConversion(
-                value => value.Value,
-                value => OrderId.FromGuid(value)
-            )
-            .HasColumnType("char(36)")
-            .HasDefaultValueSql("(UUID())");
-
+            
         builder.Property(a => a.BillId)
             .IsRequired(false)
             .HasConversion(

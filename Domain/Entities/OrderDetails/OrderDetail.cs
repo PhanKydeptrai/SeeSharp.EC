@@ -27,17 +27,71 @@ public sealed class OrderDetail
         UnitPrice = unitPrice;
     }
 
+    /// <summary>
+    /// Create new OrderDetail
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <param name="productId"></param>
+    /// <param name="quantity"></param>
+    /// <param name="productPrice"></param>
+    /// <returns></returns>
     public static OrderDetail NewOrderDetail(
         OrderId orderId,
         ProductId productId,
         OrderDetailQuantity quantity,
-        OrderDetailUnitPrice unitPrice)
+        ProductPrice productPrice)
     {
+        
+        var unitPrice = OrderDetailUnitPrice
+            .NewOrderDetailUnitPrice(productPrice.Value * quantity.Value);
+            
         return new OrderDetail(
             OrderDetailId.New(),
             orderId,
             productId,
             quantity,
             unitPrice);
+    }
+    /// <summary>
+    /// Create new OrderDetail from existing order detail (For message consumer)
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <param name="productId"></param>
+    /// <param name="quantity"></param>
+    /// <param name="productPrice"></param>
+    /// <returns></returns>
+    public static OrderDetail FromExisting(
+        OrderDetailId orderDetailId,
+        OrderId orderId,
+        ProductId productId,
+        OrderDetailQuantity quantity,
+        OrderDetailUnitPrice orderDetailUnitPrice)
+    {
+            
+        return new OrderDetail(
+            orderDetailId,
+            orderId,
+            productId,
+            quantity,
+            orderDetailUnitPrice);
+    }
+
+    /// <summary>
+    /// Update quantity and unit price of order detail
+    /// </summary>
+    /// <param name="quantity"></param>
+    /// <param name="productPrice"></param>
+    public void UpdateQuantityProductPrice(OrderDetailQuantity quantity, ProductPrice productPrice)
+    {
+        Quantity = OrderDetailQuantity.FromInt(Quantity.Value + quantity.Value);
+        UnitPrice = OrderDetailUnitPrice.NewOrderDetailUnitPrice(productPrice.Value * Quantity.Value);
+    }
+    /// <summary>
+    /// Replace unit price of order detail(Use for message consumer)
+    /// </summary>
+    /// <param name="productPrice"></param>
+    public void ReplaceUnitPrice(OrderDetailUnitPrice unitPrice)
+    {
+        UnitPrice = unitPrice;
     }
 }

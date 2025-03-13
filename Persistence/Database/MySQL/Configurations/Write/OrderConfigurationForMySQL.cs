@@ -47,18 +47,10 @@ internal sealed class OrderConfigurationForMySQL : IEntityTypeConfiguration<Orde
             .IsRequired()
             .HasColumnType("int");
 
-        builder.Property(x => x.OrderTransactionId)
-            .IsRequired()
-            .HasConversion(
-                value => value.Value,
-                value => OrderTransactionId.FromGuid(value)
-            )
-            .HasColumnType("char(36)")
-            .HasDefaultValueSql("(UUID())");
-
         builder.HasMany(x => x.OrderDetails)
             .WithOne(x => x.Order)
-            .HasForeignKey(x => x.OrderId);
+            .HasForeignKey(x => x.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);;
 
         builder.HasOne(a => a.Bill)
             .WithOne(a => a.Order)

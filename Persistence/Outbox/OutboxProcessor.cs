@@ -1,6 +1,4 @@
-﻿using Application.Abstractions.EventBus;
-using Domain;
-using Domain.IRepositories;
+﻿using Domain;
 using Domain.OutboxMessages.Services;
 using MassTransit;
 using SharedKernel;
@@ -13,19 +11,13 @@ namespace Persistence.Outbox;
 // Thêm thứ tự cho các message
 public sealed class OutboxProcessor
 {
-    private readonly IEventBus _eventBus;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
-    private readonly IUnitOfWork _unitOfWork;
     public OutboxProcessor(
-        IEventBus eventBus,
         IOutBoxMessageServices outBoxMessageServices,
-        IUnitOfWork unitOfWork,
         IPublishEndpoint publishEndpoint)
     {
-        _eventBus = eventBus;
         _outBoxMessageServices = outBoxMessageServices;
-        _unitOfWork = unitOfWork;
         _publishEndpoint = publishEndpoint;
     }
     public async Task<int> Execute(CancellationToken cancellation = default)

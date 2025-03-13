@@ -269,9 +269,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("OrderTransactionId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("integer");
 
@@ -672,8 +669,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Navigation("OrderDetails");
 
-                    b.Navigation("OrderTransaction")
-                        .IsRequired();
+                    b.Navigation("OrderTransaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.Products.Product", b =>

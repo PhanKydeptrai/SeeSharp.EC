@@ -5,6 +5,7 @@ public static class EndpointTag
     public const string Category = "Category";
     public const string Product = "Product";
     public const string Customer = "Customer";
+    public const string Order = "Order";
 }
 
 public static class EndpointName
@@ -13,10 +14,16 @@ public static class EndpointName
     {
         public const string SignUp = "SignUp";
         public const string SignIn = "SignIn";
+        public const string SignInWithGoogle = "SignInWithGoogle";
         public const string RevokeRefreshToken = "RevokeRefreshTokenForCustomer";
         public const string RevokeRefreshTokens = "RevokeAllRefreshTokenForCustomer";
         public const string SignInWithRefreshToken = "CustomerSignInWithRefreshToken";
         public const string Verify = "Verify";
+        public const string ChangePasswordConfirm = "ChangePasswordConfirm";
+        public const string ResetPasswordConfirm = "ResetPasswordConfirm";
+        public const string ResetPassword = "ResetPassword";
+        public const string ChangePassword = "ChangePassword";
+        public const string GetProfile = "GetProfile";
 
         // public const string SignIn = "SignIn";
         // public const string SignOut = "SignOut";
@@ -46,6 +53,12 @@ public static class EndpointName
         public const string Update = "UpdateCategory";
         public const string Delete = "DeleteCategory";
         public const string Restore = "RestoreCategory";
+    }
+
+    public class Order
+    {
+        public const string AddProductToOrder = "AddProductToOrder";
+        public const string GetById = "GetOrder";
     }
 }
 

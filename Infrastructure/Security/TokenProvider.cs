@@ -3,8 +3,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Application.Security;
+using Domain.Entities.Customers;
 using Domain.Entities.Users;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -13,19 +13,22 @@ namespace Infrastructure.Security;
 public class TokenProvider : ITokenProvider
 {
     SymmetricSecurityKey _key;
+    private static readonly string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
     IConfiguration _config;
     public TokenProvider(IConfiguration config)
     {
         _config = config;
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["SigningKey"]!));
     }
-    public string GenerateAccessToken(UserId userId, Email email, string role, string jti)
+    public string GenerateAccessToken(UserId userId, CustomerId customerId, Email email, string role, string jti)
     {
         var claims = new List<Claim>()
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, jti),
+            new Claim("CustomerId", customerId.ToString()),
             new Claim(ClaimTypes.Role, role)
         };
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -49,8 +52,16 @@ public class TokenProvider : ITokenProvider
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 
-    public string GetTokenFromHeader(HttpContext header)
+    public string GenerateRandomString(int length)
     {
-        throw new NotImplementedException();
+        Random random = new Random();
+        StringBuilder result = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++)
+        {
+            result.Append(chars[random.Next(chars.Length)]);
+        }
+
+        return result.ToString();
     }
 }

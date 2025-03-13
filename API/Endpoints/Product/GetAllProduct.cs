@@ -13,8 +13,7 @@ public class GetAllProduct : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/products", 
-        async (
+        app.MapGet("api/products", async (
             [FromQuery] string? filterProductStatus,
             [FromQuery] string? filterCategory,
             [FromQuery] string? searchTerm,

@@ -42,6 +42,7 @@ internal sealed class CustomerSignInWithRefreshTokenCommandHandler
         string jti = Ulid.NewUlid().ToGuid().ToString();
         string accessToken = _tokenProvider.GenerateAccessToken(
             userAuhenticationToken.UserId,
+            userAuhenticationToken.User!.Customer!.CustomerId,
             userAuhenticationToken.User!.Email!,
             userAuhenticationToken.User.Customer!.CustomerType.ToString(),
             jti);

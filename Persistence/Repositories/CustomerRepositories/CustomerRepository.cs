@@ -1,5 +1,7 @@
 using Domain.Entities.Customers;
+using Domain.Entities.Users;
 using Domain.IRepositories.Customers;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 
@@ -27,4 +29,27 @@ public class CustomerRepository : ICustomerRepository
         await _postgreSQLWriteDbContext.Customers.AddAsync(customer);
     }
 
+    public async Task<Customer?> GetCustomerByEmailFromMySQL(Email email)
+    {
+        return await _mySQLWriteDbContext.Customers
+            .Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.User!.Email == email);
+    }
+
+    public async Task<Customer?> GetCustomerByEmailFromPostgreSQL(Email email)
+    {
+        return await _postgreSQLWriteDbContext.Customers.FirstOrDefaultAsync(a => a.User!.Email == email);
+    }
+
+    public async Task<Customer?> GetCustomerByFromMySQLByUserId(UserId userId)
+    {
+        return await _mySQLWriteDbContext.Customers.Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.UserId == userId);
+    }
+
+    public async Task<Customer?> GetCustomerByFromPostgreSQLByUserId(UserId userId)
+    {
+        return await _postgreSQLWriteDbContext.Customers.Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.UserId == userId);
+    }
 }

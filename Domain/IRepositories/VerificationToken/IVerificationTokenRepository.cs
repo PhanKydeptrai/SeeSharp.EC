@@ -6,7 +6,7 @@ public interface IVerificationTokenRepository
 {
     Task<VerificationToken?> GetVerificationTokenFromMySQL(VerificationTokenId verificationTokenId);
     Task AddVerificationTokenToMySQL(VerificationToken token);
-    void RemoveVerificationTokenFrommMySQL(VerificationToken token);
+    void RemoveVerificationTokenFromMySQL(VerificationToken token);
 
     // Task<VerificationToken?> GetVerificationTokenFromPostgreSQL(VerificationTokenId verificationTokenId);
     // Task AddVerificationTokenToPostgreSQL(VerificationToken token);

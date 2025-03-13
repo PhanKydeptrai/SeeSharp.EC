@@ -67,7 +67,10 @@ public sealed class User
             imageUrl ?? string.Empty);
     }
 
-    
+    public void ChangePassword(PasswordHash passwordHash)
+    {
+        PasswordHash = passwordHash;
+    }
 
     public void VerifyAccount()
     {
@@ -79,6 +82,11 @@ public sealed class User
         if (UserStatus == UserStatus.Deleted)
         {
             throw new InvalidOperationException("User is deleted");
+        }
+
+        if (UserStatus == UserStatus.Blocked)
+        {
+            throw new InvalidOperationException("User is blocked");
         }
         
         IsVerify = IsVerify.True;

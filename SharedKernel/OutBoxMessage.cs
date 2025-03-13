@@ -13,9 +13,9 @@ public sealed class OutboxMessage
 
 public enum OutboxMessageStatus
 {
-    Pending,
-    Published,
-    Processed,
-    Failed
+    Pending = 0,
+    Published = 1,
+    Processed = 2,
+    Failed = 3
 }
 

@@ -40,7 +40,7 @@ internal sealed class EmailVerificationCommandHandler : ICommandHandler<EmailVer
         
         verificationToken.User!.VerifyAccount();
 
-        _verificationTokenRepository.RemoveVerificationTokenFrommMySQL(verificationToken);
+        _verificationTokenRepository.RemoveVerificationTokenFromMySQL(verificationToken);
         
         var message = new CustomerVerifiedEmailEvent(verificationToken.UserId.Value, Ulid.NewUlid().ToGuid());
         
@@ -59,12 +59,8 @@ internal sealed class EmailVerificationCommandHandler : ICommandHandler<EmailVer
 
         var verificationToken = await _verificationTokenRepository.GetVerificationTokenFromMySQL(tokenId);
 
-        if (verificationToken is null)
-        {
-            return (null, Result.Failure(CustomerError.NotFoundToken(tokenId)));
-        }
-
-        if(verificationToken.ExpiredDate < DateTime.UtcNow)
+        
+        if(verificationToken is null || verificationToken.ExpiredDate < DateTime.UtcNow)
         {
             return (null, Result.Failure(CustomerError.NotFoundToken(tokenId)));
         }

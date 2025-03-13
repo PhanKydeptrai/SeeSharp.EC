@@ -79,13 +79,12 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
         }
 
         //Cập nhật trạng thái hoàn thành outbox message -> Commit --
-        await _unitOfWork.SaveToMySQL();
+
         await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
             context.Message.MessageId,
             OutboxMessageStatus.Processed,
             "Successfully consumed CustomerSignedUpEvent",
             DateTime.UtcNow);
-
         //----------------------------------------------------------
 
         //Publish event-----------------------------------------------
@@ -99,7 +98,7 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
             message.MessageId,
             message,
             _outBoxMessageServices);
-        
+
         await _unitOfWork.SaveToMySQL();
 
         await _publishEndpoint.Publish(message);
@@ -136,7 +135,7 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
     private Customer CreateCustomerFromEvent(User user, CustomerSignedUpEvent context)
     {
         return Customer.FromExisting(
-                CustomerId.FromGuid(context.MessageId),
+                CustomerId.FromGuid(context.CustomerId),
                 user.UserId,
                 CustomerStatus.Active,
                 CustomerType.Subscribed);

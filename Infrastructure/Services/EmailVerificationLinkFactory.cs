@@ -29,4 +29,32 @@ internal sealed class EmailVerificationLinkFactory
 
         return $"{_baseUrl}{link}";
     }
+
+    public string CreateLinkForChangePassword(Guid verificationTokenId)
+    {
+        string? link = _linkGenerator.GetPathByRouteValues(
+            EndpointName.Customer.ChangePasswordConfirm,
+            new { token = verificationTokenId });
+
+        if (link == null)
+        {
+            throw new InvalidOperationException("Could not generate change password link.");
+        }
+
+        return $"{_baseUrl}{link}";
+    }
+
+    public string CreateLinkForResetPassword(Guid verificationTokenId)
+    {
+        string? link = _linkGenerator.GetPathByRouteValues(
+            EndpointName.Customer.ResetPasswordConfirm,
+            new { token = verificationTokenId });
+
+        if (link == null)
+        {
+            throw new InvalidOperationException("Could not generate reset password link.");
+        }
+
+        return $"{_baseUrl}{link}";
+    }
 }

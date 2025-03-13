@@ -42,6 +42,11 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
     }
 
+    public async Task<bool> CheckProductAvailability(ProductId productId)
+    {
+        return await _decorated.CheckProductAvailability(productId);
+    }
+
     public async Task<bool> IsProductNameExist(
         ProductId? productId, 
         ProductName productName, 
@@ -67,5 +72,10 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             sortOrder, 
             page, 
             pageSize);
+    }
+
+    public async Task<ProductPrice?> GetAvailableProductPrice(ProductId productId)
+    {
+        return await _decorated.GetAvailableProductPrice(productId);    
     }
 }
