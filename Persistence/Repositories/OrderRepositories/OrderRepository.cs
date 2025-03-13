@@ -58,7 +58,7 @@ internal sealed class OrderRepository : IOrderRepository
             .FirstOrDefaultAsync(x => x.OrderId == orderId && x.ProductId == productId);
     }
     /// <summary>
-    /// Get order detail by OrderDetailId
+    /// Get order detail by OrderDetailId, Include Order
     /// </summary>
     /// <param name="orderDetailId"></param>
     /// <returns></returns>
@@ -76,7 +76,10 @@ internal sealed class OrderRepository : IOrderRepository
     /// <returns></returns>
     public async Task<OrderDetail?> GetOrderDetailByIdFromPostgreSQL(OrderDetailId orderDetailId)
     {
-        return await _postgreSQLWriteDbContext.OrderDetails.FindAsync(orderDetailId);
+        return await _postgreSQLWriteDbContext.OrderDetails
+            .Include(a => a.Order)
+            .Where(a => a.OrderDetailId == orderDetailId)
+            .FirstOrDefaultAsync();
     }
     /// <summary>
     /// Get order by OrderId
@@ -105,6 +108,22 @@ internal sealed class OrderRepository : IOrderRepository
     {
         return await _mySqlWriteDbContext.Orders
             .FirstOrDefaultAsync(x => x.CustomerId == customerId);
+    }
+    /// <summary>
+    /// Delete order detail from MySQL
+    /// </summary>
+    /// <param name="orderDetail"></param>
+    public void DeleteOrderDetailFromMySQL(OrderDetail orderDetail)
+    {
+        _mySqlWriteDbContext.OrderDetails.Remove(orderDetail);
+    }
+    /// <summary>
+    /// Delete order detail from PostgreSQL
+    /// </summary>
+    /// <param name="orderDetail"></param>
+    public void DeleteOrderDetailFromPostgeSQL(OrderDetail orderDetail)
+    {
+        _postgreSQLWriteDbContext.OrderDetails.Remove(orderDetail);
     }
 
 }

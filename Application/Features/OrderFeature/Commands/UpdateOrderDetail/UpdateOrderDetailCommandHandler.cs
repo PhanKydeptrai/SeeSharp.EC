@@ -15,6 +15,7 @@ namespace Application.Features.OrderFeature.Commands.UpdateOrderDetail;
 
 internal sealed class UpdateOrderDetailCommandHandler : ICommandHandler<UpdateOrderDetailCommand>
 {
+    #region Dependencies
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderRepository _orderRepository;
     private readonly IProductQueryServices _productQueryServices;
@@ -33,26 +34,31 @@ internal sealed class UpdateOrderDetailCommandHandler : ICommandHandler<UpdateOr
         _outBoxMessageServices = outBoxMessageServices;
         _eventBus = eventBus;
     }
+    #endregion
 
+    //FIXME: Lỗi tính toán giá trị đơn hàng
     public async Task<Result> Handle(UpdateOrderDetailCommand request, CancellationToken cancellationToken)
     {
         OrderDetailId orderDetailId = OrderDetailId.FromGuid(request.OrderDetailId);
 
         var orderDetail = await _orderRepository.GetOrderDetailByIdFromMySQL(orderDetailId);
 
-        if (orderDetail is null) return Result.Failure(OrderError.NotFoundOrderDetail(orderDetailId));
+        if (orderDetail is null) return Result.Failure(OrderError.OrderDetailNotFound(orderDetailId));
         //get product price
         var productPrice = await _productQueryServices.GetAvailableProductPrice(orderDetail.ProductId);
 
+        
+        var orderTotal = orderDetail.Order!.Total.Value - orderDetail.UnitPrice.Value; //remove old order detail price
+
         // Update quantity and unit price of order detail
-        orderDetail.UpdateQuantityProductPrice(
+        orderDetail.ReCaculateUnitPrice(
             OrderDetailQuantity.NewOrderDetailQuantity(request.Quantity),
             productPrice!);
 
-        //update order total
-        var orderTotal = orderDetail.Order!.Total.Value - orderDetail.UnitPrice.Value;
-        orderDetail.Order.UpdateOrderTotal(OrderTotal.FromDecimal(orderTotal));
+        orderTotal += orderDetail.UnitPrice.Value; //add new order detail price
         
+        orderDetail.Order.ReplaceOrderTotal(OrderTotal.FromDecimal(orderTotal));
+
         var message = new CustomerUpdateOrderDetailEvent(
             orderDetail.OrderDetailId,
             orderDetail.Quantity.Value,
@@ -62,7 +68,7 @@ internal sealed class UpdateOrderDetailCommandHandler : ICommandHandler<UpdateOr
 
         await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
         await _unitOfWork.SaveToMySQL();
-        
+
         await _eventBus.PublishAsync(message);
         return Result.Success();
     }
