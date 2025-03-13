@@ -16,7 +16,7 @@ internal sealed class OrderRepository : IOrderRepository
     private readonly NextSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
 
     public OrderRepository(
-        NextSharpMySQLWriteDbContext mySqlWriteDbContext, 
+        NextSharpMySQLWriteDbContext mySqlWriteDbContext,
         NextSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
     {
         _mySqlWriteDbContext = mySqlWriteDbContext;
@@ -27,7 +27,7 @@ internal sealed class OrderRepository : IOrderRepository
     {
         await _mySqlWriteDbContext.Orders.AddAsync(order);
     }
-    
+
     public async Task AddNewOrderToPostgreSQL(Order order)
     {
         await _postgreSQLWriteDbContext.Orders.AddAsync(order);
@@ -46,27 +46,43 @@ internal sealed class OrderRepository : IOrderRepository
     {
         await _mySqlWriteDbContext.OrderTransactions.AddAsync(orderTransaction);
     }
-    
+
     public async Task AddNewOrderTransactionToPostgreSQL(OrderTransaction orderTransaction)
     {
         await _postgreSQLWriteDbContext.OrderTransactions.AddAsync(orderTransaction);
     }
-    
+
     public async Task<OrderDetail?> CheckProductAvailabilityInOrder(OrderId orderId, ProductId productId)
     {
         return await _mySqlWriteDbContext.OrderDetails
             .FirstOrDefaultAsync(x => x.OrderId == orderId && x.ProductId == productId);
     }
-
+    /// <summary>
+    /// Get order detail by OrderDetailId
+    /// </summary>
+    /// <param name="orderDetailId"></param>
+    /// <returns></returns>
     public async Task<OrderDetail?> GetOrderDetailByIdFromMySQL(OrderDetailId orderDetailId)
     {
-        return await _mySqlWriteDbContext.OrderDetails.FindAsync(orderDetailId);
+        // return await _mySqlWriteDbContext.OrderDetails.FindAsync(orderDetailId);
+        return await _mySqlWriteDbContext.OrderDetails
+            .Include(a => a.Order)
+            .Where(a => a.OrderDetailId == orderDetailId).FirstOrDefaultAsync();
     }
-
+    /// <summary>
+    /// Get order detail by OrderDetailId
+    /// </summary>
+    /// <param name="orderDetailId"></param>
+    /// <returns></returns>
     public async Task<OrderDetail?> GetOrderDetailByIdFromPostgreSQL(OrderDetailId orderDetailId)
     {
         return await _postgreSQLWriteDbContext.OrderDetails.FindAsync(orderDetailId);
     }
+    /// <summary>
+    /// Get order by OrderId
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
     public async Task<Order?> GetOrderByIdFromMySQL(OrderId orderId)
     {
         return await _mySqlWriteDbContext.Orders.FindAsync(orderId);
@@ -89,6 +105,6 @@ internal sealed class OrderRepository : IOrderRepository
     {
         return await _mySqlWriteDbContext.Orders
             .FirstOrDefaultAsync(x => x.CustomerId == customerId);
-    } 
+    }
 
 }

@@ -1,5 +1,6 @@
 using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
+using Application.Features.OrderFeature.Commands.AddProductToOrder;
 using Application.IServices;
 using Application.Outbox;
 using Domain.Entities.Customers;
