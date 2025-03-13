@@ -68,7 +68,7 @@ public sealed class Order
     /// Replace the current order total with the new one
     /// </summary>
     /// <param name="total"></param>
-    public void UpdateOrderTotal(OrderTotal total)
+    public void ReplaceOrderTotal(OrderTotal total)
     {
         Total = total;
     }

@@ -50,9 +50,9 @@ public sealed class CustomerAddProductToOrderMessageConsumer : IConsumer<Custome
                 var order = await _orderRepository.GetOrderByIdFromPostgreSQL(
                     OrderId.FromGuid(context.Message.OrderId));
 
-                order!.UpdateOrderTotal(OrderTotal.NewOrderTotal(context.Message.OrderTotal));
-                orderDetail!.ReplaceUnitPrice(OrderDetailUnitPrice.FromDecimal(context.Message.OrderDetailUnitPrice));
-
+                order!.ReplaceOrderTotal(OrderTotal.NewOrderTotal(context.Message.OrderTotal));
+                orderDetail!.ReplaceUnitPrice(OrderDetailUnitPrice.NewOrderDetailUnitPrice(context.Message.OrderDetailUnitPrice));
+                orderDetail!.ReplaceQuantity(OrderDetailQuantity.NewOrderDetailQuantity(context.Message.OrderDetailQuantity));
                 await _unitOfWork.SaveToPostgreSQL();
                 //----------------------------------------------------------
             }

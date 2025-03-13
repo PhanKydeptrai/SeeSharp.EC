@@ -58,7 +58,10 @@ public static class EndpointName
     public class Order
     {
         public const string AddProductToOrder = "AddProductToOrder";
+        public const string UpdateOrderDetail = "UpdateOrderDetail";
         public const string GetById = "GetOrder";
+        public const string DeleteOrderDetail = "DeleteOrderDetail";
+
     }
 }
 

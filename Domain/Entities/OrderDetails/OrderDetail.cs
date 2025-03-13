@@ -77,15 +77,27 @@ public sealed class OrderDetail
     }
 
     /// <summary>
-    /// Update quantity and unit price of order detail
+    /// Update quantity and unit price of order detail when add more product
     /// </summary>
     /// <param name="quantity"></param>
     /// <param name="productPrice"></param>
-    public void UpdateQuantityProductPrice(OrderDetailQuantity quantity, ProductPrice productPrice)
+    public void UpdateQuantityAndProductPriceAfterAddMoreProduct(OrderDetailQuantity quantity, ProductPrice productPrice)
     {
         Quantity = OrderDetailQuantity.FromInt(Quantity.Value + quantity.Value);
         UnitPrice = OrderDetailUnitPrice.NewOrderDetailUnitPrice(productPrice.Value * Quantity.Value);
     }
+    /// <summary>
+    /// Update quantity and unit price of order detail 
+    /// </summary>
+    /// <param name="quantity"></param>
+    /// <param name="productPrice"></param>
+    public void ReCaculateUnitPrice(OrderDetailQuantity quantity, ProductPrice productPrice)
+    {
+        Quantity = quantity;
+        UnitPrice = OrderDetailUnitPrice.NewOrderDetailUnitPrice(productPrice.Value * Quantity.Value);
+    } 
+
+
     /// <summary>
     /// Replace unit price of order detail(Use for message consumer)
     /// </summary>
@@ -93,5 +105,13 @@ public sealed class OrderDetail
     public void ReplaceUnitPrice(OrderDetailUnitPrice unitPrice)
     {
         UnitPrice = unitPrice;
+    }
+    /// <summary>
+    /// Replace quantity of order detail(Use for message consumer)
+    /// </summary>
+    /// <param name="quantity"></param>
+    public void ReplaceQuantity(OrderDetailQuantity quantity)
+    {
+        Quantity = quantity;
     }
 }

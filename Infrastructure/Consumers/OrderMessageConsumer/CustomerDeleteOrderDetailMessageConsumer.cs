@@ -10,29 +10,29 @@ using SharedKernel;
 
 namespace Infrastructure.Consumers.OrderMessageConsumer;
 
-internal sealed class CustomerUpdateOrderDetailMessageConsumer : IConsumer<CustomerUpdateOrderDetailEvent>
+internal sealed class CustomerDeleteOrderDetailMessageConsumer : IConsumer<CustomerDeleteOrderDetailEvent>
 {
+    private readonly ILogger<CustomerDeleteOrderDetailMessageConsumer> _logger;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<CustomerUpdateOrderDetailMessageConsumer> _logger;
-    private readonly IOrderRepository _orderRepository;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
-    public CustomerUpdateOrderDetailMessageConsumer(
+    private readonly IOrderRepository _orderRepository;
+    public CustomerDeleteOrderDetailMessageConsumer(
+        ILogger<CustomerDeleteOrderDetailMessageConsumer> logger,
         IUnitOfWork unitOfWork,
-        ILogger<CustomerUpdateOrderDetailMessageConsumer> logger,
         IOrderRepository orderRepository,
         IOutBoxMessageServices outBoxMessageServices)
     {
-        _unitOfWork = unitOfWork;
         _logger = logger;
+        _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
         _outBoxMessageServices = outBoxMessageServices;
     }
 
-    public async Task Consume(ConsumeContext<CustomerUpdateOrderDetailEvent> context)
+    public async Task Consume(ConsumeContext<CustomerDeleteOrderDetailEvent> context)
     {
         //Log start-----------------------------------------------------
         _logger.LogInformation(
-            "Consuming CustomerUpdateOrderDetailEvent for OrderdetailId: {OrderdetailId}",
+            "Consuming CustomerDeleteOrderDetailEvent for OrderDetailId: {OrderDetailId}",
             context.Message.OrderDetailId);
         //--------------------------------------------------------------
 
@@ -41,10 +41,9 @@ internal sealed class CustomerUpdateOrderDetailMessageConsumer : IConsumer<Custo
             //Consume message            
             var orderDetail = await _orderRepository.GetOrderDetailByIdFromPostgreSQL(
                 OrderDetailId.FromGuid(context.Message.OrderDetailId));
-
-            orderDetail!.Order!.ReplaceOrderTotal(OrderTotal.NewOrderTotal(context.Message.OrderTotal));
-            orderDetail!.ReplaceUnitPrice(OrderDetailUnitPrice.FromDecimal(context.Message.OrderDetailUnitPrice));
-            orderDetail!.ReplaceQuantity(OrderDetailQuantity.FromInt(context.Message.OrderDetailQuantity));
+            
+            orderDetail!.Order!.ReplaceOrderTotal(OrderTotal.FromDecimal(context.Message.NewOrderTotal));
+            _orderRepository.DeleteOrderDetailFromPostgeSQL(orderDetail);
             await _unitOfWork.SaveToPostgreSQL();
             //---------------------------------------------------------------
         }
@@ -54,7 +53,7 @@ internal sealed class CustomerUpdateOrderDetailMessageConsumer : IConsumer<Custo
             await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
                 context.Message.MessageId,
                 OutboxMessageStatus.Failed,
-                "Failed to consume CustomerUpdateOrderDetailEvent",
+                "Failed to consume CustomerDeleteOrderDetailEvent",
                 DateTime.UtcNow);
 
             await _unitOfWork.SaveToMySQL();
@@ -63,7 +62,7 @@ internal sealed class CustomerUpdateOrderDetailMessageConsumer : IConsumer<Custo
             //Log error-------------------------------------------------
             _logger.LogError(
                 ex,
-                "Failed to consume CustomerUpdateOrderDetailEvent for OrderdetailId: {OrderdetailId}",
+                "Failed to consume CustomerDeleteOrderDetailEvent for OrderDetailId: {OrderDetailId}",
                 context.Message.OrderDetailId);
             //----------------------------------------------------------
             throw; //Stop the message
@@ -73,7 +72,7 @@ internal sealed class CustomerUpdateOrderDetailMessageConsumer : IConsumer<Custo
         await _outBoxMessageServices.UpdateOutStatusBoxMessageAsync(
             context.Message.MessageId,
             OutboxMessageStatus.Processed,
-            "Successfully consumed CustomerUpdateOrderDetailEvent",
+            "Successfully consumed CustomerDeleteOrderDetailEvent",
             DateTime.UtcNow);
 
         await _unitOfWork.SaveToMySQL();
@@ -81,7 +80,7 @@ internal sealed class CustomerUpdateOrderDetailMessageConsumer : IConsumer<Custo
 
         //Log end------------------------------------------
         _logger.LogInformation(
-            "Consumed CustomerUpdateOrderDetailEvent for OrderdetailId: {OrderdetailId}",
+            "Consumed CustomerDeleteOrderDetailEvent for OrderDetailId: {OrderDetailId}",
             context.Message.OrderDetailId);
         //-------------------------------------------------
     }

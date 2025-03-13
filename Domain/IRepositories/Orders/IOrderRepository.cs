@@ -20,6 +20,8 @@ public interface IOrderRepository
     Task<Order?> GetOrderByIdFromMySQL(OrderId orderId);
     Task<Order?> GetOrderByIdFromPostgreSQL(OrderId orderId);
     Task<Order?> GetOrderByCustomerIdFromMySQL(CustomerId customerId);
+    void DeleteOrderDetailFromMySQL(OrderDetail orderDetail);
+    void DeleteOrderDetailFromPostgeSQL(OrderDetail orderDetail);
 }
 
 

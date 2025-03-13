@@ -59,13 +59,13 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                 var orderTotal = order.Total.Value - orderDetail.UnitPrice.Value;
 
                 // Update quantity and unit price of order detail
-                orderDetail.UpdateQuantityProductPrice(
+                orderDetail.UpdateQuantityAndProductPriceAfterAddMoreProduct(
                     OrderDetailQuantity.NewOrderDetailQuantity(request.Quantity),
                     productPrice!);
 
                 // Update order total 
                 orderTotal = orderTotal + orderDetail.UnitPrice.Value;
-                order.UpdateOrderTotal(OrderTotal.FromDecimal(orderTotal));
+                order.ReplaceOrderTotal(OrderTotal.FromDecimal(orderTotal));
 
                 //Publish event 0
                 var message = new CustomerAddProductToOrderEvent(
@@ -73,7 +73,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                     orderDetail.OrderDetailId,
                     order.CustomerId.Value,
                     productId,
-                    request.Quantity,
+                    orderDetail.Quantity.Value,
                     orderDetail.UnitPrice.Value,
                     orderTotal,
                     Ulid.NewUlid().ToGuid(),

@@ -5,7 +5,7 @@ namespace Domain.Utilities.Errors;
 
 public static class OrderError
 {
-    public static Error NotFoundOrderDetail(OrderDetailId orderDetailId) =>  Error.NotFound(
+    public static Error OrderDetailNotFound(OrderDetailId orderDetailId) =>  Error.NotFound(
         "OrderDetatail.NotFound",
         $"The Order detail with the Id = '{orderDetailId}' was not found");
 }
