@@ -83,10 +83,10 @@ internal sealed class ProductQueryServices : IProductQueryServices
             productsQuery = productsQuery.Where(x => x.ProductStatus == (ProductStatus)Enum.Parse(typeof(ProductStatus), filterProductStatus));
         }
 
-        if (!string.IsNullOrWhiteSpace(filterCategory))
+        if (!string.IsNullOrWhiteSpace(filterCategory) && Ulid.TryParse(filterCategory, out var _))
         {
             productsQuery = productsQuery.Where(
-                x => x.CategoryId.ToGuid() == CategoryId.FromString(filterCategory));
+                x => x.CategoryId == Ulid.Parse(filterCategory));
         }
 
         //sort
