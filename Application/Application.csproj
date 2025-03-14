@@ -13,7 +13,7 @@
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Features\OrderFeature\Queries\" />
+	  <Folder Include="Features\WishItemFeature\Queries\" />
 	</ItemGroup>
 
 </Project>

@@ -3,8 +3,6 @@ using API.Infrastructure;
 using Application.Features.ProductFeature.Queries.GetAllProduct;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SharedKernel.Constants;
 
 namespace API.Endpoints.Product;
