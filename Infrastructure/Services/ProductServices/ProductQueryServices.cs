@@ -2,7 +2,6 @@
 using Application.Features.Pages;
 using Application.IServices;
 using Domain.Database.PostgreSQL.ReadModels;
-using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
@@ -55,9 +54,12 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 && x.ProductId != new Ulid(productId.Value));
         }
 
+        return await _postgreSQLdbContext.Products.AnyAsync(x => x.ProductName == productName.Value);
+    }
+    public async Task<bool> IsProductExist(ProductId productId)
+    {
         return await _postgreSQLdbContext.Products
-            .Where(x => x.ProductName == productName.Value)
-            .AnyAsync();
+            .AnyAsync(x => x.ProductId == new Ulid(productId.Value) && x.ProductStatus != ProductStatus.Discontinued);
     }
 
     public async Task<PagedList<ProductResponse>> PagedList(

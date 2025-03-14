@@ -78,4 +78,9 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
     {
         return await _decorated.GetAvailableProductPrice(productId);    
     }
+
+    public async Task<bool> IsProductExist(ProductId productId)
+    {
+        return await _decorated.IsProductExist(productId);
+    }
 }

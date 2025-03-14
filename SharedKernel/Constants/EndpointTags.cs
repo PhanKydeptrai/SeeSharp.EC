@@ -6,6 +6,7 @@ public static class EndpointTag
     public const string Product = "Product";
     public const string Customer = "Customer";
     public const string Order = "Order";
+    public const string Wishlist = "Wishlist";
 }
 
 public static class EndpointName
@@ -64,6 +65,14 @@ public static class EndpointName
         public const string GetOrderByOrderId = "GetOrderByOrderId";
         public const string GetCartInformation = "GetCartInformation";
         public const string GetAllOrderForAdmin = "GetAllOrderForAdmin";
+        public const string GetAllOrderForCustomer = "GetAllOrderForCustomer";
+    }
+
+    public class Wishlist
+    {
+        public const string AddWishList = "AddWishList";
+        public const string RemoveWishList = "RemoveWishList";
+        public const string GetWishList = "GetWishList";
     }
 }
 

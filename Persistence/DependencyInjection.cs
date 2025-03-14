@@ -21,6 +21,8 @@ using Domain.IRepositories.UserAuthenticationTokens;
 using Persistence.Repositories.UserAuthenticationTokenRepositories;
 using Domain.IRepositories.Orders;
 using Persistence.Repositories.OrderRepositories;
+using Domain.IRepositories.WishItems;
+using Persistence.Repositories.WishItemRepositories;
 
 namespace Persistence;
 //FIXME: AddPersistnce
@@ -47,6 +49,7 @@ public static class DependencyInjection
         services.AddScoped<IVerificationTokenRepository, VerificationTokenRepository>();
         services.AddScoped<IUserAuthenticationTokenRepository, UserAuthenticationTokenRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IWishItemRepository, WishItemRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

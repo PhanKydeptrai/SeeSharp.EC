@@ -25,10 +25,23 @@ public sealed class WishItem
     }
 
     public static WishItem NewWishItem(
+        CustomerId customerId,
+        ProductId productId)
+    {
+        return new WishItem(
+            WishItemId.New(), 
+            customerId, 
+            productId);
+    }
+
+    public static WishItem FromExisting(
         WishItemId wishItemId,
         CustomerId customerId,
         ProductId productId)
     {
-        return new WishItem(wishItemId, customerId, productId);
+        return new WishItem(
+            wishItemId, 
+            customerId, 
+            productId);
     }
 }

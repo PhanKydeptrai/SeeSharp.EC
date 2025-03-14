@@ -6,6 +6,7 @@ using Infrastructure.Consumers.CategoryMessageConsumer;
 using Infrastructure.Consumers.CustomerMessageConsumer;
 using Infrastructure.Consumers.OrderMessageConsumer;
 using Infrastructure.Consumers.ProductMessageConsumer;
+using Infrastructure.Consumers.WishListMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Security;
 using Infrastructure.Services;
@@ -132,6 +133,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CustomerAddProductToOrderMessageConsumer>();
             busConfiguration.AddConsumer<CustomerUpdateOrderDetailMessageConsumer>();
             busConfiguration.AddConsumer<CustomerDeleteOrderDetailMessageConsumer>();
+            busConfiguration.AddConsumer<AddWishItemMessageConsumer>();
             //* FIXME: Config RabbitMQ
             #region Config RabbitMQ
             // busConfiguration.UsingRabbitMq((context, cfg) =>

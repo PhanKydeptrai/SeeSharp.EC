@@ -57,4 +57,10 @@ public interface IProductQueryServices
     /// <param name="productId"></param>
     /// <returns></returns>
     Task<bool> CheckProductAvailability(ProductId productId);
+    /// <summary>
+    /// Check if product is exist (Used for checking product before adding to wish list)
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <returns></returns>
+    Task<bool> IsProductExist(ProductId productId);
 }
