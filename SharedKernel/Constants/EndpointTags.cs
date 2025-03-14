@@ -61,7 +61,8 @@ public static class EndpointName
         public const string UpdateOrderDetail = "UpdateOrderDetail";
         public const string GetById = "GetOrder";
         public const string DeleteOrderDetail = "DeleteOrderDetail";
-
+        public const string GetOrderByOrderId = "GetOrderByOrderId";
+        public const string GetCartInformation = "GetCartInformation";
     }
 }
 
