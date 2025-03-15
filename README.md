@@ -1,4 +1,4 @@
-# NextSharp.EC
+# NextSharp.EC - Database Benchmark
 
 BenchmarkDotNet v0.14.0, Windows 10 (10.0.19044.5371/21H2/November2021Update)
 
