@@ -21,6 +21,7 @@ internal sealed class RestoreCategory : IEndpoint
         .DisableAntiforgery()
         .WithTags(EndpointTag.Category)
         .WithName(EndpointName.Category.Restore)
+        .RequireAuthorization()
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }

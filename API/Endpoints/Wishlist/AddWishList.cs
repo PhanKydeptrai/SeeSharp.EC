@@ -19,7 +19,7 @@ internal sealed class AddWishList : IEndpoint
         {
             string token = TokenExtentions.GetTokenFromHeader(httpContext);
             var claims = TokenExtentions.DecodeJwt(token);
-            claims.TryGetValue("CustomerId", out var customerId);
+            claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
             var command = new AddWishListCommand(productId, Guid.Parse(customerId!));
             var result = await sender.Send(command);

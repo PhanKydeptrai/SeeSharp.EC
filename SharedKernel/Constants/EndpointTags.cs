@@ -84,3 +84,8 @@ public static class EndpointMethod
     public const string DELETE = "DELETE";
 }
 
+public static class CustomJwtRegisteredClaimNames
+{
+    public const string CustomerId = "CustomerId";
+}
+

@@ -22,6 +22,7 @@ internal sealed class DeleteCategory : IEndpoint
         })
         .WithTags(EndpointTag.Category)
         .WithName(EndpointName.Category.Delete)
-        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
+        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
+        .RequireAuthorization();
     }
 }

@@ -16,7 +16,7 @@ internal sealed class GetCartInformation : IEndpoint
         {
             string token = TokenExtentions.GetTokenFromHeader(httpContext);
             var claims = TokenExtentions.DecodeJwt(token);
-            claims.TryGetValue("CustomerId", out var customerId);
+            claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
             var result = await sender.Send(new GetCartInformationQuery(new Guid(customerId!)));
             return result.Match(Results.Ok, CustomResults.Problem);

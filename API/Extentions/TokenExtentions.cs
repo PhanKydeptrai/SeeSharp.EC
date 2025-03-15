@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Metadata;
 
 namespace API.Extentions;
 
@@ -24,4 +25,6 @@ internal static class TokenExtentions
 
         return claims;
     }
+
+    public const string CustomerId = "CustomerId";
 }

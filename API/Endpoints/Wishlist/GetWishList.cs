@@ -1,18 +1,19 @@
+
 using API.Extentions;
 using API.Infrastructure;
-using Application.Features.OrderFeature.Queries.GetAllOrderForCustomer;
+using Application.Features.WishItemFeature.Queries.GetWishList;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
 
-namespace API.Endpoints.Order;
+namespace API.Endpoints.Wishlist;
 
-internal sealed class GetAllOrderForCustomer : IEndpoint
+internal sealed class GetWishList : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder builder)
     {
-        builder.MapGet("/api/orders/customer", async (
-            [FromQuery] string? statusFilter,
+        builder.MapGet("api/wishitems", async (
+            [FromQuery] string? productStatusFilter,
             [FromQuery] string? searchTerm,
             [FromQuery] string? sortColumn,
             [FromQuery] string? sortOrder,
@@ -25,20 +26,20 @@ internal sealed class GetAllOrderForCustomer : IEndpoint
             var claims = TokenExtentions.DecodeJwt(token);
             claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
-            var query = new GetAllOrderForCustomerQuery(
-                new Guid(customerId!),
-                statusFilter,
-                searchTerm,
-                sortColumn,
-                sortOrder,
-                page,
-                pageSize);
+            var query = new GetWishListQuery(
+                productStatusFilter, 
+                searchTerm, sortColumn, 
+                sortOrder, page, 
+                pageSize, 
+                Guid.Parse(customerId!));
 
             var result = await sender.Send(query);
+
             return result.Match(Results.Ok, CustomResults.Problem);
         })
-        .WithTags(EndpointTag.Order)
-        .WithName(EndpointName.Order.GetAllOrderForCustomer)
+        .DisableAntiforgery()
+        .WithTags(EndpointTag.Wishlist)
+        .WithName(EndpointName.Wishlist.GetWishList)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
         .RequireAuthorization();
     }

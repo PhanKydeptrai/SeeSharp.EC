@@ -96,6 +96,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
         {
             "productname" => x => x.ProductName,
             "productid" => x => x.ProductId,
+            "productprice" => x => x.ProductPrice,
             _ => x => x.ProductId
         };
 

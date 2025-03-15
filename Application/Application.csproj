@@ -12,8 +12,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Features\WishItemFeature\Queries\" />
-	</ItemGroup>
 
 </Project>

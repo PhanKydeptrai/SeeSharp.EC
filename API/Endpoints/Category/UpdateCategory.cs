@@ -18,13 +18,12 @@ internal sealed class UpdateCategory : IEndpoint
             ISender sender) =>
         {
             var result = await sender.Send(new UpdateCategoryCommand(categoryId, categoryName, image));
-            return result.Match(
-                Results.NoContent, 
-                CustomResults.Problem);
+            return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .DisableAntiforgery()
         .WithTags(EndpointTag.Category)
         .WithName(EndpointName.Category.Update)
+        .RequireAuthorization()
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
 }
