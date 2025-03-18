@@ -18,6 +18,7 @@ AMD Ryzen 5 5600H with Radeon Graphics, 1 CPU, 12 logical and 6 physical cores
 | Insert_PogreSQL  | 8.469 ms | 0.9632 ms | 2.840 ms |
 | Insert_SQLServer | 8.592 ms |  1.041 ms | 3.070 ms |
 
+
   
 
 Update (ChangeTracking)
