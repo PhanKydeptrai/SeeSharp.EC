@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Domain.Entities.WishItems;
 using Domain.IRepositories.WishItems;
 using Persistence.Database.MySQL;
@@ -11,7 +12,7 @@ internal sealed class WishItemRepository : IWishItemRepository
     private readonly NextSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
 
     public WishItemRepository(
-        NextSharpMySQLWriteDbContext mysqlWriteDbContext, 
+        NextSharpMySQLWriteDbContext mysqlWriteDbContext,
         NextSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
     {
         _mysqlWriteDbContext = mysqlWriteDbContext;
@@ -26,5 +27,24 @@ internal sealed class WishItemRepository : IWishItemRepository
     public async Task AddWishItemToPostgreSQL(WishItem wishItem)
     {
         await _postgreSQLWriteDbContext.WishItems.AddAsync(wishItem);
+    }
+    public async Task<WishItem?> GetWishItemByIdFromMySQL(WishItemId wishItemId)
+    {
+        return await _mysqlWriteDbContext.WishItems.FindAsync(wishItemId);
+    }
+
+    public async Task<WishItem?> GetWishItemByIdFromPostgreSQL(WishItemId wishItemId)
+    {
+        return await _postgreSQLWriteDbContext.WishItems.FindAsync(wishItemId);
+    }
+
+    public void DeleteWishItemFromMySQL(WishItem wishItem)
+    {
+        _mysqlWriteDbContext.WishItems.Remove(wishItem);
+    }
+
+    public void DeleteWishItemFromPostgreSQL(WishItem wishItem)
+    {
+        _postgreSQLWriteDbContext.WishItems.Remove(wishItem);
     }
 }
