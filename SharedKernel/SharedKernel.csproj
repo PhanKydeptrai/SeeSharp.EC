@@ -3,7 +3,4 @@
 		<PackageReference Include="MediatR.Contracts" />
 		<PackageReference Include="Ulid" />
 	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\Messaging.Contracts\Messaging.Contracts.csproj" />
-	</ItemGroup>
 </Project>
