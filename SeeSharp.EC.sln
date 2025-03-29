@@ -8,8 +8,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AE797A1F-96E
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{AFEB392D-E760-447E-B89F-DBD63D2D4D44}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{A8FCA6D7-B9A4-4FCC-BD85-D09BDBACC34E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F69461D2-8B9D-4BE2-8EA6-5314FDF5E389}"
@@ -30,11 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.ReverseProxy", "Yarp.ReverseProxy\Yarp.ReverseProxy.csproj", "{7CB6011A-B7DA-4152-BAFA-A80771A8A855}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextSharp.UnitTest", "NextSharp.UnitTest\NextSharp.UnitTest.csproj", "{C84F3E84-F444-419C-8B06-BCA1C9D24D5F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{DF7C5224-CE02-4436-A086-DB2F40DC021E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Contracts", "Messaging.Contracts\Messaging.Contracts.csproj", "{8243DFDC-40D7-43F3-AF52-8F7D03F637D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,18 +60,10 @@ Global
 		{7CB6011A-B7DA-4152-BAFA-A80771A8A855}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CB6011A-B7DA-4152-BAFA-A80771A8A855}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CB6011A-B7DA-4152-BAFA-A80771A8A855}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C84F3E84-F444-419C-8B06-BCA1C9D24D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C84F3E84-F444-419C-8B06-BCA1C9D24D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C84F3E84-F444-419C-8B06-BCA1C9D24D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C84F3E84-F444-419C-8B06-BCA1C9D24D5F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8243DFDC-40D7-43F3-AF52-8F7D03F637D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8243DFDC-40D7-43F3-AF52-8F7D03F637D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8243DFDC-40D7-43F3-AF52-8F7D03F637D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8243DFDC-40D7-43F3-AF52-8F7D03F637D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,8 +75,9 @@ Global
 		{7AADC7E9-E9DE-4001-B4E7-0046808CA429} = {AE797A1F-96E2-494A-B416-94E3DD77522E}
 		{BA548DC9-A28E-41AA-92EF-FE9C26F78079} = {AE797A1F-96E2-494A-B416-94E3DD77522E}
 		{7CB6011A-B7DA-4152-BAFA-A80771A8A855} = {A8FCA6D7-B9A4-4FCC-BD85-D09BDBACC34E}
-		{C84F3E84-F444-419C-8B06-BCA1C9D24D5F} = {AFEB392D-E760-447E-B89F-DBD63D2D4D44}
 		{DF7C5224-CE02-4436-A086-DB2F40DC021E} = {AE797A1F-96E2-494A-B416-94E3DD77522E}
-		{8243DFDC-40D7-43F3-AF52-8F7D03F637D1} = {AE797A1F-96E2-494A-B416-94E3DD77522E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4F4E9588-85A9-4147-A265-579B43C5D4AB}
 	EndGlobalSection
 EndGlobal
