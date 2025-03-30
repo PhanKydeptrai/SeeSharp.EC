@@ -55,7 +55,7 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
 
             await _userRepository.AddUserToPostgreSQL(user);
             await _customerRepository.AddCustomerToPostgreSQL(customer);
-            await _unitOfWork.SaveToPostgreSQL();
+            await _unitOfWork.SaveChangeAsync();
         }
         catch (Exception ex)
         {
@@ -66,7 +66,7 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
                 "Failed to consume CustomerSignedUpEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -99,7 +99,7 @@ internal sealed class CustomerSignedUpMessageConsumer : IConsumer<CustomerSigned
             message,
             _outBoxMessageServices);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
 
         await _publishEndpoint.Publish(message);
 

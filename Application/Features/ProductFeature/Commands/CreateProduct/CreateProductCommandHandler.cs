@@ -41,8 +41,8 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         var (product, failure) = await CreateNewProduct(request);
 
         if (product is null) return failure!;
-
-        await _productRepository.AddProductToMySQL(product);
+        
+        await _productRepository.AddProductToPostgreSQL(product);
 
         var message = CreateProductCreatedEvent(product);
         await OutboxMessageExtentions.InsertOutboxMessageAsync(
@@ -50,7 +50,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
             message,
             _outBoxMessageServices);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         await _eventBus.PublishAsync(message, cancellationToken);
         return Result.Success(product.ProductId);
     }

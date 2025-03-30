@@ -37,7 +37,7 @@ internal sealed class AddWishListCommandHandler : ICommandHandler<AddWishListCom
             CustomerId.FromGuid(request.CustomerId),
             ProductId.FromGuid(request.ProductId));
         
-        await _wishItemRepository.AddWishItemToMySQL(wishItem);
+        await _wishItemRepository.AddWishItemToPostgreSQL(wishItem);
         var message = new AddWishItemEvent(
             wishItem.WishItemId,
             request.ProductId, 
@@ -45,7 +45,7 @@ internal sealed class AddWishListCommandHandler : ICommandHandler<AddWishListCom
             Ulid.NewUlid().ToGuid());
 
         await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outboxMessageServices);
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         await _eventBus.PublishAsync(message);
         return Result.Success();
     }

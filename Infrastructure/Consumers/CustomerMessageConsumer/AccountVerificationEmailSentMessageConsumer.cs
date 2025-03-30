@@ -60,7 +60,7 @@ internal sealed class AccountVerificationEmailSentMessageConsumer : IConsumer<Ac
                 "Failed to consume AccountVerificationEmailSentEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -79,7 +79,7 @@ internal sealed class AccountVerificationEmailSentMessageConsumer : IConsumer<Ac
             "Successfully consumed AccountVerificationEmailSentEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Log end------------------------------------------

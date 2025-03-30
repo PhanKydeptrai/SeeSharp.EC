@@ -54,7 +54,7 @@ internal sealed class CustomerResetPasswordSuccessNotificationMessageConsumer
                 "Failed to consume CustomerResetPasswordSuccessNotificationEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -73,7 +73,7 @@ internal sealed class CustomerResetPasswordSuccessNotificationMessageConsumer
             "Successfully consumed CustomerResetPasswordSuccessNotificationEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Log end------------------------------------------

@@ -19,8 +19,6 @@ internal sealed class UpdateOrderDetailCommandHandler : ICommandHandler<UpdateOr
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderRepository _orderRepository;
     private readonly IProductQueryServices _productQueryServices;
-    private readonly IOutBoxMessageServices _outBoxMessageServices;
-    private readonly IEventBus _eventBus;
     public UpdateOrderDetailCommandHandler(
         IUnitOfWork unitOfWork,
         IOrderRepository orderRepository,
@@ -31,17 +29,14 @@ internal sealed class UpdateOrderDetailCommandHandler : ICommandHandler<UpdateOr
         _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
         _productQueryServices = productQueryServices;
-        _outBoxMessageServices = outBoxMessageServices;
-        _eventBus = eventBus;
     }
     #endregion
 
-    //FIXME: Lỗi tính toán giá trị đơn hàng
     public async Task<Result> Handle(UpdateOrderDetailCommand request, CancellationToken cancellationToken)
     {
         OrderDetailId orderDetailId = OrderDetailId.FromGuid(request.OrderDetailId);
 
-        var orderDetail = await _orderRepository.GetOrderDetailByIdFromMySQL(orderDetailId);
+        var orderDetail = await _orderRepository.GetOrderDetailByIdFromPostgreSQL(orderDetailId);
 
         if (orderDetail is null) return Result.Failure(OrderError.OrderDetailNotFound(orderDetailId));
         //get product price
@@ -59,17 +54,7 @@ internal sealed class UpdateOrderDetailCommandHandler : ICommandHandler<UpdateOr
         
         orderDetail.Order.ReplaceOrderTotal(OrderTotal.FromDecimal(orderTotal));
 
-        var message = new CustomerUpdateOrderDetailEvent(
-            orderDetail.OrderDetailId,
-            orderDetail.Quantity.Value,
-            orderDetail.UnitPrice.Value,
-            orderDetail.Order.Total.Value,
-            Ulid.NewUlid().ToGuid());
-
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
-        await _unitOfWork.SaveToMySQL();
-
-        await _eventBus.PublishAsync(message);
+        await _unitOfWork.SaveChangeAsync();      
         return Result.Success();
     }
 }

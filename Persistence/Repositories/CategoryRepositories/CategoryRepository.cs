@@ -1,27 +1,26 @@
 ﻿using Domain.Entities.Categories;
 using Domain.IRepositories.CategoryRepositories;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 
 namespace Persistence.Repositories.CategoryRepositories;
 
 internal sealed class CategoryRepository : ICategoryRepository
 {
-    private readonly NextSharpMySQLWriteDbContext _mySQLDbContext;
-    private readonly NextSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
+    private readonly SeeSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
+    private readonly SeeSharpPostgreSQLReadDbContext _postgreSQLReadDbContext;
 
     public CategoryRepository(
-        NextSharpMySQLWriteDbContext mySQLDbContext,
-        NextSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
+        SeeSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext, 
+        SeeSharpPostgreSQLReadDbContext postgreSQLReadDbContext)
     {
-        _mySQLDbContext = mySQLDbContext;
         _postgreSQLWriteDbContext = postgreSQLWriteDbContext;
+        _postgreSQLReadDbContext = postgreSQLReadDbContext;
     }
 
     public async Task AddCategoryToMySQL(Category category)
     {
-        await _mySQLDbContext.Categories.AddAsync(category);
+        await _postgreSQLWriteDbContext.Categories.AddAsync(category);
     }
 
     public async Task AddCategoryToPosgreSQL(Category category)
@@ -34,7 +33,7 @@ internal sealed class CategoryRepository : ICategoryRepository
         CategoryId categoryId,
         CancellationToken cancellationToken = default)
     {
-        return await _mySQLDbContext.Categories.FindAsync(categoryId);
+        return await _postgreSQLWriteDbContext.Categories.FindAsync(categoryId);
     }
 
     public async Task<Category?> GetCategoryByIdFromPostgreSQL(
@@ -46,7 +45,7 @@ internal sealed class CategoryRepository : ICategoryRepository
 
     public async Task<bool> IsCategoryIdExist(CategoryId categoryId, CancellationToken cancellationToken = default)
     {
-        return await _mySQLDbContext.Categories
+        return await _postgreSQLWriteDbContext.Categories
             .AsNoTracking()
             .AnyAsync(
             a => a.CategoryId == categoryId 
@@ -58,7 +57,7 @@ internal sealed class CategoryRepository : ICategoryRepository
         CategoryName categoryName,
         CancellationToken cancellationToken = default)
     {
-        return await _mySQLDbContext.Categories
+        return await _postgreSQLWriteDbContext.Categories
             .AsNoTracking()
             .AnyAsync(
                 a => a.CategoryName == categoryName,
@@ -70,7 +69,7 @@ internal sealed class CategoryRepository : ICategoryRepository
         CategoryName categoryName, 
         CancellationToken cancellationToken = default)
     {
-        return await _mySQLDbContext.Categories
+        return await _postgreSQLWriteDbContext.Categories
             .AsNoTracking()
             .AnyAsync(
                 a => a.CategoryName == categoryName 

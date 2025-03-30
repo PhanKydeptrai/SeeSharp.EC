@@ -44,7 +44,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
             message,
             _outboxService);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
 
         await _eventBus.PublishAsync(message);
 
@@ -54,7 +54,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
     //Private methods
     private async Task<(Product? product, Result? failure)> GetProductByIdAsync(ProductId productId)
     {
-        var product = await _productRepository.GetProductFromMySQL(productId);
+        var product = await _productRepository.GetProductFromPostgreSQL(productId);
         if (product is null || product.ProductStatus == ProductStatus.Discontinued)
         {
             return (null, Result.Failure(ProductError.NotFound(productId)));

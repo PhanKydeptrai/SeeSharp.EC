@@ -12,9 +12,9 @@ namespace Infrastructure.Services.OrderServices;
 
 internal sealed class OrderQueryServices : IOrderQueryServices
 {
-    private readonly NextSharpPostgreSQLReadDbContext _dbContext;
+    private readonly SeeSharpPostgreSQLReadDbContext _dbContext;
 
-    public OrderQueryServices(NextSharpPostgreSQLReadDbContext dbContext)
+    public OrderQueryServices(SeeSharpPostgreSQLReadDbContext dbContext)
     {
         _dbContext = dbContext;
     }

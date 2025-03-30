@@ -1,11 +1,11 @@
-﻿using Domain.Database.PostgreSQL.ReadModels;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Domain.Database.PostgreSQL.ReadModels;
 
-namespace Persistence.Database.MySQL;
+namespace Persistence.Database.PostgreSQL;
 
-public sealed class NextSharpMySQLReadDbContext : DbContext
+public sealed class SeeSharpPostgreSQLReadDbContext : DbContext
 {
-    public NextSharpMySQLReadDbContext(DbContextOptions<NextSharpMySQLReadDbContext> options)
+    public SeeSharpPostgreSQLReadDbContext(DbContextOptions<SeeSharpPostgreSQLReadDbContext> options)
         : base(options) { }
     public DbSet<BillReadModel> Bills { get; set; }
     public DbSet<CategoryReadModel> Categories { get; set; }
@@ -27,12 +27,11 @@ public sealed class NextSharpMySQLReadDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(
-            typeof(NextSharpMySQLWriteDbContext).Assembly,
+            typeof(SeeSharpPostgreSQLReadDbContext).Assembly,
             WriteConfigurationsFilter);
 
         base.OnModelCreating(modelBuilder);
     }
-
     private static bool WriteConfigurationsFilter(Type type) =>
-        type.FullName?.Contains("Database.MySQL.Configurations.Read") ?? false;
+        type.FullName?.Contains("Database.PostgreSQL.Configurations.Read") ?? false;
 }

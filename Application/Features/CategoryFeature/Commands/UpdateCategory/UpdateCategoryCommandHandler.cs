@@ -41,15 +41,8 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
         //Update category
         UpdateCategory(category, request);
         var message = CreateCategoryUpdatedEvent(category);
-        //Add Outbox message
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            message.messageId,
-            message,
-            _outboxservice);
 
-        await _unitOfWork.SaveToMySQL(cancellationToken);
-
-        await _eventBus.PublishAsync(message);
+        await _unitOfWork.SaveChangeAsync(cancellationToken);
 
         return Result.Success();
     }

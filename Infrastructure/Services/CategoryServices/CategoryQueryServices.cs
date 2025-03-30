@@ -12,9 +12,9 @@ namespace Infrastructure.Services.CategoryServices;
 internal class CategoryQueryServices : ICategoryQueryServices
 {
     #region Dependency
-    private readonly NextSharpPostgreSQLReadDbContext _contextPostgreSQL;
+    private readonly SeeSharpPostgreSQLReadDbContext _contextPostgreSQL;
     public CategoryQueryServices(
-        NextSharpPostgreSQLReadDbContext contextPostgreSQL)
+        SeeSharpPostgreSQLReadDbContext contextPostgreSQL)
     {
         _contextPostgreSQL = contextPostgreSQL;
     }

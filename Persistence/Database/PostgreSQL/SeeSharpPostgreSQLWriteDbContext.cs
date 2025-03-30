@@ -17,11 +17,11 @@ using Domain.Entities.WishItems;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
-namespace Persistence.Database.MySQL;
+namespace Persistence.Database.PostgreSQL;
 
-public sealed class NextSharpMySQLWriteDbContext : DbContext
+public sealed class SeeSharpPostgreSQLWriteDbContext : DbContext
 {
-    public NextSharpMySQLWriteDbContext(DbContextOptions<NextSharpMySQLWriteDbContext> options) 
+    public SeeSharpPostgreSQLWriteDbContext(DbContextOptions<SeeSharpPostgreSQLWriteDbContext> options)
         : base(options) { }
     public DbSet<Bill> Bills { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -34,22 +34,21 @@ public sealed class NextSharpMySQLWriteDbContext : DbContext
     public DbSet<OrderTransaction> OrderTransactions { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ShippingInformation> ShippingInformations { get; set; }
-    public DbSet<UserAuthenticationToken> UserAuthenticationTokens { get; set; }
+    //public DbSet<UserAuthenticationToken> UserAuthenticationTokens { get; set; }
     public DbSet<User> Users { get; set; }
-    public DbSet<VerificationToken> VerificationTokens { get; set; }
+    //public DbSet<VerificationToken> VerificationTokens { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
     public DbSet<WishItem> WishItems { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(
-            typeof(NextSharpMySQLWriteDbContext).Assembly,
+            typeof(SeeSharpPostgreSQLWriteDbContext).Assembly,
             WriteConfigurationsFilter);
-
         base.OnModelCreating(modelBuilder);
     }
 
     private static bool WriteConfigurationsFilter(Type type) =>
-        type.FullName?.Contains("Database.MySQL.Configurations.Write") ?? false;
+        type.FullName?.Contains("Database.PostgreSQL.Configurations.Write") ?? false;
 }

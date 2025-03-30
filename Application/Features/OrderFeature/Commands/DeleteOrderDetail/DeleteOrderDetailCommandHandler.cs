@@ -34,7 +34,7 @@ internal sealed class DeleteOrderDetailCommandHandler : ICommandHandler<DeleteOr
     public async Task<Result> Handle(DeleteOrderDetailCommand request, CancellationToken cancellationToken)
     {
         OrderDetailId orderDetailId = OrderDetailId.FromGuid(request.OrderDetailId);
-        var orderDetail = await _orderRepository.GetOrderDetailByIdFromMySQL(orderDetailId);
+        var orderDetail = await _orderRepository.GetOrderDetailByIdFromPostgreSQL(orderDetailId);
 
         if (orderDetail is null)
         {
@@ -44,7 +44,7 @@ internal sealed class DeleteOrderDetailCommandHandler : ICommandHandler<DeleteOr
         var newOrderTotal = OrderTotal.NewOrderTotal(orderDetail.Order!.Total.Value - orderDetail.UnitPrice.Value) ; 
         orderDetail.Order.ReplaceOrderTotal(newOrderTotal);
         // Delete order detail from MySQL
-        _orderRepository.DeleteOrderDetailFromMySQL(orderDetail);
+        _orderRepository.DeleteOrderDetailFromPostgeSQL(orderDetail);
         // Add new outbox message
         var message = new CustomerDeleteOrderDetailEvent(
             orderDetailId, 
@@ -52,7 +52,7 @@ internal sealed class DeleteOrderDetailCommandHandler : ICommandHandler<DeleteOr
             Ulid.NewUlid().ToGuid());
         await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
         
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         
         await _eventBus.PublishAsync(message);
         return Result.Success();

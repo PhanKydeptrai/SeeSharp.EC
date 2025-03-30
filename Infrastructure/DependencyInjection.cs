@@ -41,6 +41,7 @@ public static class DependencyInjection
 
         // Cấu hình FluentEmail
         services.AddScoped<EmailVerificationLinkFactory>();
+
         //Mail Test
         services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
                 .AddSmtpSender(configuration["Email:Host"], int.Parse(configuration["Email:Port"]!));
@@ -51,7 +52,7 @@ public static class DependencyInjection
 
         //Add TokenProvider
         services.AddScoped<ITokenProvider, TokenProvider>();
-        services.AddScoped<ITokenRevocationService, TokenRevocationService>();
+        // services.AddScoped<ITokenRevocationService, TokenRevocationService>();
         services.AddHttpContextAccessor();
         return services;
     }
@@ -106,6 +107,7 @@ public static class DependencyInjection
     {
         services.AddMassTransit(busConfiguration =>
         {
+
             busConfiguration.SetKebabCaseEndpointNameFormatter();
             //* NOTE: Message Broker in memory
             busConfiguration.UsingInMemory((context, config) =>
@@ -136,18 +138,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CustomerUpdateOrderDetailMessageConsumer>();
             busConfiguration.AddConsumer<CustomerDeleteOrderDetailMessageConsumer>();
             busConfiguration.AddConsumer<AddWishItemMessageConsumer>();
-            //* FIXME: Config RabbitMQ
-            #region Config RabbitMQ
-            // busConfiguration.UsingRabbitMq((context, cfg) =>
-            // {
-            //     MessageBrokerSetting messageBrokerSetting = context.GetRequiredService<MessageBrokerSetting>();
-            //     cfg.Host(new Uri(messageBrokerSetting.Host), h =>
-            //     {
-            //         h.Username(messageBrokerSetting.Username);
-            //         h.Password(messageBrokerSetting.Password);
-            //     });
-            // });
-            #endregion
+            
 
         });
 
@@ -182,7 +173,6 @@ public static class DependencyInjection
     {
         services.AddQuartz(options =>
         {
-            //options.UseMicrosoftDependencyInjectionJobFactory();
 
             var jobKey_OutboxBackgroundService = JobKey.Create(nameof(OutboxBackgroundService));
 

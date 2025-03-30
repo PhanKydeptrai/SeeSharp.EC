@@ -17,9 +17,7 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
     //FLOW: Get category by id from database -> Update category status -> Add Outbox message -> Commit -> Publish event
     private readonly ICategoryRepository _categoryRepository;
     private readonly IProductRepository _productRepository;
-    private readonly IOutBoxMessageServices _oubBoxService;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IEventBus _eventBus;
 
     public DeleteCategoryCommandHandler(
         ICategoryRepository categoryRepository,
@@ -29,16 +27,14 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
         IProductRepository productRepository)
     {
         _categoryRepository = categoryRepository;
-        _oubBoxService = oubBoxService;
         _unitOfWork = unitOfWork;
-        _eventBus = eventBus;
         _productRepository = productRepository;
     }
 
     public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
         //Start transaction
-        using var transaction = await _unitOfWork.BeginMySQLTransaction();
+        using var transaction = await _unitOfWork.BeginPostgreSQLTransaction();
         var categoryId = CategoryId.FromGuid(request.categoryId);
 
         //Process delete category
@@ -50,30 +46,14 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
         }
         category.Delete();
 
-        //Insert outbox message
-        var message = CreateCategoryDeletedEvent(category.CategoryId);
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            message.messageId,
-            message,
-            _oubBoxService);
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
 
         //Delete all products in this category
-        await _productRepository.DeleteProductByCategoryFromMySQL(category.CategoryId);
+        await _productRepository.DeleteProductByCategoryFromPosgreSQL(category.CategoryId);
         transaction.Commit();
-
-        //Publish event
-        await _eventBus.PublishAsync(message);
         return Result.Success();
-
-
     }
     //----------------------------------------------------------------
-    private CategoryDeletedEvent CreateCategoryDeletedEvent(Guid categoryId)
-    {
-        return new CategoryDeletedEvent(categoryId, Ulid.NewUlid().ToGuid());
-    }
-
     private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
     {
         var category = await _categoryRepository.GetCategoryByIdFromMySQL(categoryId);

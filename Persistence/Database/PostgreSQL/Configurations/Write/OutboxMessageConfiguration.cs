@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedKernel;
 
-namespace Persistence.Database.MySQL.Configurations.Write;
+namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
@@ -11,8 +11,7 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Id)
             .IsRequired()
-            .HasColumnType("char(36)")
-            .HasDefaultValueSql("(UUID())");
+            .HasColumnType("uuid");
 
         builder.Property(a => a.Type)
             .IsRequired()

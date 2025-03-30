@@ -46,7 +46,7 @@ internal sealed class AddWishItemMessageConsumer : IConsumer<AddWishItemEvent>
                 ProductId.FromGuid(context.Message.ProductId));
                 
             await _wishItemRepository.AddWishItemToPostgreSQL(wishItem);
-            await _unitOfWork.SaveToPostgreSQL();
+            await _unitOfWork.SaveChangeAsync();
             //---------------------------------------------------------------
         }
         catch (Exception ex)
@@ -58,7 +58,7 @@ internal sealed class AddWishItemMessageConsumer : IConsumer<AddWishItemEvent>
                 "Failed to consume AddWishItemEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -77,7 +77,7 @@ internal sealed class AddWishItemMessageConsumer : IConsumer<AddWishItemEvent>
             "Successfully consumed AddWishItemEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Log end------------------------------------------

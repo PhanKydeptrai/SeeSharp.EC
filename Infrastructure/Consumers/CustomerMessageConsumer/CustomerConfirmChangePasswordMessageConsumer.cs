@@ -47,7 +47,7 @@ internal sealed class CustomerConfirmChangePasswordMessageConsumer
             var user = await _userRepository.GetUserFromPostgreSQL(UserId.FromGuid(context.Message.UserId));
             user!.ChangePassword(PasswordHash.FromString(context.Message.NewPassword));
 
-            await _unitOfWork.SaveToPostgreSQL();
+            await _unitOfWork.SaveChangeAsync();
             //---------------------------------------------------------------
         }
         catch (Exception ex)
@@ -59,7 +59,7 @@ internal sealed class CustomerConfirmChangePasswordMessageConsumer
                 "Failed to consume CustomerConfirmChangePasswordEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -78,7 +78,7 @@ internal sealed class CustomerConfirmChangePasswordMessageConsumer
             "Successfully consumed CustomerConfirmChangePasswordEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Publish event notify user
@@ -90,7 +90,7 @@ internal sealed class CustomerConfirmChangePasswordMessageConsumer
             message.MessageId, 
             message, _outBoxMessageServices);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         
         await _eventBus.PublishAsync(message);
 

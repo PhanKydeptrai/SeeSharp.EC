@@ -53,7 +53,7 @@ public sealed class CustomerAddProductToOrderMessageConsumer : IConsumer<Custome
                 order!.ReplaceOrderTotal(OrderTotal.NewOrderTotal(context.Message.OrderTotal));
                 orderDetail!.ReplaceUnitPrice(OrderDetailUnitPrice.NewOrderDetailUnitPrice(context.Message.OrderDetailUnitPrice));
                 orderDetail!.ReplaceQuantity(OrderDetailQuantity.NewOrderDetailQuantity(context.Message.OrderDetailQuantity));
-                await _unitOfWork.SaveToPostgreSQL();
+                await _unitOfWork.SaveChangeAsync();
                 //----------------------------------------------------------
             }
             else if (context.Message.MessageType == OrderMessageType.CreateOrderDetailAndUpdateOrder)
@@ -70,7 +70,7 @@ public sealed class CustomerAddProductToOrderMessageConsumer : IConsumer<Custome
                     OrderDetailUnitPrice.FromDecimal(context.Message.OrderDetailUnitPrice));
                 
                 await _orderRepository.AddNewOrderDetailToPostgreSQL(orderDetail);
-                await _unitOfWork.SaveToPostgreSQL();
+                await _unitOfWork.SaveChangeAsync();
             }
             else if(context.Message.MessageType == OrderMessageType.CreateAll)
             {
@@ -90,7 +90,7 @@ public sealed class CustomerAddProductToOrderMessageConsumer : IConsumer<Custome
                 
                 await _orderRepository.AddNewOrderToPostgreSQL(order);
                 await _orderRepository.AddNewOrderDetailToPostgreSQL(orderDetail);
-                await _unitOfWork.SaveToPostgreSQL();
+                await _unitOfWork.SaveChangeAsync();
             }
         }
         catch (Exception ex)
@@ -102,7 +102,7 @@ public sealed class CustomerAddProductToOrderMessageConsumer : IConsumer<Custome
                 "Failed to consume CustomerAddProductToOrderEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -121,7 +121,7 @@ public sealed class CustomerAddProductToOrderMessageConsumer : IConsumer<Custome
             "Successfully consumed CustomerAddProductToOrderEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
 
 
         //Log end------------------------------------------

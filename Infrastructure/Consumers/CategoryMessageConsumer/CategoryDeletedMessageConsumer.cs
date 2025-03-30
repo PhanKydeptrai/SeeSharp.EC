@@ -49,8 +49,8 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
             var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(
             CategoryId.FromGuid(context.Message.categoryId));
             category!.Delete();
-            await _unitOfWork.SaveToPostgreSQL();
-            await _productRepository.DeleteProductByCategoryFromMySQL(category.CategoryId);
+            await _unitOfWork.SaveChangeAsync();
+            await _productRepository.DeleteProductByCategoryFromPosgreSQL(category.CategoryId);
             transaction.Commit();
         }
         catch (Exception ex)
@@ -64,7 +64,7 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
                     "Failed to consume CategoryDeletedEvent",
                     DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
 
             _logger.LogError(
                 ex,
@@ -81,7 +81,7 @@ internal sealed class CategoryDeletedMessageConsumer : IConsumer<CategoryDeleted
             "Successfully consumed CategoryDeletedEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
 
         //Ivalidating cache
         string cacheKey = $"CategoryResponse:{context.Message.categoryId}"; 

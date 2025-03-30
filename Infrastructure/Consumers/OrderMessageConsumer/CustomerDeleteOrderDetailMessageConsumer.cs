@@ -44,7 +44,7 @@ internal sealed class CustomerDeleteOrderDetailMessageConsumer : IConsumer<Custo
             
             orderDetail!.Order!.ReplaceOrderTotal(OrderTotal.FromDecimal(context.Message.NewOrderTotal));
             _orderRepository.DeleteOrderDetailFromPostgeSQL(orderDetail);
-            await _unitOfWork.SaveToPostgreSQL();
+            await _unitOfWork.SaveChangeAsync();
             //---------------------------------------------------------------
         }
         catch (Exception ex)
@@ -56,7 +56,7 @@ internal sealed class CustomerDeleteOrderDetailMessageConsumer : IConsumer<Custo
                 "Failed to consume CustomerDeleteOrderDetailEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -75,7 +75,7 @@ internal sealed class CustomerDeleteOrderDetailMessageConsumer : IConsumer<Custo
             "Successfully consumed CustomerDeleteOrderDetailEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Log end------------------------------------------

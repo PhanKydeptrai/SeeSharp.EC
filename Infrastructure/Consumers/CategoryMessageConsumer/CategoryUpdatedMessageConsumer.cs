@@ -44,7 +44,7 @@ internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdated
 
         UpdateCategory(category!, context.Message);
 
-        int result = await _unitOfWork.SaveToPostgreSQL();
+        int result = await _unitOfWork.SaveChangeAsync();
 
         if (result <= 0) //Nếu không thành công 
         {
@@ -54,7 +54,7 @@ internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdated
                     "Failed to consume CategoryUpdatedEvent",
                     DateTime.UtcNow);
     
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
 
             _logger.LogError(
                 "Failed to consume CategoryUpdatedEvent for categoryId: {CategoryId}",
@@ -74,7 +74,7 @@ internal sealed class CategoryUpdatedMessageConsumer : IConsumer<CategoryUpdated
         string cacheKey = $"CategoryResponse:{context.Message.categoryId}";
         await _distributedCache.RemoveAsync(cacheKey);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //Log End
         _logger.LogInformation(
             "Successfully consumed CategoryUpdatedEvent for categoryId: {CategoryId}",

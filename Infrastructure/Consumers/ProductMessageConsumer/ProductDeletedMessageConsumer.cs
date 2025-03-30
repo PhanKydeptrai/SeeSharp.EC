@@ -40,7 +40,7 @@ internal sealed class ProductDeletedMessageConsumer : IConsumer<ProductDeletedEv
             var product = await _productRepository.GetProductFromPostgreSQL(
                ProductId.FromGuid(context.Message.ProductId));
             product!.Delete();
-            await _unitOfWork.SaveToPostgreSQL();
+            await _unitOfWork.SaveChangeAsync();
         }
         catch (Exception ex)
         {
@@ -50,7 +50,7 @@ internal sealed class ProductDeletedMessageConsumer : IConsumer<ProductDeletedEv
                 "Failed to consume ProductDeletedEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
 
             //Log error
             _logger.LogError(
@@ -68,7 +68,7 @@ internal sealed class ProductDeletedMessageConsumer : IConsumer<ProductDeletedEv
             "Successfully consumed ProductDeletedEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //Log end
         _logger.LogInformation(
             "Consumed ProductDeletedEvent for productid: {ProductId}",

@@ -57,7 +57,7 @@ internal sealed class CustomerSignedUpWithGoogleAccountMessageConsumer
 
             await _userRepository.AddUserToPostgreSQL(user);
             await _customerRepository.AddCustomerToPostgreSQL(customer);
-            await _unitOfWork.SaveToPostgreSQL();
+            await _unitOfWork.SaveChangeAsync();
         }
         catch (Exception ex)
         {
@@ -68,7 +68,7 @@ internal sealed class CustomerSignedUpWithGoogleAccountMessageConsumer
                 "Failed to consume CustomerSignedUpWithGoogleAccountEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -88,7 +88,7 @@ internal sealed class CustomerSignedUpWithGoogleAccountMessageConsumer
             "Successfully consumed CustomerSignedUpWithGoogleAccountEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Log end------------------------------------------

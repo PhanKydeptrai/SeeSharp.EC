@@ -48,7 +48,7 @@ internal sealed class CategoryRestoredMessageConsumer : IConsumer<CategoryRestor
             var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(
                 CategoryId.FromGuid(context.Message.CategoryId));
             category!.Restore();
-            await _unitOfWork.SaveToPostgreSQL();
+            await _unitOfWork.SaveChangeAsync();
             await _productRepository.RestoreProductByCategoryFromPostgreSQL(
                 CategoryId.FromGuid(context.Message.CategoryId));
 
@@ -65,7 +65,7 @@ internal sealed class CategoryRestoredMessageConsumer : IConsumer<CategoryRestor
                 "Failed to consume CategoryRestoredEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -84,7 +84,7 @@ internal sealed class CategoryRestoredMessageConsumer : IConsumer<CategoryRestor
             "Successfully consumed CategoryRestoredEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Log end------------------------------------------

@@ -43,7 +43,7 @@ internal sealed class CustomerVerifiedEmailMessageConsumer : IConsumer<CustomerV
             var userId = UserId.FromGuid(context.Message.UserId);
             var user = await _userRepository.GetUserFromPostgreSQL(userId);
             user!.VerifyAccount();
-            await _unitOfWork.SaveToPostgreSQL();
+            await _unitOfWork.SaveChangeAsync();
             //---------------------------------------------------------------
         }
         catch (Exception ex)
@@ -55,7 +55,7 @@ internal sealed class CustomerVerifiedEmailMessageConsumer : IConsumer<CustomerV
                 "Failed to consume CustomerVerifiedEmailEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -74,7 +74,7 @@ internal sealed class CustomerVerifiedEmailMessageConsumer : IConsumer<CustomerV
             "Successfully consumed CustomerVerifiedEmailEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Log end------------------------------------------

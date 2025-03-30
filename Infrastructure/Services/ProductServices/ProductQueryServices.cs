@@ -11,9 +11,9 @@ namespace Infrastructure.Services.ProductServices;
 
 internal sealed class ProductQueryServices : IProductQueryServices
 {
-    private readonly NextSharpPostgreSQLReadDbContext _postgreSQLdbContext;
+    private readonly SeeSharpPostgreSQLReadDbContext _postgreSQLdbContext;
     public ProductQueryServices(
-        NextSharpPostgreSQLReadDbContext postgreSQLdbContext)
+        SeeSharpPostgreSQLReadDbContext postgreSQLdbContext)
     {
         _postgreSQLdbContext = postgreSQLdbContext;
     }

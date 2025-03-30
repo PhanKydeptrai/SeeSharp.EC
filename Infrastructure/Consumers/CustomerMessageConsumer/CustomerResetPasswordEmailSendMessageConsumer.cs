@@ -61,7 +61,7 @@ internal sealed class CustomerResetPasswordEmailSendMessageConsumer : IConsumer<
                 "Failed to consume CustomerResetPasswordEmailSendEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -80,7 +80,7 @@ internal sealed class CustomerResetPasswordEmailSendMessageConsumer : IConsumer<
             "Successfully consumed CustomerResetPasswordEmailSendEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Log end------------------------------------------

@@ -5,29 +5,19 @@ using Domain.Entities.OrderTransactions;
 using Domain.Entities.Products;
 using Domain.IRepositories.Orders;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Database.MySQL;
 using Persistence.Database.PostgreSQL;
 
 namespace Persistence.Repositories.OrderRepositories;
 
 internal sealed class OrderRepository : IOrderRepository
 {
-    private readonly NextSharpMySQLWriteDbContext _mySqlWriteDbContext;
-    private readonly NextSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
+    private readonly SeeSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
 
     public OrderRepository(
-        NextSharpMySQLWriteDbContext mySqlWriteDbContext,
-        NextSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
+        SeeSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
     {
-        _mySqlWriteDbContext = mySqlWriteDbContext;
         _postgreSQLWriteDbContext = postgreSQLWriteDbContext;
     }
-
-    public async Task AddNewOrderToMySQL(Order order)
-    {
-        await _mySqlWriteDbContext.Orders.AddAsync(order);
-    }
-
     public async Task AddNewOrderToPostgreSQL(Order order)
     {
         await _postgreSQLWriteDbContext.Orders.AddAsync(order);
@@ -35,16 +25,12 @@ internal sealed class OrderRepository : IOrderRepository
 
     public async Task AddNewOrderDetailToMySQL(OrderDetail orderDetail)
     {
-        await _mySqlWriteDbContext.OrderDetails.AddAsync(orderDetail);
+        await _postgreSQLWriteDbContext.OrderDetails.AddAsync(orderDetail);
     }
 
     public async Task AddNewOrderDetailToPostgreSQL(OrderDetail orderDetail)
     {
         await _postgreSQLWriteDbContext.OrderDetails.AddAsync(orderDetail);
-    }
-    public async Task AddNewOrderTransactionToMySQL(OrderTransaction orderTransaction)
-    {
-        await _mySqlWriteDbContext.OrderTransactions.AddAsync(orderTransaction);
     }
 
     public async Task AddNewOrderTransactionToPostgreSQL(OrderTransaction orderTransaction)
@@ -54,21 +40,10 @@ internal sealed class OrderRepository : IOrderRepository
 
     public async Task<OrderDetail?> CheckProductAvailabilityInOrder(OrderId orderId, ProductId productId)
     {
-        return await _mySqlWriteDbContext.OrderDetails
+        return await _postgreSQLWriteDbContext.OrderDetails
             .FirstOrDefaultAsync(x => x.OrderId == orderId && x.ProductId == productId);
     }
-    /// <summary>
-    /// Get order detail by OrderDetailId, Include Order
-    /// </summary>
-    /// <param name="orderDetailId"></param>
-    /// <returns></returns>
-    public async Task<OrderDetail?> GetOrderDetailByIdFromMySQL(OrderDetailId orderDetailId)
-    {
-        // return await _mySqlWriteDbContext.OrderDetails.FindAsync(orderDetailId);
-        return await _mySqlWriteDbContext.OrderDetails
-            .Include(a => a.Order)
-            .Where(a => a.OrderDetailId == orderDetailId).FirstOrDefaultAsync();
-    }
+
     /// <summary>
     /// Get order detail by OrderDetailId
     /// </summary>
@@ -81,15 +56,7 @@ internal sealed class OrderRepository : IOrderRepository
             .Where(a => a.OrderDetailId == orderDetailId)
             .FirstOrDefaultAsync();
     }
-    /// <summary>
-    /// Get order by OrderId
-    /// </summary>
-    /// <param name="orderId"></param>
-    /// <returns></returns>
-    public async Task<Order?> GetOrderByIdFromMySQL(OrderId orderId)
-    {
-        return await _mySqlWriteDbContext.Orders.FindAsync(orderId);
-    }
+
     /// <summary>
     /// Get order by OrderId
     /// </summary>
@@ -104,19 +71,12 @@ internal sealed class OrderRepository : IOrderRepository
     /// </summary>
     /// <param name="customerId"></param>
     /// <returns></returns>
-    public async Task<Order?> GetOrderByCustomerIdFromMySQL(CustomerId customerId)
+    public async Task<Order?> GetOrderByCustomerIdFromPostgreSQL(CustomerId customerId)
     {
-        return await _mySqlWriteDbContext.Orders
+        return await _postgreSQLWriteDbContext.Orders
             .FirstOrDefaultAsync(x => x.CustomerId == customerId);
     }
-    /// <summary>
-    /// Delete order detail from MySQL
-    /// </summary>
-    /// <param name="orderDetail"></param>
-    public void DeleteOrderDetailFromMySQL(OrderDetail orderDetail)
-    {
-        _mySqlWriteDbContext.OrderDetails.Remove(orderDetail);
-    }
+
     /// <summary>
     /// Delete order detail from PostgreSQL
     /// </summary>

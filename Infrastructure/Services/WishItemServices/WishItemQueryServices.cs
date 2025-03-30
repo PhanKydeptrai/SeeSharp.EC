@@ -12,9 +12,9 @@ namespace Infrastructure.Services.WishItemServices;
 
 internal sealed class WishItemQueryServices : IWishItemQueryServices
 {
-    private readonly NextSharpPostgreSQLReadDbContext _dbContext;
+    private readonly SeeSharpPostgreSQLReadDbContext _dbContext;
 
-    public WishItemQueryServices(NextSharpPostgreSQLReadDbContext dbContext)
+    public WishItemQueryServices(SeeSharpPostgreSQLReadDbContext dbContext)
     {
         _dbContext = dbContext;
     }

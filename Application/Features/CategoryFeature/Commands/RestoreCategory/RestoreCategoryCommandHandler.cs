@@ -36,7 +36,7 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
     public async Task<Result> Handle(RestoreCategoryCommand request, CancellationToken cancellationToken)
     {
         //Start transaction
-        using var transaction = await _unitOfWork.BeginMySQLTransaction();
+        using var transaction = await _unitOfWork.BeginPostgreSQLTransaction();
         //Process restore category
         var categoryId = CategoryId.FromGuid(request.CategoryId);
         var (category, failure) = await GetCategoryById(categoryId);
@@ -47,15 +47,13 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
         }
         category.Restore();
         //Insert outbox message
-        var message = new CategoryRestoredEvent(request.CategoryId, Ulid.NewUlid().ToGuid());
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
+        
         //Process product restore by category
-        await _productRepository.RestoreProductByCategoryFromMySQL(categoryId);
+        await _productRepository.RestoreProductByCategoryFromPostgreSQL(categoryId);
         //Commit transaction
         transaction.Commit();
-        //Publish event
-        await _eventBus.PublishAsync(message);
+        
         return Result.Success();
     }
 

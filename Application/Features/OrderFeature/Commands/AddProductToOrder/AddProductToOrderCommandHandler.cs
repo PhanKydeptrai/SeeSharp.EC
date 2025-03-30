@@ -43,7 +43,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
     public async Task<Result> Handle(AddProductToOrderCommand request, CancellationToken cancellationToken)
     {
 
-        var order = await _orderRepository.GetOrderByCustomerIdFromMySQL(CustomerId.FromGuid(request.CustomerId));
+        var order = await _orderRepository.GetOrderByCustomerIdFromPostgreSQL(CustomerId.FromGuid(request.CustomerId));
 
         ProductId productId = ProductId.FromGuid(request.ProductId);
         var productPrice = await _productQueryServices.GetAvailableProductPrice(
@@ -81,7 +81,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                 await OutboxMessageExtentions.InsertOutboxMessageAsync(
                     message.MessageId, message, 
                     _outBoxMessageServices);
-                await _unitOfWork.SaveToMySQL();
+                await _unitOfWork.SaveChangeAsync();
 
                 await _eventBus.PublishAsync(message);
                 return Result.Success();
@@ -96,7 +96,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                    productPrice!);
 
                 order.AddNewValueToOrderTotal(newOrderDetail.UnitPrice);
-                await _orderRepository.AddNewOrderDetailToMySQL(newOrderDetail);
+                await _orderRepository.AddNewOrderDetailToPostgreSQL(newOrderDetail);
                 //Publish event 1
                 var message = new CustomerAddProductToOrderEvent(
                     order.OrderId,
@@ -111,7 +111,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                 await OutboxMessageExtentions.InsertOutboxMessageAsync(
                     message.MessageId, message, 
                     _outBoxMessageServices);
-                await _unitOfWork.SaveToMySQL();
+                await _unitOfWork.SaveChangeAsync();
                 await _eventBus.PublishAsync(message);
                 return Result.Success();
             }
@@ -131,8 +131,9 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                 OrderDetailQuantity.NewOrderDetailQuantity(request.Quantity),
                 productPrice!);
 
-            await _orderRepository.AddNewOrderToMySQL(newOrder);
-            await _orderRepository.AddNewOrderDetailToMySQL(newOrderDetail);
+            await _orderRepository.AddNewOrderToPostgreSQL(newOrder);
+
+            await _orderRepository.AddNewOrderDetailToPostgreSQL(newOrderDetail);
 
             //Publish event 2
             var message = new CustomerAddProductToOrderEvent(
@@ -147,7 +148,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                 OrderMessageType.CreateAll);
 
             await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             await _eventBus.PublishAsync(message);
             return Result.Success();
         }

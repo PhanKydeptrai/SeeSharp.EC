@@ -39,17 +39,14 @@ internal sealed class RestoreProductCommandHandler : ICommandHandler<RestoreProd
         product.Restore();
         var message = new ProductRestoredEvent(product.ProductId.Value, Ulid.NewUlid().ToGuid());
         await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outboxService);
-        await _unitOfWork.SaveToMySQL();
-
-        //Publish event
-        await _eventBus.PublishAsync(message);
+        await _unitOfWork.SaveChangeAsync();
 
         return Result.Success();
     }
 
     private async Task<(Product? product, Result? failure)> GetProduct(ProductId productId)
     {
-        var product = await _productRepository.GetProductFromMySQL(productId);
+        var product = await _productRepository.GetProductFromPostgreSQL(productId);
         if (product is null)
         {
             return (null, Result.Failure(ProductError.NotFound(productId)));

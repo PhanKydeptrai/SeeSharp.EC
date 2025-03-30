@@ -47,7 +47,7 @@ internal class CustomerResetPasswordMessageConsumer : IConsumer<CustomerResetPas
             //Consume message            
             var user = await _userRepository.GetUserFromPostgreSQL(UserId.FromGuid(context.Message.UserId));
             user!.ChangePassword(PasswordHash.FromString(context.Message.RandomPass.SHA256()));
-            await _unitOfWork.SaveToPostgreSQL();
+            await _unitOfWork.SaveChangeAsync();
             //---------------------------------------------------------------
         }
         catch (Exception ex)
@@ -59,7 +59,7 @@ internal class CustomerResetPasswordMessageConsumer : IConsumer<CustomerResetPas
                 "Failed to consume CustomerResetPasswordEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -89,7 +89,7 @@ internal class CustomerResetPasswordMessageConsumer : IConsumer<CustomerResetPas
             message.MessageId ,message, 
             _outBoxMessageServices);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         await _eventBus.PublishAsync(message);
         //----------------------------------------------------------
 

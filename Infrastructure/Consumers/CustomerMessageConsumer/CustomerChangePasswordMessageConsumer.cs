@@ -61,7 +61,7 @@ internal sealed class CustomerChangePasswordMessageConsumer : IConsumer<Customer
                 "Failed to consume CustomerChangePasswordEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveToMySQL();
+            await _unitOfWork.SaveChangeAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------
@@ -80,7 +80,7 @@ internal sealed class CustomerChangePasswordMessageConsumer : IConsumer<Customer
             "Successfully consumed CustomerChangePasswordEvent",
             DateTime.UtcNow);
 
-        await _unitOfWork.SaveToMySQL();
+        await _unitOfWork.SaveChangeAsync();
         //----------------------------------------------------------
 
         //Log end------------------------------------------
