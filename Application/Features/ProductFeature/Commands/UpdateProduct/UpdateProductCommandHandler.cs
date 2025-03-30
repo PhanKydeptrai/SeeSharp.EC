@@ -1,13 +1,11 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
-using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
-using Domain.Utilities.Events.ProductEvents;
 using SharedKernel;
 
 namespace Application.Features.ProductFeature.Commands.UpdateProduct;
@@ -39,32 +37,14 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
         if (product is null) return failure!;
         UpdateProduct(product, request);
 
-        var message = CreateProductUpdatedEvent(product);
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            message.MessageId,
-            message,
-            _outboxService);
 
         await _unitOfWork.SaveChangeAsync();
-
-        await _eventBus.PublishAsync(message);
 
         return Result.Success();
     }
 
     #region Private method
-    private ProductUpdatedEvent CreateProductUpdatedEvent(Product product)
-    {
-        return new ProductUpdatedEvent(
-            product.ProductId.Value,
-            product.ProductName.Value,
-            product.ImageUrl ?? string.Empty,
-            product.Description ?? string.Empty,
-            product.ProductPrice.Value,
-            product.ProductStatus,
-            product.CategoryId.Value,
-            Ulid.NewUlid().ToGuid());
-    }
+
     private async Task<(Product? product, Result? result)> GetProductById(ProductId productId)
     {
         var product = await _productRepository.GetProductFromPostgreSQL(productId);

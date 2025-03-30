@@ -1,6 +1,4 @@
-using Domain.Entities.VerificationTokens;
 using Domain.IRepositories.VerificationTokens;
-using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
 
 namespace Persistence.Repositories.VerificationTokenRepositories;

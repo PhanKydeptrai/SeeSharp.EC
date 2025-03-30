@@ -1,4 +1,3 @@
-using Domain.Entities.Feedbacks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.Database.PostgreSQL.ReadModels;

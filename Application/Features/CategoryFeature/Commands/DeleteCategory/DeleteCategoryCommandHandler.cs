@@ -1,13 +1,11 @@
 using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
-using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
-using Domain.Utilities.Events.CategoryEvents;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.DeleteCategory;

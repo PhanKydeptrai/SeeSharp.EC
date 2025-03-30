@@ -1,5 +1,4 @@
 using Application.Abstractions.Messaging;
-using Application.DTOs.Category;
 using Application.DTOs.Order;
 using Application.Features.Pages;
 using Application.IServices;

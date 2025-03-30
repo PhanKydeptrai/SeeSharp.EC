@@ -1,4 +1,3 @@
-using System;
 using Application.Abstractions.Messaging;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerConfirmResetPassword;

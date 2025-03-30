@@ -1,5 +1,3 @@
-using Domain.Entities.VerificationTokens;
-
 namespace Domain.IRepositories.VerificationTokens;
 
 public interface IVerificationTokenRepository

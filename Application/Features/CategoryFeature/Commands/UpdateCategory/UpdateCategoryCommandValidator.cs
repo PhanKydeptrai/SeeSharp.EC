@@ -1,6 +1,5 @@
 using Application.IServices;
 using Domain.Entities.Categories;
-using Domain.IRepositories.CategoryRepositories;
 using FluentValidation;
 using NaughtyStrings;
 

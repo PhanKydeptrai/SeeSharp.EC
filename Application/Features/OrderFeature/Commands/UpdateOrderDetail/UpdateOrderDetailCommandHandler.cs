@@ -1,14 +1,12 @@
 using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
 using Application.IServices;
-using Application.Outbox;
 using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.IRepositories;
 using Domain.IRepositories.Orders;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
-using Domain.Utilities.Events.OrderEvents;
 using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.UpdateOrderDetail;

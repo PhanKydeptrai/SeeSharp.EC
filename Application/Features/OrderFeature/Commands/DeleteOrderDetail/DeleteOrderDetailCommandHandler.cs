@@ -1,13 +1,11 @@
 using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
-using Application.Outbox;
 using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.IRepositories;
 using Domain.IRepositories.Orders;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
-using Domain.Utilities.Events.OrderEvents;
 using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.DeleteOrderDetail;
@@ -45,16 +43,9 @@ internal sealed class DeleteOrderDetailCommandHandler : ICommandHandler<DeleteOr
         orderDetail.Order.ReplaceOrderTotal(newOrderTotal);
         // Delete order detail from MySQL
         _orderRepository.DeleteOrderDetailFromPostgeSQL(orderDetail);
-        // Add new outbox message
-        var message = new CustomerDeleteOrderDetailEvent(
-            orderDetailId, 
-            newOrderTotal.Value,
-            Ulid.NewUlid().ToGuid());
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
         
         await _unitOfWork.SaveChangeAsync();
         
-        await _eventBus.PublishAsync(message);
         return Result.Success();
     }
 }

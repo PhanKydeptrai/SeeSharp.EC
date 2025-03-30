@@ -2,11 +2,6 @@
 using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
-using Infrastructure.Consumers.CategoryMessageConsumer;
-using Infrastructure.Consumers.CustomerMessageConsumer;
-using Infrastructure.Consumers.OrderMessageConsumer;
-using Infrastructure.Consumers.ProductMessageConsumer;
-using Infrastructure.Consumers.WishListMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Security;
 using Infrastructure.Services;
@@ -115,31 +110,7 @@ public static class DependencyInjection
                 config.ConfigureEndpoints(context);
             });
 
-            //* Đăng ký consumer
-            busConfiguration.AddConsumer<CategoryCreatedMessageConsumer>();
-            busConfiguration.AddConsumer<CategoryUpdatedMessageConsumer>();
-            busConfiguration.AddConsumer<CategoryDeletedMessageConsumer>();
-            busConfiguration.AddConsumer<ProductCreatedMessageConsumer>();
-            busConfiguration.AddConsumer<ProductUpdatedMessageConsumer>();
-            busConfiguration.AddConsumer<ProductDeletedMessageConsumer>();
-            busConfiguration.AddConsumer<ProductRestoredMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerSignedUpMessageConsumer>();
-            busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerVerifiedEmailMessageConsumer>();
-            busConfiguration.AddConsumer<CategoryRestoredMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerChangePasswordMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerConfirmChangePasswordMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerChangePasswordSuccessNotificationMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerSignedUpWithGoogleAccountMessageConsumer>();    
-            busConfiguration.AddConsumer<CustomerResetPasswordEmailSendMessageConsumer>();  
-            busConfiguration.AddConsumer<CustomerResetPasswordMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerResetPasswordSuccessNotificationMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerAddProductToOrderMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerUpdateOrderDetailMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerDeleteOrderDetailMessageConsumer>();
-            busConfiguration.AddConsumer<AddWishItemMessageConsumer>();
-            
-
+            //* Đăng ký consumers
         });
 
         return services;

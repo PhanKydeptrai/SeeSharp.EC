@@ -1,5 +1,3 @@
-using Domain.Entities.Bills;
-using Domain.Entities.OrderTransactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Domain.Database.PostgreSQL.ReadModels;
