@@ -1,4 +1,3 @@
-using Domain.Entities.Users;
 using Domain.Entities.VerificationTokens;
 using SharedKernel;
 

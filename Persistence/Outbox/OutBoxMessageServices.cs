@@ -1,15 +1,15 @@
 ﻿using Domain.OutboxMessages.Services;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Database.MySQL;
+using Persistence.Database.PostgreSQL;
 using SharedKernel;
 
 namespace Persistence.Outbox;
 
 internal class OutBoxMessageServices : IOutBoxMessageServices
 {
-    private readonly NextSharpMySQLWriteDbContext _dbContext;
+    private readonly SeeSharpPostgreSQLWriteDbContext _dbContext;
 
-    public OutBoxMessageServices(NextSharpMySQLWriteDbContext dbContext)
+    public OutBoxMessageServices(SeeSharpPostgreSQLWriteDbContext dbContext)
     {
         _dbContext = dbContext;
     }

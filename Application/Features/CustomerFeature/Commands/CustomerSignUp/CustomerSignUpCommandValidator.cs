@@ -1,5 +1,4 @@
 using Application.IServices;
-using Domain.Entities.Users;
 using FluentValidation;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerSignUp;

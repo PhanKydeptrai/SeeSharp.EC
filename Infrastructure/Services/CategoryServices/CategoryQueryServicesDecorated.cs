@@ -3,7 +3,6 @@ using Application.Features.Pages;
 using Application.IServices;
 using Domain.Entities.Categories;
 using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
 
 namespace Infrastructure.Services.CategoryServices;
 

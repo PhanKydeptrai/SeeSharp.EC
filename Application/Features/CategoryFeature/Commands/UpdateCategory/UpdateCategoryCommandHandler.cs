@@ -1,12 +1,10 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
-using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
-using Domain.Utilities.Events.CategoryEvents;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
@@ -40,30 +38,13 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
 
         //Update category
         UpdateCategory(category, request);
-        var message = CreateCategoryUpdatedEvent(category);
-        //Add Outbox message
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            message.messageId,
-            message,
-            _outboxservice);
 
-        await _unitOfWork.SaveToMySQL(cancellationToken);
-
-        await _eventBus.PublishAsync(message);
+        await _unitOfWork.SaveChangeAsync(cancellationToken);
 
         return Result.Success();
     }
 
     //* Private methods
-    private CategoryUpdatedEvent CreateCategoryUpdatedEvent(Category category)
-    {
-        return new CategoryUpdatedEvent(
-                category.CategoryId.Value,
-                category.CategoryName.Value,
-                category.ImageUrl ?? string.Empty,
-                category.CategoryStatus,
-                Ulid.NewUlid().ToGuid());
-    }
     private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
     {
         var category = await _categoryRepository.GetCategoryByIdFromMySQL(categoryId);

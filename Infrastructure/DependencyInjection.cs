@@ -2,19 +2,14 @@
 using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
-using Infrastructure.Consumers.CategoryMessageConsumer;
-using Infrastructure.Consumers.CustomerMessageConsumer;
-using Infrastructure.Consumers.OrderMessageConsumer;
-using Infrastructure.Consumers.ProductMessageConsumer;
-using Infrastructure.Consumers.WishListMessageConsumer;
 using Infrastructure.MessageBroker;
 using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
-using Infrastructure.Services.OrderServices;
-using Infrastructure.Services.ProductServices;
-using Infrastructure.Services.WishItemServices;
+// using Infrastructure.Services.OrderServices;
+// using Infrastructure.Services.ProductServices;
+// using Infrastructure.Services.WishItemServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +36,7 @@ public static class DependencyInjection
 
         // Cấu hình FluentEmail
         services.AddScoped<EmailVerificationLinkFactory>();
+
         //Mail Test
         services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
                 .AddSmtpSender(configuration["Email:Host"], int.Parse(configuration["Email:Port"]!));
@@ -51,7 +47,7 @@ public static class DependencyInjection
 
         //Add TokenProvider
         services.AddScoped<ITokenProvider, TokenProvider>();
-        services.AddScoped<ITokenRevocationService, TokenRevocationService>();
+        // services.AddScoped<ITokenRevocationService, TokenRevocationService>();
         services.AddHttpContextAccessor();
         return services;
     }
@@ -88,16 +84,16 @@ public static class DependencyInjection
             return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!);
         });
 
-        services.AddScoped<ProductQueryServices>();
-        services.AddScoped<IProductQueryServices>(provider =>
-        {
-            var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
-            return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
-        });
+        // services.AddScoped<ProductQueryServices>();
+        // services.AddScoped<IProductQueryServices>(provider =>
+        // {
+        //     var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
+        //     return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
+        // });
 
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
-        services.AddScoped<IOrderQueryServices, OrderQueryServices>();
-        services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
+        // services.AddScoped<IOrderQueryServices, OrderQueryServices>();
+        // services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
         return services;
     }
 
@@ -106,6 +102,7 @@ public static class DependencyInjection
     {
         services.AddMassTransit(busConfiguration =>
         {
+
             busConfiguration.SetKebabCaseEndpointNameFormatter();
             //* NOTE: Message Broker in memory
             busConfiguration.UsingInMemory((context, config) =>
@@ -113,42 +110,7 @@ public static class DependencyInjection
                 config.ConfigureEndpoints(context);
             });
 
-            //* Đăng ký consumer
-            busConfiguration.AddConsumer<CategoryCreatedMessageConsumer>();
-            busConfiguration.AddConsumer<CategoryUpdatedMessageConsumer>();
-            busConfiguration.AddConsumer<CategoryDeletedMessageConsumer>();
-            busConfiguration.AddConsumer<ProductCreatedMessageConsumer>();
-            busConfiguration.AddConsumer<ProductUpdatedMessageConsumer>();
-            busConfiguration.AddConsumer<ProductDeletedMessageConsumer>();
-            busConfiguration.AddConsumer<ProductRestoredMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerSignedUpMessageConsumer>();
-            busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerVerifiedEmailMessageConsumer>();
-            busConfiguration.AddConsumer<CategoryRestoredMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerChangePasswordMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerConfirmChangePasswordMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerChangePasswordSuccessNotificationMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerSignedUpWithGoogleAccountMessageConsumer>();    
-            busConfiguration.AddConsumer<CustomerResetPasswordEmailSendMessageConsumer>();  
-            busConfiguration.AddConsumer<CustomerResetPasswordMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerResetPasswordSuccessNotificationMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerAddProductToOrderMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerUpdateOrderDetailMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerDeleteOrderDetailMessageConsumer>();
-            busConfiguration.AddConsumer<AddWishItemMessageConsumer>();
-            //* FIXME: Config RabbitMQ
-            #region Config RabbitMQ
-            // busConfiguration.UsingRabbitMq((context, cfg) =>
-            // {
-            //     MessageBrokerSetting messageBrokerSetting = context.GetRequiredService<MessageBrokerSetting>();
-            //     cfg.Host(new Uri(messageBrokerSetting.Host), h =>
-            //     {
-            //         h.Username(messageBrokerSetting.Username);
-            //         h.Password(messageBrokerSetting.Password);
-            //     });
-            // });
-            #endregion
-
+            //* Đăng ký consumers
         });
 
         return services;
@@ -182,7 +144,6 @@ public static class DependencyInjection
     {
         services.AddQuartz(options =>
         {
-            //options.UseMicrosoftDependencyInjectionJobFactory();
 
             var jobKey_OutboxBackgroundService = JobKey.Create(nameof(OutboxBackgroundService));
 

@@ -1,12 +1,9 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
-using Application.Outbox;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
-using Domain.Utilities.Errors;
-using Domain.Utilities.Events.CategoryEvents;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.CreateCategory;
@@ -46,32 +43,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
             CategoryName.NewCategoryName(request.categoryName),
             imageUrl);
 
-        var message = CreateCategoryCreatedEvent(category);
-        //Add category to MySQL
-        await _categoryRepository.AddCategoryToMySQL(category);
-        //Add Outbox message
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            message.messageId,
-            message,
-            _outboxservice);
-
-        if (await _unitOfWork.SaveToMySQL() > 0)
-        {
-            await _eventBus.PublishAsync(message);
-            return Result.Success(category.CategoryId);
-        }
-        
-        return Result.Failure<CategoryId>(CategoryErrors.Failure(category.CategoryId));
-    }
-    
-    private CategoryCreatedEvent CreateCategoryCreatedEvent(Category category)
-    {
-        return new CategoryCreatedEvent(
-            category.CategoryId.Value,
-            category.CategoryName.Value,
-            category.ImageUrl ?? string.Empty,
-            category.CategoryStatus,
-            category.IsDefault,
-            Ulid.NewUlid().ToGuid());
+        await _unitOfWork.SaveChangeAsync();
+        return Result.Success(category.CategoryId);
     }
 }

@@ -1,12 +1,10 @@
 using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
-using Application.Outbox;
 using Domain.Entities.Products;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
-using Domain.Utilities.Events.ProductEvents;
 using SharedKernel;
 
 namespace Application.Features.ProductFeature.Commands.DeleteProduct;
@@ -35,18 +33,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
         var (product, failure) = await GetProductByIdAsync(productId);
         if (product is null) return failure!;
         product.Delete();
-
-        //Create outbox message
-        var message = new ProductDeletedEvent(product.ProductId.Value, Ulid.NewUlid().ToGuid());
-
-        await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            message.MessageId,
-            message,
-            _outboxService);
-
-        await _unitOfWork.SaveToMySQL();
-
-        await _eventBus.PublishAsync(message);
+        await _unitOfWork.SaveChangeAsync();
 
         return Result.Success();
     }
@@ -54,7 +41,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
     //Private methods
     private async Task<(Product? product, Result? failure)> GetProductByIdAsync(ProductId productId)
     {
-        var product = await _productRepository.GetProductFromMySQL(productId);
+        var product = await _productRepository.GetProductFromPostgreSQL(productId);
         if (product is null || product.ProductStatus == ProductStatus.Discontinued)
         {
             return (null, Result.Failure(ProductError.NotFound(productId)));

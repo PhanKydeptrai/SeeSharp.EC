@@ -9,9 +9,9 @@ namespace Infrastructure.Services.CustomerServices;
 
 internal sealed class CustomerQueryServices : ICustomerQueryServices
 {
-    private readonly NextSharpPostgreSQLReadDbContext _dbContext;
+    private readonly SeeSharpPostgreSQLReadDbContext _dbContext;
     public CustomerQueryServices(
-        NextSharpPostgreSQLReadDbContext dbContext)
+        SeeSharpPostgreSQLReadDbContext dbContext)
     {
         _dbContext = dbContext;
     }
