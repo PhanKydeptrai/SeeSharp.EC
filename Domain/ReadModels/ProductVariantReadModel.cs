@@ -1,0 +1,16 @@
+using Domain.Database.PostgreSQL.ReadModels;
+
+namespace Domain.ReadModels;
+
+public class ProductVariantReadModel
+{
+    public Ulid ProductVariantId { get; set; }
+    public string VariantName { get; set; } = string.Empty;
+    public decimal ProductVariantPrice { get; set; }
+    public string? ImageUrl { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public Ulid ProductId { get; set; }
+    public bool IsBaseVariant { get; set; }
+    public ProductReadModel? ProductReadModel { get; private set; } = null!;
+    public ICollection<WishItemReadModel> WishItemReadModels { get; set; } = new List<WishItemReadModel>();
+}

@@ -1,5 +1,6 @@
 using Domain.Entities.Customers;
 using Domain.Entities.Products;
+using Domain.Entities.ProductVariants;
 using Domain.Entities.WishItems;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -24,11 +25,11 @@ internal sealed class WishItemConfigurationForPostgreSQL : IEntityTypeConfigurat
                 value => CustomerId.FromGuid(value))
             .HasColumnType("uuid");
 
-        builder.Property(x => x.ProductId)
+        builder.Property(x => x.ProductVariantId)
             .IsRequired()
             .HasConversion(
                 value => value.Value,
-                value => ProductId.FromGuid(value))
+                value => ProductVariantId.FromGuid(value))
             .HasColumnType("uuid");
 
     }

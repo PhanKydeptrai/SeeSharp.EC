@@ -7,9 +7,9 @@ using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
-using Infrastructure.Services.OrderServices;
-using Infrastructure.Services.ProductServices;
-using Infrastructure.Services.WishItemServices;
+// using Infrastructure.Services.OrderServices;
+// using Infrastructure.Services.ProductServices;
+// using Infrastructure.Services.WishItemServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -84,16 +84,16 @@ public static class DependencyInjection
             return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!);
         });
 
-        services.AddScoped<ProductQueryServices>();
-        services.AddScoped<IProductQueryServices>(provider =>
-        {
-            var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
-            return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
-        });
+        // services.AddScoped<ProductQueryServices>();
+        // services.AddScoped<IProductQueryServices>(provider =>
+        // {
+        //     var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
+        //     return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
+        // });
 
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
-        services.AddScoped<IOrderQueryServices, OrderQueryServices>();
-        services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
+        // services.AddScoped<IOrderQueryServices, OrderQueryServices>();
+        // services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
         return services;
     }
 

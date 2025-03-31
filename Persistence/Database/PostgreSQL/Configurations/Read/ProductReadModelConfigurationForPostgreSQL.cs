@@ -28,10 +28,6 @@ internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeCo
             .IsRequired(false)
             .HasColumnType("varchar(255)");
 
-        builder.Property(a => a.ProductPrice)
-            .IsRequired()
-            .HasColumnType("decimal(18,2)");
-
         builder.Property(a => a.ProductStatus)
             .IsRequired()
             .HasColumnType("integer");
@@ -43,11 +39,11 @@ internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeCo
                 value => new Ulid(value))
             .HasColumnType("uuid");
 
-        builder.HasMany(a => a.WishItemReadModels)
+        builder.HasMany(a => a.OrderDetailReadModels)
             .WithOne(a => a.ProductReadModel)
             .HasForeignKey(a => a.ProductId);
 
-        builder.HasMany(a => a.OrderDetailReadModels)
+        builder.HasMany(a => a.ProductVariantReadModels)
             .WithOne(a => a.ProductReadModel)
             .HasForeignKey(a => a.ProductId);
     }

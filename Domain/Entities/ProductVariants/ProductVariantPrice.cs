@@ -1,23 +1,23 @@
 using Domain.Primitives;
 
-namespace Domain.Entities.Products;
+namespace Domain.Entities.ProductVariants;
 
-public sealed class ProductPrice : ValueObject
+public sealed class ProductVariantPrice : ValueObject
 {
-    private ProductPrice(decimal value)
+    private ProductVariantPrice(decimal value)
     {
         Value = value;
     }
-    public static ProductPrice NewProductPrice(decimal value)
+    public static ProductVariantPrice NewProductPrice(decimal value)
     {
         if (value < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(value), "Price cannot be negative");
         }
         
-        return new ProductPrice(value);
+        return new ProductVariantPrice(value);
     }
-    public static ProductPrice FromDecimal(decimal value) => NewProductPrice(value);
+    public static ProductVariantPrice FromDecimal(decimal value) => NewProductPrice(value);
     public decimal Value { get; }
     public override IEnumerable<object> GetAtomicValues()
     {

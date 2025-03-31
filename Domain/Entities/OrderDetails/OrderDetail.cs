@@ -1,5 +1,6 @@
 using Domain.Entities.Orders;
 using Domain.Entities.Products;
+using Domain.Entities.ProductVariants;
 
 namespace Domain.Entities.OrderDetails;
 public sealed class OrderDetail
@@ -33,17 +34,17 @@ public sealed class OrderDetail
     /// <param name="orderId"></param>
     /// <param name="productId"></param>
     /// <param name="quantity"></param>
-    /// <param name="productPrice"></param>
+    /// <param name="productVariantPrice"></param>
     /// <returns></returns>
     public static OrderDetail NewOrderDetail(
         OrderId orderId,
         ProductId productId,
         OrderDetailQuantity quantity,
-        ProductPrice productPrice)
+        ProductVariantPrice productVariantPrice)
     {
         
         var unitPrice = OrderDetailUnitPrice
-            .NewOrderDetailUnitPrice(productPrice.Value * quantity.Value);
+            .NewOrderDetailUnitPrice(productVariantPrice.Value * quantity.Value);
             
         return new OrderDetail(
             OrderDetailId.New(),
@@ -81,7 +82,7 @@ public sealed class OrderDetail
     /// </summary>
     /// <param name="quantity"></param>
     /// <param name="productPrice"></param>
-    public void UpdateQuantityAndProductPriceAfterAddMoreProduct(OrderDetailQuantity quantity, ProductPrice productPrice)
+    public void UpdateQuantityAndProductPriceAfterAddMoreProduct(OrderDetailQuantity quantity, ProductVariantPrice productPrice)
     {
         Quantity = OrderDetailQuantity.FromInt(Quantity.Value + quantity.Value);
         UnitPrice = OrderDetailUnitPrice.NewOrderDetailUnitPrice(productPrice.Value * Quantity.Value);
@@ -91,7 +92,7 @@ public sealed class OrderDetail
     /// </summary>
     /// <param name="quantity"></param>
     /// <param name="productPrice"></param>
-    public void ReCaculateUnitPrice(OrderDetailQuantity quantity, ProductPrice productPrice)
+    public void ReCaculateUnitPrice(OrderDetailQuantity quantity, ProductVariantPrice productPrice)
     {
         Quantity = quantity;
         UnitPrice = OrderDetailUnitPrice.NewOrderDetailUnitPrice(productPrice.Value * Quantity.Value);

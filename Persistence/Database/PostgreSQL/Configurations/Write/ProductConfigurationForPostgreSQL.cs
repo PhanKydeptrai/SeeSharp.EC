@@ -32,13 +32,6 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
             .IsRequired(false)
             .HasColumnType("varchar(255)");
 
-        builder.Property(a => a.ProductPrice)
-            .IsRequired()
-            .HasConversion(
-                v => v.Value,
-                v => ProductPrice.FromDecimal(v))
-            .HasColumnType("decimal(18,2)");
-
         builder.Property(a => a.ProductStatus)
             .IsRequired()
             .HasColumnType("integer");
@@ -50,11 +43,11 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
                 value => CategoryId.FromGuid(value))
             .HasColumnType("uuid");
 
-        builder.HasMany(a => a.WishItems)
+        builder.HasMany(a => a.OrderDetails)
             .WithOne(a => a.Product)
             .HasForeignKey(a => a.ProductId);
 
-        builder.HasMany(a => a.OrderDetails)
+        builder.HasMany(a => a.ProductVariants)
             .WithOne(a => a.Product)
             .HasForeignKey(a => a.ProductId);
     }

@@ -23,7 +23,7 @@ internal sealed class WishItemReadModelConfigurationForPostgreSQL : IEntityTypeC
                 value => new Ulid(value))
             .HasColumnType("uuid");
 
-        builder.Property(x => x.ProductId)
+        builder.Property(x => x.ProductVariantId)
             .IsRequired()
             .HasConversion(
                 value => value.ToGuid(),
