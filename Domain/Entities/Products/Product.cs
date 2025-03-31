@@ -1,5 +1,6 @@
 using Domain.Entities.Categories;
 using Domain.Entities.OrderDetails;
+using Domain.Entities.ProductVariants;
 using Domain.Entities.WishItems;
 
 namespace Domain.Entities.Products;
@@ -10,20 +11,16 @@ public sealed class Product
     public ProductName ProductName { get; private set; } = ProductName.Empty;
     public string? ImageUrl { get; private set; }
     public string? Description { get; private set; }
-    public ProductPrice ProductPrice { get; private set; } = null!;
     public ProductStatus ProductStatus { get; private set; } 
     public CategoryId CategoryId { get; private set; }
     public Category? Category { get; private set; } = null!;
-    //* Foreign key
-     public ICollection<WishItem>? WishItems { get; private set; } = null!; 
-    public ICollection<OrderDetail>? OrderDetails { get; private set; } = null!; 
-
+    //* Foreign keys
+    public ICollection<ProductVariant>? ProductVariants { get; private set; } = null!;
     private Product(
         ProductId productId, 
         ProductName productName, 
         string imageUrl, 
-        string description, 
-        ProductPrice productPrice, 
+        string description,
         ProductStatus productStatus,
         CategoryId categoryId)
     {
@@ -31,7 +28,6 @@ public sealed class Product
         ProductName = productName;
         ImageUrl = imageUrl;
         Description = description;
-        ProductPrice = productPrice;
         ProductStatus = productStatus;
         CategoryId = categoryId;
     }
@@ -41,7 +37,6 @@ public sealed class Product
         ProductName productName,
         string? imageUrl,
         string? description,
-        ProductPrice productPrice,
         ProductStatus productStatus,
         CategoryId categoryId)
     {
@@ -50,15 +45,13 @@ public sealed class Product
             productName,
             imageUrl ?? string.Empty,
             description ?? string.Empty,
-            productPrice,
             productStatus,
             categoryId);
     }
     public static Product NewProduct( 
         ProductName productName, 
         string? imageUrl, 
-        string? description, 
-        ProductPrice productPrice,
+        string? description,
         CategoryId? categoryId)
     {
         return new Product(
@@ -66,7 +59,6 @@ public sealed class Product
             productName, 
             imageUrl ?? string.Empty, 
             description ?? string.Empty, 
-            productPrice, 
             ProductStatus.InStock, 
             categoryId ?? CategoryId.DefaultCategoryId);
     }
@@ -75,14 +67,12 @@ public sealed class Product
         ProductName productName,
         string? imageUrl,
         string? description,
-        ProductPrice productPrice,
         ProductStatus productStatus,
         CategoryId categoryId)
     {
         ProductName = productName;
         ImageUrl = imageUrl;
         Description = description;
-        ProductPrice = productPrice;
         ProductStatus = productStatus;
         CategoryId = categoryId;
     }

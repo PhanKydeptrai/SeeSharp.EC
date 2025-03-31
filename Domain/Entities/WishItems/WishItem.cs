@@ -1,5 +1,5 @@
 using Domain.Entities.Customers;
-using Domain.Entities.Products;
+using Domain.Entities.ProductVariants;
 
 namespace Domain.Entities.WishItems;
 
@@ -7,41 +7,41 @@ public sealed class WishItem
 {
     public WishItemId WishItemId { get; private set; } = null!; 
     public CustomerId CustomerId { get; private set; } = null!;
-    public ProductId ProductId { get; private set; } = null!;
+    public ProductVariantId ProductVariantId { get; private set; } = null!;
 
     //Foreign key
     public Customer? Customer { get; set; } = null!;
-    public Product? Product { get; set; } = null!;
+    public ProductVariant? ProductVariant { get; set; } = null!;
 
 
     private WishItem(
         WishItemId wishItemId, 
         CustomerId customerId, 
-        ProductId productId)
+        ProductVariantId productVariantId)
     {
         WishItemId = wishItemId;
         CustomerId = customerId;
-        ProductId = productId;
+        ProductVariantId = productVariantId;
     }
 
     public static WishItem NewWishItem(
         CustomerId customerId,
-        ProductId productId)
+        ProductVariantId productVariantId)
     {
         return new WishItem(
             WishItemId.New(), 
             customerId, 
-            productId);
+            productVariantId);
     }
 
     public static WishItem FromExisting(
         WishItemId wishItemId,
         CustomerId customerId,
-        ProductId productId)
+        ProductVariantId productVariantId)
     {
         return new WishItem(
             wishItemId, 
             customerId, 
-            productId);
+            productVariantId);
     }
 }

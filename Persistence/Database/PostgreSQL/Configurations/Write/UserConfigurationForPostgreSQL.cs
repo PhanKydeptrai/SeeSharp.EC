@@ -86,16 +86,5 @@ internal sealed class UserConfigurationForPostgreSQL : IEntityTypeConfiguration<
         builder.HasOne(a => a.Employee)
             .WithOne(a => a.User)
             .HasForeignKey<Employee>(a => a.UserId);
-
-
-        // 2 bảng này không được ghi vào database
-        // builder.HasMany(a => a.UserAuthenticationTokens)
-        //     .WithOne(a => a.User)
-        //     .HasForeignKey(a => a.UserId);
-
-        // builder.HasMany(a => a.VerificationTokens)
-        //     .WithOne(a => a.User)
-        //     .HasForeignKey(a => a.UserId);
-
     }
 }

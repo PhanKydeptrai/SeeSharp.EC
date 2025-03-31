@@ -1,28 +1,28 @@
 using Domain.Entities.Orders;
-using Domain.Entities.Products;
+using Domain.Entities.ProductVariants;
 
 namespace Domain.Entities.OrderDetails;
 public sealed class OrderDetail
 {
     public OrderDetailId OrderDetailId { get; private set; } = null!;
     public OrderId OrderId { get; private set; } = null!;
-    public ProductId ProductId { get; private set; } = null!;
+    public ProductVariantId ProductVariantId { get; private set; } = null!;
     public OrderDetailQuantity Quantity { get; private set; } = null!;
     public OrderDetailUnitPrice UnitPrice { get; private set; } = null!; 
     //* Foreign Key
     public Order? Order { get; set; } = null!;
-    public Product? Product { get; set; } = null!;
+    public ProductVariant? ProductVariant { get; set; } = null!;
 
     private OrderDetail(
         OrderDetailId orderDetailId,
         OrderId orderId,
-        ProductId productId,
+        ProductVariantId productVariantId,
         OrderDetailQuantity quantity,
         OrderDetailUnitPrice unitPrice)
     {
         OrderDetailId = orderDetailId;
         OrderId = orderId;
-        ProductId = productId;
+        ProductVariantId = productVariantId;
         Quantity = quantity;
         UnitPrice = unitPrice;
     }
@@ -33,22 +33,22 @@ public sealed class OrderDetail
     /// <param name="orderId"></param>
     /// <param name="productId"></param>
     /// <param name="quantity"></param>
-    /// <param name="productPrice"></param>
+    /// <param name="productVariantPrice"></param>
     /// <returns></returns>
     public static OrderDetail NewOrderDetail(
         OrderId orderId,
-        ProductId productId,
+        ProductVariantId productVariantId,
         OrderDetailQuantity quantity,
-        ProductPrice productPrice)
+        ProductVariantPrice productVariantPrice)
     {
         
         var unitPrice = OrderDetailUnitPrice
-            .NewOrderDetailUnitPrice(productPrice.Value * quantity.Value);
+            .NewOrderDetailUnitPrice(productVariantPrice.Value * quantity.Value);
             
         return new OrderDetail(
             OrderDetailId.New(),
             orderId,
-            productId,
+            productVariantId,
             quantity,
             unitPrice);
     }
@@ -63,7 +63,7 @@ public sealed class OrderDetail
     public static OrderDetail FromExisting(
         OrderDetailId orderDetailId,
         OrderId orderId,
-        ProductId productId,
+        ProductVariantId productVariantId,
         OrderDetailQuantity quantity,
         OrderDetailUnitPrice orderDetailUnitPrice)
     {
@@ -71,7 +71,7 @@ public sealed class OrderDetail
         return new OrderDetail(
             orderDetailId,
             orderId,
-            productId,
+            productVariantId,
             quantity,
             orderDetailUnitPrice);
     }
@@ -81,7 +81,7 @@ public sealed class OrderDetail
     /// </summary>
     /// <param name="quantity"></param>
     /// <param name="productPrice"></param>
-    public void UpdateQuantityAndProductPriceAfterAddMoreProduct(OrderDetailQuantity quantity, ProductPrice productPrice)
+    public void UpdateQuantityAndProductPriceAfterAddMoreProduct(OrderDetailQuantity quantity, ProductVariantPrice productPrice)
     {
         Quantity = OrderDetailQuantity.FromInt(Quantity.Value + quantity.Value);
         UnitPrice = OrderDetailUnitPrice.NewOrderDetailUnitPrice(productPrice.Value * Quantity.Value);
@@ -91,7 +91,7 @@ public sealed class OrderDetail
     /// </summary>
     /// <param name="quantity"></param>
     /// <param name="productPrice"></param>
-    public void ReCaculateUnitPrice(OrderDetailQuantity quantity, ProductPrice productPrice)
+    public void ReCaculateUnitPrice(OrderDetailQuantity quantity, ProductVariantPrice productPrice)
     {
         Quantity = quantity;
         UnitPrice = OrderDetailUnitPrice.NewOrderDetailUnitPrice(productPrice.Value * Quantity.Value);
