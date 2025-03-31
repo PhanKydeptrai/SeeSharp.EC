@@ -1,4 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+	  <GenerateDocumentationFile>False</GenerateDocumentationFile>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="FluentEmail.Smtp" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />

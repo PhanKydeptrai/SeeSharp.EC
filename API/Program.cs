@@ -66,7 +66,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
-builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+builder.Services.AddControllers();
+
+//builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 #region Dependency Injection
 builder.Services.AddApplication()
@@ -150,6 +152,7 @@ app.UseHttpsRedirection();
 
 
 #region Cấu hình minimal API
+app.MapControllers();
 app.MapEndpoints();
 #endregion
 
