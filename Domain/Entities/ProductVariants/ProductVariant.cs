@@ -1,3 +1,4 @@
+using Domain.Entities.OrderDetails;
 using Domain.Entities.Products;
 using Domain.Entities.WishItems;
 
@@ -13,9 +14,9 @@ public sealed class ProductVariant
     public ProductId ProductId { get; private set; } = null!;
     public ProductVariantStatus ProductVariantStatus { get; private set; }
     public IsBaseVariant IsBaseVariant { get; private set; } = null!;
-    public Product? Product { get; private set; } = null!;
-    public ICollection<WishItem>? WishItems { get; private set; } = null!;
-    
+    public Product? Product { get; set; } = null!;
+    public ICollection<WishItem>? WishItems { get; set; } = null!;
+    public ICollection<OrderDetail>? OrderDetails { get; set; } = null!;
     private ProductVariant(
         ProductVariantId productVariantId, 
         VariantName variantName, 

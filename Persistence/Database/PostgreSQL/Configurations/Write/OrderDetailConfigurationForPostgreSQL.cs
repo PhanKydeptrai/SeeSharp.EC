@@ -1,6 +1,7 @@
 using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.Entities.Products;
+using Domain.Entities.ProductVariants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -25,11 +26,11 @@ internal sealed class OrderDetailConfigurationForPostgreSQL : IEntityTypeConfigu
                 value => OrderId.FromGuid(value))
             .HasColumnType("uuid");
 
-        builder.Property(x => x.ProductId)
+        builder.Property(x => x.ProductVariantId)
             .IsRequired()
             .HasConversion(
                 value => value.Value,
-                value => ProductId.FromGuid(value))
+                value => ProductVariantId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.Quantity)

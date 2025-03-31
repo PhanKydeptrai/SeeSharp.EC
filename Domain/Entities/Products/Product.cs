@@ -15,7 +15,6 @@ public sealed class Product
     public CategoryId CategoryId { get; private set; }
     public Category? Category { get; private set; } = null!;
     //* Foreign keys
-    public ICollection<OrderDetail>? OrderDetails { get; private set; } = null!; 
     public ICollection<ProductVariant>? ProductVariants { get; private set; } = null!;
     private Product(
         ProductId productId, 

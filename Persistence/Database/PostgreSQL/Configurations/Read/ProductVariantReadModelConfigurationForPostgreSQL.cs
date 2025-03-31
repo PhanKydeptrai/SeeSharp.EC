@@ -32,16 +32,29 @@ internal sealed class ProductVariantReadModelConfigurationForPostgreSQL : IEntit
             .IsRequired()
             .HasColumnType("decimal(10,2)");
 
+        builder.Property(a => a.ProductVariantStatus)
+            .IsRequired()
+            .HasColumnType("integer");
+        
+        builder.Property(a => a.IsBaseVariant)
+            .IsRequired()
+            .HasColumnType("boolean");
+
         builder.Property(a => a.Description)
             .IsRequired()
             .HasColumnType("varchar(500)");
 
-        builder.HasMany(a => a.WishItemReadModels)
-            .WithOne(a => a.ProductVariantReadModel)
-            .HasForeignKey(a => a.ProductVariantId);
 
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)
             .HasColumnType("varchar(500)");
+        
+        builder.HasMany(a => a.WishItemReadModels)
+            .WithOne(a => a.ProductVariantReadModel)
+            .HasForeignKey(a => a.ProductVariantId);
+
+        builder.HasMany(a => a.OrderDetailReadModels)
+            .WithOne(a => a.ProductVariantReadModel)
+            .HasForeignKey(a => a.ProductVariantId);
     }
 }

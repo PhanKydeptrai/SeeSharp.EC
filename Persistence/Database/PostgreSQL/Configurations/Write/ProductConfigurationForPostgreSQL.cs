@@ -43,10 +43,6 @@ internal sealed class ProductConfigurationForPostgreSQL : IEntityTypeConfigurati
                 value => CategoryId.FromGuid(value))
             .HasColumnType("uuid");
 
-        builder.HasMany(a => a.OrderDetails)
-            .WithOne(a => a.Product)
-            .HasForeignKey(a => a.ProductId);
-
         builder.HasMany(a => a.ProductVariants)
             .WithOne(a => a.Product)
             .HasForeignKey(a => a.ProductId);

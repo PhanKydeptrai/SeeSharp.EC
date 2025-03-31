@@ -46,12 +46,27 @@ internal sealed class ProductVariantConfigurationForPostgreSQL : IEntityTypeConf
                 v => ProductVariantDescription.FromString(v))
             .HasColumnType("varchar(500)");
 
-        builder.HasMany(a => a.WishItems)
-            .WithOne(a => a.ProductVariant)
-            .HasForeignKey(a => a.ProductVariantId);
+        builder.Property(a => a.IsBaseVariant).IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => IsBaseVariant.FromBoolean(v))
+            .HasColumnType("boolean");
+        
+        builder.Property(a => a.ProductVariantStatus)
+            .IsRequired()
+            .HasColumnType("integer");
+
 
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)
             .HasColumnType("varchar(500)");
+
+        builder.HasMany(a => a.WishItems)
+            .WithOne(a => a.ProductVariant)
+            .HasForeignKey(a => a.ProductVariantId);
+
+        builder.HasMany(a => a.OrderDetails)
+            .WithOne(a => a.ProductVariant)
+            .HasForeignKey(a => a.ProductVariantId);
     }
 }

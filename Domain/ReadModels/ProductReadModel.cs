@@ -13,6 +13,4 @@ public class ProductReadModel
     public Ulid CategoryId { get; set; }
     public CategoryReadModel CategoryReadModel { get; set; } = null!;
     public ICollection<ProductVariantReadModel> ProductVariantReadModels { get; set; } = new List<ProductVariantReadModel>();
-    public ICollection<OrderDetailReadModel> OrderDetailReadModels { get; set; } = new List<OrderDetailReadModel>();
-    public ICollection<WishItemReadModel> WishItemReadModels { get; set; } = new List<WishItemReadModel>();
 }

@@ -1,7 +1,5 @@
 ﻿using Domain.Entities.Customers;
 using Domain.Entities.Employees;
-using Domain.Entities.UserAuthenticationTokens;
-using Domain.Entities.VerificationTokens;
 
 namespace Domain.Entities.Users;
 
@@ -19,8 +17,8 @@ public sealed class User
     public string? ImageUrl { get; private set; } = string.Empty;
     public Customer? Customer { get; set; } = null!;
     public Employee? Employee { get; set; } = null!;
-    public ICollection<UserAuthenticationToken>? UserAuthenticationTokens { get; set; } = null!;
-    public ICollection<VerificationToken>? VerificationTokens { get; set; } = null!;
+    // public ICollection<UserAuthenticationToken>? UserAuthenticationTokens { get; set; } = null!;
+    // public ICollection<VerificationToken>? VerificationTokens { get; set; } = null!;
     private User(UserId userId,
         UserName userName,
         Email email,

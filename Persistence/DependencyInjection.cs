@@ -16,7 +16,7 @@ using Persistence.Outbox;
 using Persistence.Repositories;
 using Persistence.Repositories.CategoryRepositories;
 using Persistence.Repositories.CustomerRepositories;
-using Persistence.Repositories.OrderRepositories;
+// using Persistence.Repositories.OrderRepositories;
 using Persistence.Repositories.ProductRepositories;
 // using Persistence.Repositories.UserAuthenticationTokenRepositories;
 using Persistence.Repositories.UserRepositories;
@@ -45,7 +45,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IVerificationTokenRepository, VerificationTokenRepository>();
         // services.AddScoped<IUserAuthenticationTokenRepository, UserAuthenticationTokenRepository>();
-        services.AddScoped<IOrderRepository, OrderRepository>();
+        // services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IWishItemRepository, WishItemRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -58,17 +58,15 @@ public static class DependencyInjection
         services.AddScoped<IOutBoxMessageServices, OutBoxMessageServices>();
         return services;
     }
-
-    //Add Primary Database(MySQL)
     private static IServiceCollection AddDatabase(
         this IServiceCollection services,
         IConfiguration configuration)
     {
 
-        string connectionString = configuration.GetConnectionString("ReadOnlyDatabase")
+        string connectionString = configuration.GetConnectionString("PrimaryDatabase")
             ?? throw new Exception("PostgreSQL connection string is null");
         //Dbcontext để ghi
-        services.AddDbContext<SeeSharpPostgreSQLWriteDbContext>((sp, options) =>
+        services.AddDbContext<SeeSharpPostgreSQLWriteDbContext>((options) =>
         {
             options.UseNpgsql(connectionString);
         });
@@ -79,6 +77,7 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString)
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
+
         return services;
     }
 }
