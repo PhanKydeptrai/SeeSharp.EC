@@ -6,6 +6,8 @@ namespace Application.Features.ProductFeature.Commands.CreateProduct;
 public record CreateProductCommand(
     string ProductName,
     IFormFile? ProductImage,
+    string ProductBaseVariantName,
+    string ColorCode,
     string? Description,
-    decimal Price,
+    decimal VariantPrice,
     Guid? CategoryId) : ICommand;

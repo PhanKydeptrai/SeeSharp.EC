@@ -66,24 +66,36 @@ public sealed class ProductsController : ControllerBase
     }
 
     /// <summary>
-    /// Create a new product
+    /// Tạo sản phẩm mới
     /// </summary>
+    /// <param name="ProductName">Tên sản phẩm</param>
+    /// <param name="ProductBaseVariantName">Tên phiên bản gốc</param>
+    /// <param name="ColorCode">Mã màu của phiên bản gốc</param>
+    /// <param name="ProductImage">Ảnh sản phẩm, ảnh này cũng được sử dụng cho sản phẩm gốc</param>
+    /// <param name="Description">Mô tả sản phẩm</param>
+    /// <param name="VariantPrice">Giá sản phẩm, nó được áp dụng cho sản phẩm gốc</param>
+    /// <param name="CategoryId">Mã danh mục</param>
     /// <returns></returns>
     [HttpPost]
     [EndpointName(EndpointName.Product.Create)]
     public async Task<IResult> CreateProduct(
         [FromForm] string ProductName,
-        [FromForm] IFormFile? ProductImage,
+        [FromForm] string ProductBaseVariantName,
+        [FromForm] string ColorCode,
+        IFormFile? ProductImage,
         [FromForm] string? Description,
-        [FromForm] decimal Price,
+        [FromForm] decimal VariantPrice,
         [FromForm] Guid? CategoryId)
     {
         var command = new CreateProductCommand(
-            ProductName, 
-            ProductImage, 
+            ProductName,
+            ProductImage,
+            ProductBaseVariantName,
+            ColorCode,
             Description, 
-            Price, 
+            VariantPrice, 
             CategoryId);
+            
         var result = await _sender.Send(command);
         return result.Match(Results.NoContent, CustomResults.Problem);
     }

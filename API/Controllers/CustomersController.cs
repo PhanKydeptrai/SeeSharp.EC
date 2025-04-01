@@ -16,7 +16,6 @@ namespace API.Controllers;
 public sealed class CustomersController : ControllerBase
 {
     private readonly ISender _sender;
-    
     public CustomersController(ISender sender)
     {
         _sender = sender;

@@ -12,9 +12,9 @@ using SharedKernel.Constants;
 
 namespace API.Controllers;
 
+[ApiKey]
 [Route("api/categories")]
 [ApiController]
-[ApiKey]
 public sealed class CategoriesController : ControllerBase
 {
     private readonly ISender _sender;
@@ -30,6 +30,7 @@ public sealed class CategoriesController : ControllerBase
     /// <param name="image"></param>
     /// <returns></returns>
     [HttpPost]
+    [Route("~/api/admin/categories")]
     [EndpointName(EndpointName.Category.Create)]
     public async Task<IResult> CreateCategory(
         [FromForm] string categoryName,
@@ -99,6 +100,20 @@ public sealed class CategoriesController : ControllerBase
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
+    /// <summary>
+    /// Get a category by id for admin, this get anystate of category
+    /// </summary>
+    /// <param name="categoryId"></param>
+    /// <returns></returns>/api/admin/categories/{categoryId:guid}")]
+    [HttpGet]
+    [Route("~/api/admin/categories/{categoryId:guid}")]
+    [EndpointName(EndpointName.Category.GetByIdForAdmin)]
+    public async Task<IResult> GetCategoryForAdmin([FromRoute] Guid categoryId)
+    {
+        var result = await _sender.Send(new GetCategoryByIdQuery(categoryId));
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    
     /// <summary>
     /// Restore a category
     /// </summary>

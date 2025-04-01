@@ -7,6 +7,8 @@ using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
+using Infrastructure.Services.ProductServices;
+
 // using Infrastructure.Services.OrderServices;
 // using Infrastructure.Services.ProductServices;
 // using Infrastructure.Services.WishItemServices;
@@ -84,12 +86,12 @@ public static class DependencyInjection
             return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!);
         });
 
-        // services.AddScoped<ProductQueryServices>();
-        // services.AddScoped<IProductQueryServices>(provider =>
-        // {
-        //     var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
-        //     return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
-        // });
+        services.AddScoped<ProductQueryServices>();
+        services.AddScoped<IProductQueryServices>(provider =>
+        {
+            var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
+            return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
+        });
 
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
         // services.AddScoped<IOrderQueryServices, OrderQueryServices>();

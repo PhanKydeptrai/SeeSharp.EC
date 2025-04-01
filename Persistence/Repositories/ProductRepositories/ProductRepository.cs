@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.Categories;
 using Domain.Entities.Products;
+using Domain.Entities.ProductVariants;
 using Domain.IRepositories.Products;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
@@ -20,6 +21,12 @@ internal sealed class ProductRepository : IProductRepository
     {
         await _postgreSQLWriteDbContext.Products.AddAsync(product);
     }
+
+    public async Task AddProductVariantToPostgreSQL(ProductVariant productVariant)
+    {
+        await _postgreSQLWriteDbContext.ProductVariants.AddAsync(productVariant);
+    }
+
     public async Task DeleteProductByCategoryFromPosgreSQL(CategoryId id)
     {
         await _postgreSQLWriteDbContext.Products

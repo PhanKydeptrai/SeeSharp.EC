@@ -50,6 +50,7 @@ public static class EndpointName
     {
         public const string Create = "CreateCategory";
         public const string GetById = "GetCategoryById";
+        public const string GetByIdForAdmin = "GetCategoryByIdForAdmin";
         public const string GetAll = "GetCategories";
         public const string Update = "UpdateCategory";
         public const string Delete = "DeleteCategory";

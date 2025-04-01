@@ -153,7 +153,7 @@ app.UseHttpsRedirection();
 
 #region Cấu hình minimal API
 app.MapControllers();
-app.MapEndpoints();
+// app.MapEndpoints();
 #endregion
 
 app.Run();

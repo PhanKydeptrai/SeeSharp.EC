@@ -8,6 +8,7 @@ using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
 using Domain.Entities.Products;
+using Domain.Entities.ProductVariants;
 using Domain.Entities.ShippingInformations;
 using Domain.Entities.Users;
 using Domain.Entities.Vouchers;
@@ -31,10 +32,9 @@ public sealed class SeeSharpPostgreSQLWriteDbContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderTransaction> OrderTransactions { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<ProductVariant> ProductVariants { get; set; }
     public DbSet<ShippingInformation> ShippingInformations { get; set; }
-    //public DbSet<UserAuthenticationToken> UserAuthenticationTokens { get; set; }
     public DbSet<User> Users { get; set; }
-    //public DbSet<VerificationToken> VerificationTokens { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
     public DbSet<WishItem> WishItems { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
