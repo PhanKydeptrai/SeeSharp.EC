@@ -77,7 +77,7 @@ builder.Services.AddApplication()
 
 builder.Services.AddScoped<ILinkServices, LinkServices>(); //* Hateoas 
 
-// builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpContextAccessor();
 
 #endregion
 builder.Services.AddCustomProblemDetails();

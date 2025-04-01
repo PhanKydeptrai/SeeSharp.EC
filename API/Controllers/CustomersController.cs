@@ -28,7 +28,7 @@ public sealed class CustomersController : ControllerBase
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpPost("signin")]
-    [ActionName(EndpointName.Customer.SignIn)]
+    [EndpointName(EndpointName.Customer.SignIn)]
     public async Task<IResult> SignIn([FromBody] CustomerSignInCommand command)
     {
         var result = await _sender.Send(command);
@@ -40,7 +40,7 @@ public sealed class CustomersController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet("profile")]
-    [ActionName(EndpointName.Customer.GetProfile)]
+    [EndpointName(EndpointName.Customer.GetProfile)]
     [Authorize]
     public async Task<IResult> GetCustomerProfile()
     {

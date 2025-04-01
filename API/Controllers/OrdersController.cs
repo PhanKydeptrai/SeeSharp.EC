@@ -26,7 +26,7 @@ public sealed class OrdersController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet("customer")]
-    [ActionName(EndpointName.Order.GetAllOrderForCustomer)]
+    [EndpointName(EndpointName.Order.GetAllOrderForCustomer)]
     [Authorize]
     public async Task<IResult> GetAllOrdersForCustomer(
         [FromQuery] string? statusFilter,
@@ -59,7 +59,7 @@ public sealed class OrdersController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ActionName(EndpointName.Order.AddProductToOrder)]
+    [EndpointName(EndpointName.Order.AddProductToOrder)]
     [Authorize]
     public async Task<IResult> AddProductToOrder([FromBody] AddProductToOrderRequest request)
     {

@@ -7,7 +7,6 @@ using Application.Features.CategoryFeature.Commands.UpdateCategory;
 using Application.Features.CategoryFeature.Queries.GetAllCategory;
 using Application.Features.CategoryFeature.Queries.GetCategoryById;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
 
@@ -31,10 +30,10 @@ public sealed class CategoriesController : ControllerBase
     /// <param name="image"></param>
     /// <returns></returns>
     [HttpPost]
-    [ActionName(EndpointName.Category.Create)]
+    [EndpointName(EndpointName.Category.Create)]
     public async Task<IResult> CreateCategory(
         [FromForm] string categoryName,
-        [FromForm] IFormFile? image)
+        IFormFile? image)
     {
         var command = new CreateCategoryCommand(categoryName, image);
         var result = await _sender.Send(command);
@@ -46,8 +45,8 @@ public sealed class CategoriesController : ControllerBase
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>
-    [HttpDelete]
-    [ActionName(EndpointName.Category.Delete)]
+    [HttpDelete("{categoryId:guid}")]
+    [EndpointName(EndpointName.Category.Delete)]
     public async Task<IResult> DeleteCategory([FromRoute] Guid categoryId)
     {
         var command = new DeleteCategoryCommand(categoryId);
@@ -66,7 +65,7 @@ public sealed class CategoriesController : ControllerBase
     /// <param name="pageSize"></param>
     /// <returns></returns>
     [HttpGet]
-    [ActionName(EndpointName.Category.GetAll)]
+    [EndpointName(EndpointName.Category.GetAll)]
     public async Task<IResult> GetAllCategories(
         [FromQuery] string? filter,
         [FromQuery] string? searchTerm,
@@ -90,13 +89,13 @@ public sealed class CategoriesController : ControllerBase
     /// <summary>
     /// Get a category by id
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="categoryId"></param>
     /// <returns></returns>
-    [HttpGet("{id:guid}")]
-    [ActionName(EndpointName.Category.GetById)]
-    public async Task<IResult> GetCategoryById([FromRoute] Guid id)
+    [HttpGet("{categoryId:guid}")]
+    [EndpointName(EndpointName.Category.GetById)]
+    public async Task<IResult> GetCategoryById([FromRoute] Guid categoryId)
     {
-        var result = await _sender.Send(new GetCategoryByIdQuery(id));
+        var result = await _sender.Send(new GetCategoryByIdQuery(categoryId));
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
@@ -106,15 +105,22 @@ public sealed class CategoriesController : ControllerBase
     /// <param name="categoryId"></param>
     /// <returns></returns>
     [HttpPatch("{categoryId:guid}/restore")]
-    [ActionName(EndpointName.Category.Restore)]
+    [EndpointName(EndpointName.Category.Restore)]
     public async Task<IResult> RestoreCategory([FromRoute] Guid categoryId)
     {
         var result = await _sender.Send(new RestoreCategoryCommand(categoryId));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
+    /// <summary>
+    /// Update a category
+    /// </summary>
+    /// <param name="categoryId"></param>
+    /// <param name="categoryName"></param>
+    /// <param name="image"></param>
+    /// <returns></returns>
     [HttpPut("{categoryId:guid}")]
-    [ActionName(EndpointName.Category.Update)]
+    [EndpointName(EndpointName.Category.Update)]
     public async Task<IResult> UpdateCategory(
         [FromRoute] Guid categoryId, 
         [FromForm] string categoryName, 
@@ -124,21 +130,4 @@ public sealed class CategoriesController : ControllerBase
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
-    // public void MapEndpoint(IEndpointRouteBuilder app)
-    // {
-    //     app.MapPut("api/categories/{categoryId:guid}", async (
-    //         [FromRoute] Guid categoryId,
-    //         [FromForm] string categoryName,
-    //         [FromForm] IFormFile? image,
-    //         ISender sender) =>
-    //     {
-    //         var result = await sender.Send(new UpdateCategoryCommand(categoryId, categoryName, image));
-    //         return result.Match(Results.NoContent, CustomResults.Problem);
-    //     })
-    //     .DisableAntiforgery()
-    //     .WithTags(EndpointTag.Category)
-    //     .WithName(EndpointName.Category.Update)
-    //     .RequireAuthorization()
-    //     .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
-    // }
 }

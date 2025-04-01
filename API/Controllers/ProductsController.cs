@@ -7,7 +7,6 @@ using Application.Features.ProductFeature.Commands.UpdateProduct;
 using Application.Features.ProductFeature.Queries.GetAllProduct;
 using Application.Features.ProductFeature.Queries.GetProductById;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
 
@@ -30,7 +29,7 @@ public sealed class ProductsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [ActionName(EndpointName.Product.GetAll)]
+    [EndpointName(EndpointName.Product.GetAll)]
     public async Task<IResult> GetAllProducts(
         [FromQuery] string? filterProductStatus,
         [FromQuery] string? filterCategory,
@@ -59,7 +58,7 @@ public sealed class ProductsController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id:guid}")]
-    [ActionName(EndpointName.Product.GetById)]
+    [EndpointName(EndpointName.Product.GetById)]
     public async Task<IResult> GetProductById([FromRoute] Guid id)
     {
         var result = await _sender.Send(new GetProductByIdQuery(id));
@@ -71,7 +70,7 @@ public sealed class ProductsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpPost]
-    [ActionName(EndpointName.Product.Create)]
+    [EndpointName(EndpointName.Product.Create)]
     public async Task<IResult> CreateProduct(
         [FromForm] string ProductName,
         [FromForm] IFormFile? ProductImage,
@@ -94,7 +93,7 @@ public sealed class ProductsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpPut("{productId:guid}")]
-    [ActionName(EndpointName.Product.Update)]
+    [EndpointName(EndpointName.Product.Update)]
     public async Task<IResult> UpdateProduct(
         [FromRoute] Guid productId,
         [FromForm] string productName,
@@ -120,7 +119,7 @@ public sealed class ProductsController : ControllerBase
     /// <param name="productId"></param>
     /// <returns></returns>
     [HttpDelete("{productId:guid}")]
-    [ActionName(EndpointName.Product.Delete)]
+    [EndpointName(EndpointName.Product.Delete)]
     public async Task<IResult> DeleteProduct([FromRoute] Guid productId)
     {
         var command = new DeleteProductCommand(productId);
@@ -134,10 +133,12 @@ public sealed class ProductsController : ControllerBase
     /// <param name="productId"></param>
     /// <returns></returns>
     [HttpPatch("{productId:guid}/restore")]
-    [ActionName(EndpointName.Product.Restore)]
+    [EndpointName(EndpointName.Product.Restore)]
     public async Task<IResult> RestoreProduct([FromRoute] Guid productId)
     {
         var result = await _sender.Send(new RestoreProductCommand(productId));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
+
+    
 } 

@@ -48,7 +48,7 @@ public static class DependencyInjection
         //Add TokenProvider
         services.AddScoped<ITokenProvider, TokenProvider>();
         // services.AddScoped<ITokenRevocationService, TokenRevocationService>();
-        services.AddHttpContextAccessor();
+        // services.AddHttpContextAccessor();
         return services;
     }
 

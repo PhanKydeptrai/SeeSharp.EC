@@ -26,7 +26,7 @@ public sealed class WishlistController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [ActionName(EndpointName.Wishlist.GetWishList)]
+    [EndpointName(EndpointName.Wishlist.GetWishList)]
     [Authorize]
     public async Task<IResult> GetWishList(
         [FromQuery] string? productStatusFilter,
@@ -59,7 +59,7 @@ public sealed class WishlistController : ControllerBase
     /// <param name="productId"></param>
     /// <returns></returns>
     [HttpPost("{productId:guid}")]
-    [ActionName(EndpointName.Wishlist.AddWishList)]
+    [EndpointName(EndpointName.Wishlist.AddWishList)]
     [Authorize]
     public async Task<IResult> AddWishList([FromRoute] Guid productId)
     {
