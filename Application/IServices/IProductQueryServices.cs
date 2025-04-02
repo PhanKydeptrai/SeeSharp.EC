@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Product;
+using Application.Features.Pages;
 using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
 
@@ -19,10 +20,10 @@ public interface IProductQueryServices
     /// <param name="productId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-     Task<ProductResponse?> GetById(ProductId productId, CancellationToken cancellationToken = default);
+    Task<ProductResponse?> GetProductWithVariantListById(ProductId productId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Get product by product name
+    /// Get all product with variant list
     /// </summary>
     /// <param name="filterProductStatus"></param>
     /// <param name="filterCategory"></param>
@@ -32,15 +33,37 @@ public interface IProductQueryServices
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
     /// <returns></returns>
-    // Task<PagedList<ProductResponse>> PagedList(
-    //     string? filterProductStatus,
-    //     string? filterCategory,
-    //     string? searchTerm,
-    //     string? sortColumn,
-    //     string? sortOrder,
-    //     int? page,
-    //     int? pageSize);
+    Task<PagedList<ProductResponse>> GetAllProductWithVariantList(
+        string? filterProductStatus,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize);
     
+    /// <summary>
+    /// Get all product variant
+    /// </summary>
+    /// <param name="filterProductStatus"></param>
+    /// <param name="filterCategory"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    Task<PagedList<ProductVariantResponse>> GetAllVariant(
+        string? filterProductStatus,
+        string? filterProduct,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize);
+    
+
     /// <summary>
     /// Check if product name is exist
     /// </summary>
@@ -49,10 +72,10 @@ public interface IProductQueryServices
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<bool> IsProductNameExist(
-        ProductId? productId, 
-        ProductName productName, 
+        ProductId? productId,
+        ProductName productName,
         CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Check if product variant name is exist
     /// </summary>

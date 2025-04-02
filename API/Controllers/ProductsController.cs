@@ -5,6 +5,7 @@ using Application.Features.ProductFeature.Commands.DeleteProduct;
 using Application.Features.ProductFeature.Commands.RestoreProduct;
 using Application.Features.ProductFeature.Commands.UpdateProduct;
 using Application.Features.ProductFeature.Queries.GetAllProduct;
+using Application.Features.ProductFeature.Queries.GetAllVariantQuery;
 using Application.Features.ProductFeature.Queries.GetProductById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -27,10 +28,17 @@ public sealed class ProductsController : ControllerBase
     /// <summary>
     /// Get all products
     /// </summary>
+    /// <param name="filterProductStatus"></param>
+    /// <param name="filterCategory"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
     /// <returns></returns>
     [HttpGet]
     [EndpointName(EndpointName.Product.GetAll)]
-    public async Task<IResult> GetAllProducts(
+    public async Task<IResult> GetAllProduct(
         [FromQuery] string? filterProductStatus,
         [FromQuery] string? filterCategory,
         [FromQuery] string? searchTerm,
@@ -51,6 +59,45 @@ public sealed class ProductsController : ControllerBase
 
         return Results.Ok(result.Value);
     }
+    
+    /// <summary>
+    /// Get all product variants
+    /// </summary>
+    /// <param name="filterProductStatus"></param>
+    /// /// <param name="filterProduct"></param>
+    /// <param name="filterCategory"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    [HttpGet("variants")]
+    [EndpointName(EndpointName.Product.GetAllVariant)]
+    public async Task<IResult> GetGetAllVariant(
+        [FromQuery] string? filterProductStatus,
+        [FromQuery] string? filterProduct,
+        [FromQuery] string? filterCategory,
+        [FromQuery] string? searchTerm,
+        [FromQuery] string? sortColumn,
+        [FromQuery] string? sortOrder,
+        [FromQuery] int? page,
+        [FromQuery] int? pageSize)
+    {
+        var result = await _sender.Send(
+            new GetAllVariantQuery(
+                filterProductStatus,
+                filterProduct,
+                filterCategory,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize));
+
+        return Results.Ok(result.Value);
+    }
+
 
     /// <summary>
     /// Get a product by id

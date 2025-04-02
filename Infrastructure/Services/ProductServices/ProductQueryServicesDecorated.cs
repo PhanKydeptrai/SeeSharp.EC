@@ -20,7 +20,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         _distributedCache = distributedCache;
     }
 
-    public async Task<ProductResponse?> GetById(
+    public async Task<ProductResponse?> GetProductWithVariantListById(
         ProductId productId,
         CancellationToken cancellationToken = default)
     {
@@ -29,7 +29,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         ProductResponse? product;
         if (string.IsNullOrEmpty(cachedProduct))
         {
-            product = await _decorated.GetById(productId, cancellationToken);
+            product = await _decorated.GetProductWithVariantListById(productId, cancellationToken);
 
             if (product is null) return product;
 
@@ -56,24 +56,24 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         return await _decorated.IsProductNameExist(productId, productName, cancellationToken);
     }
 
-    // public async Task<PagedList<ProductResponse>> PagedList(
-    //     string? filterProductStatus,
-    //     string? filterCategory,
-    //     string? searchTerm,
-    //     string? sortColumn,
-    //     string? sortOrder,
-    //     int? page,
-    //     int? pageSize)
-    // {
-    //     return await _decorated.PagedList(
-    //         filterProductStatus, 
-    //         filterCategory, 
-    //         searchTerm, 
-    //         sortColumn, 
-    //         sortOrder, 
-    //         page, 
-    //         pageSize);
-    // }
+    public async Task<PagedList<ProductResponse>> GetAllProductWithVariantList(
+        string? filterProductStatus,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        return await _decorated.GetAllProductWithVariantList(
+            filterProductStatus, 
+            filterCategory, 
+            searchTerm, 
+            sortColumn, 
+            sortOrder, 
+            page, 
+            pageSize);
+    }
 
     // public async Task<ProductVariantPrice?> GetAvailableProductPrice(ProductId productId)
     // {
@@ -92,5 +92,26 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         CancellationToken cancellationToken = default)
     {
         return await _decorated.IsProductVariantNameExist(productId, productVariantId, productVariantName);
+    }
+
+    public async Task<PagedList<ProductVariantResponse>> GetAllVariant(
+        string? filterProductStatus, 
+        string? filterProduct, 
+        string? filterCategory, 
+        string? searchTerm, 
+        string? sortColumn, 
+        string? sortOrder, 
+        int? page, 
+        int? pageSize)
+    {
+        return await _decorated.GetAllVariant(
+            filterProductStatus, 
+            filterProduct, 
+            filterCategory, 
+            searchTerm, 
+            sortColumn, 
+            sortOrder, 
+            page, 
+            pageSize);
     }
 }

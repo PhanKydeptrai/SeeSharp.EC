@@ -1,8 +1,12 @@
-﻿using Application.Abstractions.LinkService;
+﻿using System.Linq.Expressions;
+using Application.Abstractions.LinkService;
 using Application.DTOs.Product;
+using Application.Features.Pages;
 using Application.IServices;
+using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
+using Domain.ReadModels;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
 
@@ -22,24 +26,6 @@ internal sealed class ProductQueryServices : IProductQueryServices
         return await _postgreSQLdbContext.Products.AnyAsync(
             x => x.ProductId == new Ulid(productId.Value) && x.ProductStatus == ProductStatus.InStock);
     }
-
-    // public async Task<ProductResponse?> GetById(
-    //     ProductId productId,
-    //     CancellationToken cancellationToken = default)
-    // {
-    //     return await _postgreSQLdbContext.Products
-    //         .Where(x => x.ProductId == new Ulid(productId.Value))
-    //         .Select(x => new ProductResponse(
-    //             x.ProductId.ToGuid(),
-    //             x.ProductName,
-    //             x.ImageUrl,
-    //             x.Description,
-    //             x.ProductPrice,
-    //             x.ProductStatus.ToString(),
-    //             x.CategoryReadModel.CategoryName))
-    //         .FirstOrDefaultAsync(cancellationToken);
-    // }
-
     public async Task<bool> IsProductNameExist(
         ProductId? productId,
         ProductName productName,
@@ -82,7 +68,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 && x.ProductId == new Ulid(productId.Value));
     }
 
-    public async Task<ProductResponse?> GetById(
+    public async Task<ProductResponse?> GetProductWithVariantListById(
         ProductId productId,
         CancellationToken cancellationToken = default)
     {
@@ -91,86 +77,175 @@ internal sealed class ProductQueryServices : IProductQueryServices
             .Select(a => new ProductResponse(
                 a.ProductId.ToGuid(),
                 a.ProductName,
+                a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantPrice,
                 a.ImageUrl,
                 a.Description,
                 a.ProductStatus.ToString(),
                 a.CategoryReadModel.CategoryName,
                 a.ProductVariantReadModels.Select(b => new VariantResponse(
                     b.ProductVariantId.ToGuid(),
+                    b.ProductId.ToGuid(),
                     b.VariantName,
                     b.ColorCode,
                     b.Description,
                     b.ProductVariantPrice,
                     b.ImageUrl ?? string.Empty,
                     b.IsBaseVariant)).ToArray()
-
             )).FirstOrDefaultAsync();
-                                                 
     }
 
 
-    // public async Task<PagedList<ProductResponse>> PagedList(
-    //     string? filterProductStatus,
-    //     string? filterCategory,
-    //     string? searchTerm,
-    //     string? sortColumn,
-    //     string? sortOrder,
-    //     int? page,
-    //     int? pageSize)
-    // {
-    //     var productsQuery = _postgreSQLdbContext.Products.AsQueryable();
-    //     //Search
-    //     if (!string.IsNullOrEmpty(searchTerm))
-    //     {
-    //         productsQuery = productsQuery.Where(
-    //             x => x.ProductName.Contains(searchTerm));
-    //     }
+    public async Task<PagedList<ProductResponse>> GetAllProductWithVariantList(
+        string? filterProductStatus,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        var productsQuery = _postgreSQLdbContext.Products.AsQueryable();
+        //Search
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            productsQuery = productsQuery.Where(
+                x => x.ProductName.Contains(searchTerm));
+        }
 
-    //     //Filter
-    //     if (!string.IsNullOrWhiteSpace(filterProductStatus))
-    //     {
-    //         productsQuery = productsQuery.Where(x => x.ProductStatus == (ProductStatus)Enum.Parse(typeof(ProductStatus), filterProductStatus));
-    //     }
+        //Filter
 
-    //     if (!string.IsNullOrWhiteSpace(filterCategory) && Ulid.TryParse(filterCategory, out var _))
-    //     {
-    //         productsQuery = productsQuery.Where(
-    //             x => x.CategoryId == Ulid.Parse(filterCategory));
-    //     }
+        //Filter by ProductStatus
+        if (!string.IsNullOrWhiteSpace(filterProductStatus))
+        {
+            productsQuery = productsQuery.Where(x => x.ProductStatus == (ProductStatus)Enum.Parse(typeof(ProductStatus), filterProductStatus));
+        }
 
-    //     //sort
-    //     Expression<Func<ProductReadModel, object>> keySelector = sortColumn?.ToLower() switch
-    //     {
-    //         "productname" => x => x.ProductName,
-    //         "productid" => x => x.ProductId,
-    //         "productprice" => x => x.ProductPrice,
-    //         _ => x => x.ProductId
-    //     };
+        //Filter by CategoryId
+        if (!string.IsNullOrWhiteSpace(filterCategory) && Ulid.TryParse(filterCategory, out var _))
+        {
+            productsQuery = productsQuery.Where(
+                x => x.CategoryId == Ulid.Parse(filterCategory));
+        }
 
-    //     if (sortOrder?.ToLower() == "desc")
-    //     {
-    //         productsQuery = productsQuery.OrderByDescending(keySelector);
-    //     }
-    //     else
-    //     {
-    //         productsQuery = productsQuery.OrderBy(keySelector);
-    //     }
+        //sort
+        Expression<Func<ProductReadModel, object>> keySelector = sortColumn?.ToLower() switch
+        {
+            "productname" => x => x.ProductName,
+            "productid" => x => x.ProductId,
+            _ => x => x.ProductId
+        };
 
-    //     //paged
-    //     var products = productsQuery
-    //         .Select(x => new ProductResponse(
-    //             x.ProductId.ToGuid(),
-    //             x.ProductName,
-    //             x.ImageUrl,
-    //             x.Description,
-    //             x.ProductPrice,
-    //             x.ProductStatus.ToString(),
-    //             x.CategoryReadModel.CategoryName)).AsQueryable();
-    //     var productsList = await PagedList<ProductResponse>
-    //         .CreateAsync(products, page ?? 1, pageSize ?? 10);
+        if (sortOrder?.ToLower() == "desc")
+        {
+            productsQuery = productsQuery.OrderByDescending(keySelector);
+        }
+        else
+        {
+            productsQuery = productsQuery.OrderBy(keySelector);
+        }
 
-    //     return productsList;
-    // }
+        //paged
+        var products = productsQuery
+            .Select(a => new ProductResponse(
+                a.ProductId.ToGuid(),
+                a.ProductName,
+                a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantPrice,
+                a.ImageUrl,
+                a.Description,
+                a.ProductStatus.ToString(),
+                a.CategoryReadModel.CategoryName,
+                a.ProductVariantReadModels.Select(b => new VariantResponse(
+                    b.ProductVariantId.ToGuid(),
+                    b.ProductId.ToGuid(),
+                    b.VariantName,
+                    b.ColorCode,
+                    b.Description,
+                    b.ProductVariantPrice,
+                    b.ImageUrl ?? string.Empty,
+                    b.IsBaseVariant)).ToArray())).AsQueryable();
+            
+
+        var productsList = await PagedList<ProductResponse>
+            .CreateAsync(products, page ?? 1, pageSize ?? 10);
+
+        return productsList;
+    }
+
+    public async Task<PagedList<ProductVariantResponse>> GetAllVariant(
+        string? filterProductStatus,
+        string? filterProduct,
+        string? filterCategory, 
+        string? searchTerm, 
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        var productVariantQuery = _postgreSQLdbContext.ProductVariants
+            .Include(a => a.ProductReadModel)
+            .ThenInclude(a => a!.CategoryReadModel)
+            .AsQueryable();
+
+        //Search
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            productVariantQuery = productVariantQuery.Where(x => x.ProductReadModel!.ProductName.Contains(searchTerm));
+        }
+
+        //Filter
+        //Filter by ProductStatus
+        if (!string.IsNullOrWhiteSpace(filterProductStatus))
+        {
+            productVariantQuery = productVariantQuery
+                .Where(x => x.ProductVariantStatus == (ProductVariantStatus)Enum.Parse(typeof(ProductVariantStatus), 
+                filterProductStatus));
+        }
+
+        //Filter by CategoryId
+        if (!string.IsNullOrWhiteSpace(filterCategory) && Ulid.TryParse(filterCategory, out var _))
+        {
+            productVariantQuery = productVariantQuery.Where(
+                x => x.ProductReadModel!.CategoryId == Ulid.Parse(filterCategory));
+        }
+
+        //sort
+        Expression<Func<ProductVariantReadModel, object>> keySelector = sortColumn?.ToLower() switch
+        {
+            "productname" => x => x.ProductReadModel!.ProductName,
+            "productid" => x => x.ProductId,
+            "productvariantid" => x => x.ProductVariantId,
+            "categoryid" => x => x.ProductReadModel!.CategoryReadModel.CategoryId,
+            _ => x => x.ProductId
+        };
+
+        if (sortOrder?.ToLower() == "desc")
+        {
+            productVariantQuery = productVariantQuery.OrderByDescending(keySelector);
+        }
+        else
+        {
+            productVariantQuery = productVariantQuery.OrderBy(keySelector);
+        }
+
+        //paged
+        var productVariants = productVariantQuery
+            .Select(a => new ProductVariantResponse(
+                a.ProductVariantId.ToGuid(),
+                a.ProductId.ToGuid(),
+                a.ProductReadModel!.ProductName,
+                a.VariantName,
+                a.ColorCode,
+                a.Description,
+                a.ProductReadModel!.CategoryReadModel.CategoryName,
+                a.ProductVariantPrice,
+                a.ImageUrl ?? string.Empty,
+                a.IsBaseVariant)).AsQueryable();
+
+        var productVariantList = await PagedList<ProductVariantResponse>
+            .CreateAsync(productVariants, page ?? 1, pageSize ?? 10);
+        
+        return productVariantList;
+    }
 
     // public async Task<ProductVariantPrice?> GetAvailableProductPrice(ProductId productId) 
     // {

@@ -25,7 +25,7 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
         GetProductByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var product = await _productQueryServices.GetById(
+        var product = await _productQueryServices.GetProductWithVariantListById(
             ProductId.FromGuid(request.productId),
             cancellationToken);
 

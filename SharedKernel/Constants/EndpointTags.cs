@@ -41,6 +41,7 @@ public static class EndpointName
         public const string Create = "CreateProduct";
         public const string GetById = "GetProductById";
         public const string GetAll = "GetProducts";
+        public const string GetAllVariant = "GetAllProductVariant";
         public const string Update = "UpdateProduct";
         public const string Delete = "DeleteProduct";
         public const string Restore = "RestoreProduct";
