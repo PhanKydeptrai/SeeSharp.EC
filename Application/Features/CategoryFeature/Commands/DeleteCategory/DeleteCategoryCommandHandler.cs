@@ -43,7 +43,9 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
         await _unitOfWork.SaveChangeAsync();
 
         //Delete all products in this category
-        await _productRepository.DeleteProductByCategoryFromPosgreSQL(category.CategoryId);
+        await _productRepository.DeleteProductByCategory(category.CategoryId);
+        //Delete all variant of products in this category
+        await _productRepository.DeleteProductVariantByCategory(category.CategoryId);
         transaction.Commit();
         return Result.Success();
     }

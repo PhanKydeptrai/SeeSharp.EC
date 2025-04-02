@@ -7,6 +7,7 @@ using Application.Features.ProductFeature.Commands.UpdateProduct;
 using Application.Features.ProductFeature.Queries.GetAllProduct;
 using Application.Features.ProductFeature.Queries.GetAllVariantQuery;
 using Application.Features.ProductFeature.Queries.GetProductById;
+using Application.Features.ProductFeature.Queries.GetVariantById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
@@ -109,6 +110,19 @@ public sealed class ProductsController : ControllerBase
     public async Task<IResult> GetProductById([FromRoute] Guid id)
     {
         var result = await _sender.Send(new GetProductByIdQuery(id));
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Get a product variant by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("variants/{id:guid}")]
+    [EndpointName(EndpointName.Product.GetVariantById)]
+    public async Task<IResult> GetVariantById([FromRoute] Guid id)
+    {
+        var result = await _sender.Send(new GetVariantByIdQuery(id));
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 

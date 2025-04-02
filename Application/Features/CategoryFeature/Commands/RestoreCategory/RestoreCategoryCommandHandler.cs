@@ -47,7 +47,7 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
         await _unitOfWork.SaveChangeAsync();
         
         //Process product restore by category
-        await _productRepository.RestoreProductByCategoryFromPostgreSQL(categoryId);
+        await _productRepository.RestoreProductByCategory(categoryId);
         
         //Commit transaction
         transaction.Commit();

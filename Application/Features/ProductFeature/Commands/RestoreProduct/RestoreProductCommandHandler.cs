@@ -42,7 +42,7 @@ internal sealed class RestoreProductCommandHandler : ICommandHandler<RestoreProd
 
     private async Task<(Product? product, Result? failure)> GetProduct(ProductId productId)
     {
-        var product = await _productRepository.GetProductFromPostgreSQL(productId);
+        var product = await _productRepository.GetProduct(productId);
         if (product is null)
         {
             return (null, Result.Failure(ProductError.NotFound(productId)));

@@ -6,38 +6,64 @@ namespace Domain.IRepositories.Products;
 
 public interface IProductRepository
 {
-    #region 🐘 PostgreSQL
     /// <summary>
     /// Create new product
     /// </summary>
     /// <param name="product"></param>
     /// <returns></returns>
-    Task AddProductToPostgreSQL(Product product);
+    Task AddProduct(Product product);
 
     /// <summary>
     /// Create new product variant
     /// </summary>
     /// <param name="productVariant"></param>
     /// <returns></returns>
-    Task AddProductVariantToPostgreSQL(ProductVariant productVariant);
+    Task AddProductVariant(ProductVariant productVariant);
 
     /// <summary>
     /// Get product by id
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<Product?> GetProductFromPostgreSQL(ProductId id);
+    Task<Product?> GetProduct(ProductId id);
+    /// <summary>
+    /// Xoá sản phẩm trong danh mục
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task DeleteProductByCategory(CategoryId id);
+    
+    /// <summary>
+    /// Xoá variant của sản phẩm theo id sản phẩm
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task DeleteProductVariantByProduct(ProductId id);
+    
+    /// <summary>
+    /// Khôi phục variant theo id sản phẩm
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task RestoreProductVariantByProduct(ProductId id);
     /// <summary>
     /// 
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task DeleteProductByCategoryFromPosgreSQL(CategoryId id);
+    Task RestoreProductByCategory(CategoryId id);
+
     /// <summary>
-    /// 
+    /// Xoá variant của sản phẩm theo id danh mục
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task RestoreProductByCategoryFromPostgreSQL(CategoryId id);
-    #endregion
+    Task DeleteProductVariantByCategory(CategoryId id);
+    
+    /// <summary>
+    /// Khôi phục variant theo id danh mục
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task RestoreProductVariantByCategory(CategoryId id);
 }

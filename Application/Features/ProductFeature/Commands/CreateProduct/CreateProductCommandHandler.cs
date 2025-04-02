@@ -33,8 +33,8 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
 
         if (product is null) return failure!;
         
-        await _productRepository.AddProductToPostgreSQL(product);
-        await _productRepository.AddProductVariantToPostgreSQL(productVariant!);
+        await _productRepository.AddProduct(product);
+        await _productRepository.AddProductVariant(productVariant!);
         
         await _unitOfWork.SaveChangeAsync();
         return Result.Success(product.ProductId);

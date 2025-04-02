@@ -10,9 +10,17 @@ public interface IProductQueryServices
     /// <summary>
     /// Get product price by product id
     /// </summary>
-    /// <param name="productId"></param>
+    /// <param name="productVariantId"></param>
     /// <returns></returns>
-    // Task<ProductVariantPrice?> GetAvailableProductPrice(ProductId productId);
+    Task<ProductVariantPrice?> GetAvailableProductPrice(ProductVariantId productVariantId);
+
+    /// <summary>
+    /// Get product variant by product variant id
+    /// </summary>
+    /// <param name="productVariantId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<ProductVariantResponse?> GetVariantById(ProductVariantId productVariantId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Get product by product id

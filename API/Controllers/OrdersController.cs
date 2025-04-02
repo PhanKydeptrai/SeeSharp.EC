@@ -22,7 +22,7 @@ public sealed class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// Get all orders for the current customer
+    /// Lấy tất cả đơn hàng của khách hàng
     /// </summary>
     /// <returns></returns>
     [HttpGet("customer")]
@@ -54,7 +54,7 @@ public sealed class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// Add a product to order
+    /// Thêm sản phẩm vào giỏ hàng
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -67,7 +67,7 @@ public sealed class OrdersController : ControllerBase
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
-        var command = new AddProductToOrderCommand(request.ProductId, new Guid(customerId!), request.Quantity);
+        var command = new AddProductToOrderCommand(request.ProductVariantId, new Guid(customerId!), request.Quantity);
         var result = await _sender.Send(command);
 
         return result.Match(Results.NoContent, CustomResults.Problem);

@@ -3,11 +3,11 @@ using Application.Abstractions.Messaging;
 namespace Application.Features.OrderFeature.Commands.AddProductToOrder;
 
 public record AddProductToOrderCommand(
-    Guid ProductId,
+    Guid ProductVariantId,
     Guid CustomerId,
     int Quantity) : ICommand;
 
 public record AddProductToOrderRequest(
-    Guid ProductId,
+    Guid ProductVariantId,
     int Quantity
 );
