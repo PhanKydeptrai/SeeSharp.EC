@@ -7,9 +7,18 @@ public record ProductResponse(
     string ProductName,
     string? ImageUrl,
     string? Description,
-    decimal Price,
     string Status,
-    string CategoryName)
+    string CategoryName,
+    VariantResponse[] Variants)
 {
     public List<Link> links { get; set; } = new();
 }
+
+public record VariantResponse(
+    Guid ProductVariantId,
+    string VariantName,
+    string ColorCode,
+    string Description,
+    decimal Price,
+    string ImageUrl,
+    bool IsBaseVariant);

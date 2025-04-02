@@ -12,8 +12,7 @@ internal sealed class ProductRepository : IProductRepository
     
     private readonly SeeSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
 
-    public ProductRepository(
-        SeeSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
+    public ProductRepository(SeeSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
     {
         _postgreSQLWriteDbContext = postgreSQLWriteDbContext;
     }

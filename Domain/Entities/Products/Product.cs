@@ -1,7 +1,5 @@
 using Domain.Entities.Categories;
-using Domain.Entities.OrderDetails;
 using Domain.Entities.ProductVariants;
-using Domain.Entities.WishItems;
 
 namespace Domain.Entities.Products;
 

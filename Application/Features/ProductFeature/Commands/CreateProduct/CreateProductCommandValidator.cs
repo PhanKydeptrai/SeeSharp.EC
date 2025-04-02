@@ -1,5 +1,6 @@
 ﻿using Application.IServices;
 using Domain.Entities.Products;
+using Domain.Entities.ProductVariants;
 using FluentValidation;
 
 namespace Application.Features.ProductFeature.Commands.CreateProduct;
@@ -25,10 +26,7 @@ internal sealed class CreateProductCommandValidator : AbstractValidator<CreatePr
             .WithMessage("Product name is required")
             .MaximumLength(50)
             .WithErrorCode("ProductBaseVariantName.TooLong")
-            .WithMessage("Product name is too long")
-            .Must(x => !productQueryServices.IsProductNameExist(null, ProductName.FromString(x)).Result)
-            .WithErrorCode("ProductBaseVariantName.NotUnique")
-            .WithMessage("Product Base Variant name must be unique");
+            .WithMessage("Product name is too long");
             
         RuleFor(x => x.ColorCode)
             .NotEmpty()

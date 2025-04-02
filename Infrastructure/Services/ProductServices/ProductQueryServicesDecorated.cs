@@ -20,28 +20,28 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         _distributedCache = distributedCache;
     }
 
-    // public async Task<ProductResponse?> GetById(
-    //     ProductId productId,
-    //     CancellationToken cancellationToken = default)
-    // {
-    //     string cacheKey = $"ProductResponse:{productId.Value}";
-    //     string? cachedProduct = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
-    //     ProductResponse? product;
-    //     if (string.IsNullOrEmpty(cachedProduct))
-    //     {
-    //         product = await _decorated.GetById(productId, cancellationToken);
+    public async Task<ProductResponse?> GetById(
+        ProductId productId,
+        CancellationToken cancellationToken = default)
+    {
+        string cacheKey = $"ProductResponse:{productId.Value}";
+        string? cachedProduct = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
+        ProductResponse? product;
+        if (string.IsNullOrEmpty(cachedProduct))
+        {
+            product = await _decorated.GetById(productId, cancellationToken);
 
-    //         if (product is null) return product;
+            if (product is null) return product;
 
-    //         await _distributedCache.SetStringAsync(
-    //             cacheKey,
-    //             JsonConvert.SerializeObject(product),
-    //             cancellationToken);
+            await _distributedCache.SetStringAsync(
+                cacheKey,
+                JsonConvert.SerializeObject(product),
+                cancellationToken);
 
-    //         return product;
-    //     }
-    //     return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
-    // }
+            return product;
+        }
+        return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
+    }
 
     public async Task<bool> CheckProductAvailability(ProductId productId)
     {
@@ -85,11 +85,12 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         return await _decorated.IsProductExist(productId);
     }
 
-    public Task<bool> IsProductVariantNameExist(
-        ProductVariantId? productVariantId, 
-        VariantName productVariantName, 
+    public async Task<bool> IsProductVariantNameExist(
+        ProductId productId,
+        ProductVariantId? productVariantId,
+        VariantName productVariantName,
         CancellationToken cancellationToken = default)
     {
-        return _decorated.IsProductVariantNameExist(productVariantId, productVariantName, cancellationToken);
+        return await _decorated.IsProductVariantNameExist(productId, productVariantId, productVariantName);
     }
 }

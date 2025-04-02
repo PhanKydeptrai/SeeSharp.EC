@@ -1,12 +1,10 @@
-﻿using Application.DTOs.Product;
-using Application.Features.Pages;
+﻿using Application.Abstractions.LinkService;
+using Application.DTOs.Product;
 using Application.IServices;
-using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
-using System.Linq.Expressions;
 
 namespace Infrastructure.Services.ProductServices;
 
@@ -64,20 +62,50 @@ internal sealed class ProductQueryServices : IProductQueryServices
     }
 
     public async Task<bool> IsProductVariantNameExist(
+        ProductId productId,
         ProductVariantId? productVariantId,
         VariantName productVariantName,
         CancellationToken cancellationToken = default)
     {
         if (productVariantId is not null)
         {
-            return await _postgreSQLdbContext.Products
+            return await _postgreSQLdbContext.ProductVariants
                 .AnyAsync(
-                x => x.ProductName == productVariantName.Value
-                && x.ProductId != new Ulid(productVariantId.Value));
+                x => x.VariantName == productVariantName.Value
+                && x.ProductId == new Ulid(productId.Value)
+                && x.ProductVariantId != new Ulid(productVariantId.Value));
         }
 
         return await _postgreSQLdbContext.ProductVariants
-            .AnyAsync(x => x.VariantName == productVariantName.Value);
+                .AnyAsync(
+                x => x.VariantName == productVariantName.Value
+                && x.ProductId == new Ulid(productId.Value));
+    }
+
+    public async Task<ProductResponse?> GetById(
+        ProductId productId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _postgreSQLdbContext.Products
+            .Where(a => a.ProductId == new Ulid(productId.Value))
+            .Select(a => new ProductResponse(
+                a.ProductId.ToGuid(),
+                a.ProductName,
+                a.ImageUrl,
+                a.Description,
+                a.ProductStatus.ToString(),
+                a.CategoryReadModel.CategoryName,
+                a.ProductVariantReadModels.Select(b => new VariantResponse(
+                    b.ProductVariantId.ToGuid(),
+                    b.VariantName,
+                    b.ColorCode,
+                    b.Description,
+                    b.ProductVariantPrice,
+                    b.ImageUrl ?? string.Empty,
+                    b.IsBaseVariant)).ToArray()
+
+            )).FirstOrDefaultAsync();
+                                                 
     }
 
 

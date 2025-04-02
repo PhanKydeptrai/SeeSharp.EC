@@ -32,6 +32,13 @@ internal sealed class ProductVariantConfigurationForPostgreSQL : IEntityTypeConf
                 value => ProductId.FromGuid(value))
             .HasColumnType("uuid");
 
+        builder.Property(a => a.ColorCode)
+            .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => ColorCode.FromString(v))
+            .HasColumnType("varchar(7)");
+
         builder.Property(a => a.ProductVariantPrice)
             .IsRequired()
             .HasConversion(

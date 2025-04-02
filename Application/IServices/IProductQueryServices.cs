@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Products;
+﻿using Application.DTOs.Product;
+using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
 
 namespace Application.IServices;
@@ -11,13 +12,15 @@ public interface IProductQueryServices
     /// <param name="productId"></param>
     /// <returns></returns>
     // Task<ProductVariantPrice?> GetAvailableProductPrice(ProductId productId);
+
     /// <summary>
     /// Get product by product id
     /// </summary>
     /// <param name="productId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    // Task<ProductResponse?> GetById(ProductId productId, CancellationToken cancellationToken = default);
+     Task<ProductResponse?> GetById(ProductId productId, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Get product by product name
     /// </summary>
@@ -58,6 +61,7 @@ public interface IProductQueryServices
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<bool> IsProductVariantNameExist(
+        ProductId productId,
         ProductVariantId? productVariantId,
         VariantName productVariantName,
         CancellationToken cancellationToken = default);

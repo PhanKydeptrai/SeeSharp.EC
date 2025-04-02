@@ -74,9 +74,10 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         var newProductVariant = ProductVariant.Create(
             VariantName.FromString(command.ProductBaseVariantName),
             ProductVariantPrice.FromDecimal(command.VariantPrice),
+            ColorCode.Create(command.ColorCode),
             ProductVariantDescription.FromString(command.Description ?? string.Empty),
             newProduct.ProductId,
-            command.ColorCode,
+            string.Empty, //TODO: Xử lý ảnh
             IsBaseVariant.True);
         
         return (newProduct, newProductVariant, null);

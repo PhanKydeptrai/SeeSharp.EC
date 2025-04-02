@@ -9,6 +9,7 @@ public sealed class ProductVariant
     public ProductVariantId ProductVariantId { get; private set; } = null!;
     public VariantName VariantName { get; private set; } = VariantName.Empty;
     public ProductVariantPrice ProductVariantPrice { get; private set; } = null!;
+    public ColorCode ColorCode { get; private set; } = null!;
     public string? ImageUrl { get; private set; }
     public ProductVariantDescription Description { get; private set; } = ProductVariantDescription.Empty;
     public ProductId ProductId { get; private set; } = null!;
@@ -21,6 +22,7 @@ public sealed class ProductVariant
         ProductVariantId productVariantId, 
         VariantName variantName, 
         ProductVariantPrice productVariantPrice,
+        ColorCode colorCode,
         string? imageUrl,
         ProductVariantDescription description, 
         ProductId productId,
@@ -29,6 +31,7 @@ public sealed class ProductVariant
         ProductVariantId = productVariantId;
         VariantName = variantName;
         ProductVariantPrice = productVariantPrice;
+        ColorCode = colorCode;
         ImageUrl = imageUrl;
         Description = description;
         ProductId = productId;
@@ -39,6 +42,7 @@ public sealed class ProductVariant
     public static ProductVariant Create(
         VariantName variantName,
         ProductVariantPrice productVariantPrice,
+        ColorCode ColorCode,
         ProductVariantDescription productVariantDescription,
         ProductId productId, 
         string? imageUrl,
@@ -48,6 +52,7 @@ public sealed class ProductVariant
             ProductVariantId.New(),
             variantName,
             productVariantPrice,
+            ColorCode,
             imageUrl ?? string.Empty,
             productVariantDescription,
             productId,

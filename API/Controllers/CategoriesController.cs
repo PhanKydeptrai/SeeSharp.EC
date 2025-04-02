@@ -30,7 +30,6 @@ public sealed class CategoriesController : ControllerBase
     /// <param name="image"></param>
     /// <returns></returns>
     [HttpPost]
-    [Route("~/api/admin/categories")]
     [EndpointName(EndpointName.Category.Create)]
     public async Task<IResult> CreateCategory(
         [FromForm] string categoryName,
