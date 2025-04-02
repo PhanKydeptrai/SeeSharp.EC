@@ -31,12 +31,20 @@ internal sealed class RestoreProductCommandHandler : ICommandHandler<RestoreProd
 
     public async Task<Result> Handle(RestoreProductCommand request, CancellationToken cancellationToken)
     {
+        //Start transaction
+        using var transaction = await _unitOfWork.BeginPostgreSQLTransaction();
         var productId = ProductId.FromGuid(request.ProductId);
         var (product, failure) = await GetProduct(productId);
-        if (product is null) return failure!;
+        if (product is null)
+        {
+            transaction.Rollback();
+            return failure!;
+        }
+
         product.Restore();
         await _unitOfWork.SaveChangeAsync();
-
+        await _productRepository.RestoreProductVariantByProduct(productId);
+        transaction.Commit();
         return Result.Success();
     }
 
@@ -45,11 +53,11 @@ internal sealed class RestoreProductCommandHandler : ICommandHandler<RestoreProd
         var product = await _productRepository.GetProduct(productId);
         if (product is null)
         {
-            return (null, Result.Failure(ProductError.NotFound(productId)));
+            return (null, Result.Failure(ProductError.ProductNotFound(productId)));
         }
         if (product.ProductStatus != ProductStatus.Discontinued)
         {
-            return (null, Result.Failure(ProductError.NotDiscontinued(productId)));
+            return (null, Result.Failure(ProductError.ProductNotDiscontinued(productId)));
         }
 
         return (product, null);

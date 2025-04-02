@@ -39,7 +39,6 @@ internal sealed class ProductRepository : IProductRepository
             .Where(a => a.Product!.CategoryId == id)
             .ExecuteUpdateAsync(a => a.SetProperty(a => a.ProductVariantStatus, ProductVariantStatus.Discontinued));
     }
-
     public async Task DeleteProductVariantByProduct(ProductId id)
     {
         await _postgreSQLWriteDbContext.ProductVariants
@@ -51,6 +50,12 @@ internal sealed class ProductRepository : IProductRepository
     {
         return await _postgreSQLWriteDbContext.Products.FindAsync(id);
     }
+
+    public async Task<ProductVariant?> GetProductVariant(ProductVariantId id)
+    {
+        return await _postgreSQLWriteDbContext.ProductVariants.FindAsync(id);
+    }
+
     public async Task RestoreProductByCategory(CategoryId id)
     {
         await _postgreSQLWriteDbContext.Products

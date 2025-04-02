@@ -2,6 +2,7 @@ using API.Extentions;
 using API.Infrastructure;
 using Application.Features.ProductFeature.Commands.CreateProduct;
 using Application.Features.ProductFeature.Commands.DeleteProduct;
+using Application.Features.ProductFeature.Commands.DeleteVariant;
 using Application.Features.ProductFeature.Commands.RestoreProduct;
 using Application.Features.ProductFeature.Commands.UpdateProduct;
 using Application.Features.ProductFeature.Queries.GetAllProduct;
@@ -213,5 +214,31 @@ public sealed class ProductsController : ControllerBase
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
-    
+    /// <summary>
+    /// Delete a product variant
+    /// </summary>
+    /// <param name="variantId"></param>
+    /// <returns></returns>
+    [HttpDelete("variants/{variantId:guid}")]
+    [EndpointName(EndpointName.Product.DeleteVariant)]
+    public async Task<IResult> DeleteVariant([FromRoute] Guid variantId)
+    {
+        var command = new DeleteVariantCommand(variantId);
+        var result = await _sender.Send(command);
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Restore a product variant
+    /// </summary>
+    /// <param name="variantId"></param>
+    /// <returns></returns>
+    [HttpPatch("variants/{variantId:guid}/restore")]
+    [EndpointName(EndpointName.Product.RestoreVariant)]
+    public async Task<IResult> RestoreVariant([FromRoute] Guid variantId)
+    {
+        var command = new DeleteVariantCommand(variantId);
+        var result = await _sender.Send(command);
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
 } 

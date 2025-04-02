@@ -21,6 +21,12 @@ public interface IProductRepository
     Task AddProductVariant(ProductVariant productVariant);
 
     /// <summary>
+    /// Get all product variant
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<ProductVariant?> GetProductVariant(ProductVariantId id);
+    /// <summary>
     /// Get product by id
     /// </summary>
     /// <param name="id"></param>
@@ -33,6 +39,8 @@ public interface IProductRepository
     /// <returns></returns>
     Task DeleteProductByCategory(CategoryId id);
     
+    
+
     /// <summary>
     /// Xoá variant của sản phẩm theo id sản phẩm
     /// </summary>

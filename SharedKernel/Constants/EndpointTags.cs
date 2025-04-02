@@ -46,6 +46,8 @@ public static class EndpointName
         public const string Delete = "DeleteProduct";
         public const string Restore = "RestoreProduct";
         public const string GetVariantById = "GetVariantById";
+        public const string DeleteVariant = "DeleteVariant";
+        public const string RestoreVariant = "RestoreVariant";
     }
 
     public class Category

@@ -32,7 +32,7 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
         if (product is null)
         {
             return Result.Failure<ProductResponse>(
-                ProductError.NotFound(
+                ProductError.ProductNotFound(
                     ProductId.FromGuid(
                         request.productId)));
         }

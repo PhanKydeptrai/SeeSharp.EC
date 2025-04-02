@@ -62,6 +62,26 @@ internal sealed class ProductQueryServices : IProductQueryServices
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<ProductVariantResponse?> GetVariantByIdForAdmin(
+        ProductVariantId productVariantId, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _postgreSQLdbContext.ProductVariants
+            .Where(x => x.ProductVariantId == new Ulid(productVariantId.Value))
+            .Select(a => new ProductVariantResponse(
+                a.ProductVariantId.ToGuid(),
+                a.ProductId.ToGuid(),
+                a.ProductReadModel!.ProductName,
+                a.VariantName,
+                a.ColorCode,
+                a.Description,
+                a.ProductReadModel!.CategoryReadModel.CategoryName,
+                a.ProductVariantPrice,
+                a.ImageUrl ?? string.Empty,
+                a.IsBaseVariant))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<bool> IsProductExist(ProductId productId)
     {
         return await _postgreSQLdbContext.Products

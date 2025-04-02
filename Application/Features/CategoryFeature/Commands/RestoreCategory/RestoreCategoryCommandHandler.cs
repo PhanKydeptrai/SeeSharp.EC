@@ -15,20 +15,14 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
     private readonly ICategoryRepository _categoryRepository;
     private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOutBoxMessageServices _outBoxMessageServices;
-    private readonly IEventBus _eventBus;
     public RestoreCategoryCommandHandler(
         IUnitOfWork unitOfWork,
         ICategoryRepository categoryRepository,
-        IProductRepository productRepository,
-        IEventBus eventBus,
-        IOutBoxMessageServices outBoxMessageServices)
+        IProductRepository productRepository)
     {
         _unitOfWork = unitOfWork;
         _categoryRepository = categoryRepository;
         _productRepository = productRepository;
-        _eventBus = eventBus;
-        _outBoxMessageServices = outBoxMessageServices;
     }
 
     public async Task<Result> Handle(RestoreCategoryCommand request, CancellationToken cancellationToken)
@@ -48,7 +42,7 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
         
         //Process product restore by category
         await _productRepository.RestoreProductByCategory(categoryId);
-        
+        await _productRepository.RestoreProductVariantByCategory(categoryId);
         //Commit transaction
         transaction.Commit();
         

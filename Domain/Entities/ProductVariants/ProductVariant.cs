@@ -59,4 +59,13 @@ public sealed class ProductVariant
             isBaseVariant);
     }
 
+    public void Delete()
+    {
+        ProductVariantStatus = ProductVariantStatus.Discontinued;
+    }
+
+    public void Restore()
+    {
+        ProductVariantStatus = ProductVariantStatus.InStock;
+    }
 }

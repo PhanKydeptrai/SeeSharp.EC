@@ -75,11 +75,6 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             pageSize);
     }
 
-    // public async Task<ProductVariantPrice?> GetAvailableProductPrice(ProductId productId)
-    // {
-    //     return await _decorated.GetAvailableProductPrice(productId);    
-    // }
-
     public async Task<bool> IsProductExist(ProductId productId)
     {
         return await _decorated.IsProductExist(productId);
@@ -113,5 +108,15 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             sortOrder, 
             page, 
             pageSize);
+    }
+
+    public async Task<ProductVariantPrice?> GetAvailableProductPrice(ProductVariantId productVariantId)
+    {
+        return await _decorated.GetAvailableProductPrice(productVariantId);
+    }
+
+    public async Task<ProductVariantResponse?> GetVariantById(ProductVariantId productVariantId, CancellationToken cancellationToken = default)
+    {
+        return await _decorated.GetVariantById(productVariantId, cancellationToken);
     }
 }

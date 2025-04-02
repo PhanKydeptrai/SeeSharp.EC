@@ -20,12 +20,23 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
     }
     public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
+        //Start transaction
+        using var transaction = await _unitOfWork.BeginPostgreSQLTransaction();
+
         var productId = ProductId.FromGuid(request.ProductId);
         var (product, failure) = await GetProductByIdAsync(productId);
-        if (product is null) return failure!;
+        if (product is null)
+        {
+            transaction.Rollback();
+            return failure!;
+        }
         product.Delete();
         await _unitOfWork.SaveChangeAsync();
 
+        //Delete variant of product
+        await _productRepository.DeleteProductVariantByProduct(productId);
+
+        transaction.Commit();
         return Result.Success();
     }
 
@@ -35,7 +46,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
         var product = await _productRepository.GetProduct(productId);
         if (product is null || product.ProductStatus == ProductStatus.Discontinued)
         {
-            return (null, Result.Failure(ProductError.VariantNotFound(productId)));
+            return (null, Result.Failure(ProductError.ProductNotFound(productId)));
         }
         return (product, null);
     }
