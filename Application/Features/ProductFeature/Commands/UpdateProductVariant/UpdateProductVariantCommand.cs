@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.ProductFeature.Commands.UpdateProductVariant;
 
@@ -7,7 +8,7 @@ public record UpdateProductVariantCommand(
     string VariantName,
     decimal ProductVariantPrice,
     string ColorCode,
-    string? ImageUrl,
+    IFormFile? Image,
     string Description,
     Guid ProductId,
     bool IsBaseVariant) : ICommand;

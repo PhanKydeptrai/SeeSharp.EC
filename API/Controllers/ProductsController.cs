@@ -204,7 +204,7 @@ public sealed class ProductsController : ControllerBase
     /// <param name="variantName"></param>
     /// <param name="productVariantPrice"></param>
     /// <param name="colorCode"></param>
-    /// <param name="imageUrl"></param>
+    /// <param name="image"></param>
     /// <param name="description"></param>
     /// <param name="productId"></param>
     /// <param name="isBaseVariant"></param>
@@ -216,7 +216,7 @@ public sealed class ProductsController : ControllerBase
         [FromForm] string variantName,
         [FromForm] decimal productVariantPrice,
         [FromForm] string colorCode,
-        [FromForm] string? imageUrl,
+        [FromForm] IFormFile? image,
         [FromForm] string description,
         [FromForm] Guid productId,
         [FromForm] bool isBaseVariant)
@@ -226,7 +226,7 @@ public sealed class ProductsController : ControllerBase
             variantName,
             productVariantPrice,
             colorCode,
-            imageUrl,
+            image,
             description,
             productId,
             isBaseVariant);
@@ -262,6 +262,13 @@ public sealed class ProductsController : ControllerBase
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
+    // [HttpPost("variants")]
+    // [EndpointName(EndpointName.Product.CreateVariant)]
+    // public async Task<IResult> CreateNewVariant()
+    // {
+        
+    // }
+
     /// <summary>
     /// Delete a product variant
     /// </summary>
@@ -279,7 +286,7 @@ public sealed class ProductsController : ControllerBase
     /// <summary>
     /// Restore a product variant
     /// </summary>
-    /// <param name="variantId"></param>
+    /// <param name="variantId"></param>up
     /// <returns></returns>
     [HttpPatch("variants/{variantId:guid}/restore")]
     [EndpointName(EndpointName.Product.RestoreVariant)]

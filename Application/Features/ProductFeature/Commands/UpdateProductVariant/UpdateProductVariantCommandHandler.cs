@@ -42,7 +42,7 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
                 ProductVariantPrice.FromDecimal(request.ProductVariantPrice),
                 ColorCode.FromString(request.ColorCode),
                 ProductVariantDescription.FromString(request.Description),
-                request.ImageUrl,
+                string.Empty, //TODO: Upload image to cloud storage
                 IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
             await _unitOfWork.SaveChangeAsync();
@@ -53,7 +53,7 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
             ProductVariantPrice.FromDecimal(request.ProductVariantPrice),
             ColorCode.FromString(request.ColorCode),
             ProductVariantDescription.FromString(request.Description),
-            request.ImageUrl,
+            string.Empty, //TODO: Upload image to cloud storage
             IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
         await _unitOfWork.SaveChangeAsync();
