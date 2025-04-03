@@ -1,4 +1,3 @@
-using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
 using Application.Features.OrderFeature.Commands.AddProductToOrder;
 using Application.IServices;
@@ -8,7 +7,6 @@ using Domain.Entities.Orders;
 using Domain.Entities.ProductVariants;
 using Domain.IRepositories;
 using Domain.IRepositories.Orders;
-using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
 using SharedKernel;
 

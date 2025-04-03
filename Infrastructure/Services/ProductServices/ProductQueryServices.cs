@@ -291,7 +291,8 @@ internal sealed class ProductQueryServices : IProductQueryServices
     public async Task<ProductVariantPrice?> GetAvailableProductPrice(ProductVariantId productVariantId) 
     {
         return await _postgreSQLdbContext.ProductVariants
-            .Where(x => x.ProductId == new Ulid(productVariantId.Value) && x.ProductVariantStatus == ProductVariantStatus.InStock)
+            .Where(x => x.ProductVariantId == new Ulid(productVariantId.Value) 
+            && x.ProductVariantStatus == ProductVariantStatus.InStock)
             .Select(x => ProductVariantPrice.FromDecimal(x.ProductVariantPrice))
             .FirstOrDefaultAsync();
     }

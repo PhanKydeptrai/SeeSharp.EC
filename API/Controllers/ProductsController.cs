@@ -1,6 +1,7 @@
 using API.Extentions;
 using API.Infrastructure;
 using Application.Features.ProductFeature.Commands.CreateProduct;
+using Application.Features.ProductFeature.Commands.CreateProductVariant;
 using Application.Features.ProductFeature.Commands.DeleteProduct;
 using Application.Features.ProductFeature.Commands.DeleteVariant;
 using Application.Features.ProductFeature.Commands.RestoreProduct;
@@ -262,15 +263,40 @@ public sealed class ProductsController : ControllerBase
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
-    // [HttpPost("variants")]
-    // [EndpointName(EndpointName.Product.CreateVariant)]
-    // public async Task<IResult> CreateNewVariant()
-    // {
-        
-    // }
+    /// <summary>
+    /// Tạo mới một phiên bản sản phẩm
+    /// </summary>
+    /// <param name="variantName"></param>
+    /// <param name="productVariantPrice"></param>
+    /// <param name="colorCode"></param>
+    /// <param name="image"></param>
+    /// <param name="productVariantDescription"></param>
+    /// <param name="productId"></param>
+    /// <returns></returns>
+    [HttpPost("variants")]
+    [EndpointName(EndpointName.Product.CreateVariant)]
+    public async Task<IResult> CreateNewVariant(
+        [FromForm] string variantName,
+        [FromForm] decimal productVariantPrice,
+        [FromForm] string colorCode,
+        [FromForm] IFormFile? image,
+        [FromForm] string productVariantDescription,
+        [FromForm] Guid productId)
+    {
+        var command = new CreateProductVariantCommand(
+            variantName,
+            productVariantPrice,
+            colorCode,
+            image,
+            productVariantDescription,
+            productId);
+    
+        var result = await _sender.Send(command);
+        return result.Match(Results.NoContent, CustomResults.Problem);        
+    }
 
     /// <summary>
-    /// Delete a product variant
+    /// Xoá một phiên bản sản phẩm
     /// </summary>
     /// <param name="variantId"></param>
     /// <returns></returns>

@@ -16,9 +16,7 @@ internal sealed class UpdateOrderDetail : IEndpoint
             [FromBody] UpdateOrderDetailRequest request,
             ISender sender) =>
         {
-            var result = await sender.Send(new UpdateOrderDetailCommand(id, request.Quantity));
-
-            return result.Match(Results.NoContent, CustomResults.Problem);
+            
         })
         .WithTags(EndpointTag.Order)
         .WithName(EndpointName.Order.UpdateOrderDetail)
