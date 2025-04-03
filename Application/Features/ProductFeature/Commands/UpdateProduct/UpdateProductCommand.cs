@@ -5,7 +5,8 @@ namespace Application.Features.ProductFeature.Commands.UpdateProduct;
 public record UpdateProductCommand(
     Guid ProductId, 
     string ProductName,
-    IFormFile? ProductImage,
-    string? Description,
-    decimal ProductPrice,
+    IFormFile? ProductImage, //Áp dụng cho sản phẩm gốc
+    string Description,
+    string ColorCode, //Áp dụng cho sản phẩm gốc
+    decimal ProductPrice, //Áp dụng cho sản phẩm gốc
     Guid? CategoryId) : ICommand;

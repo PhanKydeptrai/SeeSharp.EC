@@ -5,6 +5,7 @@ using Application.Features.ProductFeature.Commands.DeleteProduct;
 using Application.Features.ProductFeature.Commands.DeleteVariant;
 using Application.Features.ProductFeature.Commands.RestoreProduct;
 using Application.Features.ProductFeature.Commands.UpdateProduct;
+using Application.Features.ProductFeature.Commands.UpdateProductVariant;
 using Application.Features.ProductFeature.Queries.GetAllProduct;
 using Application.Features.ProductFeature.Queries.GetAllVariantQuery;
 using Application.Features.ProductFeature.Queries.GetProductById;
@@ -163,15 +164,23 @@ public sealed class ProductsController : ControllerBase
     }
 
     /// <summary>
-    /// Update a product
+    /// Cập nhật sản phẩm
     /// </summary>
+    /// <param name="productId"></param>
+    /// <param name="productName"></param>
+    /// <param name="productImage"></param>
+    /// <param name="colorCode"></param>
+    /// <param name="description"></param>
+    /// <param name="productPrice"></param>
+    /// <param name="categoryId"></param>
     /// <returns></returns>
     [HttpPut("{productId:guid}")]
     [EndpointName(EndpointName.Product.Update)]
     public async Task<IResult> UpdateProduct(
         [FromRoute] Guid productId,
         [FromForm] string productName,
-        [FromForm] IFormFile? productImage,
+        IFormFile? productImage,
+        [FromForm] string colorCode,
         [FromForm] string description,
         [FromForm] decimal productPrice,
         [FromForm] Guid categoryId)
@@ -179,10 +188,49 @@ public sealed class ProductsController : ControllerBase
         var command = new UpdateProductCommand(
             productId, 
             productName, 
-            productImage, 
+            productImage,
+            colorCode,
             description, 
             productPrice, 
             categoryId);
+        var result = await _sender.Send(command);
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Cập nhật phiên bản sản phẩm
+    /// </summary>
+    /// <param name="productVariantId"></param>
+    /// <param name="variantName"></param>
+    /// <param name="productVariantPrice"></param>
+    /// <param name="colorCode"></param>
+    /// <param name="imageUrl"></param>
+    /// <param name="description"></param>
+    /// <param name="productId"></param>
+    /// <param name="isBaseVariant"></param>
+    /// <returns></returns>
+    [HttpPut("variants/{productVariantId:guid}")]
+    [EndpointName(EndpointName.Product.UpdateVariant)]
+    public async Task<IResult> UpdateVariant(
+        [FromRoute] Guid productVariantId,
+        [FromForm] string variantName,
+        [FromForm] decimal productVariantPrice,
+        [FromForm] string colorCode,
+        [FromForm] string? imageUrl,
+        [FromForm] string description,
+        [FromForm] Guid productId,
+        [FromForm] bool isBaseVariant)
+    {
+        var command = new UpdateProductVariantCommand(
+            productVariantId,
+            variantName,
+            productVariantPrice,
+            colorCode,
+            imageUrl,
+            description,
+            productId,
+            isBaseVariant);
+
         var result = await _sender.Send(command);
         return result.Match(Results.NoContent, CustomResults.Problem);
     }

@@ -59,9 +59,35 @@ public sealed class ProductVariant
             isBaseVariant);
     }
 
+    public void Update(
+        VariantName variantName,
+        ProductVariantPrice productVariantPrice,
+        ColorCode colorCode,
+        ProductVariantDescription productVariantDescription,
+        string? imageUrl,
+        IsBaseVariant isBaseVariant)
+    {
+        VariantName = variantName;
+        ProductVariantPrice = productVariantPrice;
+        ColorCode = colorCode;
+        ImageUrl = imageUrl;
+        Description = productVariantDescription;
+        IsBaseVariant = isBaseVariant;
+    }
+
     public void Delete()
     {
         ProductVariantStatus = ProductVariantStatus.Discontinued;
+    }
+
+    public void IsNotBase()
+    {
+        IsBaseVariant = IsBaseVariant.False;
+    }
+
+    public void IsBase()
+    {
+        IsBaseVariant = IsBaseVariant.True;
     }
 
     public void Restore()

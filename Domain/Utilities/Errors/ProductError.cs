@@ -6,6 +6,9 @@ namespace Domain.Utilities.Errors;
 
 public static class ProductError
 {
+    public static Error CannotUpdateBaseVariant(ProductVariantId ProductVariantId) => Error.Problem(
+        "Product.CannotUpdateBaseVariant",
+        $"Cannot change IsBase of base variant with the Id = '{ProductVariantId}'");
     public static Error ProductNotFound(ProductId ProductId) => Error.NotFound(
         "Product.NotFound",
         $"The Product with the Id = '{ProductId}' was not found");

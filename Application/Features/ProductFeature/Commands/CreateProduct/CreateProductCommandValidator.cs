@@ -30,8 +30,8 @@ internal sealed class CreateProductCommandValidator : AbstractValidator<CreatePr
             
         RuleFor(x => x.ColorCode)
             .NotEmpty()
-            .WithErrorCode("ProductImage.IsRequied")
-            .WithMessage("Product image is required")
+            .WithErrorCode("ColorCode.IsRequied")
+            .WithMessage("ColorCode is required")
             .Must(x => x.StartsWith("#") && x.Length == 7)
             .WithErrorCode("ColorCode.Invalid")
             .WithMessage("Color code must be in hex format (#RRGGBB)");

@@ -21,25 +21,32 @@ public interface IProductRepository
     Task AddProductVariant(ProductVariant productVariant);
 
     /// <summary>
-    /// Get all product variant
+    /// Lây variant theo id
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     Task<ProductVariant?> GetProductVariant(ProductVariantId id);
+
     /// <summary>
-    /// Get product by id
+    /// Lấy product theo id, load cả variant
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     Task<Product?> GetProduct(ProductId id);
+
+    /// <summary>
+    /// Lấy variant gốc của sản phẩm
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></urns>
+    Task<ProductVariant> GetBaseVariantOfProduct(ProductId id);
+
     /// <summary>
     /// Xoá sản phẩm trong danh mục
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     Task DeleteProductByCategory(CategoryId id);
-    
-    
 
     /// <summary>
     /// Xoá variant của sản phẩm theo id sản phẩm

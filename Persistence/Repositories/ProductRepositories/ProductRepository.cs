@@ -46,9 +46,19 @@ internal sealed class ProductRepository : IProductRepository
             .ExecuteUpdateAsync(a => a.SetProperty(a => a.ProductVariantStatus, ProductVariantStatus.Discontinued));
     }
 
+    public async Task<ProductVariant> GetBaseVariantOfProduct(ProductId id)
+    {
+        return await _postgreSQLWriteDbContext.ProductVariants
+            .Where(a => a.ProductId == id && a.IsBaseVariant == IsBaseVariant.True)
+            .FirstAsync();
+    }
+
     public async Task<Product?> GetProduct(ProductId id)
     {
-        return await _postgreSQLWriteDbContext.Products.FindAsync(id);
+        return await _postgreSQLWriteDbContext.Products.Where(a => a.ProductId == id)
+            .Include(a => a.ProductVariants)
+            .Where(v => v.ProductVariants!.Any(a => a.IsBaseVariant == IsBaseVariant.True))
+            .FirstOrDefaultAsync();
     }
 
     public async Task<ProductVariant?> GetProductVariant(ProductVariantId id)
