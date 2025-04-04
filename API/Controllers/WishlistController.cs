@@ -1,6 +1,7 @@
 using API.Extentions;
 using API.Infrastructure;
 using Application.Features.WishItemFeature.Commands;
+using Application.Features.WishItemFeature.Commands.DeleteWishItemFromWishList;
 using Application.Features.WishItemFeature.Queries.GetWishList;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,8 +23,14 @@ public sealed class WishlistController : ControllerBase
     }
 
     /// <summary>
-    /// Get wish list items for the current customer
+    /// Get the wish list of a customer
     /// </summary>
+    /// <param name="productStatusFilter"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
     /// <returns></returns>
     [HttpGet]
     [EndpointName(EndpointName.Wishlist.GetWishList)]
@@ -81,8 +88,7 @@ public sealed class WishlistController : ControllerBase
     [Authorize]
     public async Task<IResult> DeleteWishItem([FromRoute] Guid wishItemId)
     {
-        // TODO: Implementation based on the DeleteWishItemFromWishList endpoint
-        // The minimal API implementation appears to be incomplete
-        return Results.NoContent();
+        var result = await _sender.Send(new DeleteWishItemFromWishListCommand(wishItemId));
+        return result.Match(Results.NoContent, CustomResults.Problem);
     }
 } 

@@ -296,4 +296,10 @@ internal sealed class ProductQueryServices : IProductQueryServices
             .Select(x => ProductVariantPrice.FromDecimal(x.ProductVariantPrice))
             .FirstOrDefaultAsync();
     }
+
+    public async Task<bool> IsProductVariantExist(ProductVariantId productVariantId)
+    {
+        return await _postgreSQLdbContext.ProductVariants
+            .AnyAsync(x => x.ProductVariantId == new Ulid(productVariantId.Value) && x.ProductVariantStatus != ProductVariantStatus.Discontinued);
+    }
 }

@@ -1,8 +1,8 @@
-using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
+using Domain.Entities.WishItems;
 using Domain.IRepositories;
 using Domain.IRepositories.WishItems;
-using Domain.OutboxMessages.Services;
+using Domain.Utilities.Errors;
 using SharedKernel;
 
 namespace Application.Features.WishItemFeature.Commands.DeleteWishItemFromWishList;
@@ -11,26 +11,31 @@ internal sealed class DeleteWishItemFromWishListCommandHandler : ICommandHandler
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IWishItemRepository _wishItemRepository;
-    private readonly IOutBoxMessageServices _outBoxMessageServices;
-    private readonly IEventBus _eventBus;
     public DeleteWishItemFromWishListCommandHandler(
         IUnitOfWork unitOfWork,
-        IWishItemRepository wishItemRepository,
-        IOutBoxMessageServices outBoxMessageServices,
-        IEventBus eventBus)
+        IWishItemRepository wishItemRepository)
     {
         _unitOfWork = unitOfWork;
         _wishItemRepository = wishItemRepository;
-        _outBoxMessageServices = outBoxMessageServices;
-        _eventBus = eventBus;
     }
 
     public async Task<Result> Handle(
         DeleteWishItemFromWishListCommand request, 
         CancellationToken cancellationToken)
     {
+        var wishItemId = WishItemId.FromGuid(request.WishItemId);
+        var wishItem = await _wishItemRepository.GetWishItemByIdFromPostgreSQL(wishItemId);
+
+        if (wishItem is null)
+        {
+            return Result.Failure(WishItemError.NotFound(wishItemId));
+        }
+
+        _wishItemRepository.DeleteWishItemFromPostgreSQL(wishItem);
         
-        throw new NotImplementedException();
+        await _unitOfWork.SaveChangeAsync();
+
+        return Result.Success();
     }
 
 }

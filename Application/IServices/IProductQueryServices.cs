@@ -109,4 +109,11 @@ public interface IProductQueryServices
     /// <param name="productId"></param>
     /// <returns></returns>
     Task<bool> IsProductExist(ProductId productId);
+
+    /// <summary>
+    /// Check if product variant is exist (Used for checking product before adding to wish list)
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <returns></returns>
+    Task<bool> IsProductVariantExist(ProductVariantId productId);
 }

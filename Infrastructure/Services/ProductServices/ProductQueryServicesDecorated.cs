@@ -119,4 +119,9 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
     {
         return await _decorated.GetVariantById(productVariantId, cancellationToken);
     }
+
+    public async Task<bool> IsProductVariantExist(ProductVariantId productId)
+    {
+        return await _decorated.IsProductVariantExist(productId);
+    }
 }
