@@ -11,6 +11,7 @@ using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
 using Domain.Entities.ShippingInformations;
 using Domain.Entities.Users;
+using Domain.Entities.VerificationTokens;
 using Domain.Entities.Vouchers;
 using Domain.Entities.WishItems;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,7 @@ public sealed class SeeSharpPostgreSQLWriteDbContext : DbContext
     public DbSet<ProductVariant> ProductVariants { get; set; }
     public DbSet<ShippingInformation> ShippingInformations { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<VerificationToken> VerificationTokens { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
     public DbSet<WishItem> WishItems { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }

@@ -9,6 +9,8 @@ using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
 using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
+using Infrastructure.Services.WishItemServices;
+
 
 // using Infrastructure.Services.OrderServices;
 // using Infrastructure.Services.ProductServices;
@@ -96,7 +98,7 @@ public static class DependencyInjection
 
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
         services.AddScoped<IOrderQueryServices, OrderQueryServices>();
-        // services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
+        services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
         return services;
     }
 

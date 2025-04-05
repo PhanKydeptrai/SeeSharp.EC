@@ -28,32 +28,15 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.Events = new JwtBearerEvents
-    {
-        OnTokenValidated = async context =>
-        {
-            var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            if (jti is not null)
-            {
-                var revocationService = context.HttpContext.RequestServices
-                    .GetRequiredService<ITokenRevocationService>();
-                if (await revocationService.IsTokenRevoked(jti))
-                {
-                    context.Fail("Token was revoked.");
-                }
-            }
-        }
-    };
-
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["Issuer"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidateAudience = true,
-        ValidAudience = builder.Configuration["Audience"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
-        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["SigningKey"]!)),
+        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SigningKey"]!)),
         ValidateLifetime = true, // Kiểm tra thời gian hết hạn của token
         ClockSkew = TimeSpan.Zero, // Loại bỏ thời gian trễ mặc định
                                    // Đảm bảo token chứa claim về vai trò
@@ -71,7 +54,7 @@ builder.Services.AddControllers();
 //builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 #region Dependency Injection
-builder.Services.AddApplication()
+builder.Services.AddApplication(builder.Configuration)
     .AddPersistnce(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
 

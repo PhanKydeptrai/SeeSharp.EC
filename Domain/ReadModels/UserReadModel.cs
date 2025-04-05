@@ -1,4 +1,6 @@
-﻿namespace Domain.Database.PostgreSQL.ReadModels;
+﻿using Domain.ReadModels;
+
+namespace Domain.Database.PostgreSQL.ReadModels;
 
 public sealed class UserReadModel
 {
@@ -15,5 +17,5 @@ public sealed class UserReadModel
     public CustomerReadModel? CustomerReadModel { get; set; }
     public EmployeeReadModel? EmployeeReadModel { get; set; }
     // public ICollection<UserAuthenticationTokenReadModel> UserAuthenticationTokenReadModels { get; set; } = new List<UserAuthenticationTokenReadModel>();
-    // public ICollection<VerificationTokenReadModel> VerificationTokenReadModels { get; set; } = new List<VerificationTokenReadModel>();
+    public ICollection<VerificationTokenReadModel> VerificationTokenReadModels { get; set; } = new List<VerificationTokenReadModel>();
 }

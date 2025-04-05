@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using API.Extentions;
 using API.Infrastructure;
 using Application.Features.CustomerFeature.Commands.CustomerSignIn;
+using Application.Features.CustomerFeature.Commands.CustomerSignUp;
 using Application.Features.CustomerFeature.Queries.GetCustomerProfile;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -50,8 +51,23 @@ public sealed class CustomersController : ControllerBase
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
+    /// <summary>
+    /// Đăng ký tài khoản khách hàng
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
+    [HttpPost("signup")]
+    [EndpointName(EndpointName.Customer.SignUp)]
+    public async Task<IResult> SignUp([FromBody] CustomerSignUpCommand command)
+    {
+        var result = await _sender.Send(command);
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+
+
+
     // Additional customer endpoints could be added here
-    // - SignUp
     // - SignInWithGoogle
     // - SignInWithRefreshToken
     // - CustomerChangePassword

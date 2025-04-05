@@ -12,6 +12,7 @@
 		<PackageReference Include="NaughtyStrings" />
 		<PackageReference Include="NETCore.Encrypt" />
 		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Supabase" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Domain\Domain.csproj" />

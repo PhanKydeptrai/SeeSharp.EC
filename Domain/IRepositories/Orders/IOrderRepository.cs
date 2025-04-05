@@ -2,7 +2,6 @@ using Domain.Entities.Customers;
 using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
-using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
 
 namespace Domain.IRepositories.Orders;

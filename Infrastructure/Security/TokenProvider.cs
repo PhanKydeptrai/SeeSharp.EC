@@ -38,8 +38,8 @@ public class TokenProvider : ITokenProvider
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(10),
             SigningCredentials = credentials,
-            Issuer = _config["Issuer"],
-            Audience = _config["Audience"]
+            Issuer = _config["Jwt:Issuer"],
+            Audience = _config["Jwt:Audience"]
 
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
