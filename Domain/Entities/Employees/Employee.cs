@@ -6,33 +6,38 @@ public sealed class Employee
 {
     public EmployeeId EmployeeId { get; private set; } = null!;
     public UserId UserId { get; private set; } = null!;
-    public EmployeeStatus EmployeeStatus { get; private set; }
     public Role Role { get; private set; }
     public User? User { get; private set; } = null!;
 
     public Employee(
         EmployeeId employeeId, 
         UserId userId, 
-        Role role, 
-        EmployeeStatus employeeStatus)
+        Role role)
     {
         EmployeeId = employeeId;
         UserId = userId;
         Role = role;
-        EmployeeStatus = employeeStatus;
     }
 
     //factory method
     public static Employee NewEmployee(
         UserId userId)
     {
-        return new Employee(EmployeeId.New(), userId, Role.Employee, EmployeeStatus.Active);
+        return new Employee(EmployeeId.New(), userId, Role.Employee);
     }
 
     public static Employee NewAdmin( 
         UserId userId)
     {
-        return new Employee(EmployeeId.New(), userId, Role.Admin, EmployeeStatus.Active);
+        return new Employee(EmployeeId.New(), userId, Role.Admin);
+    }
+
+    public static Employee FromExisting(
+        EmployeeId employeeId,
+        UserId userId,
+        Role role)
+    {
+        return new Employee(employeeId, userId, role);
     }
 
 }

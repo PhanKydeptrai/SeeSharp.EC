@@ -112,7 +112,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 {
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerStatus = table.Column<int>(type: "integer", nullable: false),
                     CustomerType = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -132,7 +131,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 {
                     EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    EmployeeStatus = table.Column<int>(type: "integer", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -140,6 +138,49 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     table.PrimaryKey("PK_Employees", x => x.EmployeeId);
                     table.ForeignKey(
                         name: "FK_Employees_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAuthenticationTokens",
+                columns: table => new
+                {
+                    UserAuthenticationTokenId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Value = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Jti = table.Column<string>(type: "varchar(100)", nullable: false),
+                    ExpiredTime = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
+                    IsBlackList = table.Column<bool>(type: "boolean", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAuthenticationTokens", x => x.UserAuthenticationTokenId);
+                    table.ForeignKey(
+                        name: "FK_UserAuthenticationTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VerificationTokens",
+                columns: table => new
+                {
+                    VerificationTokenId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Temporary = table.Column<string>(type: "varchar(50)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
+                    ExpiredDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VerificationTokens", x => x.VerificationTokenId);
+                    table.ForeignKey(
+                        name: "FK_VerificationTokens_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -398,6 +439,16 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 columns: new[] { "CategoryId", "CategoryName", "CategoryStatus", "ImageUrl", "IsDefault" },
                 values: new object[] { new Guid("019546cc-2909-1710-9a1b-36df36d9a7ae"), "General", 0, "", true });
 
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserId", "DateOfBirth", "Email", "Gender", "ImageUrl", "IsVerify", "PasswordHash", "PhoneNumber", "UserName", "UserStatus" },
+                values: new object[] { new Guid("01960aec-bac7-71c5-cfb0-309df6c12572"), null, "kyp194490@gmail.com", "Unknown", "", true, "15E2B0D3C33891EBB0F1EF609EC419420C20E320CE94C65FBC8C3312448EB225", "0777637527", "PhanKy", 0 });
+
+            migrationBuilder.InsertData(
+                table: "Employees",
+                columns: new[] { "EmployeeId", "Role", "UserId" },
+                values: new object[] { new Guid("01960aed-ac00-5c87-4826-7bf26a5d84ac"), 0, new Guid("01960aec-bac7-71c5-cfb0-309df6c12572") });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Bills_CustomerId",
                 table: "Bills",
@@ -500,6 +551,16 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserAuthenticationTokens_UserId",
+                table: "UserAuthenticationTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VerificationTokens_UserId",
+                table: "VerificationTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WishItems_CustomerId",
                 table: "WishItems",
                 column: "CustomerId");
@@ -530,6 +591,12 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "OutboxMessages");
+
+            migrationBuilder.DropTable(
+                name: "UserAuthenticationTokens");
+
+            migrationBuilder.DropTable(
+                name: "VerificationTokens");
 
             migrationBuilder.DropTable(
                 name: "WishItems");

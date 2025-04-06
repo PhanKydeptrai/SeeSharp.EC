@@ -17,7 +17,7 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 //TODO: Move to external file
-//Cấu hình Authen và Author 
+//Cấu hình Authen và Author
 #region Need to move to external file
 builder.Services.AddAuthentication(options =>
 {

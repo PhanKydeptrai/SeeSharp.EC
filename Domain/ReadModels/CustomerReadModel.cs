@@ -6,7 +6,6 @@ public class CustomerReadModel
 {
     public Ulid CustomerId { get; set; }
     public Ulid UserId { get; set; }
-    public CustomerStatus CustomerStatus { get; set; }
     public CustomerType CustomerType { get; set; }
     public ICollection<BillReadModel> BillReadModels { get; set; } = new List<BillReadModel>();
     public ICollection<CustomerVoucherReadModel> CustomerVoucherReadModels { get; set; } = new List<CustomerVoucherReadModel>();

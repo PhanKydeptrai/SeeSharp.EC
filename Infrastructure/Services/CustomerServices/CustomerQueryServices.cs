@@ -88,7 +88,7 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
                 a.UserReadModel.PhoneNumber,
                 a.UserReadModel.Email,
                 a.CustomerType.ToString(),
-                a.CustomerStatus.ToString()))
+                a.UserReadModel.UserStatus.ToString()))
             .FirstOrDefaultAsync();
     }
 

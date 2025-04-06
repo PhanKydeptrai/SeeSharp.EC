@@ -118,9 +118,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("CustomerStatus")
-                        .HasColumnType("integer");
-
                     b.Property<int>("CustomerType")
                         .HasColumnType("integer");
 
@@ -140,9 +137,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("EmployeeStatus")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
@@ -155,6 +149,14 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .IsUnique();
 
                     b.ToTable("Employees");
+
+                    b.HasData(
+                        new
+                        {
+                            EmployeeId = new Guid("01960aed-ac00-5c87-4826-7bf26a5d84ac"),
+                            Role = 0,
+                            UserId = new Guid("01960aec-bac7-71c5-cfb0-309df6c12572")
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Feedbacks.Feedback", b =>
@@ -391,6 +393,35 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.ToTable("ShippingInformations");
                 });
 
+            modelBuilder.Entity("Domain.Entities.UserAuthenticationTokens.UserAuthenticationToken", b =>
+                {
+                    b.Property<Guid>("UserAuthenticationTokenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ExpiredTime")
+                        .HasColumnType("TIMESTAMP");
+
+                    b.Property<bool>("IsBlackList")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Jti")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("UserAuthenticationTokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAuthenticationTokens");
+                });
+
             modelBuilder.Entity("Domain.Entities.Users.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -431,6 +462,45 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("01960aec-bac7-71c5-cfb0-309df6c12572"),
+                            Email = "kyp194490@gmail.com",
+                            Gender = "Unknown",
+                            ImageUrl = "",
+                            IsVerify = true,
+                            PasswordHash = "15E2B0D3C33891EBB0F1EF609EC419420C20E320CE94C65FBC8C3312448EB225",
+                            PhoneNumber = "0777637527",
+                            UserName = "PhanKy",
+                            UserStatus = 0
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.VerificationTokens.VerificationToken", b =>
+                {
+                    b.Property<Guid>("VerificationTokenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TIMESTAMP");
+
+                    b.Property<DateTime>("ExpiredDate")
+                        .HasColumnType("TIMESTAMP");
+
+                    b.Property<string>("Temporary")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("VerificationTokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("VerificationTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>
@@ -700,6 +770,28 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("Domain.Entities.UserAuthenticationTokens.UserAuthenticationToken", b =>
+                {
+                    b.HasOne("Domain.Entities.Users.User", "User")
+                        .WithMany("UserAuthenticationTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.VerificationTokens.VerificationToken", b =>
+                {
+                    b.HasOne("Domain.Entities.Users.User", "User")
+                        .WithMany("VerificationTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.WishItems.WishItem", b =>
                 {
                     b.HasOne("Domain.Entities.Customers.Customer", "Customer")
@@ -772,6 +864,10 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Employee");
+
+                    b.Navigation("UserAuthenticationTokens");
+
+                    b.Navigation("VerificationTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Vouchers.Voucher", b =>

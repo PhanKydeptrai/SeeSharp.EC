@@ -58,7 +58,6 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
         {
             throw new Exception("Đăng ký tài khoản Supabase thất bại", ex);
         }
-        
 
         await _userRepository.AddUserToPostgreSQL(user);
         

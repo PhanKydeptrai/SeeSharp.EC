@@ -43,7 +43,7 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
     {
         if (!await _customerQueryServices.IsAccountVerified(Email.NewEmail(request.Email), cancellationToken))
         {
-            //TODO: Gửi mail xác thực tài khoản
+            // //TODO: Gửi mail xác thực tài khoản
             // var verificationToken = VerificationToken.NewVerificationToken(string.Empty, , DateTime.UtcNow.AddDays(1));
             // var message = new SendVerificationEmailToCustomer(request.Email, Guid.NewGuid(), Ulid.NewUlid().ToGuid());
         }
