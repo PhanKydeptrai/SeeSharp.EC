@@ -1,6 +1,7 @@
 ﻿using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.IRepositories.Customers;
+using Domain.IRepositories.Employees;
 using Domain.IRepositories.Orders;
 using Domain.IRepositories.Products;
 using Domain.IRepositories.UserAuthenticationTokens;
@@ -16,6 +17,7 @@ using Persistence.Outbox;
 using Persistence.Repositories;
 using Persistence.Repositories.CategoryRepositories;
 using Persistence.Repositories.CustomerRepositories;
+using Persistence.Repositories.EmployeeRepositories;
 using Persistence.Repositories.OrderRepositories;
 using Persistence.Repositories.ProductRepositories;
 using Persistence.Repositories.UserAuthenticationTokenRepositories;
@@ -47,6 +49,7 @@ public static class DependencyInjection
         services.AddScoped<IUserAuthenticationTokenRepository, UserAuthenticationTokenRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IWishItemRepository, WishItemRepository>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

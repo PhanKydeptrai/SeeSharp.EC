@@ -3,6 +3,7 @@ using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CustomerMessageConsumers;
+using Infrastructure.Consumers.EmployeeEventConsumers;
 using Infrastructure.MessageBroker;
 using Infrastructure.Security;
 using Infrastructure.Services;
@@ -10,6 +11,7 @@ using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
 using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
+using Infrastructure.Services.UserServices;
 using Infrastructure.Services.WishItemServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
@@ -96,6 +98,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderQueryServices, OrderQueryServices>();
         services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
         services.AddScoped<ITokenRevocationService, TokenRevocationService>();
+        services.AddScoped<IUserQueryService, UserQueryService>();
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }
@@ -120,6 +123,7 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CustomerConfirmedSuccessfullyEventConsumer>();
             busConfiguration.AddConsumer<CustomerChangePasswordEventConsumer>();
             busConfiguration.AddConsumer<CustomerConfirmChangePasswordEventConsumer>();
+            busConfiguration.AddConsumer<SendDefaultPasswordToUserEventConsumer>();
         });
 
         return services;
