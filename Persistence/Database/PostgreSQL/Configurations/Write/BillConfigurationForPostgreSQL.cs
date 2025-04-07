@@ -35,7 +35,7 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
 
         builder.Property(x => x.CreatedDate)
             .IsRequired()
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
 
         builder.Property(x => x.PaymentMethod)
             .IsRequired()

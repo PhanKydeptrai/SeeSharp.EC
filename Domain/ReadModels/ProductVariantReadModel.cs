@@ -8,6 +8,7 @@ public class ProductVariantReadModel
     public Ulid ProductVariantId { get; set; }
     public string VariantName { get; set; } = string.Empty;
     public decimal ProductVariantPrice { get; set; }
+    public string ColorCode { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }
     public string Description { get; set; } = string.Empty;
     public Ulid ProductId { get; set; }

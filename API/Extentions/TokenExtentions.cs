@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 
 namespace API.Extentions;
-
+//TODO: Thêm cơ chế validate signature của token
 internal static class TokenExtentions
 {
     internal static string GetTokenFromHeader(HttpContext httpContext)

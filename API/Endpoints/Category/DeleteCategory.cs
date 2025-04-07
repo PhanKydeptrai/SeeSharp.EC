@@ -7,22 +7,21 @@ using SharedKernel.Constants;
 
 namespace API.Endpoints.Category;
 
-internal sealed class DeleteCategory : IEndpoint
-{
-    public void MapEndpoint(IEndpointRouteBuilder app)
-    {
-        app.MapDelete("api/categories/{categoryId:guid}", async (
-            [FromRoute] Guid categoryId,
-            HttpContext context,
-            ISender sender) =>
-        {
-            var command = new DeleteCategoryCommand(categoryId);
-            var result = await sender.Send(command);
-            return result.Match(Results.NoContent, CustomResults.Problem);
-        })
-        .WithTags(EndpointTag.Category)
-        .WithName(EndpointName.Category.Delete)
-        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
-        .RequireAuthorization();
-    }
-}
+//internal sealed class DeleteCategory : IEndpoint
+//{
+//    public void MapEndpoint(IEndpointRouteBuilder app)
+//    {
+//        app.MapDelete("api/categories/{categoryId:guid}", async (
+//            [FromRoute] Guid categoryId,
+//            ISender sender) =>
+//        {
+//            var command = new DeleteCategoryCommand(categoryId);
+//            var result = await sender.Send(command);
+//            return result.Match(Results.NoContent, CustomResults.Problem);
+//        })
+//        .WithTags(EndpointTag.Category)
+//        .WithName(EndpointName.Category.Delete)
+//        .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
+//        .RequireAuthorization();
+//    }
+//}

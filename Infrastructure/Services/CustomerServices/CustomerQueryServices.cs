@@ -88,7 +88,13 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
                 a.UserReadModel.PhoneNumber,
                 a.UserReadModel.Email,
                 a.CustomerType.ToString(),
-                a.CustomerStatus.ToString()))
+                a.UserReadModel.UserStatus.ToString()))
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> IsAccountVerified(Email email, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Customers.AnyAsync(
+                a => a.UserReadModel.Email == email.Value && a.UserReadModel.IsVerify == true, cancellationToken);
     }
 }

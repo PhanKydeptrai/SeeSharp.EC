@@ -21,7 +21,7 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<Customer?> GetCustomerByEmailFromPostgreSQL(Email email)
     {
-        return await _postgreSQLWriteDbContext.Customers.FirstOrDefaultAsync(a => a.User!.Email == email);
+        return await _postgreSQLWriteDbContext.Customers.Include(a => a.User).FirstOrDefaultAsync(a => a.User!.Email == email);
     }
     public async Task<Customer?> GetCustomerByFromPostgreSQLByUserId(UserId userId)
     {

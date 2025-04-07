@@ -19,7 +19,7 @@ public class TokenProvider : ITokenProvider
     public TokenProvider(IConfiguration config)
     {
         _config = config;
-        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["SigningKey"]!));
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SigningKey"]!));
     }
     public string GenerateAccessToken(UserId userId, CustomerId customerId, Email email, string role, string jti)
     {
@@ -38,8 +38,8 @@ public class TokenProvider : ITokenProvider
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(10),
             SigningCredentials = credentials,
-            Issuer = _config["Issuer"],
-            Audience = _config["Audience"]
+            Issuer = _config["Jwt:Issuer"],
+            Audience = _config["Jwt:Audience"]
 
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);

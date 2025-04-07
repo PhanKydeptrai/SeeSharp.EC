@@ -1,13 +1,20 @@
 ﻿using Domain.Entities.Products;
+using Domain.Entities.ProductVariants;
 using SharedKernel;
 
 namespace Domain.Utilities.Errors;
 
 public static class ProductError
 {
-    public static Error NotFound(ProductId ProductId) => Error.NotFound(
+    public static Error CannotUpdateBaseVariant(ProductVariantId ProductVariantId) => Error.Problem(
+        "Product.CannotUpdateBaseVariant",
+        $"Cannot change IsBase of base variant with the Id = '{ProductVariantId}'");
+    public static Error ProductNotFound(ProductId ProductId) => Error.NotFound(
         "Product.NotFound",
         $"The Product with the Id = '{ProductId}' was not found");
+    public static Error VariantNotFound(ProductVariantId ProductVariantId) => Error.NotFound(
+        "ProductVariant.NotFound",
+        $"The Product variant with the Id = '{ProductVariantId}' was not found");
     public static Error Problem(ProductId ProductId) => Error.Problem(
         "Product.Problem",
         $"Cant save Product with the Id = '{ProductId}'");
@@ -20,8 +27,11 @@ public static class ProductError
         "Product.Deleted",
         $"The Product with the Id = '{ProductId}' was deleted");
     
-    public static Error NotDiscontinued(ProductId ProductId) => Error.Problem(
+    public static Error ProductNotDiscontinued(ProductId ProductId) => Error.Problem(
         "Product.NotDiscontinued",
         $"The Product with the Id = '{ProductId}' is not discontinued");
 
+    public static Error VariantNotDiscontinued(ProductVariantId VariantProductId) => Error.Problem(
+        "Variant.NotDiscontinued",
+        $"The Product Variant with the Id = '{VariantProductId}' is not discontinued");
 }

@@ -16,25 +16,25 @@ internal sealed class EmailVerificationLinkFactory
         _linkGenerator = linkGenerator;
     }
 
-    public string CreateLinkForEmailVerification(Guid verificationTokenId)
+    public string CreateLinkForEmailVerification(Guid TokenId)
     {
         string? link = _linkGenerator.GetPathByRouteValues(
             EndpointName.Customer.Verify, 
-            new { token = verificationTokenId });
+            new { verificationTokenId = TokenId });
 
         if (link == null)
         {
             throw new InvalidOperationException("Could not generate verification link.");
         }
-
+        
         return $"{_baseUrl}{link}";
     }
 
-    public string CreateLinkForChangePassword(Guid verificationTokenId)
+    public string CreateLinkForChangePassword(Guid tokenId)
     {
         string? link = _linkGenerator.GetPathByRouteValues(
             EndpointName.Customer.ChangePasswordConfirm,
-            new { token = verificationTokenId });
+            new { verificationTokenId = tokenId });
 
         if (link == null)
         {
@@ -44,11 +44,11 @@ internal sealed class EmailVerificationLinkFactory
         return $"{_baseUrl}{link}";
     }
 
-    public string CreateLinkForResetPassword(Guid verificationTokenId)
+    public string CreateLinkForResetPassword(Guid tokenId)
     {
         string? link = _linkGenerator.GetPathByRouteValues(
             EndpointName.Customer.ResetPasswordConfirm,
-            new { token = verificationTokenId });
+            new { verificationTokenId = tokenId });
 
         if (link == null)
         {

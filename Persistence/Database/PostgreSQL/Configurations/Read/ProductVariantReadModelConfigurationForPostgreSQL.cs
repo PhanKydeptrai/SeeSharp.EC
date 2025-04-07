@@ -27,6 +27,10 @@ internal sealed class ProductVariantReadModelConfigurationForPostgreSQL : IEntit
                 value => value.ToGuid(),
                 value => new Ulid(value))
             .HasColumnType("uuid");
+        
+        builder.Property(a => a.ColorCode)
+            .IsRequired()
+            .HasColumnType("varchar(7)");
 
         builder.Property(a => a.ProductVariantPrice)
             .IsRequired()

@@ -24,9 +24,12 @@ internal sealed class EmployeeConfigurationForPostgreSQL : IEntityTypeConfigurat
                 value => UserId.FromGuid(value))
             .HasColumnType("uuid");
 
-        builder.Property(x => x.EmployeeStatus)
-            .IsRequired()
-            .HasColumnType("integer");
+        // Seed Data
+        builder.HasData(
+            Employee.FromExisting(
+                EmployeeId.RootAccountId,
+                UserId.RootUserId,
+                Role.Admin));
 
         builder.Property(x => x.Role)
             .IsRequired()

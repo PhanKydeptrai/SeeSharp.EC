@@ -4,7 +4,8 @@ using Domain.Database.PostgreSQL.ReadModels;
 
 namespace Domain.Database.PostgreSQL.Configurations.Read;
 
-internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfiguration<UserReadModel>
+internal sealed class UserReadModelConfigurationForPostgreSQL 
+    : IEntityTypeConfiguration<UserReadModel>
 {
     public void Configure(EntityTypeBuilder<UserReadModel> builder)
     {
@@ -47,7 +48,7 @@ internal sealed class UserReadModelConfigurationForPostgreSQL : IEntityTypeConfi
 
         builder.Property(a => a.DateOfBirth)
             .IsRequired(false)
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
 
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)

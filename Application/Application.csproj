@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+	  <GenerateDocumentationFile>False</GenerateDocumentationFile>
+	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="CloudinaryDotNet" />
 		<PackageReference Include="FluentEmail.Smtp" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
 		<PackageReference Include="Google.Apis.Auth" />
@@ -8,6 +12,7 @@
 		<PackageReference Include="NaughtyStrings" />
 		<PackageReference Include="NETCore.Encrypt" />
 		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Supabase" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Domain\Domain.csproj" />

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace API.Extentions;
 
@@ -86,6 +87,9 @@ internal static class ServiceCollectionExtensions
                 Format = "time",
                 Example = new OpenApiString(DateTime.Now.ToString("HH:mm:ss"))
             });
+
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+            o.IncludeXmlComments(xmlPath);
         });
 
         return services;

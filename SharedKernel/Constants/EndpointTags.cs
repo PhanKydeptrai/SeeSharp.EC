@@ -41,15 +41,22 @@ public static class EndpointName
         public const string Create = "CreateProduct";
         public const string GetById = "GetProductById";
         public const string GetAll = "GetProducts";
+        public const string GetAllVariant = "GetAllProductVariant";
         public const string Update = "UpdateProduct";
         public const string Delete = "DeleteProduct";
         public const string Restore = "RestoreProduct";
+        public const string GetVariantById = "GetVariantById";
+        public const string DeleteVariant = "DeleteVariant";
+        public const string RestoreVariant = "RestoreVariant";
+        public const string UpdateVariant = "UpdateVariant";
+        public const string CreateVariant = "CreateVariant";
     }
 
     public class Category
     {
         public const string Create = "CreateCategory";
         public const string GetById = "GetCategoryById";
+        public const string GetByIdForAdmin = "GetCategoryByIdForAdmin";
         public const string GetAll = "GetCategories";
         public const string Update = "UpdateCategory";
         public const string Delete = "DeleteCategory";

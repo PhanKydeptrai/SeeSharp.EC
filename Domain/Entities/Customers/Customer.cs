@@ -11,7 +11,6 @@ public sealed class Customer
 {
     public CustomerId CustomerId { get; private set; } = null!;
     public UserId UserId { get; private set; } = null!;
-    public CustomerStatus CustomerStatus { get; private set; }
     public CustomerType CustomerType { get; private set; }
     public User? User { get; private set; } = null!;
     //Foreign key
@@ -22,15 +21,13 @@ public sealed class Customer
     public ICollection<Feedback>? Feedbacks { get; set; } = null!;
     public ICollection<Bill>? Bills { get; set; } = null!;
 
-    public Customer(
+    private Customer(
         CustomerId customerId, 
         UserId userId, 
-        CustomerStatus customerStatus, 
         CustomerType customerType)
     {
         CustomerId = customerId;
         UserId = userId;
-        CustomerStatus = customerStatus;
         CustomerType = customerType;
     }
 
@@ -41,20 +38,18 @@ public sealed class Customer
     {
         return new Customer(
             CustomerId.New(), 
-            userId, CustomerStatus.Active, 
+            userId,
             customerType);
     }
 
     public static Customer FromExisting(
         CustomerId customerId,
         UserId userId,
-        CustomerStatus customerStatus,
         CustomerType customerType)
     {
         return new Customer(
             customerId, 
             userId, 
-            customerStatus, 
             customerType);
     }
 }

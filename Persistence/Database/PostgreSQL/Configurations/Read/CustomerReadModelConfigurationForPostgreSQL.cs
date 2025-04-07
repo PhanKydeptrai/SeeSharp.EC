@@ -24,9 +24,9 @@ internal sealed class CustomerReadModelConfigurationForPostgreSQL : IEntityTypeC
                 value => new Ulid(value))
             .HasColumnType("uuid");
 
-        builder.Property(a => a.CustomerStatus)
-            .IsRequired()
-            .HasColumnType("integer");
+        // builder.Property(a => a.CustomerStatus)
+        //     .IsRequired()
+        //     .HasColumnType("integer");
 
         builder.Property(a => a.CustomerType)
             .IsRequired()

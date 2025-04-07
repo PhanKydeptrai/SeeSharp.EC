@@ -7,10 +7,10 @@ internal sealed class AddProductToOrderCommandValidator : AbstractValidator<AddP
 {
     public AddProductToOrderCommandValidator()
     {   
-        RuleFor(x => x.ProductId)
+        RuleFor(x => x.ProductVariantId)
             .NotEmpty()
-            .WithErrorCode("ProductId.Empty")
-            .WithMessage("ProductId is required");
+            .WithErrorCode("ProductVariantId.Empty")
+            .WithMessage("ProductVariantId is required");
 
         RuleFor(x => x.Quantity)        
             .NotEmpty()

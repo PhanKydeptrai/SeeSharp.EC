@@ -8,32 +8,16 @@ namespace Persistence.Repositories.CategoryRepositories;
 internal sealed class CategoryRepository : ICategoryRepository
 {
     private readonly SeeSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
-    private readonly SeeSharpPostgreSQLReadDbContext _postgreSQLReadDbContext;
 
     public CategoryRepository(
-        SeeSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext, 
-        SeeSharpPostgreSQLReadDbContext postgreSQLReadDbContext)
+        SeeSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
     {
         _postgreSQLWriteDbContext = postgreSQLWriteDbContext;
-        _postgreSQLReadDbContext = postgreSQLReadDbContext;
-    }
-
-    public async Task AddCategoryToMySQL(Category category)
-    {
-        await _postgreSQLWriteDbContext.Categories.AddAsync(category);
     }
 
     public async Task AddCategoryToPosgreSQL(Category category)
     {
         await _postgreSQLWriteDbContext.Categories.AddAsync(category);
-    }
-
-    
-    public async Task<Category?> GetCategoryByIdFromMySQL(
-        CategoryId categoryId,
-        CancellationToken cancellationToken = default)
-    {
-        return await _postgreSQLWriteDbContext.Categories.FindAsync(categoryId);
     }
 
     public async Task<Category?> GetCategoryByIdFromPostgreSQL(

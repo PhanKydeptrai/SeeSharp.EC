@@ -8,6 +8,22 @@ namespace Persistence.Database.PostgreSQL.Configurations.Write;
 
 internal sealed class UserConfigurationForPostgreSQL : IEntityTypeConfiguration<User>
 {
+    private readonly UserName _rootUserName;
+    private readonly Email _rootUserEmail;
+    private readonly PhoneNumber _rootUserPhoneNumber;
+    private readonly PasswordHash _rootUserPassword;
+    public UserConfigurationForPostgreSQL(
+        UserName rootUserName,
+        Email rootUserEmail,
+        PhoneNumber rootUserPhoneNumber,
+        PasswordHash rootUserPassword)
+    {
+        _rootUserName = rootUserName;
+        _rootUserEmail = rootUserEmail;
+        _rootUserPhoneNumber = rootUserPhoneNumber;
+        _rootUserPassword = rootUserPassword;
+    }
+
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.HasKey(a => a.UserId);
@@ -72,11 +88,21 @@ internal sealed class UserConfigurationForPostgreSQL : IEntityTypeConfiguration<
 
         builder.Property(a => a.DateOfBirth)
             .IsRequired(false)
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
 
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)
             .HasColumnType("varchar(256)");
+        
+        // Seed Data
+        builder.HasData(
+            User.FromExisting(
+                UserId.RootUserId,
+                _rootUserName,
+                _rootUserEmail,
+                _rootUserPhoneNumber,
+                _rootUserPassword,
+                string.Empty));
 
         //* Forign Key
         builder.HasOne(a => a.Customer)

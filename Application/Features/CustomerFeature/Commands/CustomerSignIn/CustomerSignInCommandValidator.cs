@@ -17,9 +17,6 @@ internal sealed class CustomerSignInCommandValidator : AbstractValidator<Custome
         RuleFor(a => a.Password)
             .NotEmpty()
             .WithErrorCode("Password.IsRequired")
-            .WithMessage("Password is required.")
-            .MinimumLength(8)
-            .WithErrorCode("Password.MinimumLength")
-            .WithMessage("Password must be at least 8 characters long.");
+            .WithMessage("Password is required.");
     }
 }

@@ -1,9 +1,7 @@
-﻿using Application.Abstractions.EventBus;
-using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Messaging;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
-using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
 using SharedKernel;
 
@@ -11,19 +9,13 @@ namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
 public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand>
 {
     private readonly ICategoryRepository _categoryRepository;
-    private readonly IEventBus _eventBus;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOutBoxMessageServices _outboxservice;
     public UpdateCategoryCommandHandler(
         ICategoryRepository categoryRepository,
-        IUnitOfWork unitOfWork,
-        IEventBus eventBus,
-        IOutBoxMessageServices outboxservice)
+        IUnitOfWork unitOfWork)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
-        _eventBus = eventBus;
-        _outboxservice = outboxservice;
     }
     //FLOW: Get category by id from database -> Update category -> Add Outbox message -> Commit -> Publish event
     public async Task<Result> Handle(
@@ -47,7 +39,8 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
     //* Private methods
     private async Task<(Category? category, Result? failure)> GetCategoryByIdAsync(CategoryId categoryId)
     {
-        var category = await _categoryRepository.GetCategoryByIdFromMySQL(categoryId);
+        // throw new NotImplementedException("GetCategoryByIdAsync method is not implemented yet.");
+        var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(categoryId);
         if (category is null) return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));
         if (category.IsDefault)
         {

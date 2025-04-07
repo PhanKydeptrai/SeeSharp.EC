@@ -1,42 +1,44 @@
-//using Domain.Entities.UserAuthenticationTokens;
-//using Domain.Entities.Users;
-//using Domain.IRepositories.UserAuthenticationTokens;
-//using Microsoft.EntityFrameworkCore;
+using Domain.Entities.UserAuthenticationTokens;
+using Domain.Entities.Users;
+using Domain.IRepositories.UserAuthenticationTokens;
+using Microsoft.EntityFrameworkCore;
+using Persistence.Database.PostgreSQL;
 
-//namespace Persistence.Repositories.UserAuthenticationTokenRepositories;
+namespace Persistence.Repositories.UserAuthenticationTokenRepositories;
 
-//internal sealed class UserAuthenticationTokenRepository : IUserAuthenticationTokenRepository
-//{
-//    public UserAuthenticationTokenRepository(NextSharpMySQLWriteDbContext nextSharpMySQLWriteDbContext)
-//    {
-//        _nextSharpMySQLWriteDbContext = nextSharpMySQLWriteDbContext;
-//    }
+internal sealed class UserAuthenticationTokenRepository : IUserAuthenticationTokenRepository
+{
+    private readonly SeeSharpPostgreSQLWriteDbContext _context;
+    public UserAuthenticationTokenRepository(SeeSharpPostgreSQLWriteDbContext context)
+    {
+        _context = context;
+    }
 
-//    public async Task AddRefreshTokenToMySQL(UserAuthenticationToken refreshToken)
-//    {
-//        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.AddAsync(refreshToken);
-//    }
-//    public async Task<UserAuthenticationToken?> GetRefreshTokenFromMySQLByJti(string jti)
-//    {
-//        return await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens
-//            .Where(x => x.Jti == jti)
-//            .FirstOrDefaultAsync();
-//    }
+    public async Task AddRefreshToken(UserAuthenticationToken refreshToken)
+    {
+        await _context.UserAuthenticationTokens.AddAsync(refreshToken);
+    }
+    public async Task<UserAuthenticationToken?> GetRefreshTokenFromMySQLByJti(string jti)
+    {
+        return await _context.UserAuthenticationTokens
+            .Where(x => x.Jti == jti)
+            .FirstOrDefaultAsync();
+    }
 
-//    public async Task<UserAuthenticationToken?> GetAuthenticationTokenWithRefreshToken(string refreshToken)
-//    {
-//        var userAuthenticationToken = await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens
-//            .Where(x => x.Value == refreshToken)
-//            .Include(x => x.User)
-//            .Include(x => x.User!.Customer)
-//            .FirstOrDefaultAsync();
-        
-//        return userAuthenticationToken;
-//    }
+    public async Task<UserAuthenticationToken?> GetAuthenticationTokenWithRefreshToken(string refreshToken)
+    {
+        var userAuthenticationToken = await _context.UserAuthenticationTokens
+            .Where(x => x.Value == refreshToken)
+            .Include(x => x.User)
+            .Include(x => x.User!.Customer)
+            .FirstOrDefaultAsync();
 
-//    public async Task RevokeAllTokenFromMySQLByUserId(UserId userId)
-//    {
-//        await _nextSharpMySQLWriteDbContext.UserAuthenticationTokens.Where(x => x.UserId == userId)
-//            .ExecuteUpdateAsync(a => a.SetProperty(a => a.IsBlackList, IsBlackList.True));
-//    }
-//}
+        return userAuthenticationToken;
+    }
+
+    public async Task RevokeAllTokenFromMySQLByUserId(UserId userId)
+    {
+        await _context.UserAuthenticationTokens.Where(x => x.UserId == userId)
+            .ExecuteUpdateAsync(a => a.SetProperty(a => a.IsBlackList, IsBlackList.True));
+    }
+}

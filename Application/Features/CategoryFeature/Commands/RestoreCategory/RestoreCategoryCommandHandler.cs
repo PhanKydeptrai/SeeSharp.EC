@@ -15,20 +15,14 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
     private readonly ICategoryRepository _categoryRepository;
     private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IOutBoxMessageServices _outBoxMessageServices;
-    private readonly IEventBus _eventBus;
     public RestoreCategoryCommandHandler(
         IUnitOfWork unitOfWork,
         ICategoryRepository categoryRepository,
-        IProductRepository productRepository,
-        IEventBus eventBus,
-        IOutBoxMessageServices outBoxMessageServices)
+        IProductRepository productRepository)
     {
         _unitOfWork = unitOfWork;
         _categoryRepository = categoryRepository;
         _productRepository = productRepository;
-        _eventBus = eventBus;
-        _outBoxMessageServices = outBoxMessageServices;
     }
 
     public async Task<Result> Handle(RestoreCategoryCommand request, CancellationToken cancellationToken)
@@ -44,11 +38,11 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
             return failure!;
         }
         category.Restore();
-        //Insert outbox message
         await _unitOfWork.SaveChangeAsync();
         
         //Process product restore by category
-        await _productRepository.RestoreProductByCategoryFromPostgreSQL(categoryId);
+        await _productRepository.RestoreProductByCategory(categoryId);
+        await _productRepository.RestoreProductVariantByCategory(categoryId);
         //Commit transaction
         transaction.Commit();
         
@@ -57,7 +51,8 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
 
     private async Task<(Category? category, Result? result)> GetCategoryById(CategoryId categoryId)
     {
-        var category = await _categoryRepository.GetCategoryByIdFromMySQL(categoryId);
+        
+        var category = await _categoryRepository.GetCategoryByIdFromPostgreSQL(categoryId);
         if (category is null)
         {
             return (null, Result.Failure(CategoryErrors.NotFound(categoryId)));

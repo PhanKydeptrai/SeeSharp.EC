@@ -25,14 +25,9 @@ internal sealed class CustomerConfigurationForPostgreSQL : IEntityTypeConfigurat
                 value => UserId.FromGuid(value))
             .HasColumnType("uuid");
 
-        builder.Property(a => a.CustomerStatus)
-            .IsRequired()
-            .HasColumnType("integer");
-
         builder.Property(a => a.CustomerType)
             .IsRequired()
             .HasColumnType("integer");
-
 
         builder.HasMany(a => a.ShippingInformations)
             .WithOne(a => a.Customer)

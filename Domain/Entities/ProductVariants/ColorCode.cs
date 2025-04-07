@@ -18,7 +18,17 @@ public sealed class ColorCode : ValueObject
     public static ColorCode Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
+        {
             throw new ArgumentException("Color code cannot be empty.", nameof(value));
+        }
+
+        if (value.Length != 7 || !value.StartsWith("#"))
+        {
+            throw new ArgumentException("Color code must be in the format #RRGGBB.", nameof(value));
+        }
+        
         return new ColorCode(value);
     }
+
+    public static ColorCode FromString(string value) => Create(value);
 }

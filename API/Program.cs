@@ -17,7 +17,7 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 //TODO: Move to external file
-//Cấu hình Authen và Author 
+//Cấu hình Authen và Author
 #region Need to move to external file
 builder.Services.AddAuthentication(options =>
 {
@@ -44,16 +44,16 @@ builder.Services.AddAuthentication(options =>
             }
         }
     };
-
+    
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["Issuer"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidateAudience = true,
-        ValidAudience = builder.Configuration["Audience"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
-        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["SigningKey"]!)),
+        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SigningKey"]!)),
         ValidateLifetime = true, // Kiểm tra thời gian hết hạn của token
         ClockSkew = TimeSpan.Zero, // Loại bỏ thời gian trễ mặc định
                                    // Đảm bảo token chứa claim về vai trò
@@ -66,16 +66,18 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
-builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+builder.Services.AddControllers();
+
+//builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 #region Dependency Injection
-builder.Services.AddApplication()
+builder.Services.AddApplication(builder.Configuration)
     .AddPersistnce(builder.Configuration)
     .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<ILinkServices, LinkServices>(); //* Hateoas 
 
-// builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpContextAccessor();
 
 #endregion
 builder.Services.AddCustomProblemDetails();
@@ -148,9 +150,11 @@ app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
 
+// app.UseRouting();
 
 #region Cấu hình minimal API
-app.MapEndpoints();
+app.MapControllers();
+// app.MapEndpoints();
 #endregion
 
 app.Run();

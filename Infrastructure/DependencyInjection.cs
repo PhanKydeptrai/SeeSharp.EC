@@ -2,14 +2,15 @@
 using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
+using Infrastructure.Consumers.CustomerMessageConsumers;
 using Infrastructure.MessageBroker;
 using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
-// using Infrastructure.Services.OrderServices;
-// using Infrastructure.Services.ProductServices;
-// using Infrastructure.Services.WishItemServices;
+using Infrastructure.Services.OrderServices;
+using Infrastructure.Services.ProductServices;
+using Infrastructure.Services.WishItemServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -84,16 +85,18 @@ public static class DependencyInjection
             return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!);
         });
 
-        // services.AddScoped<ProductQueryServices>();
-        // services.AddScoped<IProductQueryServices>(provider =>
-        // {
-        //     var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
-        //     return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
-        // });
+        services.AddScoped<ProductQueryServices>();
+        services.AddScoped<IProductQueryServices>(provider =>
+        {
+            var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
+            return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
+        });
 
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
-        // services.AddScoped<IOrderQueryServices, OrderQueryServices>();
-        // services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
+        services.AddScoped<IOrderQueryServices, OrderQueryServices>();
+        services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
+        services.AddScoped<ITokenRevocationService, TokenRevocationService>();
+        // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }
 
@@ -111,6 +114,12 @@ public static class DependencyInjection
             });
 
             //* Đăng ký consumers
+            busConfiguration.AddConsumer<CustomerResetPasswordEmailSendMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerResetPasswordMessageConsumer>();
+            busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerConfirmedSuccessfullyEventConsumer>();
+            busConfiguration.AddConsumer<CustomerChangePasswordEventConsumer>();
+            busConfiguration.AddConsumer<CustomerConfirmChangePasswordEventConsumer>();
         });
 
         return services;

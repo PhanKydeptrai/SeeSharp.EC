@@ -23,9 +23,9 @@ internal sealed class EmployeeReadModelConfigurationForPostgreSQL : IEntityTypeC
                 value => new Ulid(value))
             .HasColumnType("uuid");
 
-        builder.Property(x => x.EmployeeStatus)
-            .IsRequired()
-            .HasColumnType("integer");
+        // builder.Property(x => x.EmployeeStatus)
+        //     .IsRequired()
+        //     .HasColumnType("integer");
 
         builder.Property(x => x.Role)
             .IsRequired()
