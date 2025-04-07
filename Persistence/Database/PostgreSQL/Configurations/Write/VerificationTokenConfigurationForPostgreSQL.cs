@@ -31,10 +31,10 @@ internal sealed class VerificationTokenConfigurationForPostgreSQL : IEntityTypeC
 
         builder.Property(a => a.CreatedDate)
             .IsRequired()
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
 
         builder.Property(a => a.ExpiredDate)
             .IsRequired()
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
     }
 }

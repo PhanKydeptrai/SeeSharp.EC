@@ -19,7 +19,7 @@ public class TokenProvider : ITokenProvider
     public TokenProvider(IConfiguration config)
     {
         _config = config;
-        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["SigningKey"]!));
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SigningKey"]!));
     }
     public string GenerateAccessToken(UserId userId, CustomerId customerId, Email email, string role, string jti)
     {

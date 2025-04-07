@@ -3,16 +3,13 @@ using Application.DTOs.Customer;
 using Application.IServices;
 using Application.Security;
 using Application.Services;
-using CloudinaryDotNet.Actions;
 using Domain.Entities.Customers;
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.Users;
-using Domain.Entities.VerificationTokens;
 using Domain.IRepositories;
-using Domain.IRepositories.VerificationTokens;
-using Domain.OutboxMessages.Services;
+using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.Utilities.Errors;
-using Domain.Utilities.Events.CustomerEvents;
+using NETCore.Encrypt.Extensions;
 using SharedKernel;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerSignIn;
@@ -21,19 +18,20 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
 {
     #region Dependencies
     private readonly ICustomerQueryServices _customerQueryServices;
-    private readonly IVerificationTokenRepository _verificationTokenRepository;
+    private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
+    private readonly ITokenProvider _tokenProvider;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ICustomerSupabaseClient _supabaseClient;
     public CustomerSignInCommandHandler(
         IUnitOfWork unitOfWork,
         ICustomerQueryServices customerQueryServices,
         ICustomerSupabaseClient supabaseClient,
-        IVerificationTokenRepository verificationTokenRepository)
+        ITokenProvider tokenProvider,
+        IUserAuthenticationTokenRepository userAuthenticationTokenRepository)
     {
         _unitOfWork = unitOfWork;
         _customerQueryServices = customerQueryServices;
-        _supabaseClient = supabaseClient;
-        _verificationTokenRepository = verificationTokenRepository;
+        _tokenProvider = tokenProvider;
+        _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
     }
     #endregion
 
@@ -41,36 +39,45 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         CustomerSignInCommand request,
         CancellationToken cancellationToken)
     {
-        if (!await _customerQueryServices.IsAccountVerified(Email.NewEmail(request.Email), cancellationToken))
-        {
-            // //TODO: Gửi mail xác thực tài khoản
-            // var verificationToken = VerificationToken.NewVerificationToken(string.Empty, , DateTime.UtcNow.AddDays(1));
-            // var message = new SendVerificationEmailToCustomer(request.Email, Guid.NewGuid(), Ulid.NewUlid().ToGuid());
-        }
+        var (response, failure) = await IsSignInSuccess(request);
+        if (failure is not null) return Result.Failure<CustomerSignInResponse>(failure.Error);
 
-        var session = await _supabaseClient.Client.Auth.SignIn(request.Email, request.Password);
-        if (session is null) return Result.Failure<CustomerSignInResponse>(CustomerError.LoginFailed());
-        return Result.Success(new CustomerSignInResponse(session.AccessToken!, session.RefreshToken!));
+        //Tạo access token và 
+        string jti = Ulid.NewUlid().ToGuid().ToString();
+        string accessToken = _tokenProvider.GenerateAccessToken(
+            UserId.FromUlid(response!.UserId),
+            CustomerId.FromUlid(response.CustomerId),
+            Email.FromString(response.Email),
+            response.CustomerType,
+            jti);
+
+        string refreshToken = _tokenProvider.GenerateRefreshToken();
+
+        // Save jti and refresh token to database
+        var userAuthenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
+            refreshToken,
+            jti,
+            DateTime.UtcNow.AddDays(30),
+            UserId.FromUlid(response!.UserId));
+
+        await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);
+
+        await _unitOfWork.SaveChangeAsync();
+
+        return Result.Success(new CustomerSignInResponse(accessToken, refreshToken));
     }
 
     #region Private method
-    // private async Task<(CustomerAuthenticationResponse? response, Result<CustomerSignInResponse>? failure)> IsSignInSuccess(
-    //     CustomerSignInCommand request)
-    // {
-    //     // var response = await _customerQueryServices.AuthenticateCustomer(
-    //     //     Email.NewEmail(request.Email),
-    //     //     PasswordHash.NewPasswordHash(request.Password.SHA256()));
+    private async Task<(CustomerAuthenticationResponse? response, Result<CustomerSignInResponse>? failure)> IsSignInSuccess(
+        CustomerSignInCommand request)
+    {
+        var response = await _customerQueryServices.AuthenticateCustomer(
+            Email.NewEmail(request.Email),
+            PasswordHash.NewPasswordHash(request.Password.SHA256()));
 
-    //     try
-    //     {
-    //         var session = await _supabaseClient.Client.Auth.SignIn(request.Email, request.Password);
+        if (response is null) return (null, Result.Failure<CustomerSignInResponse>(CustomerError.LoginFailed()));
 
-
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return (null, Result.Failure<CustomerSignInResponse>(CustomerError.LoginFailed()));
-    //     }
-    // }
+        return (response, null);
+    }
     #endregion
 }

@@ -28,6 +28,23 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            if (jti is not null)
+            {
+                var revocationService = context.HttpContext.RequestServices
+                    .GetRequiredService<ITokenRevocationService>();
+                if (await revocationService.IsTokenRevoked(jti))
+                {
+                    context.Fail("Token was revoked.");
+                }
+            }
+        }
+    };
+    
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -133,6 +150,7 @@ app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
 
+// app.UseRouting();
 
 #region Cấu hình minimal API
 app.MapControllers();

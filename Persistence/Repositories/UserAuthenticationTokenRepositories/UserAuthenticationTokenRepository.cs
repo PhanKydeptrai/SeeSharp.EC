@@ -14,7 +14,7 @@ internal sealed class UserAuthenticationTokenRepository : IUserAuthenticationTok
         _context = context;
     }
 
-    public async Task AddRefreshTokenToMySQL(UserAuthenticationToken refreshToken)
+    public async Task AddRefreshToken(UserAuthenticationToken refreshToken)
     {
         await _context.UserAuthenticationTokens.AddAsync(refreshToken);
     }

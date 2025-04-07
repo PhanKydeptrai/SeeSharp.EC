@@ -2,6 +2,7 @@
 using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
+using Infrastructure.Consumers.CustomerMessageConsumers;
 using Infrastructure.MessageBroker;
 using Infrastructure.Security;
 using Infrastructure.Services;
@@ -10,11 +11,6 @@ using Infrastructure.Services.CustomerServices;
 using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
 using Infrastructure.Services.WishItemServices;
-
-
-// using Infrastructure.Services.OrderServices;
-// using Infrastructure.Services.ProductServices;
-// using Infrastructure.Services.WishItemServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -53,7 +49,7 @@ public static class DependencyInjection
         //Add TokenProvider
         services.AddScoped<ITokenProvider, TokenProvider>();
         // services.AddScoped<ITokenRevocationService, TokenRevocationService>();
-        // services.AddHttpContextAccessor();
+        services.AddHttpContextAccessor();
         return services;
     }
 
@@ -99,6 +95,7 @@ public static class DependencyInjection
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
         services.AddScoped<IOrderQueryServices, OrderQueryServices>();
         services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
+        // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }
 
@@ -116,6 +113,10 @@ public static class DependencyInjection
             });
 
             //* Đăng ký consumers
+            busConfiguration.AddConsumer<CustomerResetPasswordEmailSendMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerResetPasswordMessageConsumer>();
+            busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
+            busConfiguration.AddConsumer<CustomerConfirmedSuccessfullyEventConsumer>();
         });
 
         return services;

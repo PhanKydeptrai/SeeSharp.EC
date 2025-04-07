@@ -88,7 +88,7 @@ internal sealed class UserConfigurationForPostgreSQL : IEntityTypeConfiguration<
 
         builder.Property(a => a.DateOfBirth)
             .IsRequired(false)
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
 
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)

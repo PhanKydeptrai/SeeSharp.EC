@@ -62,11 +62,11 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
 
         builder.Property(a => a.StartDate)
             .IsRequired()
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
 
         builder.Property(a => a.ExpiredDate)
             .IsRequired()
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
 
         builder.Property(a => a.Description)
             .IsRequired()

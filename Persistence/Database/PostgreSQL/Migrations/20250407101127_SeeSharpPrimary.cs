@@ -34,8 +34,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     Type = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<string>(type: "JSON", nullable: false),
-                    OccurredOnUtc = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
-                    ProcessedOnUtc = table.Column<DateTime>(type: "TIMESTAMP", nullable: true),
+                    OccurredOnUtc = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
+                    ProcessedOnUtc = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: true),
                     Error = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -55,7 +55,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     UserStatus = table.Column<int>(type: "integer", nullable: false),
                     IsVerify = table.Column<bool>(type: "boolean", nullable: false),
                     Gender = table.Column<string>(type: "varchar(10)", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "TIMESTAMP", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: true),
                     ImageUrl = table.Column<string>(type: "varchar(256)", nullable: true)
                 },
                 constraints: table =>
@@ -74,8 +74,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     PercentageDiscount = table.Column<int>(type: "integer", nullable: false),
                     MaximumDiscountAmount = table.Column<decimal>(type: "decimal", nullable: false),
                     MinimumOrderAmount = table.Column<decimal>(type: "decimal", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
-                    ExpiredDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
+                    ExpiredDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -151,7 +151,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     UserAuthenticationTokenId = table.Column<Guid>(type: "uuid", nullable: false),
                     Value = table.Column<string>(type: "varchar(100)", nullable: false),
                     Jti = table.Column<string>(type: "varchar(100)", nullable: false),
-                    ExpiredTime = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
+                    ExpiredTime = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
                     IsBlackList = table.Column<bool>(type: "boolean", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -173,8 +173,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     VerificationTokenId = table.Column<Guid>(type: "uuid", nullable: false),
                     Temporary = table.Column<string>(type: "varchar(50)", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
-                    ExpiredDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false)
+                    CreatedDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
+                    ExpiredDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -371,7 +371,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     BillId = table.Column<Guid>(type: "uuid", nullable: false),
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "TIMESTAMP", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
                     PaymentMethod = table.Column<int>(type: "integer", nullable: false),
                     ShippingInformationId = table.Column<Guid>(type: "uuid", nullable: false)
                 },

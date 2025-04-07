@@ -31,10 +31,10 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
 
         builder.Property(a => a.OccurredOnUtc)
             .IsRequired()
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
 
         builder.Property(a => a.ProcessedOnUtc)
             .IsRequired(false)
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
     }
 }

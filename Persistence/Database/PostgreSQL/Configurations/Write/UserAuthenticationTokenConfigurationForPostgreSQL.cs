@@ -28,7 +28,7 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
         
         builder.Property(x => x.ExpiredTime)
             .IsRequired()
-            .HasColumnType("TIMESTAMP");
+            .HasColumnType("TIMESTAMPTZ");
         
         builder.Property(x => x.IsBlackList)
             .IsRequired()

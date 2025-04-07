@@ -12,7 +12,7 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(SeeSharpPostgreSQLWriteDbContext))]
-    [Migration("20250406134448_SeeSharpPrimary")]
+    [Migration("20250407101127_SeeSharpPrimary")]
     partial class SeeSharpPrimary
     {
         /// <inheritdoc />
@@ -31,7 +31,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TIMESTAMP");
+                        .HasColumnType("TIMESTAMPTZ");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
@@ -402,7 +402,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("ExpiredTime")
-                        .HasColumnType("TIMESTAMP");
+                        .HasColumnType("TIMESTAMPTZ");
 
                     b.Property<bool>("IsBlackList")
                         .HasColumnType("boolean");
@@ -431,7 +431,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("TIMESTAMP");
+                        .HasColumnType("TIMESTAMPTZ");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -487,10 +487,10 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TIMESTAMP");
+                        .HasColumnType("TIMESTAMPTZ");
 
                     b.Property<DateTime>("ExpiredDate")
-                        .HasColumnType("TIMESTAMP");
+                        .HasColumnType("TIMESTAMPTZ");
 
                     b.Property<string>("Temporary")
                         .IsRequired()
@@ -516,7 +516,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("ExpiredDate")
-                        .HasColumnType("TIMESTAMP");
+                        .HasColumnType("TIMESTAMPTZ");
 
                     b.Property<decimal>("MaximumDiscountAmount")
                         .HasColumnType("decimal");
@@ -528,7 +528,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("TIMESTAMP");
+                        .HasColumnType("TIMESTAMPTZ");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -583,10 +583,10 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("OccurredOnUtc")
-                        .HasColumnType("TIMESTAMP");
+                        .HasColumnType("TIMESTAMPTZ");
 
                     b.Property<DateTime?>("ProcessedOnUtc")
-                        .HasColumnType("TIMESTAMP");
+                        .HasColumnType("TIMESTAMPTZ");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
