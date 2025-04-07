@@ -12,7 +12,7 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(SeeSharpPostgreSQLWriteDbContext))]
-    [Migration("20250407101127_SeeSharpPrimary")]
+    [Migration("20250407111637_SeeSharpPrimary")]
     partial class SeeSharpPrimary
     {
         /// <inheritdoc />
@@ -494,7 +494,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("Temporary")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");

@@ -95,6 +95,7 @@ public static class DependencyInjection
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
         services.AddScoped<IOrderQueryServices, OrderQueryServices>();
         services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
+        services.AddScoped<ITokenRevocationService, TokenRevocationService>();
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }
@@ -117,6 +118,8 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CustomerResetPasswordMessageConsumer>();
             busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
             busConfiguration.AddConsumer<CustomerConfirmedSuccessfullyEventConsumer>();
+            busConfiguration.AddConsumer<CustomerChangePasswordEventConsumer>();
+            busConfiguration.AddConsumer<CustomerConfirmChangePasswordEventConsumer>();
         });
 
         return services;

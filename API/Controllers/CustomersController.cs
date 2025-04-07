@@ -1,11 +1,17 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
 using API.Extentions;
 using API.Infrastructure;
+using Application.Features.CustomerFeature.Commands.CustomerChangePassword;
+using Application.Features.CustomerFeature.Commands.CustomerConfirmChangePassword;
 using Application.Features.CustomerFeature.Commands.CustomerConfirmResetPassword;
 using Application.Features.CustomerFeature.Commands.CustomerResetPassword;
+using Application.Features.CustomerFeature.Commands.CustomerRevokeRefreshToken;
 using Application.Features.CustomerFeature.Commands.CustomerSignIn;
+using Application.Features.CustomerFeature.Commands.CustomerSignInWithRefreshToken;
 using Application.Features.CustomerFeature.Commands.CustomerSignUp;
 using Application.Features.CustomerFeature.Commands.CustomerVerifyEmail;
+using Application.Features.CustomerFeature.Commands.RevokeAllCustomerRefreshTokens;
 using Application.Features.CustomerFeature.Queries.GetCustomerProfile;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -109,18 +115,109 @@ public sealed class CustomersController : ControllerBase
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
-    [HttpGet("confirm-email/{verificationTokenId:guid}", Name = EndpointName.Customer.ChangePasswordConfirm)]
-    public async Task<IResult> CustomerConfirmEmail([FromRoute] Guid verificationTokenId)
+    /// <summary>
+    /// Cho phép khách hàng thay đổi mật khẩu của mình
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("change-password", Name = EndpointName.Customer.ChangePassword)]
+    [Authorize]
+    [ApiKey]
+    public async Task<IResult> CustomerChangePassword([FromBody] CustomerChangePasswordRequest request)
     {
-        var result = await _sender.Send(new CustomerConfirmResetPasswordCommand(verificationTokenId));
+
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
+    
+        var result = await _sender.Send(new CustomerChangePasswordCommand(
+            Guid.Parse(sub!),
+            request.currentPassword,
+            request.newPassword,
+            request.repeatNewPassword));
+
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
+
+    /// <summary>
+    /// Xác nhận thay đổi mật khẩu của khách hàng
+    /// </summary>
+    /// <param name="verificationTokenId"></param>
+    /// <returns></returns>
+    [HttpGet("confirm-change-password/{verificationTokenId:guid}", Name = EndpointName.Customer.ChangePasswordConfirm)]
+    public async Task<IResult> ChangePasswordConfirm([FromRoute] Guid verificationTokenId)
+    {
+        var result = await _sender.Send(new CustomerConfirmChangePasswordCommand(verificationTokenId));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Cho phép khách hàng đăng nhập lại bằng refresh token
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
+    [HttpGet("refresh-token", Name = EndpointName.Customer.SignInWithRefreshToken)]
+    [ApiKey]
+    public async Task<IResult> SignInWithRefreshToken([FromBody] CustomerSignInWithRefreshTokenCommand command)
+    {
+        var result = await _sender.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Thu hồi refresh token của khách hàng
+    /// </summary>
+    /// <param name="userId">ID của khách hàng</param>
+    /// <returns></returns>
+    [HttpDelete("{userId:guid}/refresh-token")]
+    [EndpointName(EndpointName.Customer.RevokeRefreshToken)]
+    [Authorize]
+    [ApiKey]
+    public async Task<IResult> RevokeRefreshToken([FromRoute] Guid userId)
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
+        claims.TryGetValue(JwtRegisteredClaimNames.Jti, out var jti);
+
+        if (sub != userId.ToString()) 
+        {
+            return Results.Unauthorized();
+        }
+
+        var result = await _sender.Send(new CustomerRevokeRefreshTokenCommand(jti!));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Thu hồi tất cả refresh tokens của khách hàng
+    /// </summary>
+    /// <param name="userId">ID của khách hàng</param>
+    /// <returns></returns>
+    [HttpDelete("{userId:guid}/refresh-tokens")]
+    [EndpointName(EndpointName.Customer.RevokeRefreshTokens)]
+    [Authorize]
+    [ApiKey]
+    public async Task<IResult> RevokeAllRefreshTokens([FromRoute] Guid userId)
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
+        
+        if (sub != userId.ToString())
+        {
+            return Results.Unauthorized();
+        }
+
+        var result = await _sender.Send(new RevokeAllCustomerRefreshTokensCommand(userId));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
     // Additional customer endpoints could be added here
     // - SignInWithGoogle
     // - SignInWithRefreshToken
-    // - CustomerChangePassword
 
     // - EmailVerification
     // - RevokeCustomerRefreshToken
     // - RevokeAllCustomerRefreshTokens
-} 
+}

@@ -491,7 +491,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("Temporary")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");

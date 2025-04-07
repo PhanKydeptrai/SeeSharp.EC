@@ -20,7 +20,7 @@ internal sealed class VerificationTokenConfigurationForPostgreSQL : IEntityTypeC
 
         builder.Property(a => a.Temporary)
             .IsRequired()
-            .HasColumnType("varchar(50)");
+            .HasColumnType("varchar(255)");
 
         builder.Property(a => a.UserId)
             .IsRequired()

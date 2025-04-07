@@ -171,7 +171,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 columns: table => new
                 {
                     VerificationTokenId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Temporary = table.Column<string>(type: "varchar(50)", nullable: false),
+                    Temporary = table.Column<string>(type: "varchar(255)", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
                     ExpiredDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false)
