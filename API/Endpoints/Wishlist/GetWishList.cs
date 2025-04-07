@@ -38,7 +38,7 @@ internal sealed class GetWishList : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags(EndpointTag.Wishlist)
+        .WithTags(EndpointTags.Wishlist)
         .WithName(EndpointName.Wishlist.GetWishList)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
         .RequireAuthorization();

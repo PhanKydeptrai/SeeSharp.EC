@@ -1,6 +1,6 @@
 ﻿namespace SharedKernel.Constants;
 
-public static class EndpointTag
+public static class EndpointTags
 {
     public const string Category = "Category";
     public const string Product = "Product";

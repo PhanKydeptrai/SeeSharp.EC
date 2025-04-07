@@ -190,6 +190,25 @@ public sealed class CustomersController : ControllerBase
     }
 
     /// <summary>
+    /// Thu hồi refresh token của khách hàng (lấy userId từ token)
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete("refresh-token/current")]
+    [EndpointName(EndpointName.Customer.RevokeRefreshToken + "FromToken")]
+    [Authorize]
+    [ApiKey]
+    public async Task<IResult> RevokeCurrentRefreshToken()
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
+        claims.TryGetValue(JwtRegisteredClaimNames.Jti, out var jti);
+
+        var result = await _sender.Send(new CustomerRevokeRefreshTokenCommand(jti!));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
     /// Thu hồi tất cả refresh tokens của khách hàng
     /// </summary>
     /// <param name="userId">ID của khách hàng</param>
@@ -210,6 +229,24 @@ public sealed class CustomersController : ControllerBase
         }
 
         var result = await _sender.Send(new RevokeAllCustomerRefreshTokensCommand(userId));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Thu hồi tất cả refresh tokens của khách hàng (lấy userId từ token)
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete("refresh-tokens/current")]
+    [EndpointName(EndpointName.Customer.RevokeRefreshTokens + "FromToken")]
+    [Authorize]
+    [ApiKey]
+    public async Task<IResult> RevokeAllCurrentRefreshTokens()
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
+        
+        var result = await _sender.Send(new RevokeAllCustomerRefreshTokensCommand(new Guid(sub!)));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 

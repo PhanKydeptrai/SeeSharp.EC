@@ -44,7 +44,7 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
 
         //Tạo access token và 
         string jti = Ulid.NewUlid().ToGuid().ToString();
-        string accessToken = _tokenProvider.GenerateAccessToken(
+        string accessToken = _tokenProvider.GenerateAccessTokenForCustomer(
             UserId.FromUlid(response!.UserId),
             CustomerId.FromUlid(response.CustomerId),
             Email.FromString(response.Email),

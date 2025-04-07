@@ -23,7 +23,7 @@ internal sealed class GetCartInformation : IEndpoint
         })
         .DisableAntiforgery()
         .RequireAuthorization()
-        .WithTags(EndpointTag.Order)
+        .WithTags(EndpointTags.Order)
         .WithName(EndpointName.Order.GetCartInformation)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }

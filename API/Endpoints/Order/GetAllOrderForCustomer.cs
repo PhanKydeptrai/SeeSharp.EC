@@ -37,7 +37,7 @@ internal sealed class GetAllOrderForCustomer : IEndpoint
             var result = await sender.Send(query);
             return result.Match(Results.Ok, CustomResults.Problem);
         })
-        .WithTags(EndpointTag.Order)
+        .WithTags(EndpointTags.Order)
         .WithName(EndpointName.Order.GetAllOrderForCustomer)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
         .RequireAuthorization();

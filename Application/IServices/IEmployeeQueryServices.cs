@@ -1,3 +1,5 @@
+using Application.DTOs.Employee;
+using Domain.Entities.Employees;
 using Domain.Entities.Users;
 
 namespace Application.IServices;
@@ -18,4 +20,19 @@ public interface IEmployeeQueryServices
     /// <param name="phoneNumber"></param>
     /// <returns></returns>
     Task<bool> IsPhoneNumberExists(PhoneNumber phoneNumber);
+
+    /// <summary>
+    /// Xác thực tài khoản nhân viên
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="password"></param>
+    /// <returns></returns>
+    Task<EmployeeAuthenticationResponse?> AuthenticateEmployee(Email email, PasswordHash password);
+    
+    /// <summary>
+    /// Lấy thông tin nhân viên theo email
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    Task<Employee?> GetEmployeeByEmail(Email email);
 }

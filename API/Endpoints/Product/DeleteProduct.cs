@@ -19,7 +19,7 @@ internal sealed class DeleteProduct : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags(EndpointTag.Product)
+        .WithTags(EndpointTags.Product)
         .WithName(EndpointName.Product.Delete)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }

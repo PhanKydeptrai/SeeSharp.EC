@@ -29,7 +29,7 @@ internal sealed class RevokeAllCustomerRefreshTokens : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags(EndpointTag.Customer)
+        .WithTags(EndpointTags.Customer)
         .WithName(EndpointName.Customer.RevokeRefreshTokens)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
         .RequireAuthorization();

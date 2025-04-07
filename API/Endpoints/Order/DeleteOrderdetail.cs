@@ -20,7 +20,7 @@ internal sealed class DeleteOrderdetail : IEndpoint
         })
         .DisableAntiforgery()
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
-        .WithTags(EndpointTag.Order)
+        .WithTags(EndpointTags.Order)
         .WithName(EndpointName.Order.DeleteOrderDetail)
         .RequireAuthorization();
     }

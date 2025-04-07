@@ -19,7 +19,7 @@ internal sealed class SignInWithGoogle : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags(EndpointTag.Customer)
+        .WithTags(EndpointTags.Customer)
         .WithName(EndpointName.Customer.SignInWithGoogle)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }

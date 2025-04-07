@@ -49,10 +49,6 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
 
         if (account is not null && account.User!.IsVerify == IsVerify.False)
         {
-            /*
-            Kiểm tra trường hợp user đã đăng ký nhưng chưa xác thực email
-            => Nếu đã đăng ký nhưng chưa xác thực email thì gửi lại email xác thực
-            */
             var newVerificationToken = VerificationToken.NewVerificationToken(
                 string.Empty, account.UserId, DateTime.UtcNow.AddMinutes(5));
 
@@ -99,21 +95,6 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
         
         return Result.Success();
     }
-
-    // private CustomerSignedUpEvent CreateCustomerSignedUpEvent(
-    //     User user, Customer customer, VerificationToken verificationToken)
-    // {
-    //     return new CustomerSignedUpEvent(
-    //         user.UserId,
-    //         customer.CustomerId,
-    //         verificationToken.VerificationTokenId,
-    //         user.UserName.Value!,
-    //         user.Email!.Value,
-    //         user.PasswordHash!.Value,
-    //         Ulid.NewUlid().ToGuid());
-    // }
-
-
     private User CreateNewUser(CustomerSignUpCommand request)
     {
         return User.NewUser(

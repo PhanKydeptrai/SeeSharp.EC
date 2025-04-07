@@ -1,4 +1,7 @@
+using Application.DTOs.Customer;
+using Application.DTOs.Employee;
 using Application.IServices;
+using Domain.Entities.Employees;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
@@ -23,6 +26,42 @@ public class EmployeeQueryServices : IEmployeeQueryServices
         return await _dbContext.Employees.AnyAsync(a => a.UserReadModel.PhoneNumber == phoneNumber.Value);   
     }
 
+    public async Task<EmployeeAuthenticationResponse?> AuthenticateEmployee(
+        Email email, PasswordHash password)
+    {
+        return await _dbContext.Employees.Where(
+            a => a.UserReadModel.Email == email.Value 
+            && a.UserReadModel.PasswordHash == password.Value
+            && a.UserReadModel.IsVerify == true
+            && a.UserReadModel.UserStatus != (int)UserStatus.Deleted
+            && a.UserReadModel.UserStatus != (int)UserStatus.Blocked)
+            .Select(a => new EmployeeAuthenticationResponse(
+                a.UserReadModel.UserId,
+                a.EmployeeId,
+                a.UserReadModel.Email,
+                a.UserReadModel.UserStatus.ToString(),
+                a.Role.ToString()))
+            .FirstOrDefaultAsync();
+    }
     
-
+    public async Task<Employee?> GetEmployeeByEmail(Email email)
+    {
+        var employeeData = await _dbContext.Employees
+            .Where(e => e.UserReadModel.Email == email.Value)
+            .Select(e => new 
+            {
+                EmployeeId = e.EmployeeId,
+                UserId = e.UserReadModel.UserId,
+                Role = e.Role
+            })
+            .FirstOrDefaultAsync();
+            
+        if (employeeData == null)
+            return null;
+            
+        return Employee.FromExisting(
+            EmployeeId.FromGuid(employeeData.EmployeeId.ToGuid()),
+            UserId.FromGuid(employeeData.UserId.ToGuid()),
+            (Role)employeeData.Role);
+    }
 }

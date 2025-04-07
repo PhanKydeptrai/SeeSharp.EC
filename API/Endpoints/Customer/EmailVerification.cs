@@ -18,7 +18,7 @@ internal sealed class EmailVerification : IEndpoint
             var result = await sender.Send(new EmailVerifycationCommand(token));
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
-        .WithTags(EndpointTag.Customer)
+        .WithTags(EndpointTags.Customer)
         .WithName(EndpointName.Customer.Verify);
     }
 }

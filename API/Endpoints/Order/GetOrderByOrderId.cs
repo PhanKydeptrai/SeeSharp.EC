@@ -25,7 +25,7 @@ internal sealed class GetOrderByOrderId : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags(EndpointTag.Order)
+        .WithTags(EndpointTags.Order)
         .WithName(EndpointName.Order.GetOrderByOrderId)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
         .RequireAuthorization();

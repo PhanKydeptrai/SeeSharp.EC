@@ -25,7 +25,7 @@ internal sealed class AddWishList : IEndpoint
             var result = await sender.Send(command);
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
-        .WithTags(EndpointTag.Wishlist)
+        .WithTags(EndpointTags.Wishlist)
         .WithName(EndpointName.Wishlist.AddWishList)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>()
         .RequireAuthorization();

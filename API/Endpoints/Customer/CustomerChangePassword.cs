@@ -35,7 +35,7 @@ internal sealed class CustomerChangePassword : IEndpoint
         })
         .DisableAntiforgery()
         .RequireAuthorization()
-        .WithTags(EndpointTag.Customer)
+        .WithTags(EndpointTags.Customer)
         .WithName(EndpointName.Customer.ChangePassword)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }

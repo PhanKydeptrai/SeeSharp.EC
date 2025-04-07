@@ -19,7 +19,7 @@ internal sealed class RestoreProduct : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags(EndpointTag.Product)
+        .WithTags(EndpointTags.Product)
         .WithName(EndpointName.Product.Restore)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }

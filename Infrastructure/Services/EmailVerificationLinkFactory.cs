@@ -57,4 +57,32 @@ internal sealed class EmailVerificationLinkFactory
 
         return $"{_baseUrl}{link}";
     }
+    
+    public string CreateLinkForEmployeeResetPassword(Guid tokenId)
+    {
+        string? link = _linkGenerator.GetPathByRouteValues(
+            "EmployeeResetPasswordConfirm",
+            new { verificationTokenId = tokenId });
+
+        if (link == null)
+        {
+            throw new InvalidOperationException("Could not generate employee reset password link.");
+        }
+
+        return $"{_baseUrl}{link}";
+    }
+    
+    public string CreateLinkForEmployeeChangePassword(Guid tokenId)
+    {
+        string? link = _linkGenerator.GetPathByRouteValues(
+            "EmployeeChangePasswordConfirm",
+            new { verificationTokenId = tokenId });
+
+        if (link == null)
+        {
+            throw new InvalidOperationException("Could not generate employee change password link.");
+        }
+
+        return $"{_baseUrl}{link}";
+    }
 }

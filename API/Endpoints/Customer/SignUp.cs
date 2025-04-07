@@ -18,7 +18,7 @@ internal sealed class SignUp : IEndpoint
             var result = await sender.Send(command);
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
-        .WithTags(EndpointTag.Customer)
+        .WithTags(EndpointTags.Customer)
         .WithName(EndpointName.Customer.SignUp)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>(); 
     }

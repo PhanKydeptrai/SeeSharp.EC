@@ -39,7 +39,7 @@ internal sealed class GetAllOrderForAdmin : IEndpoint
         })
         .DisableAntiforgery()
         .RequireAuthorization()
-        .WithTags(EndpointTag.Order)
+        .WithTags(EndpointTags.Order)
         .WithName(EndpointName.Order.GetAllOrderForAdmin)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }

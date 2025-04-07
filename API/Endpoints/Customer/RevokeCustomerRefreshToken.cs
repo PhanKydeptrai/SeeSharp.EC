@@ -33,7 +33,7 @@ internal sealed class RevokeCustomerRefreshToken : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags(EndpointTag.Customer)
+        .WithTags(EndpointTags.Customer)
         .WithName(EndpointName.Customer.RevokeRefreshToken)
         .RequireAuthorization();
     }

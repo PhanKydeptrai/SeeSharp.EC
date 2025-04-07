@@ -22,7 +22,7 @@ internal sealed class GetCustomerProfile : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()
-        .WithTags(EndpointTag.Customer)
+        .WithTags(EndpointTags.Customer)
         .WithName(EndpointName.Customer.GetProfile)
         .RequireAuthorization()
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();

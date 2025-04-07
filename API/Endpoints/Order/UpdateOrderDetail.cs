@@ -18,7 +18,7 @@ internal sealed class UpdateOrderDetail : IEndpoint
         {
             
         })
-        .WithTags(EndpointTag.Order)
+        .WithTags(EndpointTags.Order)
         .WithName(EndpointName.Order.UpdateOrderDetail)
         .RequireAuthorization()
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();

@@ -9,6 +9,7 @@ using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
+using Infrastructure.Services.EmployeeServices;
 using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
 using Infrastructure.Services.UserServices;
@@ -99,6 +100,7 @@ public static class DependencyInjection
         services.AddScoped<IWishItemQueryServices, WishItemQueryServices>();
         services.AddScoped<ITokenRevocationService, TokenRevocationService>();
         services.AddScoped<IUserQueryService, UserQueryService>();
+        services.AddScoped<IEmployeeQueryServices, EmployeeQueryServices>();
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }
@@ -124,6 +126,12 @@ public static class DependencyInjection
             busConfiguration.AddConsumer<CustomerChangePasswordEventConsumer>();
             busConfiguration.AddConsumer<CustomerConfirmChangePasswordEventConsumer>();
             busConfiguration.AddConsumer<SendDefaultPasswordToUserEventConsumer>();
+            
+            // Đăng ký employee password management consumers
+            busConfiguration.AddConsumer<EmployeeResetPasswordEmailSendEventConsumer>();
+            busConfiguration.AddConsumer<EmployeeResetPasswordEventConsumer>();
+            busConfiguration.AddConsumer<EmployeeChangePasswordEventConsumer>();
+            busConfiguration.AddConsumer<EmployeeConfirmChangePasswordEventConsumer>();
         });
 
         return services;

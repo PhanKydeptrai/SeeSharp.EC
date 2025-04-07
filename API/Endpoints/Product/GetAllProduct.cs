@@ -34,7 +34,7 @@ public class GetAllProduct : IEndpoint
             return Results.Ok(result.Value);
         })
         .DisableAntiforgery()
-        .WithTags(EndpointTag.Product)
+        .WithTags(EndpointTags.Product)
         .WithName(EndpointName.Product.GetAll)
         .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
     }
