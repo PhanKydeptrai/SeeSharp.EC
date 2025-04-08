@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
 using System.Security.Claims;
 using API.Extentions;
+using API.Infrastructure.Authorization;
 using API.Services;
 using Application;
 using Application.Abstractions.LinkService;
@@ -62,7 +62,11 @@ builder.Services.AddAuthentication(options =>
 });
 #endregion
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    AuthorizationPolicies.ConfigurePolicies(options);
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();

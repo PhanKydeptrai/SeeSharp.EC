@@ -22,4 +22,9 @@ internal sealed class UserRepository : IUserRepository
     {
         return await _postgreSQLDbContext.Users.FindAsync(userId);
     }
+    
+    public void UpdateUser(User user)
+    {
+        _postgreSQLDbContext.Users.Update(user);
+    }
 }

@@ -1,5 +1,6 @@
 using API.Extentions;
 using API.Infrastructure;
+using API.Infrastructure.Authorization;
 using Application.Features.EmployeeFeature.Commands.CreateNewEmployee;
 using Application.Features.EmployeeFeature.Commands.EmployeeChangePassword;
 using Application.Features.EmployeeFeature.Commands.EmployeeConfirmChangePassword;
@@ -9,11 +10,15 @@ using Application.Features.EmployeeFeature.Commands.EmployeeRevokeRefreshToken;
 using Application.Features.EmployeeFeature.Commands.EmployeeSignIn;
 using Application.Features.EmployeeFeature.Commands.EmployeeSignInWithRefreshToken;
 using Application.Features.EmployeeFeature.Commands.RevokeAllEmployeeRefreshTokens;
+using Application.Features.EmployeeFeature.Commands.UpdateEmployeeProfile;
+using Application.Features.EmployeeFeature.Commands.UpdateEmployeeStatus;
+using Domain.Entities.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using SharedKernel.Constants;
+using Application.IServices;
 
 namespace API.Controllers;
 
@@ -22,10 +27,12 @@ namespace API.Controllers;
 public class EmployeesController : ControllerBase
 {
     private readonly ISender _sender;
+    private readonly IEmployeeQueryServices _employeeQueryServices;
 
-    public EmployeesController(ISender sender)
+    public EmployeesController(ISender sender, IEmployeeQueryServices employeeQueryServices)
     {
         _sender = sender;
+        _employeeQueryServices = employeeQueryServices;
     }
 
     /// <summary>
@@ -221,6 +228,79 @@ public class EmployeesController : ControllerBase
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         
         var result = await _sender.Send(new RevokeAllEmployeeRefreshTokensCommand(new Guid(sub!)));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+
+    /// <summary>
+    /// Cập nhật thông tin nhân viên
+    /// </summary>
+    /// <param name="userName">Tên nhân viên</param>
+    /// <param name="phoneNumber">Số điện thoại</param>
+    /// <param name="dateOfBirth">Ngày sinh</param>
+    /// <param name="imageFile">Ảnh đại diện của nhân viên (tùy chọn)</param>
+    /// <returns></returns>
+    [HttpPut("profile")]
+    [Authorize]
+    [ApiKey]
+    public async Task<IResult> UpdateEmployeeProfile(
+        [FromForm] string userName,
+        [FromForm] string phoneNumber,
+        [FromForm] DateTime? dateOfBirth,
+        IFormFile? imageFile)
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
+
+        var command = new UpdateEmployeeProfileCommand(
+            new Guid(sub!),
+            userName,
+            phoneNumber,
+            dateOfBirth,
+            imageFile);
+
+        var result = await _sender.Send(command);
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Lấy thông tin hồ sơ nhân viên
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("profile")]
+    [Authorize]
+    [ApiKey]
+    public async Task<IResult> GetEmployeeProfile()
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
+
+        var profile = await _employeeQueryServices.GetEmployeeProfileById(UserId.FromGuid(new Guid(sub!)));
+        if (profile is null)
+        {
+            return Results.NotFound();
+        }
+
+        return Results.Ok(profile);
+    }
+
+    /// <summary>
+    /// Cập nhật trạng thái của nhân viên (chỉ admin)
+    /// </summary>
+    /// <param name="employeeId">UserID của nhân viên</param>
+    /// <param name="newStatus">Trạng thái mới (Active, InActive, Deleted, Blocked)</param>
+    /// <returns></returns>
+    [HttpPut("{employeeId:guid}/status")]
+    [AuthorizeByRole(AuthorizationPolicies.Admin)]
+    [ApiKey]
+    public async Task<IResult> UpdateEmployeeStatus(
+        [FromRoute] Guid employeeId,
+        [FromBody] string newStatus)
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var result = await _sender.Send(new UpdateEmployeeStatusCommand(employeeId, newStatus, token));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 }

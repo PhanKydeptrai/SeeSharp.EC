@@ -35,4 +35,8 @@ public static class EmployeeError
     public static Error RefreshTokenInvalid() => Error.Problem(
         "Employee.RefreshTokenInvalid",
         "The refresh token is invalid");
+        
+    public static Error NotFound(Guid employeeId) => Error.NotFound(
+        "Employee.NotFound",
+        $"The employee with the Id = '{employeeId}' was not found");
 } 

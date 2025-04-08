@@ -30,7 +30,7 @@ public sealed class PhoneNumber : ValueObject
     public readonly static PhoneNumber Empty = new PhoneNumber(string.Empty);
 
     public string Value { get; }
-    private const string PhoneNumberRegex = @"^(\+[0-9]{9})$";
+    private const string PhoneNumberRegex = @"^([0-9]{10})$";
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

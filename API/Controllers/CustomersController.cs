@@ -1,5 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.CompilerServices;
 using API.Extentions;
 using API.Infrastructure;
 using Application.Features.CustomerFeature.Commands.CustomerChangePassword;
@@ -8,6 +7,7 @@ using Application.Features.CustomerFeature.Commands.CustomerConfirmResetPassword
 using Application.Features.CustomerFeature.Commands.CustomerResetPassword;
 using Application.Features.CustomerFeature.Commands.CustomerRevokeRefreshToken;
 using Application.Features.CustomerFeature.Commands.CustomerSignIn;
+using Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
 using Application.Features.CustomerFeature.Commands.CustomerSignInWithRefreshToken;
 using Application.Features.CustomerFeature.Commands.CustomerSignUp;
 using Application.Features.CustomerFeature.Commands.CustomerVerifyEmail;
@@ -236,8 +236,8 @@ public sealed class CustomersController : ControllerBase
     /// Thu hồi tất cả refresh tokens của khách hàng (lấy userId từ token)
     /// </summary>
     /// <returns></returns>
-    [HttpDelete("refresh-tokens/current")]
-    [EndpointName(EndpointName.Customer.RevokeRefreshTokens + "FromToken")]
+    [HttpDelete("refresh-tokens/current", Name = EndpointName.Customer.RevokeRefreshTokens + "FromToken")]
+    // [EndpointName(EndpointName.Customer.RevokeRefreshTokens + "FromToken")]
     [Authorize]
     [ApiKey]
     public async Task<IResult> RevokeAllCurrentRefreshTokens()
@@ -248,6 +248,15 @@ public sealed class CustomersController : ControllerBase
         
         var result = await _sender.Send(new RevokeAllCustomerRefreshTokensCommand(new Guid(sub!)));
         return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+
+    [HttpPost("google-login/{token}")]
+    [ApiKey]
+    public async Task<IResult> SignInWithGoogle([FromRoute] string token)
+    {
+        var result = await _sender.Send(new CustomerSignInWithGoogleCommand(token));
+        return result.Match(Results.Ok, CustomResults.Problem); 
     }
 
     // Additional customer endpoints could be added here

@@ -35,4 +35,18 @@ public interface IEmployeeQueryServices
     /// <param name="email"></param>
     /// <returns></returns>
     Task<Employee?> GetEmployeeByEmail(Email email);
+    
+    /// <summary>
+    /// Lấy thông tin nhân viên theo ID
+    /// </summary>
+    /// <param name="employeeId"></param>
+    /// <returns></returns>
+    Task<Employee?> GetEmployeeById(UserId userId);
+
+    /// <summary>
+    /// Lấy thông tin hồ sơ nhân viên theo UserId
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task<EmployeeProfileResponse?> GetEmployeeProfileById(UserId userId);
 }

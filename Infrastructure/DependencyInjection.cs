@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.IServices;
 using Application.Security;
+using Application.Services;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CustomerMessageConsumers;
 using Infrastructure.Consumers.EmployeeEventConsumers;
@@ -101,6 +102,8 @@ public static class DependencyInjection
         services.AddScoped<ITokenRevocationService, TokenRevocationService>();
         services.AddScoped<IUserQueryService, UserQueryService>();
         services.AddScoped<IEmployeeQueryServices, EmployeeQueryServices>();
+        
+        
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }

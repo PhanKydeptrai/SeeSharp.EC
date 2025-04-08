@@ -1,5 +1,4 @@
-﻿
-using Domain.Entities.Customers;
+﻿using Domain.Entities.Customers;
 using Domain.Entities.Employees;
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.VerificationTokens;
@@ -68,6 +67,20 @@ public sealed class User
             imageUrl ?? string.Empty);
     }
 
+    public void UpdateUser(
+        UserName userName, 
+        Email email, 
+        PhoneNumber? phoneNumber, 
+        DateTime? dateOfBirth, 
+        string? imageUrl)
+    {
+        UserName = userName;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        DateOfBirth = dateOfBirth;
+        ImageUrl = imageUrl;
+    }
+
     public void ChangePassword(PasswordHash passwordHash)
     {
         PasswordHash = passwordHash;
@@ -113,5 +126,10 @@ public sealed class User
             Gender.Unknown,
             null, 
             imageUrl ?? string.Empty);
+    }
+
+    public void UpdateStatus(UserStatus status)
+    {
+        UserStatus = status;
     }
 }

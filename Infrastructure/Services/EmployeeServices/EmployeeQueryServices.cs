@@ -64,4 +64,42 @@ public class EmployeeQueryServices : IEmployeeQueryServices
             UserId.FromGuid(employeeData.UserId.ToGuid()),
             (Role)employeeData.Role);
     }
+    
+    public async Task<Employee?> GetEmployeeById(UserId userId)
+    {
+        var employeeData = await _dbContext.Employees
+            .Include(e => e.UserReadModel)
+            .Where(e => e.UserId == new Ulid(userId))
+            .Select(e => new 
+            {
+                EmployeeId = e.EmployeeId,
+                UserId = e.UserReadModel.UserId,
+                Role = e.Role
+            })
+            .FirstOrDefaultAsync();
+            
+        if (employeeData == null)
+            return null;
+            
+        return Employee.FromExisting(
+            EmployeeId.FromGuid(employeeData.EmployeeId.ToGuid()),
+            UserId.FromGuid(employeeData.UserId.ToGuid()),
+            (Role)employeeData.Role);
+    }
+
+    public async Task<EmployeeProfileResponse?> GetEmployeeProfileById(UserId userId)
+    {
+        return await _dbContext.Employees
+            .Where(a => a.UserId == new Ulid(userId.Value))
+            .Select(a => new EmployeeProfileResponse(
+                a.UserId.ToGuid(),
+                a.UserReadModel.UserName,
+                a.UserReadModel.DateOfBirth,
+                a.UserReadModel.ImageUrl, // TODO: Xử lý imageUrl sẽ được triển khai sau
+                a.UserReadModel.PhoneNumber,
+                a.UserReadModel.Email,
+                a.Role.ToString(),
+                a.UserReadModel.UserStatus.ToString()))
+            .FirstOrDefaultAsync();
+    }
 }
