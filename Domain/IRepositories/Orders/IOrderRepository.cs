@@ -8,14 +8,14 @@ namespace Domain.IRepositories.Orders;
 
 public interface IOrderRepository
 {
-    Task AddNewOrderToPostgreSQL(Order order);
-    Task AddNewOrderDetailToPostgreSQL(OrderDetail orderDetail);
-    Task AddNewOrderTransactionToPostgreSQL(OrderTransaction orderTransaction);
+    Task AddNewOrder(Order order);
+    Task AddNewOrderDetail(OrderDetail orderDetail);
+    Task AddNewOrderTransaction(OrderTransaction orderTransaction);
     Task<OrderDetail?> CheckProductAvailabilityInOrder(OrderId orderId, ProductVariantId ProductVariantId);
-    Task<OrderDetail?> GetOrderDetailByIdFromPostgreSQL(OrderDetailId orderDetailId);
-    Task<Order?> GetOrderByIdFromPostgreSQL(OrderId orderId);
-    Task<Order?> GetOrderByCustomerIdFromPostgreSQL(CustomerId customerId);
-    void DeleteOrderDetailFromPostgeSQL(OrderDetail orderDetail);
+    Task<OrderDetail?> GetOrderDetailById(OrderDetailId orderDetailId);
+    Task<Order?> GetOrderById(OrderId orderId);
+    Task<Order?> GetOrderByCustomerId(CustomerId customerId);
+    void DeleteOrderDetail(OrderDetail orderDetail);
 }
 
 

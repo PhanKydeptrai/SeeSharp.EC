@@ -36,6 +36,10 @@ internal sealed class OrderTransactionReadModelConfigurationForPostgreSQL : IEnt
             .IsRequired()
             .HasColumnType("varchar(50)");
 
+        builder.Property(a => a.TransactionStatus)
+            .IsRequired()
+            .HasColumnType("integer");
+
         builder.Property(a => a.IsVoucherUsed)
             .IsRequired()
             .HasColumnType("boolean");

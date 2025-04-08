@@ -11,6 +11,8 @@ using MediatR;
 using Application.Features.OrderFeature.Queries.GetOrderByOrderId;
 using Application.Features.OrderFeature.Queries.GetCartInformation;
 using Application.Features.OrderFeature.Queries.GetAllOrderForAdmin;
+using API.Infrastructure.Authorization;
+using Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
 
 namespace API.Controllers;
 
@@ -71,7 +73,7 @@ public sealed class OrdersController : ControllerBase
         string token = TokenExtentions.GetTokenFromHeader(HttpContext);
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
-
+        if (customerId is null) return Results.Unauthorized();
         var command = new AddProductToOrderCommand(request.ProductVariantId, new Guid(customerId!), request.Quantity);
         var result = await _sender.Send(command);
 
@@ -135,7 +137,7 @@ public sealed class OrdersController : ControllerBase
     [Authorize]
     public async Task<IResult> GetCartInformation()
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
@@ -155,6 +157,7 @@ public sealed class OrdersController : ControllerBase
     /// <param name="pageSize"></param>
     /// <returns></returns>
     [HttpGet("admin")]
+    [AuthorizeByRole(AuthorizationPolicies.Admin)]
     [EndpointName(EndpointName.Order.GetAllOrderForAdmin)]
     public async Task<IResult> GetAllOrderForAdmin(
         [FromQuery] string? statusFilter,
@@ -176,5 +179,34 @@ public sealed class OrdersController : ControllerBase
 
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+
+    /// <summary>
+    /// Tạo ordertransaction cho hoá đơn (Cho khách hàng đã đăng ký)
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("make-payment")]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    [ApiKey]
+    public async Task<IResult> MakePaymentForSubscriber(
+        [FromBody] MakePaymentForSubscriberRequest request)
+    {
+        string? token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token!);        
+        claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
+        var result = await _sender.Send(new MakePaymentForSubscriberCommand(new Guid(customerId!), request.voucherCode));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    [HttpPost("make-payment-guest")]
+    [ApiKey]
+    public async Task<IResult> MakePaymentForGuest(
+        [FromBody] MakePaymentForSubscriberRequest request)
+    {
+        var result = await _sender.Send(new MakePaymentForSubscriberCommand(Guid.Empty, request.voucherCode));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+
 
 }

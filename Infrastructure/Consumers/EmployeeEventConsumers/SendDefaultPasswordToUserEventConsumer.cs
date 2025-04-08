@@ -56,7 +56,7 @@ internal sealed class SendDefaultPasswordToUserEventConsumer : IConsumer<SendDef
                 string.Empty,
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -67,7 +67,7 @@ internal sealed class SendDefaultPasswordToUserEventConsumer : IConsumer<SendDef
                 "Failed to consume SendDefaultPasswordToUserEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------

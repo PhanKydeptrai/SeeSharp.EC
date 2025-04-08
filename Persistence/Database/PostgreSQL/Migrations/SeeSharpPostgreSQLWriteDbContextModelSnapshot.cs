@@ -27,6 +27,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("BillId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("BillPaymentStatus")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMPTZ");
 
@@ -243,6 +246,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TransactionStatus")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("VoucherId")

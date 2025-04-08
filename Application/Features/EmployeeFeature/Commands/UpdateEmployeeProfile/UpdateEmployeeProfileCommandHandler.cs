@@ -47,7 +47,7 @@ internal sealed class UpdateEmployeeProfileCommandHandler : ICommandHandler<Upda
             employee.User.ImageUrl); // Giữ nguyên ImageUrl hiện tại
 
         // Lưu thay đổi
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success();
 

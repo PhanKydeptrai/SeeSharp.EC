@@ -62,7 +62,7 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
 
         await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success(new CustomerSignInResponse(accessToken, refreshToken));
     }

@@ -12,7 +12,7 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(SeeSharpPostgreSQLWriteDbContext))]
-    [Migration("20250407111637_SeeSharpPrimary")]
+    [Migration("20250408162045_SeeSharpPrimary")]
     partial class SeeSharpPrimary
     {
         /// <inheritdoc />
@@ -29,6 +29,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 {
                     b.Property<Guid>("BillId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("BillPaymentStatus")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMPTZ");
@@ -246,6 +249,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TransactionStatus")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("VoucherId")

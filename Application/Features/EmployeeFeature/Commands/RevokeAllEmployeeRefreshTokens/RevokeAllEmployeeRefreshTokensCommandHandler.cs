@@ -27,7 +27,7 @@ internal sealed class RevokeAllEmployeeRefreshTokensCommandHandler
         await _userAuthenticationTokenRepository.RevokeAllTokenFromMySQLByUserId(
             UserId.FromGuid(request.userId));
             
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         
         return Result.Success();
     }

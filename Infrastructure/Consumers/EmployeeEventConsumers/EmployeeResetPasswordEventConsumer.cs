@@ -56,7 +56,7 @@ internal sealed class EmployeeResetPasswordEventConsumer : IConsumer<EmployeeRes
                 string.Empty,
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             //---------------------------------------------------------------
         }
@@ -69,7 +69,7 @@ internal sealed class EmployeeResetPasswordEventConsumer : IConsumer<EmployeeRes
                 "Failed to consume EmployeeResetPasswordEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------

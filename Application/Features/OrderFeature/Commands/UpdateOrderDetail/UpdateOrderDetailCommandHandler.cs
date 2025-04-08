@@ -30,7 +30,7 @@ internal sealed class UpdateOrderDetailCommandHandler : ICommandHandler<UpdateOr
     {
         OrderDetailId orderDetailId = OrderDetailId.FromGuid(request.OrderDetailId);
 
-        var orderDetail = await _orderRepository.GetOrderDetailByIdFromPostgreSQL(orderDetailId);
+        var orderDetail = await _orderRepository.GetOrderDetailById(orderDetailId);
 
         if (orderDetail is null) return Result.Failure(OrderError.OrderDetailNotFound(orderDetailId));
 
@@ -47,7 +47,7 @@ internal sealed class UpdateOrderDetailCommandHandler : ICommandHandler<UpdateOr
         
         orderDetail.Order.ReplaceOrderTotal(OrderTotal.FromDecimal(orderTotal));
 
-        await _unitOfWork.SaveChangeAsync();      
+        await _unitOfWork.SaveChangesAsync();      
         return Result.Success();
     }
 }

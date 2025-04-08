@@ -48,7 +48,7 @@ public class UpdateEmployeeStatusCommandHandler : IRequestHandler<UpdateEmployee
             }
 
             employee.User.UpdateStatus(status);
-            await _unitOfWork.SaveChangeAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
         return Result.Success();

@@ -5,6 +5,7 @@ using Application.Security;
 using Domain.Entities.Users;
 using Domain.Entities.VerificationTokens;
 using Domain.IRepositories;
+using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.IRepositories.VerificationTokens;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
@@ -18,6 +19,7 @@ internal sealed class EmployeeConfirmResetPasswordCommandHandler
     : ICommandHandler<EmployeeConfirmResetPasswordCommand>
 {
     private readonly IVerificationTokenRepository _verificationTokenRepository;
+    private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
     private readonly IOutBoxMessageServices _outBoxMessageServices;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenProvider _tokenProvider;
@@ -28,23 +30,32 @@ internal sealed class EmployeeConfirmResetPasswordCommandHandler
         IVerificationTokenRepository verificationTokenRepository,
         IOutBoxMessageServices outBoxMessageServices,
         IEventBus eventBus,
-        ITokenProvider tokenProvider)
+        ITokenProvider tokenProvider,
+        IUserAuthenticationTokenRepository userAuthenticationTokenRepository)
     {
         _unitOfWork = unitOfWork;
         _verificationTokenRepository = verificationTokenRepository;
         _outBoxMessageServices = outBoxMessageServices;
         _eventBus = eventBus;
         _tokenProvider = tokenProvider;
+        _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
     }
 
     public async Task<Result> Handle(
         EmployeeConfirmResetPasswordCommand request, 
         CancellationToken cancellationToken)
     {
+        // Start a transaction
+        using var transaction = await _unitOfWork.BeginPostgreSQLTransaction();
+        
         var user = await _verificationTokenRepository.GetVerificationTokenFromPostgreSQL(
             VerificationTokenId.FromGuid(request.token));
             
-        if(user is null) return Result.Failure(EmployeeError.InValidToken());
+        if(user is null) 
+        {
+            transaction.Rollback();
+            return Result.Failure(EmployeeError.InValidToken());
+        }
         
         string randomPass = _tokenProvider.GenerateRandomString(8);
 
@@ -62,7 +73,13 @@ internal sealed class EmployeeConfirmResetPasswordCommandHandler
         
         _verificationTokenRepository.RemoveVerificationTokenFrommPostgreSQL(user);
 
-        await _unitOfWork.SaveChangeAsync();
+        // Revoke all existing authentication tokens for this user
+        await _userAuthenticationTokenRepository.RevokeAllTokenFromMySQLByUserId(user.UserId);
+        
+        await _unitOfWork.SaveChangesAsync();
+        
+        // Commit the transaction if everything succeeds
+        transaction.Commit();
 
         await _eventBus.PublishAsync(message);
 

@@ -28,7 +28,7 @@ internal sealed class AddWishListCommandHandler : ICommandHandler<AddWishListCom
             ProductVariantId.FromGuid(request.ProductVariantId));
         
         await _wishItemRepository.AddWishItemToPostgreSQL(wishItem);
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 }

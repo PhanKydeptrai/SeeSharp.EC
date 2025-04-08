@@ -56,7 +56,7 @@ internal sealed class EmployeeConfirmChangePasswordCommandHandler : ICommandHand
 
         _verificationTokenRepository.RemoveVerificationTokenFrommPostgreSQL(token);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         await _eventBus.PublishAsync(message);
 

@@ -36,6 +36,21 @@ public static class EndpointName
         // public const string ConfirmEmail = "ConfirmEmail";
         // public const string ResendEmailConfirmation = "ResendEmailConfirmation";
     }
+    
+    public class Employee
+    {
+        public const string GetAll = "GetAllEmployees";
+        public const string GetById = "GetEmployeeById";
+        public const string Create = "CreateEmployee";
+        public const string Update = "UpdateEmployee";
+        public const string UpdateStatus = "UpdateEmployeeStatus";
+        public const string ResetPassword = "EmployeeResetPassword";
+        public const string ChangePassword = "EmployeeChangePassword";
+        public const string GetProfile = "GetEmployeeProfile";
+        public const string SignIn = "EmployeeSignIn";
+        public const string SignInWithRefreshToken = "EmployeeSignInWithRefreshToken";
+    }
+    
     public class Product
     {
         public const string Create = "CreateProduct";

@@ -31,7 +31,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
             return failure!;
         }
         product.Delete();
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         //Delete variant of product
         await _productRepository.DeleteProductVariantByProduct(productId);

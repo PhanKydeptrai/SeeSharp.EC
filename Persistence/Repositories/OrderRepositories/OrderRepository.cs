@@ -18,7 +18,7 @@ internal sealed class OrderRepository : IOrderRepository
     {
         _postgreSQLWriteDbContext = postgreSQLWriteDbContext;
     }
-    public async Task AddNewOrderToPostgreSQL(Order order)
+    public async Task AddNewOrder(Order order)
     {
         await _postgreSQLWriteDbContext.Orders.AddAsync(order);
     }
@@ -28,12 +28,12 @@ internal sealed class OrderRepository : IOrderRepository
         await _postgreSQLWriteDbContext.OrderDetails.AddAsync(orderDetail);
     }
 
-    public async Task AddNewOrderDetailToPostgreSQL(OrderDetail orderDetail)
+    public async Task AddNewOrderDetail(OrderDetail orderDetail)
     {
         await _postgreSQLWriteDbContext.OrderDetails.AddAsync(orderDetail);
     }
 
-    public async Task AddNewOrderTransactionToPostgreSQL(OrderTransaction orderTransaction)
+    public async Task AddNewOrderTransaction(OrderTransaction orderTransaction)
     {
         await _postgreSQLWriteDbContext.OrderTransactions.AddAsync(orderTransaction);
     }
@@ -44,7 +44,7 @@ internal sealed class OrderRepository : IOrderRepository
             .FirstOrDefaultAsync(x => x.OrderId == orderId && x.ProductVariantId == productVariantId);
     }
 
-    public async Task<OrderDetail?> GetOrderDetailByIdFromPostgreSQL(OrderDetailId orderDetailId)
+    public async Task<OrderDetail?> GetOrderDetailById(OrderDetailId orderDetailId)
     {
         return await _postgreSQLWriteDbContext.OrderDetails
             .Include(a => a.Order)
@@ -53,18 +53,18 @@ internal sealed class OrderRepository : IOrderRepository
     }
 
 
-    public async Task<Order?> GetOrderByIdFromPostgreSQL(OrderId orderId)
+    public async Task<Order?> GetOrderById(OrderId orderId)
     {
         return await _postgreSQLWriteDbContext.Orders.FindAsync(orderId);
     }
 
-    public async Task<Order?> GetOrderByCustomerIdFromPostgreSQL(CustomerId customerId)
+    public async Task<Order?> GetOrderByCustomerId(CustomerId customerId)
     {
         return await _postgreSQLWriteDbContext.Orders
             .FirstOrDefaultAsync(x => x.CustomerId == customerId);
     }
 
-    public void DeleteOrderDetailFromPostgeSQL(OrderDetail orderDetail)
+    public void DeleteOrderDetail(OrderDetail orderDetail)
     {
         _postgreSQLWriteDbContext.OrderDetails.Remove(orderDetail);
     }

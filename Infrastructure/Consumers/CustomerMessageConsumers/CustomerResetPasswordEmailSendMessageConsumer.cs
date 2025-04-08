@@ -58,7 +58,7 @@ internal sealed class CustomerResetPasswordEmailSendMessageConsumer : IConsumer<
                 string.Empty,
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -69,7 +69,7 @@ internal sealed class CustomerResetPasswordEmailSendMessageConsumer : IConsumer<
                 "Failed to consume CustomerResetPasswordEmailSendEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------

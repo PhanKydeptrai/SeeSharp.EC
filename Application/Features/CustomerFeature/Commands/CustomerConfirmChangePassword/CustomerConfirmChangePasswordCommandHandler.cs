@@ -61,7 +61,7 @@ internal sealed class CustomerConfirmChangePasswordCommandHandler : ICommandHand
         await _userAuthenticationTokenRepository.RevokeAllTokenFromMySQLByUserId(
             UserId.FromGuid(verificationToken.User.UserId));
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         
         // Publish event
         await _eventBus.PublishAsync(message);

@@ -45,7 +45,7 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
                 string.Empty, //TODO: Upload image to cloud storage
                 IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         productVariant.Update(
@@ -56,7 +56,7 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
             string.Empty, //TODO: Upload image to cloud storage
             IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success();
     }

@@ -1,10 +1,12 @@
-using Application.DTOs.Customer;
 using Application.DTOs.Employee;
+using Application.Features.Pages;
 using Application.IServices;
+using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Employees;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Services.EmployeeServices;
 
@@ -33,8 +35,8 @@ public class EmployeeQueryServices : IEmployeeQueryServices
             a => a.UserReadModel.Email == email.Value 
             && a.UserReadModel.PasswordHash == password.Value
             && a.UserReadModel.IsVerify == true
-            && a.UserReadModel.UserStatus != (int)UserStatus.Deleted
-            && a.UserReadModel.UserStatus != (int)UserStatus.Blocked)
+            && a.UserReadModel.UserStatus != UserStatus.Deleted
+            && a.UserReadModel.UserStatus != UserStatus.Blocked)
             .Select(a => new EmployeeAuthenticationResponse(
                 a.UserReadModel.UserId,
                 a.EmployeeId,
@@ -101,5 +103,75 @@ public class EmployeeQueryServices : IEmployeeQueryServices
                 a.Role.ToString(),
                 a.UserReadModel.UserStatus.ToString()))
             .FirstOrDefaultAsync();
+    }
+    
+    public async Task<PagedList<EmployeeResponse>> GetAllEmployees(
+        string? statusFilter,
+        string? roleFilter,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        var query = _dbContext.Employees.AsQueryable();
+        
+        // Filter by status
+        if (!string.IsNullOrEmpty(statusFilter))
+        {
+            query = query.Where(e => e.UserReadModel.UserStatus == (UserStatus)Enum.Parse(typeof(UserStatus), statusFilter));
+        }
+        else
+        {
+            // By default, exclude deleted employees
+            query = query.Where(e => e.UserReadModel.UserStatus != UserStatus.Deleted);
+        }
+        
+        // Filter by role
+        if (!string.IsNullOrEmpty(roleFilter))
+        {
+            query = query.Where(e => e.Role == (Role)Enum.Parse(typeof(Role), roleFilter, true));
+        }
+        
+        // Search by name, email, or phone
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            searchTerm = searchTerm.ToLower();
+            query = query.Where(e => 
+                e.UserReadModel.UserName.ToLower().Contains(searchTerm) ||
+                e.UserReadModel.Email.ToLower().Contains(searchTerm) ||
+                e.UserReadModel.PhoneNumber.Contains(searchTerm));
+        }
+        
+        // Sort
+        Expression<Func<EmployeeReadModel, object>> keySelector = sortColumn?.ToLower() switch
+        {
+            "username" => e => e.UserReadModel.UserName,
+            _ => e => e.EmployeeId
+        };
+
+        if (sortOrder?.ToLower() == "desc")
+        {
+            query = query.OrderByDescending(keySelector);
+        }
+        else
+        {
+            query = query.OrderBy(keySelector);
+        }
+        
+        // Map to EmployeeResponse
+        var employeeResponses = query.Select(e => new EmployeeResponse(
+            e.UserId.ToGuid(),
+            e.UserReadModel.UserName,
+            e.UserReadModel.DateOfBirth,
+            e.UserReadModel.ImageUrl,
+            e.UserReadModel.PhoneNumber,
+            e.UserReadModel.Email,
+            e.Role.ToString(),
+            e.UserReadModel.UserStatus.ToString(),
+            DateTime.Now)).AsQueryable(); // Using current date as we don't have CreatedAt
+        
+        // Apply pagination
+        return await PagedList<EmployeeResponse>.CreateAsync(employeeResponses, page ?? 1, pageSize ?? 10);
     }
 }

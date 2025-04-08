@@ -33,7 +33,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
     public async Task<Result> Handle(AddProductToOrderCommand request, CancellationToken cancellationToken)
     {
 
-        var order = await _orderRepository.GetOrderByCustomerIdFromPostgreSQL(CustomerId.FromGuid(request.CustomerId));
+        var order = await _orderRepository.GetOrderByCustomerId(CustomerId.FromGuid(request.CustomerId));
 
         ProductVariantId productVariantId = ProductVariantId.FromGuid(request.ProductVariantId);
         var productPrice = await _productQueryServices.GetAvailableProductPrice(productVariantId);
@@ -55,7 +55,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                 // Update order total 
                 orderTotal = orderTotal + orderDetail.UnitPrice.Value;
                 order.ReplaceOrderTotal(OrderTotal.FromDecimal(orderTotal));                
-                await _unitOfWork.SaveChangeAsync();
+                await _unitOfWork.SaveChangesAsync();
                 return Result.Success();
             }
             else
@@ -68,9 +68,9 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                    productPrice!);
 
                 order.AddNewValueToOrderTotal(newOrderDetail.UnitPrice);
-                await _orderRepository.AddNewOrderDetailToPostgreSQL(newOrderDetail);
+                await _orderRepository.AddNewOrderDetail(newOrderDetail);
                 
-                await _unitOfWork.SaveChangeAsync();
+                await _unitOfWork.SaveChangesAsync();
                 return Result.Success();
             }
         }
@@ -89,10 +89,10 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
                 OrderDetailQuantity.NewOrderDetailQuantity(request.Quantity),
                 productPrice!);
 
-            await _orderRepository.AddNewOrderToPostgreSQL(newOrder);
+            await _orderRepository.AddNewOrder(newOrder);
 
-            await _orderRepository.AddNewOrderDetailToPostgreSQL(newOrderDetail);
-            await _unitOfWork.SaveChangeAsync();
+            await _orderRepository.AddNewOrderDetail(newOrderDetail);
+            await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }
     }

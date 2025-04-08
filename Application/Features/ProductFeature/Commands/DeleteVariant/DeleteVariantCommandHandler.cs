@@ -31,7 +31,7 @@ internal sealed class DeleteVariantCommandHandler : ICommandHandler<DeleteVarian
         }
 
         productVariant.Delete();
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success();
     }

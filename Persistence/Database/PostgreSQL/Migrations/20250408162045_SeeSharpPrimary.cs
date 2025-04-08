@@ -373,6 +373,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
                     PaymentMethod = table.Column<int>(type: "integer", nullable: false),
+                    BillPaymentStatus = table.Column<int>(type: "integer", nullable: false),
                     ShippingInformationId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -409,6 +410,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     Description = table.Column<string>(type: "varchar(255)", nullable: false),
                     PaymentMethod = table.Column<int>(type: "integer", nullable: false),
                     IsVoucherUsed = table.Column<bool>(type: "boolean", nullable: false),
+                    TransactionStatus = table.Column<int>(type: "integer", nullable: false),
                     VoucherId = table.Column<Guid>(type: "uuid", nullable: true),
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
                     BillId = table.Column<Guid>(type: "uuid", nullable: true)

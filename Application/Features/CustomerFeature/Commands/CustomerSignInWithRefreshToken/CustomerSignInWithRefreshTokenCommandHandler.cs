@@ -60,7 +60,7 @@ internal sealed class CustomerSignInWithRefreshTokenCommandHandler
 
         await _userAuthenticationTokenRepository.AddRefreshToken(newUserAuhenticationToken);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success(response);
     }

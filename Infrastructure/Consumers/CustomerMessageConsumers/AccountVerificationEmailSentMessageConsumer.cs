@@ -58,7 +58,7 @@ internal sealed class AccountVerificationEmailSentMessageConsumer : IConsumer<Ac
                 string.Empty,
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -69,7 +69,7 @@ internal sealed class AccountVerificationEmailSentMessageConsumer : IConsumer<Ac
                 "Failed to consume AccountVerificationEmailSentEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------

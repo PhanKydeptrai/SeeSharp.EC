@@ -55,7 +55,7 @@ internal sealed class CustomerConfirmedSuccessfullyEventConsumer : IConsumer<Cus
                 string.Empty,
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             //---------------------------------------------------------------
         }
@@ -68,7 +68,7 @@ internal sealed class CustomerConfirmedSuccessfullyEventConsumer : IConsumer<Cus
                 "Failed to consume CustomerConfirmedSuccessfullyEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------

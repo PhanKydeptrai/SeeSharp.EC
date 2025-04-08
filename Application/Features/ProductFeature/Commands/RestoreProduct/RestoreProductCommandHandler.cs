@@ -42,7 +42,7 @@ internal sealed class RestoreProductCommandHandler : ICommandHandler<RestoreProd
         }
 
         product.Restore();
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         await _productRepository.RestoreProductVariantByProduct(productId);
         transaction.Commit();
         return Result.Success();

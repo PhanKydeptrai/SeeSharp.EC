@@ -50,8 +50,8 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
             a => a.UserReadModel.Email == email.Value 
             && a.UserReadModel.PasswordHash == password.Value
             && a.UserReadModel.IsVerify == true
-            && a.UserReadModel.UserStatus != (int)UserStatus.Deleted
-            && a.UserReadModel.UserStatus != (int)UserStatus.Blocked)
+            && a.UserReadModel.UserStatus != UserStatus.Deleted
+            && a.UserReadModel.UserStatus != UserStatus.Blocked)
             .Select(a => new CustomerAuthenticationResponse(
                 a.UserReadModel.UserId,
                 a.CustomerId,
@@ -64,8 +64,8 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
     {
         return await _dbContext.Customers.Where(
             a => a.UserReadModel.Email == email.Value 
-            && a.UserReadModel.UserStatus != (int)UserStatus.Deleted
-            && a.UserReadModel.UserStatus != (int)UserStatus.Blocked)
+            && a.UserReadModel.UserStatus != UserStatus.Deleted
+            && a.UserReadModel.UserStatus != UserStatus.Blocked)
             .Select(a => new CustomerAuthenticationResponse(
                 a.UserReadModel.UserId,
                 a.CustomerId,

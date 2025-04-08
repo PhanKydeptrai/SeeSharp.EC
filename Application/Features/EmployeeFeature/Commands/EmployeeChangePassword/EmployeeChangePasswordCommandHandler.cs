@@ -71,7 +71,7 @@ internal sealed class EmployeeChangePasswordCommandHandler : ICommandHandler<Emp
 
         await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         await _eventBus.PublishAsync(message);
 

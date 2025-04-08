@@ -12,6 +12,7 @@ using Application.Features.EmployeeFeature.Commands.EmployeeSignInWithRefreshTok
 using Application.Features.EmployeeFeature.Commands.RevokeAllEmployeeRefreshTokens;
 using Application.Features.EmployeeFeature.Commands.UpdateEmployeeProfile;
 using Application.Features.EmployeeFeature.Commands.UpdateEmployeeStatus;
+using Application.Features.EmployeeFeature.Queries.GetAllEmployees;
 using Domain.Entities.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using SharedKernel.Constants;
 using Application.IServices;
+using Application.DTOs.Employee;
+using Application.Features.Pages;
 
 namespace API.Controllers;
 
@@ -302,5 +305,42 @@ public class EmployeesController : ControllerBase
         string token = TokenExtentions.GetTokenFromHeader(HttpContext);
         var result = await _sender.Send(new UpdateEmployeeStatusCommand(employeeId, newStatus, token));
         return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Lấy danh sách tất cả nhân viên (chỉ admin)
+    /// </summary>
+    /// <param name="statusFilter">Lọc theo trạng thái</param>
+    /// <param name="roleFilter">Lọc theo vai trò</param>
+    /// <param name="searchTerm">Tìm kiếm theo tên, email hoặc số điện thoại</param>
+    /// <param name="sortColumn">Cột sắp xếp</param>
+    /// <param name="sortOrder">Thứ tự sắp xếp</param>
+    /// <param name="page">Trang</param>
+    /// <param name="pageSize">Số lượng mỗi trang</param>
+    /// <returns>Danh sách nhân viên phân trang</returns>
+    [HttpGet]
+    [EndpointName(EndpointName.Employee.GetAll)]
+    [AuthorizeByRole(AuthorizationPolicies.Admin)]
+    [ApiKey]
+    public async Task<IResult> GetAllEmployees(
+        [FromQuery] string? statusFilter = null,
+        [FromQuery] string? roleFilter = null,
+        [FromQuery] string? searchTerm = null,
+        [FromQuery] string? sortColumn = null,
+        [FromQuery] string? sortOrder = null,
+        [FromQuery] int? page = 1,
+        [FromQuery] int? pageSize = 10)
+    {
+        var result = await _sender.Send(
+            new GetAllEmployeesQuery(
+                statusFilter,
+                roleFilter,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize));
+
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
 }

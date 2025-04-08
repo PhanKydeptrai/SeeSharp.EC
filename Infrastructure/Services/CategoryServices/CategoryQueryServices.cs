@@ -96,8 +96,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
         //Filter
         if (!string.IsNullOrEmpty(filter))
         {
-            categoriesQuery = categoriesQuery
-                .Where(x => x.CategoryStatus == (CategoryStatus)Enum.Parse(typeof(CategoryStatus), filter));
+            categoriesQuery = categoriesQuery.Where(x => x.CategoryStatus == (CategoryStatus)Enum.Parse(typeof(CategoryStatus), filter));
         }
 
         //sort

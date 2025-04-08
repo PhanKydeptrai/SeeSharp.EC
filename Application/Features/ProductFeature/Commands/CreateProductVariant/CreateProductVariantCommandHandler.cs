@@ -34,7 +34,7 @@ internal sealed class CreateProductVariantCommandHandler : ICommandHandler<Creat
         
         await _productRepository.AddProductVariant(productVariant);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success();
     }

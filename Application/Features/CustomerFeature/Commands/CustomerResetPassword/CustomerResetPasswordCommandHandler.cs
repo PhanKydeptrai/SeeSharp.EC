@@ -60,7 +60,7 @@ internal sealed class CustomerResetPasswordCommandHandler
             message.MessageId, message,
             _outBoxMessageServices);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         await _eventBus.PublishAsync(message);
         return Result.Success();
     }

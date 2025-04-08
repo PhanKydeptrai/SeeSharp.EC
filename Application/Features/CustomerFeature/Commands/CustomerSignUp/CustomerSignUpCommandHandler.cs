@@ -64,7 +64,7 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
                 newMessage.MessageId,
                 newMessage, _outBoxMessageServices);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
             await _eventBus.PublishAsync(newMessage);
             return Result.Success();
         }
@@ -89,7 +89,7 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
             message,
             _outBoxMessageServices);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         await _eventBus.PublishAsync(message);
         

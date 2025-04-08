@@ -76,7 +76,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
 
                 await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);
                 
-                await _unitOfWork.SaveChangeAsync();
+                await _unitOfWork.SaveChangesAsync();
 
                 return Result.Success(response);
             }
@@ -130,7 +130,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
             // await OutboxMessageExtentions.InsertOutboxMessageAsync(
             //     message.MessageId ,message, _outboxMessageServices);
             
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             // await _eventBus.PublishAsync(message);
 

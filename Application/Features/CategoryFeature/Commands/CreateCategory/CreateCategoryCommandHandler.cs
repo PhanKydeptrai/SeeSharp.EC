@@ -36,7 +36,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
             imageUrl);
 
         await _categoryRepository.AddCategoryToPosgreSQL(category);
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         return Result.Success(category.CategoryId);
     }
 }

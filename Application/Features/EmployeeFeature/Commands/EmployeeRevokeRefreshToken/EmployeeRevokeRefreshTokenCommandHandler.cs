@@ -31,7 +31,7 @@ internal sealed class EmployeeRevokeRefreshTokenCommandHandler
             return Result.Failure(EmployeeError.RefreshTokenInvalid());
         
         userAuthenticationToken.BlackList();
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         
         return Result.Success();
     }

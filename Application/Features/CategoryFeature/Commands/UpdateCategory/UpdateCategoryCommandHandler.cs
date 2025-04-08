@@ -31,7 +31,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
         //Update category
         UpdateCategory(category, request);
 
-        await _unitOfWork.SaveChangeAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

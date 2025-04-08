@@ -16,7 +16,18 @@ public class TokenRevocationService : ITokenRevocationService
 
     public async Task<bool> IsTokenRevoked(string jti)
     {
-        return await _dbContext.UserAuthenticationTokens
-            .AnyAsync(x => x.Jti == jti && x.IsBlackList == IsBlackList.True);
+        var token = await _dbContext.UserAuthenticationTokens.FirstOrDefaultAsync(x => x.Jti == jti);
+        
+        if(token is null)
+        {
+            return true; // Token is invalid
+        }
+
+        if(token is not null && token.IsBlackList == IsBlackList.True)
+        {
+            return true; // Token is revoked
+        }
+        
+        return false;
     }
 }

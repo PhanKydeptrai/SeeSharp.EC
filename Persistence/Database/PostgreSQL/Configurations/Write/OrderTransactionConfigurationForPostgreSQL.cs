@@ -52,6 +52,10 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
             .IsRequired()
             .HasColumnType("integer");
 
+        builder.Property(a => a.TransactionStatus)
+            .IsRequired()
+            .HasColumnType("integer");
+
         builder.Property(a => a.IsVoucherUsed)
             .IsRequired()
             .HasConversion(

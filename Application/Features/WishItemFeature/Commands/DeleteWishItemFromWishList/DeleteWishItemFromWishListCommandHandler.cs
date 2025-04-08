@@ -33,7 +33,7 @@ internal sealed class DeleteWishItemFromWishListCommandHandler : ICommandHandler
 
         _wishItemRepository.DeleteWishItemFromPostgreSQL(wishItem);
         
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success();
     }

@@ -237,7 +237,6 @@ public sealed class CustomersController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpDelete("refresh-tokens/current", Name = EndpointName.Customer.RevokeRefreshTokens + "FromToken")]
-    // [EndpointName(EndpointName.Customer.RevokeRefreshTokens + "FromToken")]
     [Authorize]
     [ApiKey]
     public async Task<IResult> RevokeAllCurrentRefreshTokens()
@@ -250,7 +249,11 @@ public sealed class CustomersController : ControllerBase
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
-
+    /// <summary>
+    /// Cho phép khách hàng đăng nhập bằng tài khoản Google
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
     [HttpPost("google-login/{token}")]
     [ApiKey]
     public async Task<IResult> SignInWithGoogle([FromRoute] string token)

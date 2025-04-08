@@ -39,7 +39,7 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
             string.Empty, //TODO: Update ImageUrl
             IsBaseVariant.True);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 

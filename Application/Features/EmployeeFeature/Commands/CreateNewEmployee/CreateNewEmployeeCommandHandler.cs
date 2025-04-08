@@ -62,7 +62,7 @@ internal sealed class CreateNewEmployeeCommandHandler : ICommandHandler<CreateNe
 
         await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outboxMessageServices);
         
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         await _eventBus.PublishAsync(message);
         return Result.Success();

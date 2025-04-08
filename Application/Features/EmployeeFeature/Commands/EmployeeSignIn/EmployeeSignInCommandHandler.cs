@@ -59,7 +59,7 @@ internal sealed class EmployeeSignInCommandHandler : ICommandHandler<EmployeeSig
         
         await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Result.Success(new EmployeeSignInResponse(accessToken, refreshToken));
     }

@@ -1,4 +1,5 @@
 using Application.DTOs.Employee;
+using Application.Features.Pages;
 using Domain.Entities.Employees;
 using Domain.Entities.Users;
 
@@ -49,4 +50,24 @@ public interface IEmployeeQueryServices
     /// <param name="userId"></param>
     /// <returns></returns>
     Task<EmployeeProfileResponse?> GetEmployeeProfileById(UserId userId);
+
+    /// <summary>
+    /// Lấy danh sách tất cả nhân viên
+    /// </summary>
+    /// <param name="statusFilter">Lọc theo trạng thái</param>
+    /// <param name="roleFilter">Lọc theo vai trò</param>
+    /// <param name="searchTerm">Tìm kiếm theo tên, email hoặc số điện thoại</param>
+    /// <param name="sortColumn">Cột sắp xếp</param>
+    /// <param name="sortOrder">Thứ tự sắp xếp</param>
+    /// <param name="page">Trang</param>
+    /// <param name="pageSize">Số lượng mỗi trang</param>
+    /// <returns>Danh sách nhân viên phân trang</returns>
+    Task<PagedList<EmployeeResponse>> GetAllEmployees(
+        string? statusFilter,
+        string? roleFilter,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize);
 }
