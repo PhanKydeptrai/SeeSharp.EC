@@ -107,6 +107,23 @@ public sealed class User
         UserStatus = UserStatus.Active;
     }
 
+    
+
+    public void BlockAccount()
+    {
+        if (UserStatus == UserStatus.Deleted)
+        {
+            throw new InvalidOperationException("User is deleted");
+        }
+
+        if (UserStatus == UserStatus.Blocked)
+        {
+            throw new InvalidOperationException("User is already blocked");
+        }
+
+        UserStatus = UserStatus.Blocked;
+    }
+
     public static User FromExisting(
         UserId userId, 
         UserName userName, 

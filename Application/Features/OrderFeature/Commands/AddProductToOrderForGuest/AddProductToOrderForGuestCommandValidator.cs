@@ -1,18 +1,18 @@
-using Application.Features.OrderFeature.Commands.AddProductToOrder;
+using System;
 using FluentValidation;
 
-namespace Application.Features.OrderFeature.Commands;
+namespace Application.Features.OrderFeature.Commands.AddProductToOrderForGuest;
 
-internal sealed class AddProductToOrderCommandValidator : AbstractValidator<AddProductToOrderCommand>
+internal sealed class AddProductToOrderForGuestCommandValidator : AbstractValidator<AddProductToOrderForGuestCommand>
 {
-    public AddProductToOrderCommandValidator()
-    {   
+    public AddProductToOrderForGuestCommandValidator()
+    {
         RuleFor(x => x.ProductVariantId)
             .NotEmpty()
             .WithErrorCode("ProductVariantId.Empty")
             .WithMessage("ProductVariantId is required");
 
-        RuleFor(x => x.Quantity)        
+        RuleFor(x => x.Quantity)
             .NotEmpty()
             .WithErrorCode("Quantity.Empty")
             .WithMessage("Quantity is required")

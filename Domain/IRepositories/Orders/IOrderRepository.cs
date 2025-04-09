@@ -15,6 +15,7 @@ public interface IOrderRepository
     Task<OrderDetail?> GetOrderDetailById(OrderDetailId orderDetailId);
     Task<Order?> GetOrderById(OrderId orderId);
     Task<Order?> GetOrderByCustomerId(CustomerId customerId);
+    Task<Order?> GetOrderByGuestId(CustomerId customerId);
     void DeleteOrderDetail(OrderDetail orderDetail);
 }
 

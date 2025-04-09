@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using Serilog;
+using SharedKernel.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 //TODO: Move to external file
@@ -33,7 +34,9 @@ builder.Services.AddAuthentication(options =>
         OnTokenValidated = async context =>
         {
             var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            if (jti is not null)
+            var isGuest = context.Principal?.FindFirst(CustomJwtRegisteredClaimNames.GuestId)?.Value;
+
+            if (jti is not null && isGuest is null)
             {
                 var revocationService = context.HttpContext.RequestServices
                     .GetRequiredService<ITokenRevocationService>();

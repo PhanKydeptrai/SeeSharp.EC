@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Org.BouncyCastle.Crypto.Agreement.Srp;
 
 namespace API.Infrastructure.Authorization;
 
@@ -8,6 +9,7 @@ public static class AuthorizationPolicies
     public const string Admin = "Admin";
     public const string Employee = "Employee";
     public const string Subscribed = "Subscribed";
+    public const string Guest = "Guest";
     // public const string Customer = "Customer";
 
     //POLICY:
@@ -27,5 +29,9 @@ public static class AuthorizationPolicies
         // Customer policy - customer đều có quyền truy cập
         options.AddPolicy(SubscribedOnly, policy => 
             policy.RequireRole(Subscribed));
+        
+        // Guest policy - chỉ guest mới có quyền truy cập
+        options.AddPolicy(Guest, policy => 
+            policy.RequireRole(Guest));
     }
 }

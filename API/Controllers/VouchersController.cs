@@ -51,7 +51,7 @@ public class VouchersController : ControllerBase
     }
     
     /// <summary>
-    /// Gets all vouchers with filtering, sorting and pagination
+    /// Lấy tất cả voucher (Cho Admin)
     /// </summary>
     /// <param name="voucherTypeFilter">Filter by voucher type (Direct or Percentage)</param>
     /// <param name="statusFilter">Filter by status</param>
@@ -86,7 +86,7 @@ public class VouchersController : ControllerBase
     }
     
     /// <summary>
-    /// Gets all vouchers for the current customer with filtering, sorting and pagination
+    /// Lấy tất cả voucher của khách hàng với các tham số lọc, sắp xếp và phân trang
     /// </summary>
     /// <param name="voucherTypeFilter">Filter by voucher type (Direct or Percentage)</param>
     /// <param name="statusFilter">Filter by status</param>

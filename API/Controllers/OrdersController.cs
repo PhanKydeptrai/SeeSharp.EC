@@ -12,6 +12,7 @@ using Application.Features.OrderFeature.Queries.GetCartInformation;
 using Application.Features.OrderFeature.Queries.GetAllOrderForAdmin;
 using API.Infrastructure.Authorization;
 using Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
+using Application.Features.OrderFeature.Commands.AddProductToOrderForGuest;
 
 namespace API.Controllers;
 
@@ -112,12 +113,14 @@ public sealed class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// Use this endpoint to get order details by order id. 
-    /// Usecase 1: Admin want to see the details of an order. | Requires Admin Role and Order Status is not "New"
+    /// Lấy thông tin đơn hàng theo orderId (Dùng cho khách hàng)
     /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    // Usecase 1: Admin want to see the details of an order. | Requires Admin Role and Order Status is not "New"
 
-    [HttpGet("{orderId:guid}")]
-    [EndpointName(EndpointName.Order.GetOrderByOrderId)]
+    [HttpGet("{orderId:guid}", Name = EndpointName.Order.GetOrderByOrderId)]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
     public async Task<IResult> GetOrderByOrderId(
         [FromRoute] Guid orderId)
     {
@@ -188,21 +191,30 @@ public sealed class OrdersController : ControllerBase
         [FromBody] MakePaymentForSubscriberRequest request)
     {
         string? token = TokenExtentions.GetTokenFromHeader(HttpContext);
-        var claims = TokenExtentions.DecodeJwt(token!);        
+        var claims = TokenExtentions.DecodeJwt(token!);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
         var result = await _sender.Send(new MakePaymentForSubscriberCommand(new Guid(customerId!), request.voucherCode));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
-    // [HttpPost("make-payment-guest")]
-    // [ApiKey]
-    // public async Task<IResult> MakePaymentForGuest()
-    // {
-    //     var result = await _sender.Send(new MakePaymentForSubscriberCommand(Guid.Empty, request.voucherCode));
-    //     return result.Match(Results.NoContent, CustomResults.Problem);
-    // }
+    /// <summary>
+    ///  (Cho khách hàng chưa đăng ký)
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("guest")]
+    [AuthorizeByRole(AuthorizationPolicies.Guest)]
+    [ApiKey]
+    public async Task<IResult> AddProductToOrderForGuest(
+        [FromBody] AddProductToOrderForGuestRequest request)
+    {
+        string? token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token!);
+        claims.TryGetValue(CustomJwtRegisteredClaimNames.GuestId, out var guestId);
 
-    //TODO:
-    // + Endpoint đặt hàng cho khách chưa đăng ký
+        var command = new AddProductToOrderForGuestCommand(request.ProductVariantId, Guid.Parse(guestId!), request.Quantity);
+        var result = await _sender.Send(command);
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
 
 }

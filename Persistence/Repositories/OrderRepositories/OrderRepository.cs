@@ -64,6 +64,12 @@ internal sealed class OrderRepository : IOrderRepository
             .FirstOrDefaultAsync(x => x.CustomerId == customerId);
     }
 
+    public async Task<Order?> GetOrderByGuestId(CustomerId customerId)
+    {
+        return await _postgreSQLWriteDbContext.Orders
+            .FirstOrDefaultAsync(x => x.CustomerId == customerId);
+    }
+
     public void DeleteOrderDetail(OrderDetail orderDetail)
     {
         _postgreSQLWriteDbContext.OrderDetails.Remove(orderDetail);

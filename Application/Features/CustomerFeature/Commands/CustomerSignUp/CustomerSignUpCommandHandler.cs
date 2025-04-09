@@ -80,8 +80,8 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
                 user.Email!.Value,
                 Ulid.NewUlid().ToGuid());
 
-        await _userRepository.AddUserToPostgreSQL(user);
-        await _customerRepository.AddCustomerToPostgreSQL(customer);
+        await _userRepository.AddUser(user);
+        await _customerRepository.AddCustomer(customer);
         await _verificationTokenRepository.AddVerificationTokenToPostgreSQL(verificationToken);
 
         await OutboxMessageExtentions.InsertOutboxMessageAsync(

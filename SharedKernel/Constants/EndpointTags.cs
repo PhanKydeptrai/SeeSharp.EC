@@ -120,5 +120,7 @@ public static class EndpointMethod
 public static class CustomJwtRegisteredClaimNames
 {
     public const string CustomerId = "CustomerId";
+    public const string EmployeeId = "EmployeeId";
+    public const string GuestId = "GuestId";
 }
 

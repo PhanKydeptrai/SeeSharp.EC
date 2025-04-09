@@ -96,8 +96,8 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
             var newCustomer = Customer.NewCustomer(user.UserId, CustomerType.Subscribed);
             
             //Add customer to database
-            await _userRepository.AddUserToPostgreSQL(user);
-            await _customerRepository.AddCustomerToPostgreSQL(newCustomer);
+            await _userRepository.AddUser(user);
+            await _customerRepository.AddCustomer(newCustomer);
 
             string newJti = Ulid.NewUlid().ToGuid().ToString();
 

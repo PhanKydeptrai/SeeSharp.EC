@@ -54,7 +54,7 @@ internal sealed class CreateNewEmployeeCommandHandler : ICommandHandler<CreateNe
 
         var employee = Employee.NewEmployee(user.UserId);
         
-        await _userRepository.AddUserToPostgreSQL(user);
+        await _userRepository.AddUser(user);
         
         await _employeeRepository.AddEmployee(employee);
 

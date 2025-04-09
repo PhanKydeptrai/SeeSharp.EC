@@ -11,6 +11,7 @@ using Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
 using Application.Features.CustomerFeature.Commands.CustomerSignInWithRefreshToken;
 using Application.Features.CustomerFeature.Commands.CustomerSignUp;
 using Application.Features.CustomerFeature.Commands.CustomerVerifyEmail;
+using Application.Features.CustomerFeature.Commands.GenerateGuestToken;
 using Application.Features.CustomerFeature.Commands.RevokeAllCustomerRefreshTokens;
 using Application.Features.CustomerFeature.Queries.GetCustomerProfile;
 using MediatR;
@@ -261,6 +262,19 @@ public sealed class CustomersController : ControllerBase
         var result = await _sender.Send(new CustomerSignInWithGoogleCommand(token));
         return result.Match(Results.Ok, CustomResults.Problem); 
     }
+
+    /// <summary>
+    /// Cho phép client lấy guest token
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("guest-token")]
+    [ApiKey]
+    public async Task<IResult> GetGuestToken()
+    {
+        var result = await _sender.Send(new GenerateGuestTokenCommand());
+        return result.Match(Results.Ok, CustomResults.Problem); 
+    }
+
 
     // Additional customer endpoints could be added here
     // - SignInWithGoogle

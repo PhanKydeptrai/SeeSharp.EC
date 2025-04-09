@@ -14,7 +14,7 @@ public class CustomerRepository : ICustomerRepository
         _postgreSQLWriteDbContext = postgreSQLWriteDbContext;
     }
 
-    public async Task AddCustomerToPostgreSQL(Customer customer)
+    public async Task AddCustomer(Customer customer)
     {
         await _postgreSQLWriteDbContext.Customers.AddAsync(customer);
     }
