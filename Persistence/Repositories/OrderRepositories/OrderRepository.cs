@@ -67,7 +67,15 @@ internal sealed class OrderRepository : IOrderRepository
     public async Task<Order?> GetOrderByGuestId(CustomerId customerId)
     {
         return await _postgreSQLWriteDbContext.Orders
+            .Include(a => a.OrderDetails)
             .FirstOrDefaultAsync(x => x.CustomerId == customerId);
+    }
+
+    public async Task<Order?> GetWaitingOrderByCustomerId(CustomerId customerId)
+    {
+        return await _postgreSQLWriteDbContext.Orders
+            .Include(a => a.OrderDetails)
+            .FirstOrDefaultAsync(x => x.CustomerId == customerId && x.OrderStatus == OrderStatus.Waiting);
     }
 
     public void DeleteOrderDetail(OrderDetail orderDetail)
@@ -75,4 +83,5 @@ internal sealed class OrderRepository : IOrderRepository
         _postgreSQLWriteDbContext.OrderDetails.Remove(orderDetail);
     }
 
+    
 }

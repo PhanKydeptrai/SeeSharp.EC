@@ -18,4 +18,8 @@ public static class OrderError
     public static Error OrderNotCreated(CustomerId customerId) => Error.Problem(
         "Order.NotCreated",
         $"Customer with the Id = '{customerId}' dont have any order yet, Add product to create a new order"); 
+    
+    public static Error TransactionNotCreated(CustomerId customerId) => Error.Problem(
+        "OrderTransaction.NotCreated",
+        $"Customer with the Id = '{customerId}' dont have any transaction yet"); 
 }

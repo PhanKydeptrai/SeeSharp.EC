@@ -89,6 +89,7 @@ public static class EndpointName
         public const string GetCartInformation = "GetCartInformation";
         public const string GetAllOrderForAdmin = "GetAllOrderForAdmin";
         public const string GetAllOrderForCustomer = "GetAllOrderForCustomer";
+        public const string GetMakePaymentResponse = "GetMakePaymentResponse";
     }
 
     public class Wishlist

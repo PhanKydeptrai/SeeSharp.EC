@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using API.Extentions;
 using API.Infrastructure;
+using API.Infrastructure.Authorization;
 using Application.Features.CustomerFeature.Commands.CustomerChangePassword;
 using Application.Features.CustomerFeature.Commands.CustomerConfirmChangePassword;
 using Application.Features.CustomerFeature.Commands.CustomerConfirmResetPassword;
@@ -34,14 +35,18 @@ public sealed class CustomersController : ControllerBase
     /// <summary>
     /// Sign in a customer
     /// </summary>
-    /// <param name="command"></param>
+    /// <param name="request"></param>
     /// <returns></returns>
-    [HttpPost("signin")]
-    [EndpointName(EndpointName.Customer.SignIn)]
+    [HttpPost("signin", Name = EndpointName.Customer.SignIn)]
+    // [AuthorizeByRole(AuthorizationPolicies.Guest)]
     [ApiKey]
-    public async Task<IResult> SignIn([FromBody] CustomerSignInCommand command)
+    public async Task<IResult> SignIn([FromBody] CustomerSignInCommand request)
     {
-        var result = await _sender.Send(command);
+        // string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
+        // var claims = TokenExtentions.DecodeJwt(token);
+        // claims.TryGetValue(CustomJwtRegisteredClaimNames.GuestId, out var guestId);
+        // var result = await _sender.Send(new CustomerSignInCommand(request.Email, request.Password, Guid.Parse(guestId!)));
+        var result = await _sender.Send(request);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
@@ -49,13 +54,12 @@ public sealed class CustomersController : ControllerBase
     /// Get customer profile
     /// </summary>
     /// <returns></returns>
-    [HttpGet("profile")]
-    [EndpointName(EndpointName.Customer.GetProfile)]
+    [HttpGet("profile", Name = EndpointName.Customer.GetProfile)]
     [Authorize]
     [ApiKey]
     public async Task<IResult> GetCustomerProfile()
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         var result = await _sender.Send(new GetCustomerProfileQuery(new Guid(sub!)));
@@ -67,8 +71,8 @@ public sealed class CustomersController : ControllerBase
     /// </summary>
     /// <param name="command"></param>
     /// <returns></returns>
-    [HttpPost("signup")]
-    [EndpointName(EndpointName.Customer.SignUp)]
+    [HttpPost("signup", Name = EndpointName.Customer.SignUp)]
+    // [AuthorizeByRole(AuthorizationPolicies.Guest)]
     [ApiKey]
     public async Task<IResult> SignUp([FromBody] CustomerSignUpCommand command)
     {
@@ -81,8 +85,7 @@ public sealed class CustomersController : ControllerBase
     /// </summary>
     /// <param name="command"></param>
     /// <returns></returns>
-    [HttpPost("reset-password")]
-    [EndpointName(EndpointName.Customer.ResetPassword)]
+    [HttpPost("reset-password", Name = EndpointName.Customer.ResetPassword)]
     [ApiKey]
     public async Task<IResult> CustomerResetPassword([FromBody] CustomerResetPasswordCommand command)
     {
@@ -122,12 +125,12 @@ public sealed class CustomersController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("change-password", Name = EndpointName.Customer.ChangePassword)]
-    [Authorize]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
     [ApiKey]
     public async Task<IResult> CustomerChangePassword([FromBody] CustomerChangePasswordRequest request)
     {
 
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
     
@@ -158,6 +161,7 @@ public sealed class CustomersController : ControllerBase
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpGet("refresh-token", Name = EndpointName.Customer.SignInWithRefreshToken)]
+    [AuthorizeByRole(AuthorizationPolicies.Guest)]
     [ApiKey]
     public async Task<IResult> SignInWithRefreshToken([FromBody] CustomerSignInWithRefreshTokenCommand command)
     {
@@ -176,7 +180,7 @@ public sealed class CustomersController : ControllerBase
     [ApiKey]
     public async Task<IResult> RevokeRefreshToken([FromRoute] Guid userId)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         claims.TryGetValue(JwtRegisteredClaimNames.Jti, out var jti);
@@ -191,16 +195,15 @@ public sealed class CustomersController : ControllerBase
     }
 
     /// <summary>
-    /// Thu hồi refresh token của khách hàng (lấy userId từ token)
+    /// Thu hồi refresh token của khách hàng (lấy userId từ token, Admin và khách đều có thể dùng chung)
     /// </summary>
     /// <returns></returns>
-    [HttpDelete("refresh-token/current")]
-    [EndpointName(EndpointName.Customer.RevokeRefreshToken + "FromToken")]
+    [HttpDelete("refresh-token/current", Name = EndpointName.Customer.RevokeRefreshToken + "FromToken")]
     [Authorize]
     [ApiKey]
     public async Task<IResult> RevokeCurrentRefreshToken()
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         claims.TryGetValue(JwtRegisteredClaimNames.Jti, out var jti);
@@ -210,9 +213,9 @@ public sealed class CustomersController : ControllerBase
     }
 
     /// <summary>
-    /// Thu hồi tất cả refresh tokens của khách hàng
+    /// Thu hồi tất cả refresh tokens của người dùng (Tất cẩ đều dùng được)
     /// </summary>
-    /// <param name="userId">ID của khách hàng</param>
+    /// <param name="userId">ID user</param>
     /// <returns></returns>
     [HttpDelete("{userId:guid}/refresh-tokens")]
     [EndpointName(EndpointName.Customer.RevokeRefreshTokens)]
@@ -220,7 +223,7 @@ public sealed class CustomersController : ControllerBase
     [ApiKey]
     public async Task<IResult> RevokeAllRefreshTokens([FromRoute] Guid userId)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         
@@ -242,7 +245,7 @@ public sealed class CustomersController : ControllerBase
     [ApiKey]
     public async Task<IResult> RevokeAllCurrentRefreshTokens()
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         

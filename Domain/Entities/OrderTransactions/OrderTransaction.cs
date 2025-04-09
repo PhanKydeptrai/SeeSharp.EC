@@ -32,9 +32,9 @@ public sealed class OrderTransaction
         PaymentMethod paymentMethod,
         IsVoucherUsed isVoucherUsed,
         TransactionStatus transactionStatus,
-        VoucherId voucherId,
+        VoucherId? voucherId,
         OrderId orderId,
-        BillId billId)
+        BillId? billId)
     {
         OrderTransactionId = orderTransactionId;
         PayerName = payerName;
@@ -70,8 +70,8 @@ public sealed class OrderTransaction
             paymentMethod,
             isVoucherUsed,
             transactionStatus,
-            voucherId ?? VoucherId.Empty,
+            voucherId ?? null,
             orderId,
-            billId ?? BillId.Empty);
+            billId);
     }
 }

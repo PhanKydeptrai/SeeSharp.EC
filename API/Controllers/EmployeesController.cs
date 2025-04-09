@@ -20,8 +20,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using SharedKernel.Constants;
 using Application.IServices;
-using Application.DTOs.Employee;
-using Application.Features.Pages;
 
 namespace API.Controllers;
 
@@ -123,7 +121,7 @@ public class EmployeesController : ControllerBase
     [ApiKey]
     public async Task<IResult> EmployeeChangePassword([FromBody] EmployeeChangePasswordRequest request)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
     
@@ -159,7 +157,7 @@ public class EmployeesController : ControllerBase
     [ApiKey]
     public async Task<IResult> RevokeRefreshToken([FromRoute] Guid userId)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         claims.TryGetValue(JwtRegisteredClaimNames.Jti, out var jti);
@@ -203,7 +201,7 @@ public class EmployeesController : ControllerBase
     [ApiKey]
     public async Task<IResult> RevokeAllRefreshTokens([FromRoute] Guid userId)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         
@@ -226,7 +224,7 @@ public class EmployeesController : ControllerBase
     [ApiKey]
     public async Task<IResult> RevokeAllCurrentRefreshTokens()
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         
@@ -252,7 +250,7 @@ public class EmployeesController : ControllerBase
         [FromForm] DateTime? dateOfBirth,
         IFormFile? imageFile)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
 
@@ -276,7 +274,7 @@ public class EmployeesController : ControllerBase
     [ApiKey]
     public async Task<IResult> GetEmployeeProfile()
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
 
@@ -302,7 +300,7 @@ public class EmployeesController : ControllerBase
         [FromRoute] Guid employeeId,
         [FromBody] string newStatus)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var result = await _sender.Send(new UpdateEmployeeStatusCommand(employeeId, newStatus, token));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }

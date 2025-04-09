@@ -1,3 +1,5 @@
+using Domain.Entities.Customers;
+using Domain.Entities.CustomerVouchers;
 using Domain.Entities.Vouchers;
 using Domain.IRepositories.Vouchers;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,18 @@ internal sealed class VoucherRepository : IVoucherRepository
     public VoucherRepository(SeeSharpPostgreSQLWriteDbContext dbContext)
     {
         _dbContext = dbContext;
+    }
+
+    public async Task<CustomerVoucher?> GetCustomerVoucherByVoucherCode(
+        VoucherCode voucherCode, 
+        CustomerId customerId)
+    {
+        return await _dbContext.CustomerVouchers.Include(v => v.Voucher)
+            .FirstOrDefaultAsync(
+                v => v.Voucher!.VoucherCode == voucherCode 
+                && v.CustomerId == customerId
+                && v.Quantity.Value > 0
+                && v.Voucher!.Status == Status.Active);
     }
 
     public async Task AddVoucher(Voucher voucher)

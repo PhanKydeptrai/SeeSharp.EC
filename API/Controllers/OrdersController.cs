@@ -13,6 +13,7 @@ using Application.Features.OrderFeature.Queries.GetAllOrderForAdmin;
 using API.Infrastructure.Authorization;
 using Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
 using Application.Features.OrderFeature.Commands.AddProductToOrderForGuest;
+using Application.Features.OrderFeature.Queries.GetMakePaymentResponse;
 
 namespace API.Controllers;
 
@@ -130,7 +131,7 @@ public sealed class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// Get cart information for customer
+    /// Lấy thông tin giỏ hàng của khách hàng (Khách có đăng ký)
     /// </summary>
     /// <returns></returns>
     [HttpGet("cart", Name = EndpointName.Order.GetCartInformation)]
@@ -144,6 +145,13 @@ public sealed class OrdersController : ControllerBase
         var result = await _sender.Send(new GetCartInformationQuery(new Guid(customerId!)));
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+
+    // [HttpGet("cart/guest")]
+    // [AuthorizeByRole(AuthorizationPolicies.Guest)]
+    
+
+
+
 
     /// <summary>
     /// Get all orders for admin
@@ -193,7 +201,17 @@ public sealed class OrdersController : ControllerBase
         string? token = TokenExtentions.GetTokenFromHeader(HttpContext);
         var claims = TokenExtentions.DecodeJwt(token!);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
-        var result = await _sender.Send(new MakePaymentForSubscriberCommand(new Guid(customerId!), request.voucherCode));
+        var result = await _sender.Send(new MakePaymentForSubscriberCommand(
+            new Guid(customerId!), 
+            request.voucherCode,
+            request.ShippingInformationId,
+            request.FullName,
+            request.PhoneNumber,
+            request.Province,
+            request.District,
+            request.Ward,
+            request.SpecificAddress));
+            
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
@@ -215,6 +233,23 @@ public sealed class OrdersController : ControllerBase
         var command = new AddProductToOrderForGuestCommand(request.ProductVariantId, Guid.Parse(guestId!), request.Quantity);
         var result = await _sender.Send(command);
         return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Lấy thông tin thanh toán cho khách hàng
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("make-payment", Name = EndpointName.Order.GetMakePaymentResponse)]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    [ApiKey]
+    public async Task<IResult> GetMakePaymentResponse()
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
+
+        var result = await _sender.Send(new GetMakePaymentResponseQuery(new Guid(customerId!)));
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
 
 }

@@ -85,7 +85,7 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
             .HasColumnType("uuid");
 
         builder.HasOne(a => a.Voucher)
-            .WithMany(a => a.OrderTransactions)
+            .WithMany(a => a.OrderTransactions).IsRequired(false)
             .HasForeignKey(a => a.VoucherId);
 
 

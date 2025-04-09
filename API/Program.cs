@@ -34,9 +34,9 @@ builder.Services.AddAuthentication(options =>
         OnTokenValidated = async context =>
         {
             var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            var isGuest = context.Principal?.FindFirst(CustomJwtRegisteredClaimNames.GuestId)?.Value;
+            // var isGuest = context.Principal?.FindFirst(CustomJwtRegisteredClaimNames.GuestId)?.Value;
 
-            if (jti is not null && isGuest is null)
+            if (jti is not null)
             {
                 var revocationService = context.HttpContext.RequestServices
                     .GetRequiredService<ITokenRevocationService>();

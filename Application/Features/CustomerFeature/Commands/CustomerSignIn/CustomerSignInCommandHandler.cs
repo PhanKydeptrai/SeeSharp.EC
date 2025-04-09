@@ -2,11 +2,11 @@ using Application.Abstractions.Messaging;
 using Application.DTOs.Customer;
 using Application.IServices;
 using Application.Security;
-using Application.Services;
 using Domain.Entities.Customers;
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.Users;
 using Domain.IRepositories;
+using Domain.IRepositories.Orders;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.Utilities.Errors;
 using NETCore.Encrypt.Extensions;
@@ -19,19 +19,21 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
     #region Dependencies
     private readonly ICustomerQueryServices _customerQueryServices;
     private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
+    private readonly IOrderRepository _orderRepository;
     private readonly ITokenProvider _tokenProvider;
     private readonly IUnitOfWork _unitOfWork;
     public CustomerSignInCommandHandler(
         IUnitOfWork unitOfWork,
         ICustomerQueryServices customerQueryServices,
-        ICustomerSupabaseClient supabaseClient,
         ITokenProvider tokenProvider,
-        IUserAuthenticationTokenRepository userAuthenticationTokenRepository)
+        IUserAuthenticationTokenRepository userAuthenticationTokenRepository,
+        IOrderRepository orderRepository)
     {
         _unitOfWork = unitOfWork;
         _customerQueryServices = customerQueryServices;
         _tokenProvider = tokenProvider;
         _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
+        _orderRepository = orderRepository;
     }
     #endregion
 
@@ -41,6 +43,14 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
     {
         var (response, failure) = await IsSignInSuccess(request);
         if (failure is not null) return Result.Failure<CustomerSignInResponse>(failure.Error);
+
+        #region Đồng bộ giỏ hàng giữa guest và customer
+        // var orderInfo = await _orderRepository.GetWaitingOrderByCustomerId(CustomerId.FromGuid(request.GuestId));
+        // if(orderInfo is not null && orderInfo.OrderDetails is not null)
+        // {
+
+        // }
+        #endregion
 
         //Tạo access token và 
         string jti = Ulid.NewUlid().ToGuid().ToString();

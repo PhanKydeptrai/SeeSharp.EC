@@ -26,6 +26,10 @@ using Persistence.Repositories.UserRepositories;
 using Persistence.Repositories.VerificationTokenRepositories;
 using Persistence.Repositories.WishItemRepositories;
 using Persistence.Repositories.VoucherRepositories;
+using Persistence.Repositories.ShippingInformationRepositories;
+using Domain.IRepositories.ShippingInformations;
+using Domain.IRepositories.Bills;
+using Persistence.Repositories.BillRepositories;
 
 namespace Persistence;
 public static class DependencyInjection
@@ -53,6 +57,8 @@ public static class DependencyInjection
         services.AddScoped<IWishItemRepository, WishItemRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IVoucherRepository, VoucherRepository>();
+        services.AddScoped<IShippingInformationRepository, ShippingInformationRepository>();
+        services.AddScoped<IBillRepository, BillRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

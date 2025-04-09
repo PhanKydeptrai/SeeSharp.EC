@@ -14,6 +14,13 @@ public interface IOrderQueryServices
     /// <param name="orderId"></param>
     /// <returns></returns>
     Task<OrderResponse?> GetOrderById(OrderId orderId);
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    Task<MakePaymentResponse?> GetMakePaymentResponse(CustomerId customerId);
 
     /// <summary>
     /// Get Cart Information by CustomerId with OrderStatus == Waiting
@@ -50,4 +57,5 @@ public interface IOrderQueryServices
         string? sortOrder,
         int? page,
         int? pageSize);
+
 }

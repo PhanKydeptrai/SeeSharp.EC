@@ -15,7 +15,9 @@ public interface IOrderRepository
     Task<OrderDetail?> GetOrderDetailById(OrderDetailId orderDetailId);
     Task<Order?> GetOrderById(OrderId orderId);
     Task<Order?> GetOrderByCustomerId(CustomerId customerId);
-    Task<Order?> GetOrderByGuestId(CustomerId customerId);
+    Task<Order?> GetWaitingOrderByCustomerId(CustomerId customerId);
+    // Task SyncCartForCustomer(OrderId orderId, CustomerId customerId);
+    // Task<Order?> GetOrderByGuestId(CustomerId customerId);
     void DeleteOrderDetail(OrderDetail orderDetail);
 }
 

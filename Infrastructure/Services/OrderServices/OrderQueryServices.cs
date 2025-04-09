@@ -203,4 +203,28 @@ internal sealed class OrderQueryServices : IOrderQueryServices
 
         return orderList;
     }
+
+    public async Task<MakePaymentResponse?> GetMakePaymentResponse(CustomerId customerId)
+    {
+        return await _dbContext.Orders
+            .Include(a => a.OrderTransactionReadModel)
+            .ThenInclude(a => a!.VoucherReadModel)
+            .Include(a => a.OrderDetailReadModels)
+            .ThenInclude(a => a.ProductVariantReadModel)
+            .Where(a => a.CustomerId == new Ulid(customerId) && a.OrderStatus == OrderStatus.Waiting)
+            .Select(a => new MakePaymentResponse(
+                a.OrderId.ToGuid(),
+                a.PaymentStatus.ToString(),
+                a.OrderTransactionReadModel!.Amount,
+                a.OrderTransactionReadModel.VoucherReadModel!.VoucherCode,
+                a.OrderDetailReadModels.Select(b => new OrderDetailResponse(
+                    b.OrderDetailId.ToGuid(),
+                    b.ProductVariantId.ToGuid(),
+                    b.ProductVariantReadModel.ProductVariantPrice,
+                    b.Quantity,
+                    b.ProductVariantReadModel.ImageUrl ?? string.Empty,
+                    b.UnitPrice
+                )).ToArray()
+            )).FirstOrDefaultAsync();
+    }
 }
