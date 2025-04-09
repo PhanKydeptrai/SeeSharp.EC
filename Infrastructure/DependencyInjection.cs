@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.EventBus;
 using Application.IServices;
 using Application.Security;
-using Application.Services;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CustomerMessageConsumers;
 using Infrastructure.Consumers.EmployeeEventConsumers;
@@ -14,6 +13,7 @@ using Infrastructure.Services.EmployeeServices;
 using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
 using Infrastructure.Services.UserServices;
+using Infrastructure.Services.VoucherServices;
 using Infrastructure.Services.WishItemServices;
 using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
@@ -102,6 +102,7 @@ public static class DependencyInjection
         services.AddScoped<ITokenRevocationService, TokenRevocationService>();
         services.AddScoped<IUserQueryService, UserQueryService>();
         services.AddScoped<IEmployeeQueryServices, EmployeeQueryServices>();
+        services.AddScoped<IVoucherQueryServices, VoucherQueryServices>();
         
         
         // services.AddScoped<EmailVerificationLinkFactory>();

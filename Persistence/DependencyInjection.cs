@@ -7,6 +7,7 @@ using Domain.IRepositories.Products;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.IRepositories.Users;
 using Domain.IRepositories.VerificationTokens;
+using Domain.IRepositories.Vouchers;
 using Domain.IRepositories.WishItems;
 using Domain.OutboxMessages.Services;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ using Persistence.Repositories.UserAuthenticationTokenRepositories;
 using Persistence.Repositories.UserRepositories;
 using Persistence.Repositories.VerificationTokenRepositories;
 using Persistence.Repositories.WishItemRepositories;
+using Persistence.Repositories.VoucherRepositories;
 
 namespace Persistence;
 public static class DependencyInjection
@@ -50,6 +52,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IWishItemRepository, WishItemRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IVoucherRepository, VoucherRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

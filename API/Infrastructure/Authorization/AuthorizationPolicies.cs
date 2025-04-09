@@ -4,18 +4,20 @@ namespace API.Infrastructure.Authorization;
 
 public static class AuthorizationPolicies
 {
+    //ROLE:
     public const string Admin = "Admin";
     public const string Employee = "Employee";
-    public const string Customer = "Customer";
     public const string Subscribed = "Subscribed";
-    public const string SubscribedOnly = "SubscribedOnly";
+    // public const string Customer = "Customer";
 
-    public const string CustomerOnly = "CustomerOnly";
+    //POLICY:
+    public const string AdminOnly = "AdminOnly";
+    public const string SubscribedOnly = "SubscribedOnly";
 
     public static void ConfigurePolicies(AuthorizationOptions options)
     {
         // Admin policy - chỉ admin mới có quyền truy cập
-        options.AddPolicy(Admin, policy => 
+        options.AddPolicy(AdminOnly, policy => 
             policy.RequireRole(Admin));
 
         // Employee policy - employee và admin đều có quyền truy cập

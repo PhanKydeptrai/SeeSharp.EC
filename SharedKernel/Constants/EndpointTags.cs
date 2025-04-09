@@ -7,6 +7,7 @@ public static class EndpointTags
     public const string Customer = "Customer";
     public const string Order = "Order";
     public const string Wishlist = "Wishlist";
+    public const string Voucher = "Voucher";
 }
 
 public static class EndpointName
@@ -95,6 +96,16 @@ public static class EndpointName
         public const string AddWishList = "AddWishList";
         public const string RemoveWishList = "RemoveWishList";
         public const string GetWishList = "GetWishList";
+    }
+
+    public class Voucher
+    {
+        public const string Create = "CreateVoucher";
+        public const string GetById = "GetVoucherById";
+        public const string GetAll = "GetVouchers";
+        public const string Update = "UpdateVoucher";
+        public const string Delete = "DeleteVoucher";
+        public const string GetAllForCustomer = "GetAllCustomerVouchers";
     }
 }
 

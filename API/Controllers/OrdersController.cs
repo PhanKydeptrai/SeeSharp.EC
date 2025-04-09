@@ -4,7 +4,6 @@ using Application.Features.OrderFeature.Commands.AddProductToOrder;
 using Application.Features.OrderFeature.Commands.DeleteOrderDetail;
 using Application.Features.OrderFeature.Commands.UpdateOrderDetail;
 using Application.Features.OrderFeature.Queries.GetAllOrderForCustomer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
 using MediatR;
@@ -29,12 +28,11 @@ public sealed class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// Lấy tất cả đơn hàng của khách hàng
+    /// Lấy tất cả đơn hàng của khách hàng (Dùng cho khách hàng)
     /// </summary>
     /// <returns></returns>
-    [HttpGet("customer")]
-    [EndpointName(EndpointName.Order.GetAllOrderForCustomer)]
-    [Authorize]
+    [HttpGet("customer", Name = EndpointName.Order.GetAllOrderForCustomer)]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
     public async Task<IResult> GetAllOrdersForCustomer(
         [FromQuery] string? statusFilter,
         [FromQuery] string? searchTerm,
@@ -43,7 +41,7 @@ public sealed class OrdersController : ControllerBase
         [FromQuery] int? page,
         [FromQuery] int? pageSize)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
@@ -67,10 +65,10 @@ public sealed class OrdersController : ControllerBase
     /// <returns></returns>
     [HttpPost]
     [EndpointName(EndpointName.Order.AddProductToOrder)]
-    [Authorize]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
     public async Task<IResult> AddProductToOrder([FromBody] AddProductToOrderRequest request)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
         if (customerId is null) return Results.Unauthorized();
@@ -89,7 +87,7 @@ public sealed class OrdersController : ControllerBase
     [EndpointName(EndpointName.Order.DeleteOrderDetail)]
     public async Task<IResult> DeleteOrderdetail([FromRoute] Guid orderDetailId)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
@@ -103,8 +101,8 @@ public sealed class OrdersController : ControllerBase
     /// <param name="orderDetailId"></param>
     /// <param name="request"></param>
     /// <returns></returns>
-    [HttpPut("details/{orderDetailId:guid}")]
-    [EndpointName(EndpointName.Order.UpdateOrderDetail)]
+    [HttpPut("details/{orderDetailId:guid}", Name = EndpointName.Order.UpdateOrderDetail)]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
     public async Task<IResult> UpdateOrderDetail(
         [FromRoute] Guid orderDetailId,
         [FromBody] UpdateOrderDetailRequest request)
@@ -132,9 +130,8 @@ public sealed class OrdersController : ControllerBase
     /// Get cart information for customer
     /// </summary>
     /// <returns></returns>
-    [HttpGet("cart")]
-    [EndpointName(EndpointName.Order.GetCartInformation)]
-    [Authorize]
+    [HttpGet("cart", Name = EndpointName.Order.GetCartInformation)]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
     public async Task<IResult> GetCartInformation()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -156,9 +153,8 @@ public sealed class OrdersController : ControllerBase
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
     /// <returns></returns>
-    [HttpGet("admin")]
+    [HttpGet("admin", Name = EndpointName.Order.GetAllOrderForAdmin)]
     [AuthorizeByRole(AuthorizationPolicies.Admin)]
-    [EndpointName(EndpointName.Order.GetAllOrderForAdmin)]
     public async Task<IResult> GetAllOrderForAdmin(
         [FromQuery] string? statusFilter,
         [FromQuery] string? customerFilter,
@@ -198,15 +194,15 @@ public sealed class OrdersController : ControllerBase
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
-    [HttpPost("make-payment-guest")]
-    [ApiKey]
-    public async Task<IResult> MakePaymentForGuest(
-        [FromBody] MakePaymentForSubscriberRequest request)
-    {
-        var result = await _sender.Send(new MakePaymentForSubscriberCommand(Guid.Empty, request.voucherCode));
-        return result.Match(Results.NoContent, CustomResults.Problem);
-    }
+    // [HttpPost("make-payment-guest")]
+    // [ApiKey]
+    // public async Task<IResult> MakePaymentForGuest()
+    // {
+    //     var result = await _sender.Send(new MakePaymentForSubscriberCommand(Guid.Empty, request.voucherCode));
+    //     return result.Match(Results.NoContent, CustomResults.Problem);
+    // }
 
-
+    //TODO:
+    // + Endpoint đặt hàng cho khách chưa đăng ký
 
 }
