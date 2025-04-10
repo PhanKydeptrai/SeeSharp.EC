@@ -18,7 +18,7 @@ internal sealed class CustomerChangePassword : IEndpoint
             HttpContext httpContext,
             ISender sender) =>
         {
-            string token = TokenExtentions.GetTokenFromHeader(httpContext);
+            string token = TokenExtentions.GetTokenFromHeader(httpContext)!;
             var claims = TokenExtentions.DecodeJwt(token);
 
             claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);

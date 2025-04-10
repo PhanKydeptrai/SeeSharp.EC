@@ -19,7 +19,7 @@ internal sealed class RevokeCustomerRefreshToken : IEndpoint
             HttpContext httpContext,
             ISender sender) =>
         {
-            string token = TokenExtentions.GetTokenFromHeader(httpContext);
+            string token = TokenExtentions.GetTokenFromHeader(httpContext)!;
             var claims = TokenExtentions.DecodeJwt(token);
             claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
             claims.TryGetValue(JwtRegisteredClaimNames.Jti, out var jti);

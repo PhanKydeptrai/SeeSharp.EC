@@ -43,7 +43,7 @@ public sealed class WishlistController : ControllerBase
         [FromQuery] int? page,
         [FromQuery] int? pageSize)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
@@ -70,7 +70,7 @@ public sealed class WishlistController : ControllerBase
     [Authorize]
     public async Task<IResult> AddWishList([FromRoute] Guid productId)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 

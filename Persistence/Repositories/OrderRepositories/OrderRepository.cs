@@ -4,6 +4,7 @@ using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
 using Domain.Entities.ProductVariants;
 using Domain.IRepositories.Orders;
+using MassTransit.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
 
@@ -83,5 +84,17 @@ internal sealed class OrderRepository : IOrderRepository
         _postgreSQLWriteDbContext.OrderDetails.Remove(orderDetail);
     }
 
-    
+    public void RemoveOrderTransaction(OrderTransaction orderTransaction)
+    {
+        _postgreSQLWriteDbContext.OrderTransactions.Remove(orderTransaction);
+    }
+
+    public async Task<OrderTransaction?> GetOrderTransactionByCustomerId(CustomerId customerId)
+    {
+        return await _postgreSQLWriteDbContext.OrderTransactions
+            .Include(a => a.Bill)
+            .FirstOrDefaultAsync(
+                x => x.Bill!.CustomerId == customerId 
+                && x.TransactionStatus == TransactionStatus.Pending);
+    }
 }

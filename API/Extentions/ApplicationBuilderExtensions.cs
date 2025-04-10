@@ -22,6 +22,7 @@ public static class ApplicationBuilderExtensions
         {
             options.SwaggerEndpoint("/openapi/v1.json", "NextSharp");
             options.RoutePrefix = "swagger";
+            options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
         });
 
 

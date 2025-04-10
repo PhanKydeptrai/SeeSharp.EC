@@ -14,6 +14,9 @@ using API.Infrastructure.Authorization;
 using Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
 using Application.Features.OrderFeature.Commands.AddProductToOrderForGuest;
 using Application.Features.OrderFeature.Queries.GetMakePaymentResponse;
+using Application.Features.OrderFeature.Commands.MakePaymentForGuest;
+using Application.Features.OrderFeature.Commands.DeleteOrderTransaction;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers;
 
@@ -135,20 +138,24 @@ public sealed class OrdersController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet("cart", Name = EndpointName.Order.GetCartInformation)]
-    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOrGuest)]
     public async Task<IResult> GetCartInformation()
-    {
+    {   
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
-        claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
-
-        var result = await _sender.Send(new GetCartInformationQuery(new Guid(customerId!)));
+        string? id = string.Empty;
+        claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out id);
+        if (id.IsNullOrEmpty())
+        {
+            claims.TryGetValue(CustomJwtRegisteredClaimNames.GuestId, out id);
+        }
+        var result = await _sender.Send(new GetCartInformationQuery(new Guid(id!)));
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
     // [HttpGet("cart/guest")]
     // [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    
+
 
 
 
@@ -202,7 +209,7 @@ public sealed class OrdersController : ControllerBase
         var claims = TokenExtentions.DecodeJwt(token!);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
         var result = await _sender.Send(new MakePaymentForSubscriberCommand(
-            new Guid(customerId!), 
+            new Guid(customerId!),
             request.voucherCode,
             request.ShippingInformationId,
             request.FullName,
@@ -211,7 +218,7 @@ public sealed class OrdersController : ControllerBase
             request.District,
             request.Ward,
             request.SpecificAddress));
-            
+
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
@@ -250,6 +257,74 @@ public sealed class OrdersController : ControllerBase
 
         var result = await _sender.Send(new GetMakePaymentResponseQuery(new Guid(customerId!)));
         return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Lấy thông tin thanh toán cho khách hàng
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("make-payment/guest")]
+    [AuthorizeByRole(AuthorizationPolicies.Guest)]
+    [ApiKey]
+    public async Task<IResult> GetMakePaymentResponseForGuest()
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(CustomJwtRegisteredClaimNames.GuestId, out var guestId);
+
+        var result = await _sender.Send(new GetMakePaymentResponseQuery(new Guid(guestId!)));
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Tạo ordertransaction cho hoá đơn (Cho khách hàng chưa đăng ký)
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("make-payment/guest")]
+    [AuthorizeByRole(AuthorizationPolicies.Guest)]
+    [ApiKey]
+    public async Task<IResult> MakePaymentForGuest([FromBody] MakePaymentForGuestRequest request)
+    {
+        string? token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        var claims = TokenExtentions.DecodeJwt(token!);
+        claims.TryGetValue(CustomJwtRegisteredClaimNames.GuestId, out var guestId);
+
+        var command = new MakePaymentForGuestCommand(
+            new Guid(guestId!),
+            request.Email,
+            request.FullName,
+            request.PhoneNumber,
+            request.Province,
+            request.District,
+            request.Ward,
+            request.SpecificAddress);
+
+        var result = await _sender.Send(command);
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Delete an order transaction for a customer
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete("transaction")]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOrGuest)]
+    [ApiKey]
+    public async Task<IResult> DeleteOrderTransaction()
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
+        var claims = TokenExtentions.DecodeJwt(token);
+        string? id = string.Empty;
+
+        claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out id);
+        if (id.IsNullOrEmpty())
+        {
+            claims.TryGetValue(CustomJwtRegisteredClaimNames.GuestId, out id);
+        }
+
+        var result = await _sender.Send(new DeleteOrderTransactionCommand(new Guid(id!)));
+        return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
 }

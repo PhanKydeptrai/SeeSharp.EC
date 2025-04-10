@@ -15,7 +15,7 @@ internal sealed class GetCustomerProfile : IEndpoint
             HttpContext httpContext,
             ISender sender) =>
         {
-            string token = TokenExtentions.GetTokenFromHeader(httpContext);
+            string token = TokenExtentions.GetTokenFromHeader(httpContext)!;
             var claims = TokenExtentions.DecodeJwt(token);
             claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
             var result = await sender.Send(new GetCustomerProfileQuery(new Guid(sub!)));

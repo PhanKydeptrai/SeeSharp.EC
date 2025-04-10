@@ -16,6 +16,13 @@ public interface IOrderRepository
     Task<Order?> GetOrderById(OrderId orderId);
     Task<Order?> GetOrderByCustomerId(CustomerId customerId);
     Task<Order?> GetWaitingOrderByCustomerId(CustomerId customerId);
+    /// <summary>
+    /// lấy order transaction theo customerId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    Task<OrderTransaction?> GetOrderTransactionByCustomerId(CustomerId customerId);
+    void RemoveOrderTransaction(OrderTransaction orderTransaction); 
     // Task SyncCartForCustomer(OrderId orderId, CustomerId customerId);
     // Task<Order?> GetOrderByGuestId(CustomerId customerId);
     void DeleteOrderDetail(OrderDetail orderDetail);
