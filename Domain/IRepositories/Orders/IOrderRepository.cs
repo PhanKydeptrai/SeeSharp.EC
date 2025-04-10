@@ -16,6 +16,9 @@ public interface IOrderRepository
     Task<Order?> GetOrderById(OrderId orderId);
     Task<Order?> GetOrderByCustomerId(CustomerId customerId);
     Task<Order?> GetWaitingOrderByCustomerId(CustomerId customerId);
+
+    Task<OrderTransaction?> GetOrderTransactionById(OrderTransactionId orderTransactionId);
+
     /// <summary>
     /// lấy order transaction theo customerId
     /// </summary>

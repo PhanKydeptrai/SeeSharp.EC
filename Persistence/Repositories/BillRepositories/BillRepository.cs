@@ -17,4 +17,9 @@ internal sealed class BillRepository : IBillRepository
     {
         await _dbContext.Bills.AddAsync(bill);
     }
+
+    public void RemoveBill(Bill bill)
+    {
+        _dbContext.Bills.Remove(bill);
+    }
 }

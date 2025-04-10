@@ -17,12 +17,14 @@ using Application.Features.OrderFeature.Queries.GetMakePaymentResponse;
 using Application.Features.OrderFeature.Commands.MakePaymentForGuest;
 using Application.Features.OrderFeature.Commands.DeleteOrderTransaction;
 using Microsoft.IdentityModel.Tokens;
+using Application.Features.OrderFeature.Commands.PayOrderWithVnPay;
+using Application.DTOs.Payment;
+using Application.Features.OrderFeature.Commands.VnPayReturnUrl;
 
 namespace API.Controllers;
 
 [Route("api/orders")]
 [ApiController]
-[ApiKey]
 public sealed class OrdersController : ControllerBase
 {
     private readonly ISender _sender;
@@ -134,13 +136,13 @@ public sealed class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// Lấy thông tin giỏ hàng của khách hàng (Khách có đăng ký)
+    /// Lấy thông tin giỏ hàng của khách
     /// </summary>
     /// <returns></returns>
     [HttpGet("cart", Name = EndpointName.Order.GetCartInformation)]
     [AuthorizeByRole(AuthorizationPolicies.SubscribedOrGuest)]
     public async Task<IResult> GetCartInformation()
-    {   
+    {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         string? id = string.Empty;
@@ -152,13 +154,6 @@ public sealed class OrdersController : ControllerBase
         var result = await _sender.Send(new GetCartInformationQuery(new Guid(id!)));
         return result.Match(Results.Ok, CustomResults.Problem);
     }
-
-    // [HttpGet("cart/guest")]
-    // [AuthorizeByRole(AuthorizationPolicies.Guest)]
-
-
-
-
 
     /// <summary>
     /// Get all orders for admin
@@ -326,5 +321,59 @@ public sealed class OrdersController : ControllerBase
         var result = await _sender.Send(new DeleteOrderTransactionCommand(new Guid(id!)));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
+
+    #region Thanh toán
+    /// <summary>
+    /// Thanh toán đơn hàng với VnPay
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    [HttpGet("vnpay/{orderId:guid}")]
+    // [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    public async Task<IResult> PayOrderWithVnPay([FromRoute] Guid orderId)
+    {
+        var command = new PayOrderWithVnPayCommand(orderId);
+        var result = await _sender.Send(command);
+        return Results.Redirect(result.Value);
+    }
+
+    /// <summary>
+    /// VnPay return url
+    /// </summary>
+    /// <param name="vnp_Amount"></param>
+    /// <param name="vnp_BankCode"></param>
+    /// <param name="vnp_OrderInfo"></param>
+    /// <param name="vnp_ResponseCode"></param>
+    /// <param name="vnp_TmnCode"></param>
+    /// <param name="vnp_TransactionNo"></param>
+    /// <param name="vnp_TxnRef"></param>
+    /// <param name="vnp_SecureHash"></param>
+    /// <returns></returns>
+    [HttpGet("return-url")]
+    public async Task<IResult> VnPayReturnUrl(
+        [FromQuery(Name = "vnp_Amount")] string vnp_Amount,
+        [FromQuery(Name = "vnp_BankCode")] string vnp_BankCode,
+        [FromQuery(Name = "vnp_OrderInfo")] string vnp_OrderInfo,
+        [FromQuery(Name = "vnp_ResponseCode")] string vnp_ResponseCode,
+        [FromQuery(Name = "vnp_TmnCode")] string vnp_TmnCode,
+        [FromQuery(Name = "vnp_TransactionNo")] string vnp_TransactionNo,
+        [FromQuery(Name = "vnp_TxnRef")] string vnp_TxnRef,
+        [FromQuery(Name = "vnp_SecureHash")] string vnp_SecureHash)
+    {
+        var model = new VnPayReturnModel
+        {
+            vnp_Amount = vnp_Amount,
+            vnp_BankCode = vnp_BankCode,
+            vnp_OrderInfo = vnp_OrderInfo,
+            vnp_ResponseCode = vnp_ResponseCode,
+            vnp_TmnCode = vnp_TmnCode,
+            vnp_TransactionNo = vnp_TransactionNo,
+            vnp_TxnRef = vnp_TxnRef,
+            vnp_SecureHash = vnp_SecureHash
+        };
+        var result = await _sender.Send(new VnPayReturnUrlCommand(Guid.Parse(model.vnp_TxnRef)));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+    #endregion
 
 }

@@ -28,6 +28,11 @@ internal sealed class VoucherRepository : IVoucherRepository
                 && v.Voucher!.Status == Status.Active);
     }
 
+    public async Task<CustomerVoucher?> GetCustomerVoucherByVoucherId(VoucherId voucherId)
+    {
+        return await _dbContext.CustomerVouchers.FirstOrDefaultAsync(a => a.VoucherId == voucherId);
+    }
+
     public async Task AddVoucher(Voucher voucher)
     {
         await _dbContext.Vouchers.AddAsync(voucher);

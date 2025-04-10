@@ -4,7 +4,6 @@ using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
 using Domain.Entities.ProductVariants;
 using Domain.IRepositories.Orders;
-using MassTransit.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
 
@@ -56,7 +55,10 @@ internal sealed class OrderRepository : IOrderRepository
 
     public async Task<Order?> GetOrderById(OrderId orderId)
     {
-        return await _postgreSQLWriteDbContext.Orders.FindAsync(orderId);
+        return await _postgreSQLWriteDbContext.Orders
+            .Include(a => a.OrderTransaction)
+            .Include(a => a.Bill)
+            .FirstOrDefaultAsync(a => a.OrderId == orderId);
     }
 
     public async Task<Order?> GetOrderByCustomerId(CustomerId customerId)
@@ -96,5 +98,13 @@ internal sealed class OrderRepository : IOrderRepository
             .FirstOrDefaultAsync(
                 x => x.Bill!.CustomerId == customerId 
                 && x.TransactionStatus == TransactionStatus.Pending);
+    }
+
+    public async Task<OrderTransaction?> GetOrderTransactionById(OrderTransactionId orderTransactionId)
+    {
+        return await _postgreSQLWriteDbContext.OrderTransactions
+            .Include(a => a.Bill)
+            .Include(a => a.Order)
+            .FirstOrDefaultAsync(x => x.OrderTransactionId == orderTransactionId);  
     }
 }

@@ -54,4 +54,14 @@ public sealed class Bill
             billPaymentStatus,
             shippingInformationId);
     }
+
+    public void ChangeBillStatus(
+        BillPaymentStatus billPaymentStatus, 
+        PaymentMethod paymentMethod)
+    {
+        BillPaymentStatus = billPaymentStatus;
+        PaymentMethod = paymentMethod;
+    }
+
+
 }

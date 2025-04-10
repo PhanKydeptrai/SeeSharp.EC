@@ -74,4 +74,9 @@ public sealed class OrderTransaction
             orderId,
             billId);
     }
+
+    public void ChangeTransactionStatus(TransactionStatus transactionStatus)
+    {
+        TransactionStatus = transactionStatus;
+    }
 }

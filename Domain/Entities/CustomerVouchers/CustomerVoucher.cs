@@ -36,4 +36,9 @@ public sealed class CustomerVoucher
             customerId,
             quantity);
     }
+
+    public void ChangeCustomerVoucherQuantity(CustomerVoucherQuantity quantity)
+    {
+        Quantity = quantity;
+    }
 }
