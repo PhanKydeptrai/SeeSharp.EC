@@ -1,3 +1,3 @@
 namespace Domain.Utilities.Events.EmployeeEvents;
 
-public record SendDefaultPasswordToUserEvent(string email, string randomPassword, Guid MessageId);
+public record SendDefaultPasswordToUserEvent(string Email, string RandomPassword, Guid MessageId);

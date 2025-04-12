@@ -12,12 +12,17 @@ public sealed class PasswordHash : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(nameof(value), "Password hash cannot be empty");
+
+            //throw new ArgumentNullException(nameof(value), "Password hash cannot be empty");
+            throw new ArgumentException(nameof(value), "Password hash cannot be empty");
+
         }
 
         if (value.Length != Length)
         {
-            throw new ArgumentOutOfRangeException(nameof(value), $"Password hash must be {Length} char");
+            //throw new ArgumentOutOfRangeException(nameof(value), $"Password hash must be {Length} char");
+            throw new ArgumentException(nameof(value), $"Password hash must be {Length} char");
+
         }
         return new PasswordHash(value);
     }

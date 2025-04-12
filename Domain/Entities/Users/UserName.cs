@@ -13,13 +13,20 @@ public sealed class UserName : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(
+            //throw new ArgumentNullException(
+            //    nameof(Value), "User name cannot be empty");
+
+            throw new ArgumentException(
                 nameof(Value), "User name cannot be empty");
+
         }
 
         if (value.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
+            //throw new ArgumentOutOfRangeException(
+            //    nameof(Value), $"User name cannot be longer than {MaxLength} characters");
+
+            throw new ArgumentException(
                 nameof(Value), $"User name cannot be longer than {MaxLength} characters");
         }
 

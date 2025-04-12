@@ -39,7 +39,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpPost("signin", Name = EndpointName.Customer.SignIn)]
     // [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    [ApiKey]
+    // [ApiKey]
     public async Task<IResult> SignIn([FromBody] CustomerSignInCommand request)
     {
         // string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -73,7 +73,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpPost("signup", Name = EndpointName.Customer.SignUp)]
     // [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    [ApiKey]
+    // [ApiKey]
     public async Task<IResult> SignUp([FromBody] CustomerSignUpCommand command)
     {
         var result = await _sender.Send(command);

@@ -19,12 +19,12 @@ public sealed class VariantName : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(
+            throw new ArgumentException(
                 nameof(value), "Variant name cannot be empty.");
         }
         if (value.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
+            throw new ArgumentException(
                 nameof(value), $"Variant name cannot be longer than {MaxLength} characters.");
         }
 

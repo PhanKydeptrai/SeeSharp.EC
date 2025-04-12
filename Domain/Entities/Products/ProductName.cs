@@ -19,12 +19,12 @@ public sealed class ProductName : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(
+            throw new ArgumentException(
                 nameof(value), "Product name cannot be empty.");
         }
         if (value.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
+            throw new ArgumentException(
                 nameof(value), $"Product name cannot be longer than {MaxLength} characters.");
         }
 

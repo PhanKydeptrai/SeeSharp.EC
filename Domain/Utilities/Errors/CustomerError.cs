@@ -79,4 +79,8 @@ public static class CustomerError
     public static Error InValidToken() => Error.Problem(
         "Customer.InValidToken",
         "The token is invalid");
+    
+    public static Error EmailAlreadyInUse() => Error.Problem(
+        "Email.AlreadyInUse",
+        "The email is already in use");
 }

@@ -9,7 +9,7 @@ public sealed class MaximumDiscountAmount : ValueObject
     {
         if (value < 0)
         {
-            throw new ArgumentOutOfRangeException(
+            throw new ArgumentException(
                 nameof(value), "Maximum discount amount cannot be negative");
         }
 

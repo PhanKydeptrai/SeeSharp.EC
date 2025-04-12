@@ -10,12 +10,12 @@ public sealed class Substance : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(
+            throw new ArgumentException(
                 nameof(value), "Substance must not be empty");
         }
         if (value.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
+            throw new ArgumentException(
                 nameof(value), $"Substance must not exceed {MaxLength} characters");
         }
 

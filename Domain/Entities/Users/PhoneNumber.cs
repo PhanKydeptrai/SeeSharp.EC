@@ -14,7 +14,8 @@ public sealed class PhoneNumber : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(
+            
+            throw new ArgumentException(
                 nameof(value), "Phone number cannot be empty");
         }
 

@@ -9,6 +9,7 @@ using Domain.IRepositories.Customers;
 using Domain.IRepositories.Users;
 using Domain.IRepositories.VerificationTokens;
 using Domain.OutboxMessages.Services;
+using Domain.Utilities.Errors;
 using Domain.Utilities.Events.CustomerEvents;
 using NETCore.Encrypt.Extensions;
 using SharedKernel;
@@ -47,6 +48,11 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
     {
         var account = await _customerRepository.GetCustomerByEmailFromPostgreSQL(Email.FromString(request.Email));
 
+        if (account is not null && account.User!.IsVerify == IsVerify.True)
+        {
+            return Result.Failure(CustomerError.EmailAlreadyInUse());
+        }
+        
         if (account is not null && account.User!.IsVerify == IsVerify.False)
         {
             var newVerificationToken = VerificationToken.NewVerificationToken(
