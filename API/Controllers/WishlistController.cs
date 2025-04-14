@@ -23,7 +23,7 @@ public sealed class WishlistController : ControllerBase
     }
 
     /// <summary>
-    /// Get the wish list of a customer
+    /// Lấy danh sách sản phẩm yêu thích của khách hàng
     /// </summary>
     /// <param name="productStatusFilter"></param>
     /// <param name="searchTerm"></param>
@@ -61,7 +61,7 @@ public sealed class WishlistController : ControllerBase
     }
 
     /// <summary>
-    /// Add a product to the wish list
+    /// Thêm một sản phẩm vào danh sách yêu thích
     /// </summary>
     /// <param name="productId"></param>
     /// <returns></returns>
@@ -80,7 +80,7 @@ public sealed class WishlistController : ControllerBase
     }
 
     /// <summary>
-    /// Delete a wish item from the wish list
+    /// Xóa một sản phẩm khỏi danh sách yêu thích
     /// </summary>
     /// <param name="wishItemId"></param>
     /// <returns></returns>

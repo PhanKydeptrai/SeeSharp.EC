@@ -30,8 +30,8 @@ internal sealed class SendDefaultPasswordToUserEventConsumer : IConsumer<SendDef
     public async Task Consume(ConsumeContext<SendDefaultPasswordToUserEvent> context)
     {
         var message = context.Message;
-        var email = message.email;
-        var randomPassword = message.randomPassword;
+        var email = message.Email;
+        var randomPassword = message.RandomPassword;
         var messageId = message.MessageId;
 
         //Log start-----------------------------------------------------

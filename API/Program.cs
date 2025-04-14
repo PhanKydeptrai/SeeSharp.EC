@@ -9,6 +9,7 @@ using Application.Security;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
@@ -22,11 +23,13 @@ var builder = WebApplication.CreateBuilder(args);
 #region Need to move to external file
 builder.Services.AddAuthentication(options =>
 {
-
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    // Nhưng cho quá trình external login, sử dụng Cookie để lưu trạng thái tạm thời
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
 })
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
     options.Events = new JwtBearerEvents
@@ -47,7 +50,7 @@ builder.Services.AddAuthentication(options =>
             }
         }
     };
-    
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -62,6 +65,21 @@ builder.Services.AddAuthentication(options =>
                                    // Đảm bảo token chứa claim về vai trò
         RoleClaimType = ClaimTypes.Role
     };
+})
+.AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration["Google:client_id"]!;
+    googleOptions.ClientSecret = builder.Configuration["Google:client_secret"]!;
+})
+.AddGitHub(githubOptions =>
+{
+    githubOptions.ClientId = builder.Configuration["Discord:client_id"]!;
+    githubOptions.ClientSecret = builder.Configuration["Discord:client_secret"]!;
+})
+.AddDiscord(discordOptions =>
+{
+    discordOptions.ClientId = builder.Configuration["Github:client_id"]!;
+    discordOptions.ClientSecret = builder.Configuration["Github:client_secret"]!;
 });
 #endregion
 

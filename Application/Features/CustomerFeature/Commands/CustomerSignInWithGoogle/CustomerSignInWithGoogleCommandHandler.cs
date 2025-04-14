@@ -11,8 +11,6 @@ using Domain.IRepositories.Customers;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.IRepositories.Users;
 using Domain.OutboxMessages.Services;
-using Domain.Utilities.Errors;
-using Google.Apis.Auth;
 using SharedKernel;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
@@ -54,96 +52,73 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
         CustomerSignInWithGoogleCommand request,
         CancellationToken cancellationToken)
     {
-        try
+
+        var customerAuthResponse = await _customerQueryServices.GetCustomerByEmail(Email.FromString(request.Email));
+
+        // nếu khách hàng đã tồn tại trong hệ thống -> đăng nhập
+        if (customerAuthResponse is not null)
         {
-            var googleUser = await GoogleJsonWebSignature.ValidateAsync(
-                request.token, new GoogleJsonWebSignature.ValidationSettings());
-
-            var customerAuthResponse = await _customerQueryServices.GetCustomerByEmail(Email.FromString(googleUser.Email));
-
-            // nếu khách hàng đã tồn tại trong hệ thống -> đăng nhập
-            if (customerAuthResponse is not null)
+            if (customerAuthResponse.UserStatus == UserStatus.InActive.ToString()) // if this account not verify
             {
-                if (customerAuthResponse.UserStatus == UserStatus.InActive.ToString()) // if this account not verify
-                {
-                    var customer = await _userRepository.GetUserFromPostgreSQL(
-                        UserId.FromUlid(customerAuthResponse.UserId));
+                var customer = await _userRepository.GetUserFromPostgreSQL(
+                    UserId.FromUlid(customerAuthResponse.UserId));
 
-                    customer!.VerifyAccount();
-                }
-                
-                var (userAuthenticationToken, response) = CreateAuthenticationToken(customerAuthResponse);
-
-                await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);
-                
-                await _unitOfWork.SaveChangesAsync();
-
-                return Result.Success(response);
+                customer!.VerifyAccount();
             }
 
-            // nếu khách hàng chưa tồn tại trong hệ thống -> đăng ký
-            var user = User.NewUser(
-                null,
-                UserName.NewUserName(googleUser.Name),
-                Email.FromString(googleUser.Email),
-                PhoneNumber.Empty,
-                PasswordHash.Empty,
-                null,
-                googleUser.Picture);
+            var (userAuthenticationToken, response) = CreateAuthenticationToken(customerAuthResponse);
 
-            user.VerifyAccount();
+            await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);
 
-            var newCustomer = Customer.NewCustomer(user.UserId, CustomerType.Subscribed);
-            
-            //Add customer to database
-            await _userRepository.AddUser(user);
-            await _customerRepository.AddCustomer(newCustomer);
-
-            string newJti = Ulid.NewUlid().ToGuid().ToString();
-
-            var newAccessToken = _tokenProvider.GenerateAccessTokenForCustomer(
-                user.UserId,
-                newCustomer.CustomerId,
-                user.Email!,
-                CustomerType.Subscribed.ToString(),
-                newJti);
-
-            var newRefreshToken = _tokenProvider.GenerateRefreshToken();
-
-            // Save jti and refresh token to database
-            var newUserAuthenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
-                newAccessToken,
-                newJti,
-                DateTime.UtcNow.AddDays(30),
-                user.UserId);
-
-            await _userAuthenticationTokenRepository.AddRefreshToken(newUserAuthenticationToken);
-
-            // var message = new CustomerSignedUpWithGoogleAccountEvent(
-            //     user.UserId, 
-            //     newCustomer.CustomerId, 
-            //     user.UserName.Value,
-            //     user.Email!.Value,
-            //     user.ImageUrl! ?? string.Empty,
-            //     Ulid.NewUlid().ToGuid());
-
-            // await OutboxMessageExtentions.InsertOutboxMessageAsync(
-            //     message.MessageId ,message, _outboxMessageServices);
-            
             await _unitOfWork.SaveChangesAsync();
 
-            // await _eventBus.PublishAsync(message);
-
-            return Result.Success(new CustomerSignInResponse(newAccessToken, newRefreshToken));
-        }
-        catch
-        {
-            return Result.Failure<CustomerSignInResponse>(CustomerError.InValidToken());
+            return Result.Success(response);
         }
 
+        // nếu khách hàng chưa tồn tại trong hệ thống -> đăng ký
+        var user = User.NewUser(
+            null,
+            UserName.NewUserName(request.UserName),
+            Email.FromString(request.Email),
+            PhoneNumber.Empty,
+            PasswordHash.Empty,
+            null,
+            string.Empty); //NOTE: Chưa lấy được id_token
+
+        user.VerifyAccount();
+
+        var newCustomer = Customer.NewCustomer(user.UserId, CustomerType.Subscribed);
+
+        //Add customer to database
+        await _userRepository.AddUser(user);
+        await _customerRepository.AddCustomer(newCustomer);
+
+        string newJti = Ulid.NewUlid().ToGuid().ToString();
+
+        var newAccessToken = _tokenProvider.GenerateAccessTokenForCustomer(
+            user.UserId,
+            newCustomer.CustomerId,
+            user.Email!,
+            CustomerType.Subscribed.ToString(),
+            newJti);
+
+        var newRefreshToken = _tokenProvider.GenerateRefreshToken();
+
+        // Save jti and refresh token to database
+        var newUserAuthenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
+            newAccessToken,
+            newJti,
+            DateTime.UtcNow.AddDays(30),
+            user.UserId);
+
+        await _userAuthenticationTokenRepository.AddRefreshToken(newUserAuthenticationToken);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return Result.Success(new CustomerSignInResponse(newAccessToken, newRefreshToken));
     }
 
-
+    //Private method 
     private (UserAuthenticationToken userAuthenticationToken, CustomerSignInResponse customerSignInResponse) CreateAuthenticationToken(
         CustomerAuthenticationResponse customerAuthResponse)
     {

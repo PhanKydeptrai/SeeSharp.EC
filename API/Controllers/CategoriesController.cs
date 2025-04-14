@@ -24,7 +24,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Create a new category
+    /// Tạo một danh mục mới
     /// </summary>
     /// <param name="categoryName"></param>
     /// <param name="image"></param>
@@ -41,7 +41,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Delete a category
+    /// Xóa một danh mục
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>
@@ -55,7 +55,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Get all categories
+    /// Lấy tất cả các danh mục
     /// </summary>
     /// <param name="filter"></param>
     /// <param name="searchTerm"></param>
@@ -87,7 +87,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Get a category by id
+    /// Lấy một danh mục theo id
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>
@@ -100,7 +100,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Get a category by id for admin, this get anystate of category
+    /// Lấy một danh mục theo id cho admin, lấy bất kỳ trạng thái nào của danh mục
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>/api/admin/categories/{categoryId:guid}")]
@@ -114,7 +114,7 @@ public sealed class CategoriesController : ControllerBase
     }
     
     /// <summary>
-    /// Restore a category
+    /// Khôi phục một danh mục
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>
@@ -127,7 +127,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Update a category
+    /// Cập nhật một danh mục
     /// </summary>
     /// <param name="categoryId"></param>
     /// <param name="categoryName"></param>

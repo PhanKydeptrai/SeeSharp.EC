@@ -15,8 +15,8 @@ internal sealed class SignInWithGoogle : IEndpoint
             [FromRoute] string token,
             ISender sender) =>
         {
-            var result = await sender.Send(new CustomerSignInWithGoogleCommand(token));
-            return result.Match(Results.Ok, CustomResults.Problem);
+            // var result = await sender.Send(new CustomerSignInWithGoogleCommand(token));
+            // return result.Match(Results.Ok, CustomResults.Problem);
         })
         .DisableAntiforgery()
         .WithTags(EndpointTags.Customer)

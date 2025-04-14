@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using API.Extentions;
 using API.Infrastructure;
 using API.Infrastructure.Authorization;
@@ -15,9 +16,16 @@ using Application.Features.CustomerFeature.Commands.CustomerVerifyEmail;
 using Application.Features.CustomerFeature.Commands.GenerateGuestToken;
 using Application.Features.CustomerFeature.Commands.RevokeAllCustomerRefreshTokens;
 using Application.Features.CustomerFeature.Queries.GetCustomerProfile;
+using AspNet.Security.OAuth.Discord;
+using AspNet.Security.OAuth.GitHub;
+using AspNet.Security.OAuth.Spotify;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SharedKernel.Constants;
 
 namespace API.Controllers;
@@ -33,7 +41,7 @@ public sealed class CustomersController : ControllerBase
     }
 
     /// <summary>
-    /// Sign in a customer
+    /// Cho phép khách hàng đăng nhập vào hệ thống
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -86,7 +94,7 @@ public sealed class CustomersController : ControllerBase
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpPost("reset-password", Name = EndpointName.Customer.ResetPassword)]
-    [ApiKey]
+    // [ApiKey]
     public async Task<IResult> CustomerResetPassword([FromBody] CustomerResetPasswordCommand command)
     {
         var result = await _sender.Send(command);
@@ -133,7 +141,7 @@ public sealed class CustomersController : ControllerBase
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
-    
+
         var result = await _sender.Send(new CustomerChangePasswordCommand(
             Guid.Parse(sub!),
             request.currentPassword,
@@ -185,7 +193,7 @@ public sealed class CustomersController : ControllerBase
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         claims.TryGetValue(JwtRegisteredClaimNames.Jti, out var jti);
 
-        if (sub != userId.ToString()) 
+        if (sub != userId.ToString())
         {
             return Results.Unauthorized();
         }
@@ -226,7 +234,7 @@ public sealed class CustomersController : ControllerBase
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
-        
+
         if (sub != userId.ToString())
         {
             return Results.Unauthorized();
@@ -248,7 +256,7 @@ public sealed class CustomersController : ControllerBase
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
-        
+
         var result = await _sender.Send(new RevokeAllCustomerRefreshTokensCommand(new Guid(sub!)));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
@@ -258,13 +266,13 @@ public sealed class CustomersController : ControllerBase
     /// </summary>
     /// <param name="token"></param>
     /// <returns></returns>
-    [HttpPost("google-login/{token}")]
-    [ApiKey]
-    public async Task<IResult> SignInWithGoogle([FromRoute] string token)
-    {
-        var result = await _sender.Send(new CustomerSignInWithGoogleCommand(token));
-        return result.Match(Results.Ok, CustomResults.Problem); 
-    }
+    // [HttpPost("google-login/{token}")]
+    // [ApiKey]
+    // public async Task<IResult> SignInWithGoogle([FromRoute] string token)
+    // {
+    //     var result = await _sender.Send(new CustomerSignInWithGoogleCommand(token));
+    //     return result.Match(Results.Ok, CustomResults.Problem);
+    // }
 
     /// <summary>
     /// Cho phép client lấy guest token
@@ -275,15 +283,170 @@ public sealed class CustomersController : ControllerBase
     public async Task<IResult> GetGuestToken()
     {
         var result = await _sender.Send(new GenerateGuestTokenCommand());
-        return result.Match(Results.Ok, CustomResults.Problem); 
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
+
+    #region Google Authen
+    /// <summary>
+    /// Bắt đầu quá trình đăng nhập bằng Google.
+    /// </summary>
+    /// <returns>Chuyển hướng đến trang đăng nhập của Google.</returns>
+    [HttpGet("signin-google")]
+    public async Task<IActionResult> ExternalLoginGoogle()
+    {
+        var properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallback") };
+        return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+    }
+
+    /// <summary>
+    /// Xử lý callback sau khi đăng nhập bằng Google.
+    /// </summary>
+    /// <returns>Chuyển hướng về frontend với token JWT (nếu thành công đăng nhập thành công).</returns>
+    [HttpGet("external-login-callback")]
+    public async Task<IResult> ExternalLoginCallback()
+    {
+        var authenticationResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+        if (!authenticationResult.Succeeded)
+        {
+            return null;
+        }
+
+        // Hoặc lấy từ AuthenticationProperties
+
+        var claims = authenticationResult.Principal.Claims;
+        var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+        var result = await _sender.Send(new CustomerSignInWithGoogleCommand(name!, email!));
+
+        var redirectUrl = $"https://localhost:7192/?data=";
+
+        return Results.Redirect(redirectUrl);
+    }
+    #endregion
+
+    #region Github Authen
+    /// <summary>
+    /// Bắt đầu quá trình đăng nhập bằng Github.
+    /// </summary>
+    /// <returns>Chuyển hướng đến trang đăng nhập của Github.</returns>
+    [HttpGet("signin-github")]
+    public async Task<IActionResult> ExternalLoginGithub()
+    {
+        var properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallbackForGit") };
+        return Challenge(properties, GitHubAuthenticationDefaults.AuthenticationScheme);
+    }
+
+    /// <summary>
+    /// Xử lý callback sau khi đăng nhập bằng Github.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("signin-github-callback-url")]
+    public async Task<IActionResult> ExternalLoginCallbackForGit()
+    {
+        var authenticationResult = await HttpContext.AuthenticateAsync(GitHubAuthenticationDefaults.AuthenticationScheme);
+
+        if (!authenticationResult.Succeeded)
+        {
+            return null;
+        }
+
+        // Hoặc lấy từ AuthenticationProperties
+
+        var claims = authenticationResult.Principal.Claims;
+        var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+        // var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        // var result = await _sender.Send(new CustomerSignInWithGoogleCommand(name!, email!));
+
+        // var redirectUrl = $"https://localhost:7192/?data=";
+
+        // return Results.Redirect(redirectUrl);
+        return Ok(new { claims = claims.ToList() });
+    }
+    #endregion
+
+    #region Discord Authen
+
+    /// <summary>
+    /// Đăng nhập discord
+    /// </summary>
+    /// <returns>Chuyển hướng đến trang đăng nhập của Discord</returns>
+    [HttpGet("signin-discord")]
+    public async Task<IActionResult> ExternalLoginDiscord()
+    {
+        var properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallbackForDiscord") };
+        return Challenge(properties, DiscordAuthenticationDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet("signin-discord-callback")]
+    public async Task<IResult> ExternalLoginCallbackForDiscord([FromQuery] string? code)
+    {
+
+        var authenticationResult = await HttpContext.AuthenticateAsync(DiscordAuthenticationDefaults.AuthenticationScheme);
+
+        if (!authenticationResult.Succeeded)
+        {
+            return null;
+        }
+
+        // Hoặc lấy từ AuthenticationProperties
+
+        var claims = authenticationResult.Principal.Claims;
+        // var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        // var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+        // var result = await _sender.Send(new CustomerSignInWithGoogleCommand(name!, email!));
+
+        // var redirectUrl = $"https://localhost:7192/?data=";
+
+
+        // return Results.Redirect(redirectUrl);
+        return Results.Ok(new { claims = claims.ToList() });
+    }
+
+
+    #endregion
+
+    #region Facebook Authen
+    /// <summary>
+    /// Bắt đầu quá trình đăng nhập bằng Facebook.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("signin-facebook")]
+    public async Task<IActionResult> ExternalLoginFacebook()
+    {
+        var properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallbackForFacebook") };
+        return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+    }
+
+    /// <summary>
+    /// Xử lý callback sau khi đăng nhập bằng Facebook.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("external-facebook-login-callback")]
+    public async Task<IResult> ExternalLoginCallbackForFacebook()
+    {
+        var authenticationResult = await HttpContext.AuthenticateAsync(FacebookDefaults.AuthenticationScheme);
+
+        if (!authenticationResult.Succeeded)
+        {
+            return null;
+        }
+
+        // Hoặc lấy từ AuthenticationProperties
+
+        var claims = authenticationResult.Principal.Claims;
+        var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+        var result = await _sender.Send(new CustomerSignInWithGoogleCommand(name!, email!));
+
+        var redirectUrl = $"https://localhost:7192/?data=";
+
+        return Results.Redirect(redirectUrl);
+    }
+    #endregion
 
 
     // Additional customer endpoints could be added here
     // - SignInWithGoogle
     // - SignInWithRefreshToken
-
-    // - EmailVerification
-    // - RevokeCustomerRefreshToken
-    // - RevokeAllCustomerRefreshTokens
 }
