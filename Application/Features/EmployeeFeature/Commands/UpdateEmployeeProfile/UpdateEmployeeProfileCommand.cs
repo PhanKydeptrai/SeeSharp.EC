@@ -7,5 +7,5 @@ public record UpdateEmployeeProfileCommand(
     Guid UserId,
     string UserName,
     string PhoneNumber,
-    DateTime? DateOfBirth,
-    IFormFile? ImageFile) : ICommand; 
+    DateOnly? DateOfBirth,
+    IFormFile? ImageFile) : ICommand;

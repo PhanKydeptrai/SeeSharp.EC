@@ -7,5 +7,5 @@ public record CreateNewEmployeeCommand(
     string UserName,
     string Email,
     string PhoneNumber,
-    DateTime? DateOfBirth,
+    DateOnly? DateOfBirth,
     IFormFile? ImageFile) : ICommand;

@@ -1,6 +1,7 @@
 using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
 using Application.DTOs.Customer;
+using Application.Features.CustomerFeature.Commands.CustomerSignInWithExternal;
 using Application.IServices;
 using Application.Security;
 using Domain.Entities.Customers;
@@ -16,7 +17,7 @@ using SharedKernel;
 namespace Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
 
 internal sealed class CustomerSignInWithGoogleCommandHandler
-    : ICommandHandler<CustomerSignInWithGoogleCommand, CustomerSignInResponse>
+    : ICommandHandler<CustomerSignInWithExternalCommand, CustomerSignInResponse>
 {
     #region Dependencies
     private readonly ICustomerRepository _customerRepository;
@@ -25,14 +26,10 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenProvider _tokenProvider;
-    private readonly IEventBus _eventBus;
-    private readonly IOutBoxMessageServices _outboxMessageServices;
     public CustomerSignInWithGoogleCommandHandler(
         ICustomerRepository customerRepository,
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
-        IOutBoxMessageServices outboxMessageServices,
-        IEventBus eventBus,
         ICustomerQueryServices customerQueryServices,
         ITokenProvider tokenProvider,
         IUserAuthenticationTokenRepository userAuthenticationTokenRepository)
@@ -40,8 +37,6 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
         _customerRepository = customerRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
-        _outboxMessageServices = outboxMessageServices;
-        _eventBus = eventBus;
         _customerQueryServices = customerQueryServices;
         _tokenProvider = tokenProvider;
         _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
@@ -49,7 +44,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
     #endregion
 
     public async Task<Result<CustomerSignInResponse>> Handle(
-        CustomerSignInWithGoogleCommand request,
+        CustomerSignInWithExternalCommand request,
         CancellationToken cancellationToken)
     {
 
@@ -106,7 +101,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
 
         // Save jti and refresh token to database
         var newUserAuthenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
-            newAccessToken,
+            newRefreshToken,
             newJti,
             DateTime.UtcNow.AddDays(30),
             user.UserId);

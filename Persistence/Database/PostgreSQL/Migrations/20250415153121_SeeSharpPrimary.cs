@@ -55,7 +55,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     UserStatus = table.Column<int>(type: "integer", nullable: false),
                     IsVerify = table.Column<bool>(type: "boolean", nullable: false),
                     Gender = table.Column<string>(type: "varchar(10)", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: true),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
                     ImageUrl = table.Column<string>(type: "varchar(256)", nullable: true)
                 },
                 constraints: table =>
@@ -74,8 +74,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     PercentageDiscount = table.Column<int>(type: "integer", nullable: false),
                     MaximumDiscountAmount = table.Column<decimal>(type: "decimal", nullable: false),
                     MinimumOrderAmount = table.Column<decimal>(type: "decimal", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
-                    ExpiredDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "date", nullable: false),
+                    ExpiredDate = table.Column<DateTime>(type: "date", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false)
                 },

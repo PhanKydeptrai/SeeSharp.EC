@@ -15,7 +15,7 @@ public sealed class User
     public UserStatus UserStatus { get; private set; }
     public IsVerify IsVerify { get; private set; } 
     public Gender Gender { get; private set; }
-    public DateTime? DateOfBirth { get; private set; }
+    public DateOnly? DateOfBirth { get; private set; }
     public string? ImageUrl { get; private set; } = string.Empty;
     public Customer? Customer { get; set; } = null!;
     public Employee? Employee { get; set; } = null!;
@@ -29,7 +29,7 @@ public sealed class User
         UserStatus userStatus,
         IsVerify isVerify,
         Gender gender,
-        DateTime? dateOfBirth,
+        DateOnly? dateOfBirth,
         string? imageUrl)
     {
         UserId = userId;
@@ -51,7 +51,7 @@ public sealed class User
         Email email,
         PhoneNumber? phoneNumber,
         PasswordHash? passwordHash,
-        DateTime? dateOfBirth,
+        DateOnly? dateOfBirth,
         string? imageUrl)
     {
         return new User(
@@ -68,16 +68,16 @@ public sealed class User
     }
 
     public void UpdateUser(
-        UserName userName, 
-        Email email, 
+        UserName userName,
         PhoneNumber? phoneNumber, 
-        DateTime? dateOfBirth, 
+        DateOnly? dateOfBirth,
+        Gender gender,
         string? imageUrl)
     {
         UserName = userName;
-        Email = email;
         PhoneNumber = phoneNumber;
         DateOfBirth = dateOfBirth;
+        Gender = gender;
         ImageUrl = imageUrl;
     }
 

@@ -41,9 +41,9 @@ internal sealed class UpdateEmployeeProfileCommandHandler : ICommandHandler<Upda
         // Cập nhật thông tin người dùng sử dụng phương thức UpdateUser
         employee.User.UpdateUser(
             UserName.NewUserName(request.UserName),
-            employee.User.Email!,
             PhoneNumber.NewPhoneNumber(request.PhoneNumber),
             request.DateOfBirth,
+            employee.User.Gender,
             employee.User.ImageUrl); // Giữ nguyên ImageUrl hiện tại
 
         // Lưu thay đổi

@@ -9,23 +9,22 @@ using Application.Features.CustomerFeature.Commands.CustomerConfirmResetPassword
 using Application.Features.CustomerFeature.Commands.CustomerResetPassword;
 using Application.Features.CustomerFeature.Commands.CustomerRevokeRefreshToken;
 using Application.Features.CustomerFeature.Commands.CustomerSignIn;
-using Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
+using Application.Features.CustomerFeature.Commands.CustomerSignInWithExternal;
 using Application.Features.CustomerFeature.Commands.CustomerSignInWithRefreshToken;
 using Application.Features.CustomerFeature.Commands.CustomerSignUp;
 using Application.Features.CustomerFeature.Commands.CustomerVerifyEmail;
 using Application.Features.CustomerFeature.Commands.GenerateGuestToken;
 using Application.Features.CustomerFeature.Commands.RevokeAllCustomerRefreshTokens;
+using Application.Features.CustomerFeature.Commands.UpdateCustomerProfile;
 using Application.Features.CustomerFeature.Queries.GetCustomerProfile;
 using AspNet.Security.OAuth.Discord;
 using AspNet.Security.OAuth.GitHub;
-using AspNet.Security.OAuth.Spotify;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using SharedKernel.Constants;
 
 namespace API.Controllers;
@@ -64,7 +63,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpGet("profile", Name = EndpointName.Customer.GetProfile)]
     [Authorize]
-    [ApiKey]
+    // [ApiKey]
     public async Task<IResult> GetCustomerProfile()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -134,7 +133,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpPost("change-password", Name = EndpointName.Customer.ChangePassword)]
     [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
-    [ApiKey]
+    // [ApiKey]
     public async Task<IResult> CustomerChangePassword([FromBody] CustomerChangePasswordRequest request)
     {
 
@@ -309,17 +308,15 @@ public sealed class CustomersController : ControllerBase
 
         if (!authenticationResult.Succeeded)
         {
-            return null;
+            return Results.Redirect("https://localhost:7115/login");
         }
-
-        // Hoặc lấy từ AuthenticationProperties
-
         var claims = authenticationResult.Principal.Claims;
         var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
         var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
-        var result = await _sender.Send(new CustomerSignInWithGoogleCommand(name!, email!));
+        var idtoken = claims.FirstOrDefault(x => x.Type == "id_token")?.Value;
+        var result = await _sender.Send(new CustomerSignInWithExternalCommand(name!, email!));
 
-        var redirectUrl = $"https://localhost:7192/?data=";
+        var redirectUrl = $"https://localhost:7115/login?token={result.Value.accessToken}&?rtoken={result.Value.refreshToken}";
 
         return Results.Redirect(redirectUrl);
     }
@@ -342,7 +339,7 @@ public sealed class CustomersController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet("signin-github-callback-url")]
-    public async Task<IActionResult> ExternalLoginCallbackForGit()
+    public async Task<IResult> ExternalLoginCallbackForGit()
     {
         var authenticationResult = await HttpContext.AuthenticateAsync(GitHubAuthenticationDefaults.AuthenticationScheme);
 
@@ -355,13 +352,12 @@ public sealed class CustomersController : ControllerBase
 
         var claims = authenticationResult.Principal.Claims;
         var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
-        // var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-        // var result = await _sender.Send(new CustomerSignInWithGoogleCommand(name!, email!));
+        var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        var result = await _sender.Send(new CustomerSignInWithExternalCommand(name!, email!));
 
-        // var redirectUrl = $"https://localhost:7192/?data=";
+        var redirectUrl = $"https://localhost:7115/login?token={result.Value.accessToken}&?rtoken={result.Value.refreshToken}";
 
-        // return Results.Redirect(redirectUrl);
-        return Ok(new { claims = claims.ToList() });
+        return Results.Redirect(redirectUrl);
     }
     #endregion
 
@@ -372,6 +368,7 @@ public sealed class CustomersController : ControllerBase
     /// </summary>
     /// <returns>Chuyển hướng đến trang đăng nhập của Discord</returns>
     [HttpGet("signin-discord")]
+    [Obsolete]
     public async Task<IActionResult> ExternalLoginDiscord()
     {
         var properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallbackForDiscord") };
@@ -379,6 +376,7 @@ public sealed class CustomersController : ControllerBase
     }
 
     [HttpGet("signin-discord-callback")]
+    [Obsolete]
     public async Task<IResult> ExternalLoginCallbackForDiscord([FromQuery] string? code)
     {
 
@@ -411,6 +409,7 @@ public sealed class CustomersController : ControllerBase
     /// Bắt đầu quá trình đăng nhập bằng Facebook.
     /// </summary>
     /// <returns></returns>
+    [Obsolete]
     [HttpGet("signin-facebook")]
     public async Task<IActionResult> ExternalLoginFacebook()
     {
@@ -422,6 +421,7 @@ public sealed class CustomersController : ControllerBase
     /// Xử lý callback sau khi đăng nhập bằng Facebook.
     /// </summary>
     /// <returns></returns>
+    [Obsolete]
     [HttpGet("external-facebook-login-callback")]
     public async Task<IResult> ExternalLoginCallbackForFacebook()
     {
@@ -437,7 +437,7 @@ public sealed class CustomersController : ControllerBase
         var claims = authenticationResult.Principal.Claims;
         var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
         var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
-        var result = await _sender.Send(new CustomerSignInWithGoogleCommand(name!, email!));
+        var result = await _sender.Send(new CustomerSignInWithExternalCommand(name!, email!));
 
         var redirectUrl = $"https://localhost:7192/?data=";
 
@@ -445,8 +445,33 @@ public sealed class CustomersController : ControllerBase
     }
     #endregion
 
+    /// <summary>
+    /// Cập nhật thông tin cá nhân của khách hàng
+    /// </summary>
+    /// <returns></returns>
+    [HttpPut("profile", Name = EndpointName.Customer.UpdateProfile)]
+    [Authorize]
+    public async Task<IResult> UpdateCustomerProfile([FromForm] UpdateCustomerProfileRequest request)
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
+        var claims = TokenExtentions.DecodeJwt(token);
+        claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
 
-    // Additional customer endpoints could be added here
-    // - SignInWithGoogle
-    // - SignInWithRefreshToken
+        var userId = Guid.Parse(sub!);
+
+        // Map request to command and add the user ID from token
+        var command = new UpdateCustomerProfileCommand(
+            userId,
+            request.UserName,
+            request.PhoneNumber,
+            request.Gender,
+            request.DateOfBirth != null ? DateOnly.Parse(request.DateOfBirth) : null,
+            request.ImageFile
+        );
+
+        var result = await _sender.Send(command);
+        return result.Match(Results.NoContent, CustomResults.Problem);
+
+    }
+
 }

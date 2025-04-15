@@ -48,13 +48,13 @@ internal sealed class UpdateEmployeeProfileCommandValidator : AbstractValidator<
         return PhoneRegex.IsMatch(phoneNumber);
     }
     
-    private static bool BeAValidDateOfBirth(DateTime? dateOfBirth)
+    private static bool BeAValidDateOfBirth(DateOnly? dateOfBirth)
     {
         if (!dateOfBirth.HasValue)
             return true;
             
         int age = DateTime.Today.Year - dateOfBirth.Value.Year;
-        if (dateOfBirth.Value.Date > DateTime.Today.AddYears(-age))
+        if (dateOfBirth.Value > DateOnly.FromDateTime(DateTime.Today.AddYears(-age)))
             age--;
             
         return age >= 18 && age <= 100;

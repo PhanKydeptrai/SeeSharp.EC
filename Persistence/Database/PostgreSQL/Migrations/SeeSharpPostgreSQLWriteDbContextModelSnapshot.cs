@@ -433,8 +433,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("TIMESTAMPTZ");
+                    b.Property<DateOnly?>("DateOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -519,7 +519,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("ExpiredDate")
-                        .HasColumnType("TIMESTAMPTZ");
+                        .HasColumnType("date");
 
                     b.Property<decimal>("MaximumDiscountAmount")
                         .HasColumnType("decimal");
@@ -531,7 +531,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("TIMESTAMPTZ");
+                        .HasColumnType("date");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");

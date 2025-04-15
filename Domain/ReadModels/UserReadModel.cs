@@ -12,7 +12,7 @@ public sealed class UserReadModel
     public string PasswordHash { get; set; } = null!;
     public UserStatus UserStatus { get; set; }
     public bool IsVerify { get; set; }
-    public int Gender { get; set; }
+    public Gender Gender { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public string? ImageUrl { get; set; }
     public CustomerReadModel? CustomerReadModel { get; set; }

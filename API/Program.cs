@@ -70,16 +70,18 @@ builder.Services.AddAuthentication(options =>
 {
     googleOptions.ClientId = builder.Configuration["Google:client_id"]!;
     googleOptions.ClientSecret = builder.Configuration["Google:client_secret"]!;
+    googleOptions.SaveTokens = true; // Lưu trữ token sau khi xác thực thành công
 })
 .AddGitHub(githubOptions =>
 {
-    githubOptions.ClientId = builder.Configuration["Discord:client_id"]!;
-    githubOptions.ClientSecret = builder.Configuration["Discord:client_secret"]!;
+    githubOptions.ClientId = builder.Configuration["Github:client_id"]!;
+    githubOptions.ClientSecret = builder.Configuration["Github:client_secret"]!;
+    githubOptions.Scope.Add("user:email");
 })
 .AddDiscord(discordOptions =>
 {
-    discordOptions.ClientId = builder.Configuration["Github:client_id"]!;
-    discordOptions.ClientSecret = builder.Configuration["Github:client_secret"]!;
+    discordOptions.ClientId = builder.Configuration["Discord:client_id"]!;
+    discordOptions.ClientSecret = builder.Configuration["Discord:client_secret"]!;
 });
 #endregion
 

@@ -52,7 +52,7 @@ public class EmployeesController : ControllerBase
         [FromForm] string userName,
         [FromForm] string email,
         [FromForm] string phoneNumber,
-        [FromForm] DateTime? dateOfBirth,
+        [FromForm] DateOnly? dateOfBirth,
         IFormFile? imageFile)
     {
         var result = await _sender.Send(new CreateNewEmployeeCommand(userName, email, phoneNumber, dateOfBirth, imageFile));
@@ -181,7 +181,7 @@ public class EmployeesController : ControllerBase
     [ApiKey]
     public async Task<IResult> RevokeCurrentRefreshToken()
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(JwtRegisteredClaimNames.Sub, out var sub);
         claims.TryGetValue(JwtRegisteredClaimNames.Jti, out var jti);
@@ -247,7 +247,7 @@ public class EmployeesController : ControllerBase
     public async Task<IResult> UpdateEmployeeProfile(
         [FromForm] string userName,
         [FromForm] string phoneNumber,
-        [FromForm] DateTime? dateOfBirth,
+        [FromForm] DateOnly? dateOfBirth,
         IFormFile? imageFile)
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;

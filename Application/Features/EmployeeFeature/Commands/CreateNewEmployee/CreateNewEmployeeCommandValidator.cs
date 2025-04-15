@@ -41,7 +41,7 @@ internal sealed class CreateNewEmployeeCommandValidator : AbstractValidator<Crea
 
                 // Kiểm tra xem sinh nhật trong năm nay đã qua chưa
                 // Nếu chưa thì trừ đi 1 tuổi
-                if (date > today.AddYears(-age))
+                if (date > DateOnly.FromDateTime(today.AddYears(-age)))
                     age--;
 
                 return age >= 18;

@@ -26,6 +26,7 @@ public static class EndpointName
         public const string ResetPassword = "ResetPassword";
         public const string ChangePassword = "ChangePassword";
         public const string GetProfile = "GetProfile";
+        public const string UpdateProfile = "UpdateProfile";
 
         // public const string SignIn = "SignIn";
         // public const string SignOut = "SignOut";

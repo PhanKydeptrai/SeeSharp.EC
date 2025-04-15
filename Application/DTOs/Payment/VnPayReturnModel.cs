@@ -1,5 +1,4 @@
 namespace Application.DTOs.Payment;
-
 public class VnPayReturnModel
 {
     public string vnp_Amount { get; set; } 
