@@ -2,7 +2,7 @@ namespace Application.DTOs.WishItems;
 
 public record WishlistResponse(
     Guid WishItemId,
-    Guid ProductId,
+    Guid ProductVariantId,
     string ProductName,
     string? ImageUrl,
     string? Description,

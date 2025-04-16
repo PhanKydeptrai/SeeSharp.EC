@@ -31,4 +31,6 @@ public interface ICategoryQueryServices
     Task<bool> IsCategoryStatusNotDeleted(
         CategoryId categoryId,
         CancellationToken cancellationToken = default);
+    
+    Task<List<CategoryInfo>> GetCategoryInfo();
 }

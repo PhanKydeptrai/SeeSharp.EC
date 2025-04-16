@@ -16,7 +16,7 @@ public sealed class User
     public IsVerify IsVerify { get; private set; } 
     public Gender Gender { get; private set; }
     public DateOnly? DateOfBirth { get; private set; }
-    public string? ImageUrl { get; private set; } = string.Empty;
+    public string? ImageUrl { get; set; }
     public Customer? Customer { get; set; } = null!;
     public Employee? Employee { get; set; } = null!;
     public ICollection<UserAuthenticationToken>? UserAuthenticationTokens { get; set; } = null!;

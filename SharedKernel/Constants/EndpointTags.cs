@@ -78,6 +78,7 @@ public static class EndpointName
         public const string Update = "UpdateCategory";
         public const string Delete = "DeleteCategory";
         public const string Restore = "RestoreCategory";
+        public const string GetCategoryInfo = "GetCategoryInfo";
     }
 
     public class Order

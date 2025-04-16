@@ -37,46 +37,46 @@ internal sealed class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByI
                         request.categoryId)));
         }
 
-        AddLinkForCategory(category);
+        // AddLinkForCategory(category);
 
         return Result.Success(category);
     }
 
-    private void AddLinkForCategory(CategoryResponse categoryResponse)
-    {
-        categoryResponse.links.Add(_linkServices.Generate(
-            EndpointName.Category.GetById,
-            new { categoryId = categoryResponse.categoryId },
-            "self",
-            EndpointMethod.GET));
+    // private void AddLinkForCategory(CategoryResponse categoryResponse)
+    // {
+    //     categoryResponse.links.Add(_linkServices.Generate(
+    //         EndpointName.Category.GetById,
+    //         new { categoryId = categoryResponse.categoryId },
+    //         "self",
+    //         EndpointMethod.GET));
 
-        if (!categoryResponse.isDefault)
-        {
-            categoryResponse.links.Add(_linkServices.Generate(
-            EndpointName.Category.Update,
-            new { categoryId = categoryResponse.categoryId },
-            "update-category",
-            EndpointMethod.PUT));
+    //     if (!categoryResponse.isDefault)
+    //     {
+    //         categoryResponse.links.Add(_linkServices.Generate(
+    //         EndpointName.Category.Update,
+    //         new { categoryId = categoryResponse.categoryId },
+    //         "update-category",
+    //         EndpointMethod.PUT));
 
-            if (categoryResponse.categoryStatus == CategoryStatus.Deleted.ToString())
-            {
-                categoryResponse.links.Add(_linkServices.Generate(
-                            EndpointName.Category.Restore,
-                            new { categoryId = categoryResponse.categoryId },
-                            "restore-category",
-                            EndpointMethod.PUT));
-            }
+    //         if (categoryResponse.categoryStatus == CategoryStatus.Deleted.ToString())
+    //         {
+    //             categoryResponse.links.Add(_linkServices.Generate(
+    //                         EndpointName.Category.Restore,
+    //                         new { categoryId = categoryResponse.categoryId },
+    //                         "restore-category",
+    //                         EndpointMethod.PUT));
+    //         }
 
-            if (categoryResponse.categoryStatus == CategoryStatus.Available.ToString())
-            {
-                categoryResponse.links.Add(_linkServices.Generate(
-                            EndpointName.Category.Delete,
-                            new { categoryId = categoryResponse.categoryId },
-                            "delete-category",
-                            EndpointMethod.DELETE));
-            }
-        }
+    //         if (categoryResponse.categoryStatus == CategoryStatus.Available.ToString())
+    //         {
+    //             categoryResponse.links.Add(_linkServices.Generate(
+    //                         EndpointName.Category.Delete,
+    //                         new { categoryId = categoryResponse.categoryId },
+    //                         "delete-category",
+    //                         EndpointMethod.DELETE));
+    //         }
+    //     }
 
 
-    }
+    // }
 }

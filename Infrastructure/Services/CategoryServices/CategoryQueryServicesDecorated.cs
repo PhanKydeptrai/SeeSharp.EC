@@ -53,6 +53,11 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         return await _decorated.GetCategoryDetail(categoryId, cancellationToken);
     }
 
+    public async Task<List<CategoryInfo>> GetCategoryInfo()
+    {
+        return await _decorated.GetCategoryInfo();
+    }
+
     public async Task<bool> IsCategoryNameExist(
         CategoryId? categoryId, 
         CategoryName categoryName, 

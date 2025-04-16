@@ -33,64 +33,64 @@ internal sealed class GetAllProductQueryHandler : IQueryHandler<GetAllProductQue
             request.page,
             request.pageSize);
 
-        AddLinks(request, pagedList);
+        // AddLinks(request, pagedList);
         return Result.Success(pagedList);
     }
 
-    private void AddLinks(GetAllProductQuery request, PagedList<ProductResponse> pagedList)
-    {
-        pagedList.Links.Add(_linkServices.Generate(
-            EndpointName.Product.GetAll,
-            new
-            {
-                filterProductStatus = request.filterProductStatus,
-                filterCategory = request.filterCategory,
-                searchTerm = request.searchTerm,
-                sortColumn = request.sortColumn,
-                sortOrder = request.sortOrder,
-                page = request.page,
-                pageSize = request.pageSize
-            },
-            "self",
-            EndpointMethod.GET));
+    // private void AddLinks(GetAllProductQuery request, PagedList<ProductResponse> pagedList)
+    // {
+    //     pagedList.Links.Add(_linkServices.Generate(
+    //         EndpointName.Product.GetAll,
+    //         new
+    //         {
+    //             filterProductStatus = request.filterProductStatus,
+    //             filterCategory = request.filterCategory,
+    //             searchTerm = request.searchTerm,
+    //             sortColumn = request.sortColumn,
+    //             sortOrder = request.sortOrder,
+    //             page = request.page,
+    //             pageSize = request.pageSize
+    //         },
+    //         "self",
+    //         EndpointMethod.GET));
 
-        if (pagedList.HaspreviousPage)
-        {
-            pagedList.Links.Add(_linkServices.Generate(
-                EndpointName.Product.GetAll,
-                new
-                {
-                    filterProductStatus = request.filterProductStatus,
-                    filterCategory = request.filterCategory,
-                    searchTerm = request.searchTerm,
-                    sortColumn = request.sortColumn,
-                    sortOrder = request.sortOrder,
-                    page = request.page - 1,
-                    pageSize = request.pageSize
-                },
-                "previous-page",
-                EndpointMethod.GET));
-        }
-
-
-        if (pagedList.HasNextPage)
-        {
-            pagedList.Links.Add(_linkServices.Generate(
-                EndpointName.Product.GetAll,
-                new
-                {
-                    filterProductStatus = request.filterProductStatus,
-                    filterCategory = request.filterCategory,
-                    searchTerm = request.searchTerm,
-                    sortColumn = request.sortColumn,
-                    sortOrder = request.sortOrder,
-                    page = request.page + 1,
-                    pageSize = request.pageSize
-                },
-                "next-page",
-                EndpointMethod.GET));
-        }
+    //     if (pagedList.HaspreviousPage)
+    //     {
+    //         pagedList.Links.Add(_linkServices.Generate(
+    //             EndpointName.Product.GetAll,
+    //             new
+    //             {
+    //                 filterProductStatus = request.filterProductStatus,
+    //                 filterCategory = request.filterCategory,
+    //                 searchTerm = request.searchTerm,
+    //                 sortColumn = request.sortColumn,
+    //                 sortOrder = request.sortOrder,
+    //                 page = request.page - 1,
+    //                 pageSize = request.pageSize
+    //             },
+    //             "previous-page",
+    //             EndpointMethod.GET));
+    //     }
 
 
-    }
+    //     if (pagedList.HasNextPage)
+    //     {
+    //         pagedList.Links.Add(_linkServices.Generate(
+    //             EndpointName.Product.GetAll,
+    //             new
+    //             {
+    //                 filterProductStatus = request.filterProductStatus,
+    //                 filterCategory = request.filterCategory,
+    //                 searchTerm = request.searchTerm,
+    //                 sortColumn = request.sortColumn,
+    //                 sortOrder = request.sortOrder,
+    //                 page = request.page + 1,
+    //                 pageSize = request.pageSize
+    //             },
+    //             "next-page",
+    //             EndpointMethod.GET));
+    //     }
+
+
+    // }
 }

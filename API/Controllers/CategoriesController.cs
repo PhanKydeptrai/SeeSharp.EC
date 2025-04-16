@@ -6,13 +6,14 @@ using Application.Features.CategoryFeature.Commands.RestoreCategory;
 using Application.Features.CategoryFeature.Commands.UpdateCategory;
 using Application.Features.CategoryFeature.Queries.GetAllCategory;
 using Application.Features.CategoryFeature.Queries.GetCategoryById;
+using Application.Features.CategoryFeature.Queries.GetCategoryInfo;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
 
 namespace API.Controllers;
 
-[ApiKey]
+// [ApiKey]
 [Route("api/categories")]
 [ApiController]
 public sealed class CategoriesController : ControllerBase
@@ -142,6 +143,18 @@ public sealed class CategoriesController : ControllerBase
     {
         var result = await _sender.Send(new UpdateCategoryCommand(categoryId, categoryName, image));
         return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Lấy thông tin danh mục
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("info")]
+    [EndpointName(EndpointName.Category.GetCategoryInfo)]
+    public async Task<IResult> GetCategoryInfo()
+    {
+        var result = await _sender.Send(new GetCategoryInfoQuery());
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
 
 }

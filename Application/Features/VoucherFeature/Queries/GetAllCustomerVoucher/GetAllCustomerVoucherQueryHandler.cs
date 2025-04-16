@@ -40,64 +40,64 @@ internal sealed class GetAllCustomerVoucherQueryHandler
             request.pageSize ?? 10,
             cancellationToken);
 
-        AddLinks(request, pagedList);
+        // AddLinks(request, pagedList);
         return Result.Success(pagedList);
     }
 
-    private void AddLinks(GetAllCustomerVoucherQuery request, PagedList<CustomerVoucherResponse> pagedList)
-    {
-        pagedList.Links.Add(_linkServices.Generate(
-            EndpointName.Voucher.GetAllForCustomer,
-            new
-            {
-                customerId = request.CustomerId,
-                voucherTypeFilter = request.voucherTypeFilter,
-                statusFilter = request.statusFilter,
-                searchTerm = request.searchTerm,
-                sortColumn = request.sortColumn,
-                sortOrder = request.sortOrder,
-                page = request.page,
-                pageSize = request.pageSize
-            },
-            "self",
-            EndpointMethod.GET));
+    // private void AddLinks(GetAllCustomerVoucherQuery request, PagedList<CustomerVoucherResponse> pagedList)
+    // {
+    //     pagedList.Links.Add(_linkServices.Generate(
+    //         EndpointName.Voucher.GetAllForCustomer,
+    //         new
+    //         {
+    //             customerId = request.CustomerId,
+    //             voucherTypeFilter = request.voucherTypeFilter,
+    //             statusFilter = request.statusFilter,
+    //             searchTerm = request.searchTerm,
+    //             sortColumn = request.sortColumn,
+    //             sortOrder = request.sortOrder,
+    //             page = request.page,
+    //             pageSize = request.pageSize
+    //         },
+    //         "self",
+    //         EndpointMethod.GET));
 
-        if (pagedList.HaspreviousPage)
-        {
-            pagedList.Links.Add(_linkServices.Generate(
-                EndpointName.Voucher.GetAllForCustomer,
-                new
-                {
-                    customerId = request.CustomerId,
-                    voucherTypeFilter = request.voucherTypeFilter,
-                    statusFilter = request.statusFilter,
-                    searchTerm = request.searchTerm,
-                    sortColumn = request.sortColumn,
-                    sortOrder = request.sortOrder,
-                    page = request.page - 1,
-                    pageSize = request.pageSize
-                },
-                "previous-page",
-                EndpointMethod.GET));
-        }
+    //     if (pagedList.HaspreviousPage)
+    //     {
+    //         pagedList.Links.Add(_linkServices.Generate(
+    //             EndpointName.Voucher.GetAllForCustomer,
+    //             new
+    //             {
+    //                 customerId = request.CustomerId,
+    //                 voucherTypeFilter = request.voucherTypeFilter,
+    //                 statusFilter = request.statusFilter,
+    //                 searchTerm = request.searchTerm,
+    //                 sortColumn = request.sortColumn,
+    //                 sortOrder = request.sortOrder,
+    //                 page = request.page - 1,
+    //                 pageSize = request.pageSize
+    //             },
+    //             "previous-page",
+    //             EndpointMethod.GET));
+    //     }
 
-        if (pagedList.HasNextPage)
-        {
-            pagedList.Links.Add(_linkServices.Generate(
-                EndpointName.Voucher.GetAllForCustomer,
-                new
-                {
-                    customerId = request.CustomerId,
-                    voucherTypeFilter = request.voucherTypeFilter,
-                    statusFilter = request.statusFilter,
-                    searchTerm = request.searchTerm,
-                    sortColumn = request.sortColumn,
-                    sortOrder = request.sortOrder,
-                    page = request.page + 1,
-                    pageSize = request.pageSize
-                },
-                "next-page",
-                EndpointMethod.GET));
-        }
-    }
+    //     if (pagedList.HasNextPage)
+    //     {
+    //         pagedList.Links.Add(_linkServices.Generate(
+    //             EndpointName.Voucher.GetAllForCustomer,
+    //             new
+    //             {
+    //                 customerId = request.CustomerId,
+    //                 voucherTypeFilter = request.voucherTypeFilter,
+    //                 statusFilter = request.statusFilter,
+    //                 searchTerm = request.searchTerm,
+    //                 sortColumn = request.sortColumn,
+    //                 sortOrder = request.sortOrder,
+    //                 page = request.page + 1,
+    //                 pageSize = request.pageSize
+    //             },
+    //             "next-page",
+    //             EndpointMethod.GET));
+    //     }
+    // }
 } 

@@ -7,24 +7,29 @@ using Domain.IRepositories.CategoryRepositories;
 using Domain.Utilities.Errors;
 using SharedKernel;
 using Domain.Entities.ProductVariants;
+using CloudinaryDotNet;
+using Application.Services;
 
 namespace Application.Features.ProductFeature.Commands.CreateProduct;
 
 internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProductCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly CloudinaryService _cloudinaryService;
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;
     public CreateProductCommandHandler(
         IUnitOfWork unitOfWork,
         IProductRepository productRepository,
-        ICategoryRepository categoryRepository)
+        ICategoryRepository categoryRepository,
+        CloudinaryService cloudinaryService)
     {
         _unitOfWork = unitOfWork;
         _productRepository = productRepository;
         _categoryRepository = categoryRepository;
+        _cloudinaryService = cloudinaryService;
     }
-    
+
     public async Task<Result> Handle(
         CreateProductCommand request, 
         CancellationToken cancellationToken)
@@ -61,13 +66,29 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
 
         //TODO: Xử lý ảnh
         //--------------------
+        //Xử lý lưu 
+        string imageUrl = string.Empty;
+        if (command.ProductImage != null)
+        {
 
+            //tạo memory stream từ file ảnh
+            var memoryStream = new MemoryStream();
+            await command.ProductImage.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+
+            //Upload ảnh lên cloudinary
+            
+            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, command.ProductImage.FileName);
+            imageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
+            //Log
+            Console.WriteLine(resultUpload.JsonObj);
+        }
 
         //--------------------
         
         var newProduct = Product.NewProduct(
             ProductName.NewProductName(command.ProductName),
-            string.Empty, //TODO: Xử lý ảnh
+            imageUrl,
             command.Description ?? string.Empty,
             categoryId);
 
@@ -77,7 +98,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
             ColorCode.Create(command.ColorCode),
             ProductVariantDescription.FromString(command.Description ?? string.Empty),
             newProduct.ProductId,
-            string.Empty, //TODO: Xử lý ảnh
+            imageUrl,
             IsBaseVariant.True);
         
         return (newProduct, newProductVariant, null);

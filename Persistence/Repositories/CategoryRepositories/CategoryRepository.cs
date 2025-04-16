@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Categories;
+﻿using Application.DTOs.Category;
+using Domain.Entities.Categories;
 using Domain.IRepositories.CategoryRepositories;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
@@ -32,8 +33,8 @@ internal sealed class CategoryRepository : ICategoryRepository
         return await _postgreSQLWriteDbContext.Categories
             .AsNoTracking()
             .AnyAsync(
-            a => a.CategoryId == categoryId 
-            && a.CategoryStatus != CategoryStatus.Deleted, 
+            a => a.CategoryId == categoryId
+            && a.CategoryStatus != CategoryStatus.Deleted,
             cancellationToken);
     }
 
@@ -49,16 +50,16 @@ internal sealed class CategoryRepository : ICategoryRepository
     }
 
     public async Task<bool> IsCategoryNameExistWhenUpdate(
-        CategoryId categoryId, 
-        CategoryName categoryName, 
+        CategoryId categoryId,
+        CategoryName categoryName,
         CancellationToken cancellationToken = default)
     {
         return await _postgreSQLWriteDbContext.Categories
             .AsNoTracking()
             .AnyAsync(
-                a => a.CategoryName == categoryName 
-                && a.CategoryId != categoryId, 
+                a => a.CategoryName == categoryName
+                && a.CategoryId != categoryId,
                 cancellationToken);
-        
+
     }
 }

@@ -12,6 +12,7 @@ using Application.Features.ProductFeature.Queries.GetAllVariantQuery;
 using Application.Features.ProductFeature.Queries.GetProductById;
 using Application.Features.ProductFeature.Queries.GetVariantById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
 
@@ -19,7 +20,6 @@ namespace API.Controllers;
 
 [Route("api/products")]
 [ApiController]
-[ApiKey]
 public sealed class ProductsController : ControllerBase
 {
     private readonly ISender _sender;
@@ -140,8 +140,8 @@ public sealed class ProductsController : ControllerBase
     /// <param name="VariantPrice">Giá sản phẩm, nó được áp dụng cho sản phẩm gốc</param>
     /// <param name="CategoryId">Mã danh mục</param>
     /// <returns></returns>
-    [HttpPost]
-    [EndpointName(EndpointName.Product.Create)]
+    [HttpPost(Name = EndpointName.Product.Create)]
+    [Authorize]
     public async Task<IResult> CreateProduct(
         [FromForm] string ProductName,
         [FromForm] string ProductBaseVariantName,
@@ -279,7 +279,7 @@ public sealed class ProductsController : ControllerBase
         [FromForm] string variantName,
         [FromForm] decimal productVariantPrice,
         [FromForm] string colorCode,
-        [FromForm] IFormFile? image,
+        IFormFile? image,
         [FromForm] string productVariantDescription,
         [FromForm] Guid productId)
     {

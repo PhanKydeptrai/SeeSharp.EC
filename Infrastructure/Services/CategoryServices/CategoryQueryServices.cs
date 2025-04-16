@@ -129,4 +129,11 @@ internal class CategoryQueryServices : ICategoryQueryServices
 
         return categoriesList;
     }
+
+    public async Task<List<CategoryInfo>> GetCategoryInfo()
+    {
+        return await _contextPostgreSQL.Categories
+            .Select(a => new CategoryInfo(a.CategoryId.ToGuid(), a.CategoryName))
+            .ToListAsync();
+    }
 }

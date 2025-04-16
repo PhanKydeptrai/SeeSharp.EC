@@ -24,23 +24,28 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         ProductId productId,
         CancellationToken cancellationToken = default)
     {
-        string cacheKey = $"ProductResponse:{productId.Value}";
-        string? cachedProduct = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
-        ProductResponse? product;
-        if (string.IsNullOrEmpty(cachedProduct))
-        {
-            product = await _decorated.GetProductWithVariantListById(productId, cancellationToken);
+        return await _decorated.GetProductWithVariantListById(productId, cancellationToken);
+        
+        #region Cached
+        // string cacheKey = $"ProductResponse:{productId.Value}";
+        // string? cachedProduct = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
+        // ProductResponse? product;
+        // if (string.IsNullOrEmpty(cachedProduct))
+        // {
+        //     product = await _decorated.GetProductWithVariantListById(productId, cancellationToken);
 
-            if (product is null) return product;
+        //     if (product is null) return product;
 
-            await _distributedCache.SetStringAsync(
-                cacheKey,
-                JsonConvert.SerializeObject(product),
-                cancellationToken);
+        //     await _distributedCache.SetStringAsync(
+        //         cacheKey,
+        //         JsonConvert.SerializeObject(product),
+        //         cancellationToken);
 
-            return product;
-        }
-        return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
+        //     return product;
+        // }
+        // return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
+        #endregion
+        
     }
 
     public async Task<bool> CheckProductAvailability(ProductId productId)

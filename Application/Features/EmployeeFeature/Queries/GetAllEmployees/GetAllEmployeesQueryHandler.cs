@@ -35,61 +35,61 @@ internal sealed class GetAllEmployeesQueryHandler : IQueryHandler<GetAllEmployee
             request.Page ?? 1,
             request.PageSize ?? 10);
 
-        AddLinks(request, pagedList);
+        // AddLinks(request, pagedList);
         return Result.Success(pagedList);
     }
 
-    private void AddLinks(GetAllEmployeesQuery request, PagedList<EmployeeResponse> pagedList)
-    {
-        pagedList.Links.Add(_linkServices.Generate(
-            EndpointName.Employee.GetAll,
-            new
-            {
-                statusFilter = request.StatusFilter,
-                roleFilter = request.RoleFilter,
-                searchTerm = request.SearchTerm,
-                sortColumn = request.SortColumn,
-                sortOrder = request.SortOrder,
-                page = request.Page,
-                pageSize = request.PageSize
-            },
-            "self",
-            EndpointMethod.GET));
+    // private void AddLinks(GetAllEmployeesQuery request, PagedList<EmployeeResponse> pagedList)
+    // {
+    //     pagedList.Links.Add(_linkServices.Generate(
+    //         EndpointName.Employee.GetAll,
+    //         new
+    //         {
+    //             statusFilter = request.StatusFilter,
+    //             roleFilter = request.RoleFilter,
+    //             searchTerm = request.SearchTerm,
+    //             sortColumn = request.SortColumn,
+    //             sortOrder = request.SortOrder,
+    //             page = request.Page,
+    //             pageSize = request.PageSize
+    //         },
+    //         "self",
+    //         EndpointMethod.GET));
 
-        if (pagedList.HaspreviousPage)
-        {
-            pagedList.Links.Add(_linkServices.Generate(
-                EndpointName.Employee.GetAll,
-                new
-                {
-                    statusFilter = request.StatusFilter,
-                    roleFilter = request.RoleFilter,
-                    searchTerm = request.SearchTerm,
-                    sortColumn = request.SortColumn,
-                    sortOrder = request.SortOrder,
-                    page = request.Page - 1,
-                    pageSize = request.PageSize
-                },
-                "previous-page",
-                EndpointMethod.GET));
-        }
+    //     if (pagedList.HaspreviousPage)
+    //     {
+    //         pagedList.Links.Add(_linkServices.Generate(
+    //             EndpointName.Employee.GetAll,
+    //             new
+    //             {
+    //                 statusFilter = request.StatusFilter,
+    //                 roleFilter = request.RoleFilter,
+    //                 searchTerm = request.SearchTerm,
+    //                 sortColumn = request.SortColumn,
+    //                 sortOrder = request.SortOrder,
+    //                 page = request.Page - 1,
+    //                 pageSize = request.PageSize
+    //             },
+    //             "previous-page",
+    //             EndpointMethod.GET));
+    //     }
 
-        if (pagedList.HasNextPage)
-        {
-            pagedList.Links.Add(_linkServices.Generate(
-                EndpointName.Employee.GetAll,
-                new
-                {
-                    statusFilter = request.StatusFilter,
-                    roleFilter = request.RoleFilter,
-                    searchTerm = request.SearchTerm,
-                    sortColumn = request.SortColumn,
-                    sortOrder = request.SortOrder,
-                    page = request.Page + 1,
-                    pageSize = request.PageSize
-                },
-                "next-page",
-                EndpointMethod.GET));
-        }
-    }
+    //     if (pagedList.HasNextPage)
+    //     {
+    //         pagedList.Links.Add(_linkServices.Generate(
+    //             EndpointName.Employee.GetAll,
+    //             new
+    //             {
+    //                 statusFilter = request.StatusFilter,
+    //                 roleFilter = request.RoleFilter,
+    //                 searchTerm = request.SearchTerm,
+    //                 sortColumn = request.SortColumn,
+    //                 sortOrder = request.SortOrder,
+    //                 page = request.Page + 1,
+    //                 pageSize = request.PageSize
+    //             },
+    //             "next-page",
+    //             EndpointMethod.GET));
+    //     }
+    // }
 } 

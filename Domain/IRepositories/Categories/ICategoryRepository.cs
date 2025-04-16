@@ -12,7 +12,7 @@ public interface ICategoryRepository
     #region Read
     // Task<Category?> GetCategoryByIdFromMySQL(CategoryId categoryId,
     //     CancellationToken cancellationToken = default);
-    Task<Category?> GetCategoryByIdFromPostgreSQL(CategoryId categoryId,
-    CancellationToken cancellationToken = default); 
+    Task<Category?> GetCategoryByIdFromPostgreSQL(CategoryId categoryId, CancellationToken cancellationToken = default); 
+
     #endregion
 }

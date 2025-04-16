@@ -12,7 +12,7 @@ namespace API.Controllers;
 
 [Route("api/wishitems")]
 [ApiController]
-[ApiKey]
+// [ApiKey]
 public sealed class WishlistController : ControllerBase
 {
     private readonly ISender _sender;
@@ -32,8 +32,7 @@ public sealed class WishlistController : ControllerBase
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
     /// <returns></returns>
-    [HttpGet]
-    [EndpointName(EndpointName.Wishlist.GetWishList)]
+    [HttpGet(Name = EndpointName.Wishlist.GetWishList)]
     [Authorize]
     public async Task<IResult> GetWishList(
         [FromQuery] string? productStatusFilter,

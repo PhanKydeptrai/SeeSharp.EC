@@ -113,10 +113,12 @@ internal sealed class ProductQueryServices : IProductQueryServices
         ProductId productId,
         CancellationToken cancellationToken = default)
     {
+        #region Old Code
         return await _postgreSQLdbContext.Products
             .Where(a => a.ProductId == new Ulid(productId.Value))
             .Select(a => new ProductResponse(
                 a.ProductId.ToGuid(),
+                a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantId.ToGuid(),
                 a.ProductName,
                 a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantPrice,
                 a.ImageUrl,
@@ -131,8 +133,8 @@ internal sealed class ProductQueryServices : IProductQueryServices
                     b.Description,
                     b.ProductVariantPrice,
                     b.ImageUrl ?? string.Empty,
-                    b.IsBaseVariant)).ToArray()
-            )).FirstOrDefaultAsync();
+                    b.IsBaseVariant)).ToArray())).FirstOrDefaultAsync();
+        #endregion
     }
 
 
@@ -189,6 +191,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
         var products = productsQuery
             .Select(a => new ProductResponse(
                 a.ProductId.ToGuid(),
+                a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantId.ToGuid(),
                 a.ProductName,
                 a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantPrice,
                 a.ImageUrl,
