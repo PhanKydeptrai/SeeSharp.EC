@@ -6,11 +6,8 @@ namespace Domain.Database.PostgreSQL.ReadModels;
 public class OrderReadModel
 {
     public Ulid OrderId { get; set; }
-
     public Ulid CustomerId { get; set; }
-
     public decimal Total { get; set; }
-
     public PaymentMethod PaymentStatus { get; set; }
     public OrderStatus OrderStatus { get; set; }
     public Ulid OrderTransactionId { get; set; }

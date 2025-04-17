@@ -40,7 +40,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
     public async Task<Result> Handle(MakePaymentForSubscriberCommand request, CancellationToken cancellationToken)
     {
         var customerId = CustomerId.FromGuid(request.CustomerId);
-        var orderInformation = await _orderRepository.GetOrderByCustomerId(customerId);
+        var orderInformation = await _orderRepository.GetWaitingOrderByCustomerId(customerId);
 
         if (orderInformation is null) //Không có đơn hàng nào
         {
@@ -51,7 +51,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                     ErrorType.Problem));
         }
 
-        if (request.voucherCode is not null) // Có sử dụng voucher
+        if (!string.IsNullOrEmpty(request.voucherCode)) // Có sử dụng voucher
         {
 
             var customerVoucher = await _voucherRepository.GetCustomerVoucherByVoucherCode(

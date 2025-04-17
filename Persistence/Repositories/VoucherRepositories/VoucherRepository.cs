@@ -24,13 +24,13 @@ internal sealed class VoucherRepository : IVoucherRepository
             .FirstOrDefaultAsync(
                 v => v.Voucher!.VoucherCode == voucherCode 
                 && v.CustomerId == customerId
-                && v.Quantity.Value > 0
+                // && v.Quantity.Value > 0
                 && v.Voucher!.Status == Status.Active);
     }
 
-    public async Task<CustomerVoucher?> GetCustomerVoucherByVoucherId(VoucherId voucherId)
+    public async Task<CustomerVoucher?> GetCustomerVoucherByVoucherId(VoucherId voucherId, CustomerId customerId)
     {
-        return await _dbContext.CustomerVouchers.FirstOrDefaultAsync(a => a.VoucherId == voucherId);
+        return await _dbContext.CustomerVouchers.FirstOrDefaultAsync(a => a.VoucherId == voucherId && a.CustomerId == customerId);
     }
 
     public async Task AddVoucher(Voucher voucher)

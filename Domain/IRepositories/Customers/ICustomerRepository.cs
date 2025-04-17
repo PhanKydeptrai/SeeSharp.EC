@@ -8,4 +8,5 @@ public interface ICustomerRepository
     Task AddCustomer(Customer customer);
     Task<Customer?> GetCustomerByEmailFromPostgreSQL(Email email);
     Task<Customer?> GetCustomerByUserId(UserId userId);
+    Task<Customer?> GetCustomerByCustomerId(CustomerId customerId);
 }

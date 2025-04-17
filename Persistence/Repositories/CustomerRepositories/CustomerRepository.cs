@@ -28,4 +28,9 @@ public class CustomerRepository : ICustomerRepository
         return await _postgreSQLWriteDbContext.Customers.Include(a => a.User)
             .FirstOrDefaultAsync(a => a.UserId == userId);
     }
+
+    public async Task<Customer?> GetCustomerByCustomerId(CustomerId customerId)
+    {
+        return await _postgreSQLWriteDbContext.Customers.Include(a => a.User).FirstOrDefaultAsync(a => a.CustomerId == customerId);
+    }
 }

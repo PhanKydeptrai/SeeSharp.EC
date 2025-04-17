@@ -40,7 +40,7 @@ internal sealed class ProductReadModelConfigurationForPostgreSQL : IEntityTypeCo
             .HasColumnType("uuid");
 
         builder.HasMany(a => a.ProductVariantReadModels)
-            .WithOne()
+            .WithOne(v => v.ProductReadModel)
             .HasForeignKey(a => a.ProductId);
     }
 }

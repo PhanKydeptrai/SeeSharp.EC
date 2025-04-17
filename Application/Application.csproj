@@ -19,6 +19,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Features\EmployeeFeature\Queries\" />
+	  <Folder Include="Features\ShippingInformationFeature\Commands\" />
 	</ItemGroup>
 
 </Project>

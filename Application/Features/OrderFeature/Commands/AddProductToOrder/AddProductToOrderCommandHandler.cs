@@ -33,7 +33,7 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
     public async Task<Result> Handle(AddProductToOrderCommand request, CancellationToken cancellationToken)
     {
 
-        var order = await _orderRepository.GetOrderByCustomerId(CustomerId.FromGuid(request.CustomerId));
+        var order = await _orderRepository.GetWaitingOrderByCustomerId(CustomerId.FromGuid(request.CustomerId));
 
         ProductVariantId productVariantId = ProductVariantId.FromGuid(request.ProductVariantId);
         var productPrice = await _productQueryServices.GetAvailableProductPrice(productVariantId);

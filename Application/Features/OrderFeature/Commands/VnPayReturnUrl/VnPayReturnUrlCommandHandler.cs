@@ -43,7 +43,10 @@ internal sealed class VnPayReturnUrlCommandHandler : ICommandHandler<VnPayReturn
         //Xử lý voucher
         if (orderTransaction.IsVoucherUsed == IsVoucherUsed.Used)
         {
-            var voucher = await _voucherRepository.GetCustomerVoucherByVoucherId(orderTransaction.VoucherId!);
+            var voucher = await _voucherRepository.GetCustomerVoucherByVoucherId(
+                orderTransaction.VoucherId!, 
+                orderTransaction.Order.CustomerId);
+            
             if (voucher is null)
             {
                 throw new Exception($"Voucher with ID {orderTransaction.VoucherId} not found.");
@@ -53,6 +56,7 @@ internal sealed class VnPayReturnUrlCommandHandler : ICommandHandler<VnPayReturn
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }
+
         await _unitOfWork.SaveChangesAsync();
         return Result.Success();
     }

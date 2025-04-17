@@ -10,7 +10,7 @@ public interface IVoucherRepository
     Task<Voucher?> GetVoucherById(VoucherId voucherId);
     Task<Voucher?> GetVoucherByCode(VoucherCode voucherCode);
     Task<CustomerVoucher?> GetCustomerVoucherByVoucherCode(VoucherCode voucherCode, CustomerId customerId);
-    Task<CustomerVoucher?> GetCustomerVoucherByVoucherId(VoucherId voucherId);
+    Task<CustomerVoucher?> GetCustomerVoucherByVoucherId(VoucherId voucherId, CustomerId customerId);
     Task<bool> IsVoucherCodeExist(VoucherCode voucherCode);
     Task<bool> IsVoucherNameExist(VoucherName voucherName);
     Task UpdateVoucher(Voucher voucher);

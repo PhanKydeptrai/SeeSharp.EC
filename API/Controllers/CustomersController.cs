@@ -46,7 +46,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpPost("signin", Name = EndpointName.Customer.SignIn)]
     // [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    // [ApiKey]
+    // //[ApiKey]
     public async Task<IResult> SignIn([FromBody] CustomerSignInCommand request)
     {
         // string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -63,7 +63,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpGet("profile", Name = EndpointName.Customer.GetProfile)]
     [Authorize]
-    // [ApiKey]
+    // //[ApiKey]
     public async Task<IResult> GetCustomerProfile()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -80,7 +80,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpPost("signup", Name = EndpointName.Customer.SignUp)]
     // [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    // [ApiKey]
+    // //[ApiKey]
     public async Task<IResult> SignUp([FromBody] CustomerSignUpCommand command)
     {
         var result = await _sender.Send(command);
@@ -93,7 +93,7 @@ public sealed class CustomersController : ControllerBase
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpPost("reset-password", Name = EndpointName.Customer.ResetPassword)]
-    // [ApiKey]
+    // //[ApiKey]
     public async Task<IResult> CustomerResetPassword([FromBody] CustomerResetPasswordCommand command)
     {
         var result = await _sender.Send(command);
@@ -133,7 +133,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpPost("change-password", Name = EndpointName.Customer.ChangePassword)]
     [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
-    // [ApiKey]
+    // //[ApiKey]
     public async Task<IResult> CustomerChangePassword([FromBody] CustomerChangePasswordRequest request)
     {
 
@@ -169,7 +169,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpGet("refresh-token", Name = EndpointName.Customer.SignInWithRefreshToken)]
     [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> SignInWithRefreshToken([FromBody] CustomerSignInWithRefreshTokenCommand command)
     {
         var result = await _sender.Send(command);
@@ -184,7 +184,7 @@ public sealed class CustomersController : ControllerBase
     [HttpDelete("{userId:guid}/refresh-token")]
     [EndpointName(EndpointName.Customer.RevokeRefreshToken)]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> RevokeRefreshToken([FromRoute] Guid userId)
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -207,7 +207,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpDelete("refresh-token/current", Name = EndpointName.Customer.RevokeRefreshToken + "FromToken")]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> RevokeCurrentRefreshToken()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -227,7 +227,7 @@ public sealed class CustomersController : ControllerBase
     [HttpDelete("{userId:guid}/refresh-tokens")]
     [EndpointName(EndpointName.Customer.RevokeRefreshTokens)]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> RevokeAllRefreshTokens([FromRoute] Guid userId)
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -249,7 +249,7 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpDelete("refresh-tokens/current", Name = EndpointName.Customer.RevokeRefreshTokens + "FromToken")]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> RevokeAllCurrentRefreshTokens()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -266,7 +266,7 @@ public sealed class CustomersController : ControllerBase
     /// <param name="token"></param>
     /// <returns></returns>
     // [HttpPost("google-login/{token}")]
-    // [ApiKey]
+    // //[ApiKey]
     // public async Task<IResult> SignInWithGoogle([FromRoute] string token)
     // {
     //     var result = await _sender.Send(new CustomerSignInWithGoogleCommand(token));
@@ -278,7 +278,7 @@ public sealed class CustomersController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet("guest-token")]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> GetGuestToken()
     {
         var result = await _sender.Send(new GenerateGuestTokenCommand());

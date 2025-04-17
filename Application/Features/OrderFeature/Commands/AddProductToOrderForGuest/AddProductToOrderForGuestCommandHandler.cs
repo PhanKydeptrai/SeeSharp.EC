@@ -38,8 +38,8 @@ internal sealed class AddProductToOrderForGuestCommandHandler : ICommandHandler<
 
     public async Task<Result> Handle(AddProductToOrderForGuestCommand request, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.GetOrderByCustomerId(CustomerId.FromGuid(request.GuestId));
-        
+        var order = await _orderRepository.GetWaitingOrderByCustomerId(CustomerId.FromGuid(request.GuestId));
+
         ProductVariantId productVariantId = ProductVariantId.FromGuid(request.ProductVariantId);
         var productPrice = await _productQueryServices.GetAvailableProductPrice(productVariantId);
         if (productPrice is null) return Result.Failure(ProductError.VariantNotFound(productVariantId));
@@ -57,7 +57,7 @@ internal sealed class AddProductToOrderForGuestCommandHandler : ICommandHandler<
 
                 // Update order total 
                 orderTotal = orderTotal + orderDetail.UnitPrice.Value;
-                order.ReplaceOrderTotal(OrderTotal.FromDecimal(orderTotal));                
+                order.ReplaceOrderTotal(OrderTotal.FromDecimal(orderTotal));
                 await _unitOfWork.SaveChangesAsync();
                 return Result.Success();
             }
@@ -72,52 +72,77 @@ internal sealed class AddProductToOrderForGuestCommandHandler : ICommandHandler<
 
                 order.AddNewValueToOrderTotal(newOrderDetail.UnitPrice);
                 await _orderRepository.AddNewOrderDetail(newOrderDetail);
-                
+
                 await _unitOfWork.SaveChangesAsync();
                 return Result.Success();
             }
         }
         else
         {
+            //Kiểm tra xem có tồn tại khách hàng không
+            var customer = await _customerRepository.GetCustomerByCustomerId(CustomerId.FromGuid(request.GuestId));
             //* Order is not exist
             // Create new Normal customer, new order and order detail
+            if (customer is null)
+            {
+                var user = User.NewUser(
+                    null,
+                    UserName.Empty,
+                    Email.Empty,
+                    PhoneNumber.Empty,
+                    PasswordHash.Empty,
+                    null,
+                    string.Empty);
 
-            var user = User.NewUser(
-                null,
-                UserName.Empty, 
-                Email.Empty, 
-                PhoneNumber.Empty, 
-                PasswordHash.Empty, 
-                null, 
-                string.Empty);
+                customer = Customer.FromExisting(
+                    CustomerId.FromGuid(request.GuestId),
+                    user.UserId,
+                    CustomerType.Normal);
 
-            var customer = Customer.FromExisting(
-                CustomerId.FromGuid(request.GuestId), 
-                user.UserId, 
-                CustomerType.Normal);
+                var newOrder = Order.NewOrder(
+                    CustomerId.FromGuid(request.GuestId),
+                    OrderTotal.FromDecimal(productPrice!.Value * request.Quantity),
+                    OrderPaymentStatus.Waiting,
+                    OrderStatus.Waiting);
 
-            var newOrder = Order.NewOrder(
-                CustomerId.FromGuid(request.GuestId),
-                OrderTotal.FromDecimal(productPrice!.Value * request.Quantity),
-                OrderPaymentStatus.Waiting,
-                OrderStatus.Waiting);
+                var newOrderDetail = OrderDetail.NewOrderDetail(
+                    newOrder.OrderId,
+                    ProductVariantId.FromGuid(request.ProductVariantId),
+                    OrderDetailQuantity.NewOrderDetailQuantity(request.Quantity),
+                    productPrice!);
 
-            var newOrderDetail = OrderDetail.NewOrderDetail(
-                newOrder.OrderId,
-                ProductVariantId.FromGuid(request.ProductVariantId),
-                OrderDetailQuantity.NewOrderDetailQuantity(request.Quantity),
-                productPrice!);
+                await _userRepository.AddUser(user);
 
-            await _userRepository.AddUser(user);
-            
-            await _customerRepository.AddCustomer(customer);
+                await _customerRepository.AddCustomer(customer);
 
-            await _orderRepository.AddNewOrder(newOrder);
+                await _orderRepository.AddNewOrder(newOrder);
 
-            await _orderRepository.AddNewOrderDetail(newOrderDetail);
+                await _orderRepository.AddNewOrderDetail(newOrderDetail);
 
-            await _unitOfWork.SaveChangesAsync();
-            return Result.Success();
+                await _unitOfWork.SaveChangesAsync();
+                return Result.Success();
+            }
+            else
+            {
+                var newOrder = Order.NewOrder(
+                    CustomerId.FromGuid(request.GuestId),
+                    OrderTotal.FromDecimal(productPrice!.Value * request.Quantity),
+                    OrderPaymentStatus.Waiting,
+                    OrderStatus.Waiting);
+
+                var newOrderDetail = OrderDetail.NewOrderDetail(
+                    newOrder.OrderId,
+                    ProductVariantId.FromGuid(request.ProductVariantId),
+                    OrderDetailQuantity.NewOrderDetailQuantity(request.Quantity),
+                    productPrice!);
+
+                await _orderRepository.AddNewOrder(newOrder);
+
+                await _orderRepository.AddNewOrderDetail(newOrderDetail);
+
+                await _unitOfWork.SaveChangesAsync();
+                return Result.Success();
+            }
         }
     }
 }

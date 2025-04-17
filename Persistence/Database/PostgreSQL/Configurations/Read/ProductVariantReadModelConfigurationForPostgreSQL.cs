@@ -1,6 +1,7 @@
 using Domain.ReadModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Domain.Database.PostgreSQL.ReadModels;
 
 namespace Persistence.Database.PostgreSQL.Configurations.Read;
 
@@ -60,5 +61,9 @@ internal sealed class ProductVariantReadModelConfigurationForPostgreSQL : IEntit
         builder.HasMany(a => a.OrderDetailReadModels)
             .WithOne(a => a.ProductVariantReadModel)
             .HasForeignKey(a => a.ProductVariantId);
+            
+        builder.HasOne(a => a.ProductReadModel)
+            .WithMany(p => p.ProductVariantReadModels)
+            .HasForeignKey(a => a.ProductId);
     }
 }

@@ -64,8 +64,7 @@ public sealed class WishlistController : ControllerBase
     /// </summary>
     /// <param name="productId"></param>
     /// <returns></returns>
-    [HttpPost("{productId:guid}")]
-    [EndpointName(EndpointName.Wishlist.AddWishList)]
+    [HttpPost("{productId:guid}", Name = EndpointName.Wishlist.AddWishList)]
     [Authorize]
     public async Task<IResult> AddWishList([FromRoute] Guid productId)
     {

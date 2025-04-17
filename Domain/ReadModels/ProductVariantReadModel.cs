@@ -14,7 +14,7 @@ public class ProductVariantReadModel
     public Ulid ProductId { get; set; }
     public ProductVariantStatus ProductVariantStatus { get; set; }
     public bool IsBaseVariant { get; set; }
-    public ProductReadModel? ProductReadModel { get; private set; } = null!;
+    public ProductReadModel? ProductReadModel { get; set; } = null!;
     public ICollection<WishItemReadModel> WishItemReadModels { get; set; } = new List<WishItemReadModel>();
     public ICollection<OrderDetailReadModel> OrderDetailReadModels { get; set; } = new List<OrderDetailReadModel>();
 }

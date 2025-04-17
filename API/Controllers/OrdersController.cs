@@ -20,6 +20,8 @@ using Microsoft.IdentityModel.Tokens;
 using Application.Features.OrderFeature.Commands.PayOrderWithVnPay;
 using Application.DTOs.Payment;
 using Application.Features.OrderFeature.Commands.VnPayReturnUrl;
+using Application.Features.OrderFeature.Queries.GetOrderHistoryForCustomer;
+using Application.Features.OrderFeature.Commands.PayOrderWithCOD;
 
 namespace API.Controllers;
 
@@ -109,7 +111,7 @@ public sealed class OrdersController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPut("details/{orderDetailId:guid}", Name = EndpointName.Order.UpdateOrderDetail)]
-    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOrGuest)]
     public async Task<IResult> UpdateOrderDetail(
         [FromRoute] Guid orderDetailId,
         [FromBody] UpdateOrderDetailRequest request)
@@ -147,6 +149,7 @@ public sealed class OrdersController : ControllerBase
         var claims = TokenExtentions.DecodeJwt(token);
         string? id = string.Empty;
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out id);
+
         if (id.IsNullOrEmpty())
         {
             claims.TryGetValue(CustomJwtRegisteredClaimNames.GuestId, out id);
@@ -194,15 +197,15 @@ public sealed class OrdersController : ControllerBase
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
+    //[ApiKey]
     [HttpPost("make-payment")]
     [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
-    [ApiKey]
-    public async Task<IResult> MakePaymentForSubscriber(
-        [FromBody] MakePaymentForSubscriberRequest request)
+    public async Task<IResult> MakePaymentForSubscriber([FromBody] MakePaymentForSubscriberRequest request)
     {
         string? token = TokenExtentions.GetTokenFromHeader(HttpContext);
         var claims = TokenExtentions.DecodeJwt(token!);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
+
         var result = await _sender.Send(new MakePaymentForSubscriberCommand(
             new Guid(customerId!),
             request.voucherCode,
@@ -217,6 +220,28 @@ public sealed class OrdersController : ControllerBase
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
+    // [HttpPut("make-payment")]
+    // [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    // public async Task<IResult> UpdateMakePaymentForSubscriber([FromBody] MakePaymentForSubscriberRequest request)
+    // {
+    //     string? token = TokenExtentions.GetTokenFromHeader(HttpContext);
+    //     var claims = TokenExtentions.DecodeJwt(token!);
+    //     claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
+        
+    //     var result = await _sender.Send(new MakePaymentForSubscriberCommand(
+    //         new Guid(customerId!),
+    //         request.voucherCode,
+    //         request.ShippingInformationId,
+    //         request.FullName,
+    //         request.PhoneNumber,
+    //         request.Province,
+    //         request.District,
+    //         request.Ward,
+    //         request.SpecificAddress));
+
+    //     return result.Match(Results.NoContent, CustomResults.Problem);
+    // }
+
     /// <summary>
     ///  (Cho khách hàng chưa đăng ký)
     /// </summary>
@@ -224,7 +249,7 @@ public sealed class OrdersController : ControllerBase
     /// <returns></returns>
     [HttpPost("guest")]
     [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> AddProductToOrderForGuest(
         [FromBody] AddProductToOrderForGuestRequest request)
     {
@@ -243,7 +268,7 @@ public sealed class OrdersController : ControllerBase
     /// <returns></returns>
     [HttpGet("make-payment", Name = EndpointName.Order.GetMakePaymentResponse)]
     [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> GetMakePaymentResponse()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -260,7 +285,7 @@ public sealed class OrdersController : ControllerBase
     /// <returns></returns>
     [HttpGet("make-payment/guest")]
     [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> GetMakePaymentResponseForGuest()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -278,7 +303,7 @@ public sealed class OrdersController : ControllerBase
     /// <returns></returns>
     [HttpPost("make-payment/guest")]
     [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> MakePaymentForGuest([FromBody] MakePaymentForGuestRequest request)
     {
         string? token = TokenExtentions.GetTokenFromHeader(HttpContext);
@@ -303,9 +328,9 @@ public sealed class OrdersController : ControllerBase
     /// Delete an order transaction for a customer
     /// </summary>
     /// <returns></returns>
+    //[ApiKey]
     [HttpDelete("transaction")]
     [AuthorizeByRole(AuthorizationPolicies.SubscribedOrGuest)]
-    [ApiKey]
     public async Task<IResult> DeleteOrderTransaction()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -335,6 +360,18 @@ public sealed class OrdersController : ControllerBase
         var command = new PayOrderWithVnPayCommand(orderId);
         var result = await _sender.Send(command);
         return Results.Redirect(result.Value);
+    }
+    
+    /// <summary>
+    /// Thanh toán khi nhận hàng (COD)
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    [HttpPost("payorder-cod/{orderId:guid}")]
+    public async Task<IResult> PayorderWithCOD([FromRoute] Guid orderId)
+    { 
+        var result = await _sender.Send(new PayOrderWithCODCommand(orderId));
+        return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
     /// <summary>
@@ -372,8 +409,31 @@ public sealed class OrdersController : ControllerBase
             vnp_SecureHash = vnp_SecureHash
         };
         var result = await _sender.Send(new VnPayReturnUrlCommand(Guid.Parse(model.vnp_TxnRef)));
-        return result.Match(Results.NoContent, CustomResults.Problem);
+        if (result.IsSuccess)
+        {
+            return Results.Redirect("https://localhost:7115/payment-success");
+        }
+        return Results.Redirect("https://localhost:7115/payment-failed");
     }
     #endregion
 
+
+    /// <summary>
+    /// Lấy lịch sử đơn hàng của khách hàng (Hiển thị tại trang thông tin tài khoản, 
+    /// đây là những order đã đặt thành công và có trạng thái khác "Waiting")
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("history")]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    public async Task<IResult> GetOrderHistoryForCustomer()
+    {
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
+        var claims = TokenExtentions.DecodeJwt(token);
+        string? customerId = string.Empty;
+        claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out customerId);
+
+        var result = await _sender.Send(new GetOrderHistoryForCustomerQuery(new Guid(customerId!)));
+
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
 }

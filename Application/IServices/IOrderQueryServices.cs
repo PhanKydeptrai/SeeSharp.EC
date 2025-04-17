@@ -57,5 +57,5 @@ public interface IOrderQueryServices
         string? sortOrder,
         int? page,
         int? pageSize);
-
+    Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId);
 }
