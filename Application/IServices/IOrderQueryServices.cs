@@ -67,4 +67,12 @@ public interface IOrderQueryServices
     /// <param name="billId"></param>
     /// <returns></returns>
     Task<BillResponse?> GetBillByBillId(BillId billId);
+
+
+    /// <summary>
+    /// Lấy thông tin hoá đơn bằng OrderId
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    Task<BillResponse?> GetBillByOrderId(OrderId orderId);
 }

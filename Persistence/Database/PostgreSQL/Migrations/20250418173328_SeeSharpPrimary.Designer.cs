@@ -12,7 +12,7 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(SeeSharpPostgreSQLWriteDbContext))]
-    [Migration("20250415153121_SeeSharpPrimary")]
+    [Migration("20250418173328_SeeSharpPrimary")]
     partial class SeeSharpPrimary
     {
         /// <inheritdoc />
@@ -300,7 +300,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("ColorCode")
                         .IsRequired()
-                        .HasColumnType("varchar(7)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("Description")
                         .IsRequired()

@@ -194,7 +194,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     ProductVariantId = table.Column<Guid>(type: "uuid", nullable: false),
                     VariantName = table.Column<string>(type: "varchar(50)", nullable: false),
                     ProductVariantPrice = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
-                    ColorCode = table.Column<string>(type: "varchar(7)", nullable: false),
+                    ColorCode = table.Column<string>(type: "varchar(10)", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(500)", nullable: true),
                     Description = table.Column<string>(type: "varchar(500)", nullable: false),
                     ProductId = table.Column<Guid>(type: "uuid", nullable: false),

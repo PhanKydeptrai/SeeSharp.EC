@@ -37,7 +37,7 @@ internal sealed class ProductVariantConfigurationForPostgreSQL : IEntityTypeConf
             .HasConversion(
                 v => v.Value,
                 v => ColorCode.FromString(v))
-            .HasColumnType("varchar(7)");
+            .HasColumnType("varchar(10)");
 
         builder.Property(a => a.ProductVariantPrice)
             .IsRequired()

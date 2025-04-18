@@ -66,7 +66,7 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
             string.Empty, //TODO: Update ImageUrl
             request.Description,
             product.ProductStatus,
-            CategoryId.FromGuid(categoryId));
+            categoryId);
     }
     #endregion
 }

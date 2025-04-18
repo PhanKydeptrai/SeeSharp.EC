@@ -46,7 +46,7 @@ public class EmployeesController : ControllerBase
     /// <param name="imageFile"></param>
     /// <returns></returns>
     [HttpPost]
-    [ApiKey]
+    //[ApiKey]
     [Authorize]
     public async Task<IResult> CreateEmployee(
         [FromForm] string userName,
@@ -65,7 +65,7 @@ public class EmployeesController : ControllerBase
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpPost("sign-in")]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> SignIn([FromBody] EmployeeSignInCommand command)
     {
         var result = await _sender.Send(command);
@@ -78,7 +78,7 @@ public class EmployeesController : ControllerBase
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpPost("refresh-token", Name = "EmployeeSignInWithRefreshToken")]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> SignInWithRefreshToken([FromBody] EmployeeSignInWithRefreshTokenCommand command)
     {
         var result = await _sender.Send(command);
@@ -92,7 +92,7 @@ public class EmployeesController : ControllerBase
     /// <returns></returns>
     [HttpPost("reset-password")]
     [EndpointName("EmployeeResetPassword")]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> EmployeeResetPassword([FromBody] EmployeeResetPasswordCommand command)
     {
         var result = await _sender.Send(command);
@@ -118,7 +118,7 @@ public class EmployeesController : ControllerBase
     /// <returns></returns>
     [HttpPost("change-password", Name = "EmployeeChangePassword")]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> EmployeeChangePassword([FromBody] EmployeeChangePasswordRequest request)
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -154,7 +154,7 @@ public class EmployeesController : ControllerBase
     [HttpDelete("{userId:guid}/refresh-token")]
     [EndpointName("EmployeeRevokeRefreshToken")]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> RevokeRefreshToken([FromRoute] Guid userId)
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -178,7 +178,7 @@ public class EmployeesController : ControllerBase
     [HttpDelete("refresh-token/current")]
     [EndpointName("EmployeeRevokeRefreshTokenFromToken")]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> RevokeCurrentRefreshToken()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -198,7 +198,7 @@ public class EmployeesController : ControllerBase
     [HttpDelete("{userId:guid}/refresh-tokens")]
     [EndpointName("EmployeeRevokeRefreshTokens")]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> RevokeAllRefreshTokens([FromRoute] Guid userId)
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -221,7 +221,7 @@ public class EmployeesController : ControllerBase
     [HttpDelete("refresh-tokens/current")]
     [EndpointName("EmployeeRevokeRefreshTokensFromToken")]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> RevokeAllCurrentRefreshTokens()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -243,7 +243,7 @@ public class EmployeesController : ControllerBase
     /// <returns></returns>
     [HttpPut("profile")]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> UpdateEmployeeProfile(
         [FromForm] string userName,
         [FromForm] string phoneNumber,
@@ -271,7 +271,7 @@ public class EmployeesController : ControllerBase
     /// <returns></returns>
     [HttpGet("profile")]
     [Authorize]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> GetEmployeeProfile()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -295,7 +295,7 @@ public class EmployeesController : ControllerBase
     /// <returns></returns>
     [HttpPut("{employeeId:guid}/status")]
     [AuthorizeByRole(AuthorizationPolicies.Admin)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> UpdateEmployeeStatus(
         [FromRoute] Guid employeeId,
         [FromBody] string newStatus)
@@ -319,7 +319,7 @@ public class EmployeesController : ControllerBase
     [HttpGet]
     [EndpointName(EndpointName.Employee.GetAll)]
     [AuthorizeByRole(AuthorizationPolicies.Admin)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> GetAllEmployees(
         [FromQuery] string? statusFilter = null,
         [FromQuery] string? roleFilter = null,

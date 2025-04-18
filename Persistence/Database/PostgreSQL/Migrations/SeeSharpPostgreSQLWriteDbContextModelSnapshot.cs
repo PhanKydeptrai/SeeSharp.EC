@@ -297,7 +297,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("ColorCode")
                         .IsRequired()
-                        .HasColumnType("varchar(7)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("Description")
                         .IsRequired()

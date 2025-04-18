@@ -31,7 +31,7 @@ internal sealed class ProductVariantReadModelConfigurationForPostgreSQL : IEntit
         
         builder.Property(a => a.ColorCode)
             .IsRequired()
-            .HasColumnType("varchar(7)");
+            .HasColumnType("varchar(10)");
 
         builder.Property(a => a.ProductVariantPrice)
             .IsRequired()

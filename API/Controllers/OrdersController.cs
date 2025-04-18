@@ -22,6 +22,7 @@ using Application.DTOs.Payment;
 using Application.Features.OrderFeature.Commands.VnPayReturnUrl;
 using Application.Features.OrderFeature.Queries.GetOrderHistoryForCustomer;
 using Application.Features.OrderFeature.Commands.PayOrderWithCOD;
+using Application.Features.OrderFeature.Queries.GetOrderHistoryByOrderId;
 
 namespace API.Controllers;
 
@@ -437,4 +438,17 @@ public sealed class OrdersController : ControllerBase
 
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+    
+    /// <summary>
+    /// Cho phép khách tra cứu đơn hàng 
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    [HttpGet("history/{orderId:guid}")]
+    public async Task<IResult> GetOrderHistoryByOrderId([FromRoute] Guid orderId)
+    {
+        var result = await _sender.Send(new GetOrderHistoryByOrderIdQuery(orderId));
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
 }
