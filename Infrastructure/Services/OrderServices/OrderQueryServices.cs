@@ -1,8 +1,10 @@
 using System.Linq.Expressions;
+using Application.DTOs.Bills;
 using Application.DTOs.Order;
 using Application.Features.Pages;
 using Application.IServices;
 using Domain.Database.PostgreSQL.ReadModels;
+using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
@@ -284,5 +286,43 @@ internal sealed class OrderQueryServices : IOrderQueryServices
                 )).ToArray()
             ))
             .ToListAsync();
+    }
+
+    public async Task<BillResponse?> GetBillByBillId(BillId billId)
+    {
+        return await _writeDbContext.Orders
+            .Include(a => a.OrderTransaction)
+            .ThenInclude(a => a!.Voucher)
+            .Include(a => a.Bill)
+            .ThenInclude(a => a!.ShippingInformation)
+            .Include(a => a.OrderDetails)
+            .Include(a => a.Customer)
+            .ThenInclude(a => a!.User)
+            .Where(a => a.Bill!.BillId == billId && a.OrderStatus != OrderStatus.Waiting)
+            .Select(a => new BillResponse(
+                a.CustomerId.Value,
+                a.Customer!.User!.UserName.Value,
+                a.Customer.User.Email!.Value,
+                a.Bill!.ShippingInformation.PhoneNumber!.Value,
+                a.Bill!.ShippingInformation.SpecificAddress.Value,
+                a.Total.Value,
+                a.PaymentStatus.ToString(),
+                a.Bill!.PaymentMethod.ToString(),
+                a.OrderTransaction!.IsVoucherUsed.Value && a.OrderTransaction.Voucher != null ? a.OrderTransaction.Voucher.VoucherCode.Value : null,
+                a.Bill.BillId.Value,
+                a.OrderTransaction.Amount.Value,
+                a.OrderId.Value,
+                a.OrderDetails!.Select(b => new OrderDetailResponse(
+                    b.OrderDetailId.Value,
+                    b.ProductVariantId.Value,
+                    b.ProductVariant!.Product!.ProductName.Value,
+                    b.ProductVariant.VariantName.Value,
+                    b.ProductVariant.ColorCode.Value,
+                    b.ProductVariant.ProductVariantPrice.Value,
+                    b.Quantity.Value,
+                    b.ProductVariant.ImageUrl ?? string.Empty,
+                    b.UnitPrice.Value
+                )).ToArray()
+            )).FirstOrDefaultAsync();
     }
 }

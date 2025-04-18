@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
+using QuestPDF.Infrastructure;
 using Serilog;
 using SharedKernel.Constants;
 
@@ -21,6 +22,10 @@ var builder = WebApplication.CreateBuilder(args);
 //TODO: Move to external file
 //Cấu hình Authen và Author
 #region Need to move to external file
+
+// Configure QuestPDF
+QuestPDF.Settings.License = LicenseType.Community;
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -176,6 +181,7 @@ app.UseAuthorization();
 app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // Add static files middleware
 
 // app.UseRouting();
 

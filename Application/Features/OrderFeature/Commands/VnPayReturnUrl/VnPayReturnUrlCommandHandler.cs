@@ -11,7 +11,7 @@ using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.VnPayReturnUrl;
 
-internal sealed class VnPayReturnUrlCommandHandler : ICommandHandler<VnPayReturnUrlCommand>
+internal sealed class VnPayReturnUrlCommandHandler : ICommandHandler<VnPayReturnUrlCommand, Guid>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IVoucherRepository _voucherRepository;
@@ -26,13 +26,13 @@ internal sealed class VnPayReturnUrlCommandHandler : ICommandHandler<VnPayReturn
         _voucherRepository = voucherRepository;
     }
 
-    public async Task<Result> Handle(VnPayReturnUrlCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(VnPayReturnUrlCommand request, CancellationToken cancellationToken)
     {
         var orderTransactionId = OrderTransactionId.FromGuid(request.OrderTransactionId);
         var orderTransaction = await _orderRepository.GetOrderTransactionById(orderTransactionId);
         if (orderTransaction is null)
         {
-            return Result.Failure(OrderError.TransactionNotFound(orderTransactionId));
+            return Result.Failure<Guid>(OrderError.TransactionNotFound(orderTransactionId));
         }
 
         orderTransaction.ChangeTransactionStatus(TransactionStatus.Completed);
@@ -54,10 +54,10 @@ internal sealed class VnPayReturnUrlCommandHandler : ICommandHandler<VnPayReturn
 
             voucher.ChangeCustomerVoucherQuantity(CustomerVoucherQuantity.FromInt(voucher.Quantity.Value - 1));
             await _unitOfWork.SaveChangesAsync();
-            return Result.Success();
+            return Result.Success(orderTransaction.Order.OrderId.Value);
         }
 
         await _unitOfWork.SaveChangesAsync();
-        return Result.Success();
+        return Result.Success(orderTransaction.Order.OrderId.Value);
     }
 }

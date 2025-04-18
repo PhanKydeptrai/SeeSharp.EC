@@ -12,7 +12,7 @@ using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.PayOrderWithCOD;
 
-internal sealed class PayOrderWithCODCommandHandler : ICommandHandler<PayOrderWithCODCommand>
+internal sealed class PayOrderWithCODCommandHandler : ICommandHandler<PayOrderWithCODCommand, Guid>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IVoucherRepository _voucherRepository;
@@ -27,18 +27,18 @@ internal sealed class PayOrderWithCODCommandHandler : ICommandHandler<PayOrderWi
         _voucherRepository = voucherRepository;
     }
 
-    public async Task<Result> Handle(PayOrderWithCODCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(PayOrderWithCODCommand request, CancellationToken cancellationToken)
     {
         var orderId = OrderId.FromGuid(request.OrderId);
         var order = await _orderRepository.GetOrderById(orderId);
         if (order is null)
         {
-            return Result.Failure(OrderError.OrderNotFound(orderId));
+            return Result.Failure<Guid>(OrderError.OrderNotFound(orderId));
         }
 
         if (order!.OrderTransaction is null)
         {
-            return Result.Failure<string>(OrderError.TransactionNotCreated(order.CustomerId));
+            return Result.Failure<Guid>(OrderError.TransactionNotCreated(order.CustomerId));
         }
 
         order.OrderTransaction!.ChangeTransactionStatus(TransactionStatus.Completed);
@@ -61,11 +61,11 @@ internal sealed class PayOrderWithCODCommandHandler : ICommandHandler<PayOrderWi
 
             voucher.ChangeCustomerVoucherQuantity(CustomerVoucherQuantity.FromInt(voucher.Quantity.Value - 1));
             await _unitOfWork.SaveChangesAsync();
-            return Result.Success();
+            return Result.Success(order.OrderId.Value);
         }
 
         await _unitOfWork.SaveChangesAsync();
-        return Result.Success();
+        return Result.Success(order.OrderId.Value);
     }
 
 }

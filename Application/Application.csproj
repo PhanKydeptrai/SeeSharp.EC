@@ -18,6 +18,7 @@
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Folder Include="Features\BillFeature\Commands\" />
 	  <Folder Include="Features\EmployeeFeature\Queries\" />
 	  <Folder Include="Features\ShippingInformationFeature\Commands\" />
 	</ItemGroup>

@@ -371,7 +371,8 @@ public sealed class OrdersController : ControllerBase
     public async Task<IResult> PayorderWithCOD([FromRoute] Guid orderId)
     { 
         var result = await _sender.Send(new PayOrderWithCODCommand(orderId));
-        return result.Match(Results.NoContent, CustomResults.Problem);
+        
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
 
     /// <summary>
@@ -411,9 +412,9 @@ public sealed class OrdersController : ControllerBase
         var result = await _sender.Send(new VnPayReturnUrlCommand(Guid.Parse(model.vnp_TxnRef)));
         if (result.IsSuccess)
         {
-            return Results.Redirect("https://localhost:7115/payment-success");
+            return Results.Redirect($"https://localhost:7115/payment-success/{result.Value}");
         }
-        return Results.Redirect("https://localhost:7115/payment-failed");
+        return Results.Redirect($"https://localhost:7115/payment-failed/{result.Value}");
     }
     #endregion
 

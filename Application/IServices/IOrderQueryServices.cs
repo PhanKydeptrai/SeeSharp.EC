@@ -1,5 +1,7 @@
+using Application.DTOs.Bills;
 using Application.DTOs.Order;
 using Application.Features.Pages;
+using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Orders;
 
@@ -58,4 +60,11 @@ public interface IOrderQueryServices
         int? page,
         int? pageSize);
     Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId);
+
+    /// <summary>
+    /// Lấy thông tin hóa đơn theo BillId
+    /// </summary>
+    /// <param name="billId"></param>
+    /// <returns></returns>
+    Task<BillResponse?> GetBillByBillId(BillId billId);
 }
