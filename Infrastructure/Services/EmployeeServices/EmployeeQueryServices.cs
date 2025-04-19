@@ -121,11 +121,11 @@ public class EmployeeQueryServices : IEmployeeQueryServices
         {
             query = query.Where(e => e.UserReadModel.UserStatus == (UserStatus)Enum.Parse(typeof(UserStatus), statusFilter));
         }
-        else
-        {
-            // By default, exclude deleted employees
-            query = query.Where(e => e.UserReadModel.UserStatus != UserStatus.Deleted);
-        }
+        // else
+        // {
+        //     // By default, exclude deleted employees
+        //     query = query.Where(e => e.UserReadModel.UserStatus != UserStatus.Deleted);
+        // }
         
         // Filter by role
         if (!string.IsNullOrEmpty(roleFilter))

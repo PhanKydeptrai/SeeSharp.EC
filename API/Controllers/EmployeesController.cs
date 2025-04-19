@@ -294,7 +294,7 @@ public class EmployeesController : ControllerBase
     /// <param name="newStatus">Trạng thái mới (Active, InActive, Deleted, Blocked)</param>
     /// <returns></returns>
     [HttpPut("{employeeId:guid}/status")]
-    [AuthorizeByRole(AuthorizationPolicies.Admin)]
+    [AuthorizeByRole(AuthorizationPolicies.AdminOnly)]
     //[ApiKey]
     public async Task<IResult> UpdateEmployeeStatus(
         [FromRoute] Guid employeeId,
@@ -318,7 +318,7 @@ public class EmployeesController : ControllerBase
     /// <returns>Danh sách nhân viên phân trang</returns>
     [HttpGet]
     [EndpointName(EndpointName.Employee.GetAll)]
-    [AuthorizeByRole(AuthorizationPolicies.Admin)]
+    [AuthorizeByRole(AuthorizationPolicies.AdminOnly)]
     //[ApiKey]
     public async Task<IResult> GetAllEmployees(
         [FromQuery] string? statusFilter = null,

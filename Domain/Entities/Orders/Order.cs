@@ -87,6 +87,10 @@ public sealed class Order
         PaymentStatus = paymentStatus;
     }
 
+    public void Cancel()
+    {
+        OrderStatus = OrderStatus.Cancelled;
+    }
     public void ChangeOrderStatus(OrderStatus orderStatus)
     {
         OrderStatus = orderStatus;

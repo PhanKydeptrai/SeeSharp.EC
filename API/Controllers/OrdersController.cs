@@ -23,6 +23,8 @@ using Application.Features.OrderFeature.Commands.VnPayReturnUrl;
 using Application.Features.OrderFeature.Queries.GetOrderHistoryForCustomer;
 using Application.Features.OrderFeature.Commands.PayOrderWithCOD;
 using Application.Features.OrderFeature.Queries.GetOrderHistoryByOrderId;
+using Microsoft.AspNetCore.Authorization;
+using Application.Features.OrderFeature.Commands.CancelOrder;
 
 namespace API.Controllers;
 
@@ -129,7 +131,7 @@ public sealed class OrdersController : ControllerBase
     // Usecase 1: Admin want to see the details of an order. | Requires Admin Role and Order Status is not "New"
 
     [HttpGet("{orderId:guid}", Name = EndpointName.Order.GetOrderByOrderId)]
-    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    // [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
     public async Task<IResult> GetOrderByOrderId(
         [FromRoute] Guid orderId)
     {
@@ -171,7 +173,7 @@ public sealed class OrdersController : ControllerBase
     /// <param name="pageSize"></param>
     /// <returns></returns>
     [HttpGet("admin", Name = EndpointName.Order.GetAllOrderForAdmin)]
-    [AuthorizeByRole(AuthorizationPolicies.Admin)]
+    [AuthorizeByRole(AuthorizationPolicies.AdminOnly)]
     public async Task<IResult> GetAllOrderForAdmin(
         [FromQuery] string? statusFilter,
         [FromQuery] string? customerFilter,
@@ -191,6 +193,27 @@ public sealed class OrdersController : ControllerBase
             pageSize));
 
         return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Huỷ đơn hàng
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    [HttpDelete("{orderId:guid}/cancel")]
+    [Authorize]
+    public async Task<IResult> OrderCancel([FromRoute] Guid orderId)
+    {
+        var result = await _sender.Send(new CancelOrderCommand(orderId));
+        return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    [HttpPatch("{orderId:guid}/order-status")]
+    [Authorize]
+    public async Task<IResult> ChangeOrderStatus([FromRoute] Guid orderId)
+    {
+        var result = await _sender.Send(new CancelOrderCommand(orderId));
+        return result.Match(Results.NoContent, CustomResults.Problem);
     }
 
     /// <summary>

@@ -26,7 +26,7 @@ internal sealed class CreateNewEmployeeCommandValidator : AbstractValidator<Crea
             .NotEmpty()
             .WithErrorCode("PhoneNumber.Required")
             .WithMessage("PhoneNumber is required.")
-            .Matches(@"^\+?[1-9]\d{1,14}$")
+            .Matches(@"^0\d{9}$")
             .WithErrorCode("PhoneNumber.Invalid")
             .WithMessage("PhoneNumber is not valid.");
 

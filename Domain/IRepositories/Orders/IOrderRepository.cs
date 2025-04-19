@@ -43,7 +43,13 @@ public interface IOrderRepository
     /// <param name="orderDetailId"></param>
     /// <returns></returns>
     Task<OrderDetail?> GetOrderDetailById(OrderDetailId orderDetailId);
-
+    
+    /// <summary>
+    /// Huỷ đơn hàng
+    /// </summary>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    Task CancelOrder(Order order);
     /// <summary>
     /// Lấy danh sách order detail theo orderId
     /// </summary>

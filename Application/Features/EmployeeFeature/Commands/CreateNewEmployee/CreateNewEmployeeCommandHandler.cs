@@ -41,6 +41,12 @@ internal sealed class CreateNewEmployeeCommandHandler : ICommandHandler<CreateNe
 
     public async Task<Result> Handle(CreateNewEmployeeCommand request, CancellationToken cancellationToken)
     {
+        var userExists = await _employeeRepository.IsEmployeeExist(Email.NewEmail(request.Email));
+        if (userExists is not null)
+        {
+            return Result.Failure(new Error("UserAlreadyExists", "User with this email already exists.", ErrorType.Problem));
+        }
+    
         var randomPassword = _tokenProvider.GenerateRandomString(8);
 
         var user = User.NewUser(

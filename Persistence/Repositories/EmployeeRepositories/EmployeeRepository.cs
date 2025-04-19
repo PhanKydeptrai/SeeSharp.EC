@@ -25,4 +25,11 @@ internal sealed class EmployeeRepository : IEmployeeRepository
             .Include(e => e.User)
             .FirstOrDefaultAsync(e => e.UserId == userId);
     }
+
+    public async Task<Employee?> IsEmployeeExist(Email email)
+    {
+        return await _postgreSQLDbContext.Employees
+            .Include(e => e.User)
+            .FirstOrDefaultAsync(e => e.User!.Email == email);
+    }
 }

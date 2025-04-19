@@ -64,8 +64,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
             return (null, null, Result.Failure(CategoryErrors.NotFound(categoryId)));
         }
 
-        //TODO: Xử lý ảnh
-        //--------------------
+        
         //Xử lý lưu 
         string imageUrl = string.Empty;
         if (command.ProductImage != null)

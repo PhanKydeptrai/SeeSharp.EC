@@ -107,4 +107,11 @@ internal sealed class OrderRepository : IOrderRepository
             .Include(a => a.Order)
             .FirstOrDefaultAsync(x => x.OrderTransactionId == orderTransactionId);  
     }
+
+    public async Task CancelOrder(Order order)
+    {
+        await _postgreSQLWriteDbContext.Orders
+            .Where(x => x.OrderId == order.OrderId)
+            .ExecuteUpdateAsync(x => x.SetProperty(a => a.OrderStatus, OrderStatus.Cancelled));
+    }
 }

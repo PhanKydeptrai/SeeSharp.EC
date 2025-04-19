@@ -164,10 +164,10 @@ internal sealed class ProductQueryServices : IProductQueryServices
         }
 
         //Filter by CategoryId
-        if (!string.IsNullOrWhiteSpace(filterCategory) && Ulid.TryParse(filterCategory, out var _))
+        if (!string.IsNullOrWhiteSpace(filterCategory))
         {
-            productsQuery = productsQuery.Where(
-                x => x.CategoryId == Ulid.Parse(filterCategory));
+            var id = new Guid(filterCategory);
+            productsQuery = productsQuery.Where(x => x.CategoryId == new Ulid(id));
         }
 
         //sort

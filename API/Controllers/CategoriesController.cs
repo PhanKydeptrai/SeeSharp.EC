@@ -139,7 +139,7 @@ public sealed class CategoriesController : ControllerBase
     public async Task<IResult> UpdateCategory(
         [FromRoute] Guid categoryId, 
         [FromForm] string categoryName, 
-        [FromForm] IFormFile? image)
+        IFormFile? image)
     {
         var result = await _sender.Send(new UpdateCategoryCommand(categoryId, categoryName, image));
         return result.Match(Results.NoContent, CustomResults.Problem);

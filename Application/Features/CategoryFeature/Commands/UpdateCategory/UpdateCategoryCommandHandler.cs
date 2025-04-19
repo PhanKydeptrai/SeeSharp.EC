@@ -17,7 +17,7 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
     }
-    //FLOW: Get category by id from database -> Update category -> Add Outbox message -> Commit -> Publish event
+
     public async Task<Result> Handle(
         UpdateCategoryCommand request,
         CancellationToken cancellationToken)
@@ -51,10 +51,6 @@ public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComman
     private void UpdateCategory(Category category, UpdateCategoryCommand request)
     {
         //TODO: Xử lý ảnh
-        //--------------------
-
-
-        //--------------------
         category.Update(
                 CategoryName.FromString(request.categoryName),
                 category.CategoryStatus,
