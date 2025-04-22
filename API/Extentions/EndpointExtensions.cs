@@ -1,34 +1,34 @@
-﻿using API.Endpoints;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Reflection;
+﻿// using API.Endpoints;
+// using Microsoft.Extensions.DependencyInjection.Extensions;
+// using System.Reflection;
 
-namespace API.Extentions;
+// namespace API.Extentions;
 
-public static class EndpointExtensions
-{
-    public static IServiceCollection AddEndpoints(this IServiceCollection services, Assembly assembly)
-    {
-        ServiceDescriptor[] serviceDescriptors = assembly
-            .DefinedTypes
-            .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                           type.IsAssignableTo(typeof(IEndpoint)))
-            .Select(type => ServiceDescriptor.Transient(typeof(IEndpoint), type))
-            .ToArray();
+// public static class EndpointExtensions
+// {
+//     public static IServiceCollection AddEndpoints(this IServiceCollection services, Assembly assembly)
+//     {
+//         ServiceDescriptor[] serviceDescriptors = assembly
+//             .DefinedTypes
+//             .Where(type => type is { IsAbstract: false, IsInterface: false } &&
+//                            type.IsAssignableTo(typeof(IEndpoint)))
+//             .Select(type => ServiceDescriptor.Transient(typeof(IEndpoint), type))
+//             .ToArray();
 
-        services.TryAddEnumerable(serviceDescriptors);
+//         services.TryAddEnumerable(serviceDescriptors);
 
-        return services;
-    }
+//         return services;
+//     }
 
-    public static IApplicationBuilder MapEndpoints(this WebApplication app)
-    {
-        IEnumerable<IEndpoint> endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
+//     public static IApplicationBuilder MapEndpoints(this WebApplication app)
+//     {
+//         IEnumerable<IEndpoint> endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
 
-        foreach (IEndpoint endpoint in endpoints)
-        {
-            endpoint.MapEndpoint(app);
-        }
+//         foreach (IEndpoint endpoint in endpoints)
+//         {
+//             endpoint.MapEndpoint(app);
+//         }
 
-        return app;
-    }
-}
+//         return app;
+//     }
+// }

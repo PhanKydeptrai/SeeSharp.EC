@@ -41,14 +41,31 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         CustomerSignInCommand request,
         CancellationToken cancellationToken)
     {
+        using var transaction = await _unitOfWork.BeginPostgreSQLTransaction();
         var (response, failure) = await IsSignInSuccess(request);
         if (failure is not null) return Result.Failure<CustomerSignInResponse>(failure.Error);
 
         #region Đồng bộ giỏ hàng giữa guest và customer
+        
+        // //Lấy giỏ hàng của guest
         // var orderInfo = await _orderRepository.GetWaitingOrderByCustomerId(CustomerId.FromGuid(request.GuestId));
+        // //Lấy thông tin khách hàng bằng email
+        // var customerInfo = await _customerQueryServices.GetCustomerByEmail(Email.NewEmail(request.Email));
+        // //Lấy thông tin giỏ hàng của customer
+        // var orderInfoCustomer = await _orderRepository.GetWaitingOrderByCustomerId(CustomerId.FromUlid(customerInfo!.CustomerId));
+        // //Kiểm tra xem giỏ hàng của guest có tồn tại hay không
         // if(orderInfo is not null && orderInfo.OrderDetails is not null)
         // {
-
+        //     if(orderInfoCustomer is not null) //Customer đã có giỏ hàng
+        //     {
+        //         //Dời order detail của guest sang order customer
+        //         await _orderRepository.MergeOrder(orderInfo, orderInfoCustomer);
+        //     }
+        //     else if(orderInfoCustomer is null) //Customer chưa có giỏ hàng
+        //     {
+        //         //Dời order sang cho customer
+        //         orderInfo.ChangeCustomerId(CustomerId.FromUlid(customerInfo!.CustomerId));
+        //     }
         // }
         #endregion
 
@@ -73,7 +90,8 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);
 
         await _unitOfWork.SaveChangesAsync();
-
+        
+        transaction.Commit();
         return Result.Success(new CustomerSignInResponse(accessToken, refreshToken));
     }
 

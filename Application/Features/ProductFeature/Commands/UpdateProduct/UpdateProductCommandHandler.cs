@@ -40,41 +40,41 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
             string newImageUrl = string.Empty;
             // if (request.ProductImage != null)
             // {
-                //tạo memory stream từ file ảnh
-                var memoryStream = new MemoryStream();
-                await request.ProductImage.CopyToAsync(memoryStream);
-                memoryStream.Position = 0;
+            //tạo memory stream từ file ảnh
+            var memoryStream = new MemoryStream();
+            await request.ProductImage.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
 
+            //Upload ảnh lên cloudinary
+            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.ProductImage.FileName);
+            newImageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
+
+            //Log                                              
+            Console.WriteLine(resultUpload.JsonObj);
+
+            UpdateProduct(product, request, newImageUrl);
+
+            //Xóa ảnh cũ
+            if (oldimageUrl != "")
+            {
                 //Upload ảnh lên cloudinary
-                var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.ProductImage.FileName);
-                newImageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
+                var resultDelete = await _cloudinaryService.DeleteAsync(oldimageUrl);
+                //Log
+                Console.WriteLine(resultDelete.JsonObj);
+            }
 
-                //Log                                              
-                Console.WriteLine(resultUpload.JsonObj);
+            var baseVariant = product.ProductVariants!.FirstOrDefault(a => a.IsBaseVariant == IsBaseVariant.True);
 
-                UpdateProduct(product, request, newImageUrl);
+            baseVariant!.Update(
+                baseVariant.VariantName,
+                ProductVariantPrice.FromDecimal(request.ProductPrice),
+                ColorCode.FromString(request.ColorCode),
+                ProductVariantDescription.FromString(request.Description),
+                newImageUrl,
+                IsBaseVariant.True);
 
-                //Xóa ảnh cũ
-                if (oldimageUrl != "")
-                {
-                    //Upload ảnh lên cloudinary
-                    var resultDelete = await _cloudinaryService.DeleteAsync(oldimageUrl);
-                    //Log
-                    Console.WriteLine(resultDelete.JsonObj);
-                }
-
-                var baseVariant = product.ProductVariants!.FirstOrDefault(a => a.IsBaseVariant == IsBaseVariant.True);
-
-                baseVariant!.Update(
-                    baseVariant.VariantName,
-                    ProductVariantPrice.FromDecimal(request.ProductPrice),
-                    ColorCode.FromString(request.ColorCode),
-                    ProductVariantDescription.FromString(request.Description),
-                    newImageUrl,
-                    IsBaseVariant.True);
-
-                await _unitOfWork.SaveChangesAsync();
-                return Result.Success();
+            await _unitOfWork.SaveChangesAsync();
+            return Result.Success();
             // }
 
 

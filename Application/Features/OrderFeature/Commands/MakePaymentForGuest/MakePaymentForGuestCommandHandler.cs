@@ -34,7 +34,7 @@ internal sealed class MakePaymentForGuestCommandHandler : ICommandHandler<MakePa
     public async Task<Result> Handle(MakePaymentForGuestCommand request, CancellationToken cancellationToken)
     {
         var customerId = CustomerId.FromGuid(request.GuestId);
-        var orderInformation = await _orderRepository.GetOrderByCustomerId(customerId);
+        var orderInformation = await _orderRepository.GetWaitingOrderByCustomerId(customerId);
 
         if (orderInformation is null) //Không có đơn hàng nào
         {

@@ -1,4 +1,5 @@
 using Application.DTOs.Customer;
+using Application.Features.Pages;
 using Domain.Entities.Customers;
 using Domain.Entities.Users;
 
@@ -21,5 +22,14 @@ public interface ICustomerQueryServices
 
     Task<bool> IsCustomerAccountExist(Email email, CancellationToken cancellationToken = default);
     Task<CustomerProfileResponse?> GetCustomerProfileById(UserId userId);
-    
+    Task<PagedList<CustomerProfileResponse>> GetAllCustomerProfile(
+        string? statusFilter,
+        string? customerTypeFilter,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize);
+
+
 }

@@ -29,7 +29,7 @@ public class VouchersController : ControllerBase
     /// <returns>Success or error result</returns>
     [HttpPost(Name = EndpointName.Voucher.Create)]
     [AuthorizeByRole(AuthorizationPolicies.AdminOnly)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> CreateVoucher([FromBody] CreateNewVoucherCommand command)
     {
         var result = await _sender.Send(command);
@@ -43,7 +43,7 @@ public class VouchersController : ControllerBase
     /// <returns>The voucher details</returns>
     [HttpGet("{voucherId:guid}", Name = EndpointName.Voucher.GetById)]
     [AuthorizeByRole(AuthorizationPolicies.AdminOnly)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> GetVoucherById(Guid voucherId)
     {
         var result = await _sender.Send(new GetVoucherByIdQuery(voucherId));
@@ -63,7 +63,7 @@ public class VouchersController : ControllerBase
     /// <returns>Paged list of vouchers</returns>
     [HttpGet(Name = EndpointName.Voucher.GetAll)]
     [AuthorizeByRole(AuthorizationPolicies.AdminOnly)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> GetAllVouchers(
         [FromQuery] string? voucherTypeFilter,
         [FromQuery] string? statusFilter,
@@ -98,7 +98,7 @@ public class VouchersController : ControllerBase
     /// <returns>Paged list of customer vouchers</returns>
     [HttpGet("customer", Name = EndpointName.Voucher.GetAllForCustomer)]
     [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
-    [ApiKey]
+    //[ApiKey]
     public async Task<IResult> GetAllCustomerVouchers(
         [FromQuery] string? voucherTypeFilter,
         [FromQuery] string? statusFilter,

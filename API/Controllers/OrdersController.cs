@@ -224,7 +224,8 @@ public sealed class OrdersController : ControllerBase
     //[ApiKey]
     [HttpPost("make-payment")]
     [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
-    public async Task<IResult> MakePaymentForSubscriber([FromBody] MakePaymentForSubscriberRequest request)
+    public async Task<IResult> MakePaymentForSubscriber(
+        [FromBody] MakePaymentForSubscriberRequest request)
     {
         string? token = TokenExtentions.GetTokenFromHeader(HttpContext);
         var claims = TokenExtentions.DecodeJwt(token!);

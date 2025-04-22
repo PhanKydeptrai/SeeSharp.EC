@@ -339,7 +339,7 @@ internal sealed class OrderQueryServices : IOrderQueryServices
             .Where(a => a.Bill!.OrderId == orderId && a.OrderStatus != OrderStatus.Waiting)
             .Select(a => new BillResponse(
                 a.CustomerId.Value,
-                a.Customer!.User!.UserName.Value,
+                a.Customer!.User!.UserName.Value != string.Empty ? a.Customer.User.UserName!.Value : a.Bill!.ShippingInformation.FullName.Value,
                 a.Customer.User.Email!.Value,
                 a.Bill!.ShippingInformation.PhoneNumber!.Value,
                 a.Bill!.ShippingInformation.SpecificAddress.Value,

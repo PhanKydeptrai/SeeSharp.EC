@@ -95,5 +95,10 @@ public sealed class Order
     {
         OrderStatus = orderStatus;
     }
+
+    public void ChangeCustomerId(CustomerId customerId)
+    {
+        CustomerId = customerId;
+    }
 }
 

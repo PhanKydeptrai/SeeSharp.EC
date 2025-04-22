@@ -1,5 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using API.Extentions;
 using API.Infrastructure;
 using API.Infrastructure.Authorization;
@@ -16,7 +14,9 @@ using Application.Features.CustomerFeature.Commands.CustomerVerifyEmail;
 using Application.Features.CustomerFeature.Commands.GenerateGuestToken;
 using Application.Features.CustomerFeature.Commands.RevokeAllCustomerRefreshTokens;
 using Application.Features.CustomerFeature.Commands.UpdateCustomerProfile;
+using Application.Features.CustomerFeature.Queries.GetAllCustomer;
 using Application.Features.CustomerFeature.Queries.GetCustomerProfile;
+using Application.Features.CustomerFeature.Queries.GetCustomerProfileById;
 using AspNet.Security.OAuth.Discord;
 using AspNet.Security.OAuth.GitHub;
 using MediatR;
@@ -26,6 +26,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace API.Controllers;
 
@@ -46,14 +48,14 @@ public sealed class CustomersController : ControllerBase
     /// <returns></returns>
     [HttpPost("signin", Name = EndpointName.Customer.SignIn)]
     // [AuthorizeByRole(AuthorizationPolicies.Guest)]
-    // //[ApiKey]
-    public async Task<IResult> SignIn([FromBody] CustomerSignInCommand request)
+    // [ApiKey]
+    public async Task<IResult> SignIn(
+        [FromBody] CustomerSignInRequest request)
     {
-        // string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
-        // var claims = TokenExtentions.DecodeJwt(token);
-        // claims.TryGetValue(CustomJwtRegisteredClaimNames.GuestId, out var guestId);
-        // var result = await _sender.Send(new CustomerSignInCommand(request.Email, request.Password, Guid.Parse(guestId!)));
-        var result = await _sender.Send(request);
+        var result = await _sender.Send(new CustomerSignInCommand(
+            request.Email,
+            request.Password));
+
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
@@ -62,8 +64,8 @@ public sealed class CustomersController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet("profile", Name = EndpointName.Customer.GetProfile)]
-    [Authorize]
-    // //[ApiKey]
+    [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    //[ApiKey]
     public async Task<IResult> GetCustomerProfile()
     {
         string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
@@ -110,7 +112,11 @@ public sealed class CustomersController : ControllerBase
     public async Task<IResult> CustomerConfirmChangePassword([FromRoute] Guid verificationTokenId)
     {
         var result = await _sender.Send(new CustomerConfirmResetPasswordCommand(verificationTokenId));
-        return result.Match(Results.NoContent, CustomResults.Problem);
+        if (result.IsFailure)
+        {
+            return Results.Redirect("https://localhost:7115/password-reset-failed");
+        }
+        return Results.Redirect("https://localhost:7115/password-reset-success");
     }
 
     /// <summary>
@@ -123,7 +129,11 @@ public sealed class CustomersController : ControllerBase
     public async Task<IResult> CustomerVerifyEmail([FromRoute] Guid verificationTokenId)
     {
         var result = await _sender.Send(new CustomerVerifyEmailCommand(verificationTokenId));
-        return result.Match(Results.NoContent, CustomResults.Problem);
+        if (result.IsFailure)
+        {
+            return Results.Redirect("https://localhost:7115/authentication-failed");
+        }
+        return Results.Redirect("https://localhost:7115/authentication-success");
     }
 
     /// <summary>
@@ -159,7 +169,11 @@ public sealed class CustomersController : ControllerBase
     public async Task<IResult> ChangePasswordConfirm([FromRoute] Guid verificationTokenId)
     {
         var result = await _sender.Send(new CustomerConfirmChangePasswordCommand(verificationTokenId));
-        return result.Match(Results.NoContent, CustomResults.Problem);
+        if (result.IsFailure)
+        {
+            return Results.Redirect("https://localhost:7115/change-password-success");
+        }
+        return Results.Redirect("https://localhost:7115/change-password-failed");
     }
 
     /// <summary>
@@ -168,7 +182,6 @@ public sealed class CustomersController : ControllerBase
     /// <param name="command"></param>
     /// <returns></returns>
     [HttpGet("refresh-token", Name = EndpointName.Customer.SignInWithRefreshToken)]
-    [AuthorizeByRole(AuthorizationPolicies.Guest)]
     //[ApiKey]
     public async Task<IResult> SignInWithRefreshToken([FromBody] CustomerSignInWithRefreshTokenCommand command)
     {
@@ -259,19 +272,6 @@ public sealed class CustomersController : ControllerBase
         var result = await _sender.Send(new RevokeAllCustomerRefreshTokensCommand(new Guid(sub!)));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
-
-    /// <summary>
-    /// Cho phép khách hàng đăng nhập bằng tài khoản Google
-    /// </summary>
-    /// <param name="token"></param>
-    /// <returns></returns>
-    // [HttpPost("google-login/{token}")]
-    // //[ApiKey]
-    // public async Task<IResult> SignInWithGoogle([FromRoute] string token)
-    // {
-    //     var result = await _sender.Send(new CustomerSignInWithGoogleCommand(token));
-    //     return result.Match(Results.Ok, CustomResults.Problem);
-    // }
 
     /// <summary>
     /// Cho phép client lấy guest token
@@ -380,7 +380,8 @@ public sealed class CustomersController : ControllerBase
     public async Task<IResult> ExternalLoginCallbackForDiscord([FromQuery] string? code)
     {
 
-        var authenticationResult = await HttpContext.AuthenticateAsync(DiscordAuthenticationDefaults.AuthenticationScheme);
+        var authenticationResult = await HttpContext
+            .AuthenticateAsync(DiscordAuthenticationDefaults.AuthenticationScheme);
 
         if (!authenticationResult.Succeeded)
         {
@@ -472,6 +473,43 @@ public sealed class CustomersController : ControllerBase
         var result = await _sender.Send(command);
         return result.Match(Results.NoContent, CustomResults.Problem);
 
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IResult> GetAllCustomerProfile(
+        [FromQuery] string? statusFilter,
+        [FromQuery] string? customerTypeFilter,
+        [FromQuery] string? searchTerm,
+        [FromQuery] string? sortColumn,
+        [FromQuery] string? sortOrder,
+        [FromQuery] int? page,
+        [FromQuery] int? pageSize)
+    {
+        var result = await _sender.Send(
+            new GetAllCustomerQuery(
+                statusFilter, 
+                customerTypeFilter, 
+                searchTerm, 
+                sortColumn, 
+                sortOrder, 
+                page, 
+                pageSize));
+
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Lấy thông tin chi tiết của khách hàng theo ID
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    [HttpGet("{userId:guid}")]
+    [AuthorizeByRole(AuthorizationPolicies.AllEmployee)]
+    public async Task<IResult> GetCustomerProfileById([FromRoute] Guid userId)
+    {
+        var result = await _sender.Send(new GetCustomerProfileByIdQuery(userId));
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
 
 }

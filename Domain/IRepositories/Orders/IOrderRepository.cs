@@ -86,6 +86,14 @@ public interface IOrderRepository
     // Task SyncCartForCustomer(OrderId orderId, CustomerId customerId);
     // Task<Order?> GetOrderByGuestId(CustomerId customerId);
     void DeleteOrderDetail(OrderDetail orderDetail);
+
+    /// <summary>
+    /// Gộp giỏ hàng của khách hàng(Customer) và khách vãng lai(Guest) 
+    /// </summary>
+    /// <param name="guestOrder">Order Của guest</param>
+    /// <param name="orderCustomer">Order của khách hàng</param>
+    /// <returns></returns>
+    Task MergeOrder(Order guestOrder, Order orderCustomer);
 }
 
 

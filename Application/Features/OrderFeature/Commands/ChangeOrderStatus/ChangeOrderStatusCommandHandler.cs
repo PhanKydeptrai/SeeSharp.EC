@@ -28,11 +28,19 @@ internal sealed class ChangeOrderStatusCommandHandler : ICommandHandler<ChangeOr
             return Result.Failure(new Error("OrderNotFound", "Order not found.", ErrorType.NotFound));
         }
 
-        if (order.OrderStatus == OrderStatus.New)
+        if (order.OrderStatus == OrderStatus.Cancelled)
         {
             return Result.Failure(new Error(
-                "OrderNotInNew", 
-                "Order is not in new status.", 
+                "OrderCancelled",
+                "Order is cancelled.",
+                ErrorType.Problem));
+        }
+
+        if (order.OrderStatus == OrderStatus.Waiting)
+        {
+            return Result.Failure(new Error(
+                "Order.IsWaiting",
+                "Order is waiting.",
                 ErrorType.Problem));
         }
 
@@ -42,6 +50,13 @@ internal sealed class ChangeOrderStatusCommandHandler : ICommandHandler<ChangeOr
                 "OrderAlreadyDelivered", 
                 "Order is already delivered.", 
                 ErrorType.Problem));
+        }
+
+        if (order.OrderStatus == OrderStatus.New)
+        {
+            order.ChangeOrderStatus(OrderStatus.Processing);
+            await _unitOfWork.SaveChangesAsync();
+            return Result.Success();
         }
 
         if (order.OrderStatus == OrderStatus.Processing)
@@ -66,8 +81,6 @@ internal sealed class ChangeOrderStatusCommandHandler : ICommandHandler<ChangeOr
         //         "Order is shipped.", 
         //         ErrorType.Problem));
         // }
-
-        await _unitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 }

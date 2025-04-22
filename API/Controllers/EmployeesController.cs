@@ -108,7 +108,11 @@ public class EmployeesController : ControllerBase
     public async Task<IResult> EmployeeConfirmResetPassword([FromRoute] Guid verificationTokenId)
     {
         var result = await _sender.Send(new EmployeeConfirmResetPasswordCommand(verificationTokenId));
-        return result.Match(Results.NoContent, CustomResults.Problem);
+        if (result.IsFailure)
+        {
+            return Results.Redirect("https://localhost:7259/password-reset-failed");
+        }
+        return Results.Redirect("https://localhost:7259/password-reset-success"); 
     }
 
     /// <summary>
@@ -143,7 +147,11 @@ public class EmployeesController : ControllerBase
     public async Task<IResult> EmployeeConfirmChangePassword([FromRoute] Guid verificationTokenId)
     {
         var result = await _sender.Send(new EmployeeConfirmChangePasswordCommand(verificationTokenId));
-        return result.Match(Results.NoContent, CustomResults.Problem);
+        if (result.IsFailure)
+        {
+            return Results.Redirect("https://localhost:7259/change-password-failed");
+        }
+        return Results.Redirect("https://localhost:7259/change-password-success");
     }
     
     /// <summary>

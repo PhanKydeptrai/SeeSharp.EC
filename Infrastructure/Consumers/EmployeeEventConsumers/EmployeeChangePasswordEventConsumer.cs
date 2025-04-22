@@ -47,9 +47,9 @@ internal sealed class EmployeeChangePasswordEventConsumer : IConsumer<EmployeeCh
         try
         {
             var email = _fluentEmail
-            .To(message.Email)
-            .Subject("Xác nhận thay đổi mật khẩu")
-            .Body($"<h1>Xin chào</h1><p>Để thay đổi mật khẩu, vui lòng nhấn vào <a href='{_emailVerificationLinkFactory.CreateLinkForEmployeeChangePassword(message.VerificationTokenId)}'>đường dẫn này</a></p>", isHtml: true);
+                .To(message.Email)
+                .Subject("Xác nhận thay đổi mật khẩu")
+                .Body($"<h1>Xin chào</h1><p>Để thay đổi mật khẩu, vui lòng nhấn vào <a href='{_emailVerificationLinkFactory.CreateLinkForEmployeeChangePassword(message.VerificationTokenId)}'>đường dẫn này</a></p>", isHtml: true);
 
             await email.SendAsync();
 

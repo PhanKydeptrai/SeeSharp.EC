@@ -5,6 +5,7 @@ using Application.Features.ProductFeature.Commands.CreateProductVariant;
 using Application.Features.ProductFeature.Commands.DeleteProduct;
 using Application.Features.ProductFeature.Commands.DeleteVariant;
 using Application.Features.ProductFeature.Commands.RestoreProduct;
+using Application.Features.ProductFeature.Commands.RestoreVariant;
 using Application.Features.ProductFeature.Commands.UpdateProduct;
 using Application.Features.ProductFeature.Commands.UpdateProductVariant;
 using Application.Features.ProductFeature.Queries.GetAllProduct;
@@ -188,10 +189,10 @@ public sealed class ProductsController : ControllerBase
     {
         var command = new UpdateProductCommand(
             productId, 
-            productName, 
+            productName,
             productImage,
-            colorCode,
-            description, 
+            description,
+            colorCode, 
             productPrice, 
             categoryId);
         var result = await _sender.Send(command);
@@ -217,7 +218,7 @@ public sealed class ProductsController : ControllerBase
         [FromForm] string variantName,
         [FromForm] decimal productVariantPrice,
         [FromForm] string colorCode,
-        [FromForm] IFormFile? image,
+        IFormFile? image,
         [FromForm] string description,
         [FromForm] Guid productId,
         [FromForm] bool isBaseVariant)
@@ -318,7 +319,7 @@ public sealed class ProductsController : ControllerBase
     [EndpointName(EndpointName.Product.RestoreVariant)]
     public async Task<IResult> RestoreVariant([FromRoute] Guid variantId)
     {
-        var command = new DeleteVariantCommand(variantId);
+        var command = new RestoreVariantCommand(variantId);
         var result = await _sender.Send(command);
         return result.Match(Results.NoContent, CustomResults.Problem);
     }

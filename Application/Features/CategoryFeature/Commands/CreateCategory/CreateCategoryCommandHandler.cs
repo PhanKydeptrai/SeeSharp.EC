@@ -27,7 +27,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
 
     public async Task<Result<CategoryId>> Handle(
         CreateCategoryCommand request,
-    CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         // Xử lý ảnh
         //--------------------

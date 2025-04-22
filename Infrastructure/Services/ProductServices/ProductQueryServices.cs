@@ -132,6 +132,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                     b.ColorCode,
                     b.Description,
                     b.ProductVariantPrice,
+                    b.ProductVariantStatus.ToString(),
                     b.ImageUrl ?? string.Empty,
                     b.IsBaseVariant)).ToArray())).FirstOrDefaultAsync();
         #endregion
@@ -205,6 +206,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                     b.ColorCode,
                     b.Description,
                     b.ProductVariantPrice,
+                    b.ProductVariantStatus.ToString(),
                     b.ImageUrl ?? string.Empty,
                     b.IsBaseVariant)).ToArray())).AsQueryable();
             

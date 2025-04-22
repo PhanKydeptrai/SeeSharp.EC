@@ -96,7 +96,7 @@ internal sealed class OrderRepository : IOrderRepository
         return await _postgreSQLWriteDbContext.OrderTransactions
             .Include(a => a.Bill)
             .FirstOrDefaultAsync(
-                x => x.Bill!.CustomerId == customerId 
+                x => x.Bill!.CustomerId == customerId
                 && x.TransactionStatus == TransactionStatus.Pending);
     }
 
@@ -105,7 +105,7 @@ internal sealed class OrderRepository : IOrderRepository
         return await _postgreSQLWriteDbContext.OrderTransactions
             .Include(a => a.Bill)
             .Include(a => a.Order)
-            .FirstOrDefaultAsync(x => x.OrderTransactionId == orderTransactionId);  
+            .FirstOrDefaultAsync(x => x.OrderTransactionId == orderTransactionId);
     }
 
     public async Task CancelOrder(Order order)
@@ -113,5 +113,35 @@ internal sealed class OrderRepository : IOrderRepository
         await _postgreSQLWriteDbContext.Orders
             .Where(x => x.OrderId == order.OrderId)
             .ExecuteUpdateAsync(x => x.SetProperty(a => a.OrderStatus, OrderStatus.Cancelled));
+    }
+
+    public async Task MergeOrder(Order guestOrder, Order orderCustomer)
+    {
+        // foreach(var item in guestOrder.OrderDetails!)
+        // {
+        //     foreach(var itemCustomer in orderCustomer.OrderDetails!)
+        //     {
+        //         if(item.ProductVariantId == itemCustomer.ProductVariantId)
+        //         {
+        //             itemCustomer.Quantity += item.Quantity;
+        //             _postgreSQLWriteDbContext.OrderDetails.Remove(item);
+        //             break;
+        //         }
+        //     }
+        // }
+
+        // var orderDetailOfCustomer = orderCustomer.OrderDetails!.ToList();
+
+        // await _postgreSQLWriteDbContext.OrderDetails
+        //     .Where(a =>
+        //         a.OrderId == guestOrder.OrderId // Lấy OrderDetail của guest
+        //         && !orderDetailOfCustomer.Any(c => c.ProductVariantId == a.ProductVariantId) 
+        //         // Loại trừ các ProductVariantId đã tồn tại trong customer order
+        //     )
+        //     .ExecuteUpdateAsync(x => x.SetProperty(a => a.OrderId, orderCustomer.OrderId));
+
+        await _postgreSQLWriteDbContext.OrderDetails.Where(
+            a => a.OrderId == guestOrder.OrderId)
+            .ExecuteUpdateAsync(x => x.SetProperty(a => a.OrderId, orderCustomer.OrderId));
     }
 }

@@ -45,5 +45,6 @@ public record VariantResponse(
     string ColorCode,
     string Description,
     decimal Price,
+    string ProductVariantStatus,
     string? ImageUrl,
     bool IsBaseVariant);

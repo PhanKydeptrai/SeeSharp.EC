@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Application.Services;
 using Domain.Entities.ProductVariants;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
@@ -10,11 +11,16 @@ namespace Application.Features.ProductFeature.Commands.UpdateProductVariant;
 internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<UpdateProductVariantCommand>
 {
     private readonly IProductRepository _productRepository;
+    private readonly CloudinaryService _cloudinaryService;
     private readonly IUnitOfWork _unitOfWork;
-    public UpdateProductVariantCommandHandler(IProductRepository productRepository, IUnitOfWork unitOfWork)
+    public UpdateProductVariantCommandHandler(
+        IProductRepository productRepository, 
+        IUnitOfWork unitOfWork, 
+        CloudinaryService cloudinaryService)
     {
         _productRepository = productRepository;
         _unitOfWork = unitOfWork;
+        _cloudinaryService = cloudinaryService;
     }
 
     public async Task<Result> Handle(UpdateProductVariantCommand request, CancellationToken cancellationToken)
@@ -31,6 +37,54 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
         {
             return Result.Failure(ProductError.CannotUpdateBaseVariant(productVariantId));
         }
+        
+        
+        if (request.Image is not null)
+        {
+            string oldimageUrl = productVariant.ImageUrl!;
+            //Xử lý lưu ảnh mới
+            string newImageUrl = string.Empty;
+            //tạo memory stream từ file ảnh
+            var memoryStream = new MemoryStream();
+            await request.Image.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+
+            //Upload ảnh lên cloudinary
+            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.Image.FileName);
+            newImageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
+
+            //Log                                              
+            Console.WriteLine(resultUpload.JsonObj);
+
+            if (productVariant.IsBaseVariant == IsBaseVariant.False && request.IsBaseVariant == true)
+            {
+                var baseVariant = await _productRepository.GetBaseVariantOfProduct(productVariant.ProductId);
+                baseVariant.IsNotBase();
+
+                productVariant.Update(
+                    VariantName.FromString(request.VariantName),
+                    ProductVariantPrice.FromDecimal(request.ProductVariantPrice),
+                    ColorCode.FromString(request.ColorCode),
+                    ProductVariantDescription.FromString(request.Description),
+                    newImageUrl, 
+                    IsBaseVariant.FromBoolean(request.IsBaseVariant));
+
+                await _unitOfWork.SaveChangesAsync();
+                return Result.Success();
+            }
+
+            productVariant.Update(
+                VariantName.FromString(request.VariantName),
+                ProductVariantPrice.FromDecimal(request.ProductVariantPrice),
+                ColorCode.FromString(request.ColorCode),
+                ProductVariantDescription.FromString(request.Description),
+                newImageUrl, 
+                IsBaseVariant.FromBoolean(request.IsBaseVariant));
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Success();
+        }
 
         if (productVariant.IsBaseVariant == IsBaseVariant.False && request.IsBaseVariant == true)
         {
@@ -42,10 +96,11 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
                 ProductVariantPrice.FromDecimal(request.ProductVariantPrice),
                 ColorCode.FromString(request.ColorCode),
                 ProductVariantDescription.FromString(request.Description),
-                string.Empty, //TODO: Upload image to cloud storage
+                productVariant.ImageUrl, 
                 IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
             await _unitOfWork.SaveChangesAsync();
+            return Result.Success();
         }
 
         productVariant.Update(
@@ -53,7 +108,7 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
             ProductVariantPrice.FromDecimal(request.ProductVariantPrice),
             ColorCode.FromString(request.ColorCode),
             ProductVariantDescription.FromString(request.Description),
-            string.Empty, //TODO: Upload image to cloud storage
+            productVariant.ImageUrl, 
             IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
         await _unitOfWork.SaveChangesAsync();

@@ -5,9 +5,9 @@ namespace API.Infrastructure.Authorization;
 public static class AuthorizationPolicies
 {
     //ROLE:
-    public const string Admin = "Admin";
-    public const string Employee = "Employee";
-    public const string Subscribed = "Subscribed";
+    private const string Admin = "Admin";
+    private const string Employee = "Employee";
+    private const string Subscribed = "Subscribed";
     public const string Guest = "Guest";
     // public const string Customer = "Customer";
 
@@ -15,6 +15,7 @@ public static class AuthorizationPolicies
     public const string AdminOnly = "AdminOnly";
     public const string SubscribedOnly = "SubscribedOnly";
     public const string SubscribedOrGuest = "SubscribedOrGuest";
+    public const string AllEmployee = "AllEmployee";
 
     public static void ConfigurePolicies(AuthorizationOptions options)
     {
@@ -23,7 +24,7 @@ public static class AuthorizationPolicies
             policy.RequireRole(Admin));
 
         // Employee policy - employee và admin đều có quyền truy cập
-        options.AddPolicy(Employee, policy => 
+        options.AddPolicy(AllEmployee, policy => 
             policy.RequireRole(Employee, Admin));
 
         // Customer policy - customer đều có quyền truy cập

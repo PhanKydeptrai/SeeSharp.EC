@@ -34,4 +34,11 @@ public class ShippingInformationsController : ControllerBase
         var result = await _sender.Send(new GetDefaultShippingInformationQuery(Guid.Parse(customerId!)));
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+
+    // [HttpPost]
+    // [AuthorizeByRole(AuthorizationPolicies.SubscribedOnly)]
+    // public async Task<IResult> CreateShippingInformation()
+    // {
+    //     throw new NotImplementedException();
+    // }
 }
