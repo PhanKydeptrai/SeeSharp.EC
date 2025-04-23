@@ -25,6 +25,7 @@ using Application.Features.OrderFeature.Commands.PayOrderWithCOD;
 using Application.Features.OrderFeature.Queries.GetOrderHistoryByOrderId;
 using Microsoft.AspNetCore.Authorization;
 using Application.Features.OrderFeature.Commands.CancelOrder;
+using Application.Features.OrderFeature.Commands.ChangeOrderStatus;
 
 namespace API.Controllers;
 
@@ -212,7 +213,7 @@ public sealed class OrdersController : ControllerBase
     [Authorize]
     public async Task<IResult> ChangeOrderStatus([FromRoute] Guid orderId)
     {
-        var result = await _sender.Send(new CancelOrderCommand(orderId));
+        var result = await _sender.Send(new ChangeOrderStatusCommand(orderId));
         return result.Match(Results.NoContent, CustomResults.Problem);
     }
 

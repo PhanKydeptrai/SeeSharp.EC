@@ -10,6 +10,7 @@ public record BillResponse(
     string? SpecificAddress,
     decimal Total,
     string PaymentStatus,
+    string OrderStatus,
     string PaymentMethod,
     string? VoucherCode,
     Guid BillId,
