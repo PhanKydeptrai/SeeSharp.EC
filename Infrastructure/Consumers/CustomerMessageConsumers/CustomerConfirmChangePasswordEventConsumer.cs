@@ -56,7 +56,7 @@ internal sealed class CustomerConfirmChangePasswordEventConsumer : IConsumer<Cus
                 string.Empty,
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -67,7 +67,7 @@ internal sealed class CustomerConfirmChangePasswordEventConsumer : IConsumer<Cus
                 "Failed to consume CustomerConfirmChangePasswordEvent",
                 DateTime.UtcNow);
 
-            await _unitOfWork.SaveChangeAsync();
+            await _unitOfWork.SaveChangesAsync();
             //----------------------------------------------------------
 
             //Log error-------------------------------------------------

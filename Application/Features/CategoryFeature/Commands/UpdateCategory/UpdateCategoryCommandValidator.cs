@@ -18,8 +18,8 @@ internal sealed class UpdateCategoryCommandValidator : AbstractValidator<UpdateC
             .WithMessage("CategoryName is required")
             .MaximumLength(50)
             .WithMessage("CategoryName must not exceed 50 characters")
-            .Must(ValidateInput)
-            .WithMessage("Category name contains invalid characters")
+            // .Must(ValidateInput)
+            // .WithMessage("Category name contains invalid characters")
             .Must((context, categoryName) =>
             {
                 return categoryQueryServices.IsCategoryNameExist(
@@ -30,16 +30,16 @@ internal sealed class UpdateCategoryCommandValidator : AbstractValidator<UpdateC
             .WithMessage("CategoryName must be unique");
     }
 
-    private bool ValidateInput(string input)
-    {
+    // private bool ValidateInput(string input)
+    // {
         
-        foreach (var naughtyString in TheNaughtyStrings.All)
-        {
-            if (input.Contains(naughtyString))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    //     foreach (var naughtyString in TheNaughtyStrings.All)
+    //     {
+    //         if (input.Contains(naughtyString))
+    //         {
+    //             return false;
+    //         }
+    //     }
+    //     return true;
+    // }
 }

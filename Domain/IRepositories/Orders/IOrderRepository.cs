@@ -8,14 +8,92 @@ namespace Domain.IRepositories.Orders;
 
 public interface IOrderRepository
 {
-    Task AddNewOrderToPostgreSQL(Order order);
-    Task AddNewOrderDetailToPostgreSQL(OrderDetail orderDetail);
-    Task AddNewOrderTransactionToPostgreSQL(OrderTransaction orderTransaction);
+    /// <summary>
+    /// Thêm mới order
+    /// </summary>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    Task AddNewOrder(Order order);
+
+    /// <summary>
+    /// Thêm mới order detail
+    /// </summary>
+    /// <param name="orderDetail"></param>
+    /// <returns></returns>
+    Task AddNewOrderDetail(OrderDetail orderDetail);
+
+    /// <summary>
+    /// Thêm mới order transaction
+    /// </summary>
+    /// <param name="orderTransaction"></param>
+    /// <returns></returns>
+    Task AddNewOrderTransaction(OrderTransaction orderTransaction);
+
+    /// <summary>
+    /// Kiểm tra xem sản phẩm đã có trong order chưa
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <param name="ProductVariantId"></param>
+    /// <returns></returns>
     Task<OrderDetail?> CheckProductAvailabilityInOrder(OrderId orderId, ProductVariantId ProductVariantId);
-    Task<OrderDetail?> GetOrderDetailByIdFromPostgreSQL(OrderDetailId orderDetailId);
-    Task<Order?> GetOrderByIdFromPostgreSQL(OrderId orderId);
-    Task<Order?> GetOrderByCustomerIdFromPostgreSQL(CustomerId customerId);
-    void DeleteOrderDetailFromPostgeSQL(OrderDetail orderDetail);
+
+    /// <summary>
+    /// Lấy danh sách order detail theo orderId
+    /// </summary>
+    /// <param name="orderDetailId"></param>
+    /// <returns></returns>
+    Task<OrderDetail?> GetOrderDetailById(OrderDetailId orderDetailId);
+    
+    /// <summary>
+    /// Huỷ đơn hàng
+    /// </summary>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    Task CancelOrder(Order order);
+    /// <summary>
+    /// Lấy danh sách order detail theo orderId
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    Task<Order?> GetOrderById(OrderId orderId);
+
+    /// <summary>
+    /// Lấy danh sách order detail theo orderId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    Task<Order?> GetOrderByCustomerId(CustomerId customerId);
+    Task<Order?> GetWaitingOrderByCustomerId(CustomerId customerId);
+
+    /// <summary>
+    /// lấy order transaction theo id
+    /// </summary>
+    /// <param name="orderTransactionId">Id của order transaction</param>
+    /// <returns></returns>
+    Task<OrderTransaction?> GetOrderTransactionById(OrderTransactionId orderTransactionId);
+
+    /// <summary>
+    /// lấy order transaction theo customerId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    Task<OrderTransaction?> GetOrderTransactionByCustomerId(CustomerId customerId);
+    /// <summary>
+    /// Xoá order transaction
+    /// </summary>
+    /// <param name="orderTransaction"></param>
+    void RemoveOrderTransaction(OrderTransaction orderTransaction); 
+    // Task SyncCartForCustomer(OrderId orderId, CustomerId customerId);
+    // Task<Order?> GetOrderByGuestId(CustomerId customerId);
+    void DeleteOrderDetail(OrderDetail orderDetail);
+
+    /// <summary>
+    /// Gộp giỏ hàng của khách hàng(Customer) và khách vãng lai(Guest) 
+    /// </summary>
+    /// <param name="guestOrder">Order Của guest</param>
+    /// <param name="orderCustomer">Order của khách hàng</param>
+    /// <returns></returns>
+    Task MergeOrder(Order guestOrder, Order orderCustomer);
 }
 
 

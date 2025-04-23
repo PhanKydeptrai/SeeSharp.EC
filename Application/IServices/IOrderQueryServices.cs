@@ -1,5 +1,7 @@
+using Application.DTOs.Bills;
 using Application.DTOs.Order;
 using Application.Features.Pages;
+using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Orders;
 
@@ -14,6 +16,13 @@ public interface IOrderQueryServices
     /// <param name="orderId"></param>
     /// <returns></returns>
     Task<OrderResponse?> GetOrderById(OrderId orderId);
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    Task<MakePaymentResponse?> GetMakePaymentResponse(CustomerId customerId);
 
     /// <summary>
     /// Get Cart Information by CustomerId with OrderStatus == Waiting
@@ -50,4 +59,20 @@ public interface IOrderQueryServices
         string? sortOrder,
         int? page,
         int? pageSize);
+    Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId);
+
+    /// <summary>
+    /// Lấy thông tin hóa đơn theo BillId
+    /// </summary>
+    /// <param name="billId"></param>
+    /// <returns></returns>
+    Task<BillResponse?> GetBillByBillId(BillId billId);
+
+
+    /// <summary>
+    /// Lấy thông tin hoá đơn bằng OrderId
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    Task<BillResponse?> GetBillByOrderId(OrderId orderId);
 }

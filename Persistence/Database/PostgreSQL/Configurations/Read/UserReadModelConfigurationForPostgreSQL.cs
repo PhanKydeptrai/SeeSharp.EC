@@ -48,7 +48,7 @@ internal sealed class UserReadModelConfigurationForPostgreSQL
 
         builder.Property(a => a.DateOfBirth)
             .IsRequired(false)
-            .HasColumnType("TIMESTAMPTZ");
+            .HasColumnType("date");
 
         builder.Property(a => a.ImageUrl)
             .IsRequired(false)

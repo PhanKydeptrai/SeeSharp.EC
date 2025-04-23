@@ -12,7 +12,7 @@ namespace API.Controllers;
 
 [Route("api/wishitems")]
 [ApiController]
-[ApiKey]
+// [ApiKey]
 public sealed class WishlistController : ControllerBase
 {
     private readonly ISender _sender;
@@ -23,7 +23,7 @@ public sealed class WishlistController : ControllerBase
     }
 
     /// <summary>
-    /// Get the wish list of a customer
+    /// Lấy danh sách sản phẩm yêu thích của khách hàng
     /// </summary>
     /// <param name="productStatusFilter"></param>
     /// <param name="searchTerm"></param>
@@ -32,8 +32,7 @@ public sealed class WishlistController : ControllerBase
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
     /// <returns></returns>
-    [HttpGet]
-    [EndpointName(EndpointName.Wishlist.GetWishList)]
+    [HttpGet(Name = EndpointName.Wishlist.GetWishList)]
     [Authorize]
     public async Task<IResult> GetWishList(
         [FromQuery] string? productStatusFilter,
@@ -43,7 +42,7 @@ public sealed class WishlistController : ControllerBase
         [FromQuery] int? page,
         [FromQuery] int? pageSize)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
@@ -61,16 +60,15 @@ public sealed class WishlistController : ControllerBase
     }
 
     /// <summary>
-    /// Add a product to the wish list
+    /// Thêm một sản phẩm vào danh sách yêu thích
     /// </summary>
     /// <param name="productId"></param>
     /// <returns></returns>
-    [HttpPost("{productId:guid}")]
-    [EndpointName(EndpointName.Wishlist.AddWishList)]
+    [HttpPost("{productId:guid}", Name = EndpointName.Wishlist.AddWishList)]
     [Authorize]
     public async Task<IResult> AddWishList([FromRoute] Guid productId)
     {
-        string token = TokenExtentions.GetTokenFromHeader(HttpContext);
+        string token = TokenExtentions.GetTokenFromHeader(HttpContext)!;
         var claims = TokenExtentions.DecodeJwt(token);
         claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
 
@@ -80,7 +78,7 @@ public sealed class WishlistController : ControllerBase
     }
 
     /// <summary>
-    /// Delete a wish item from the wish list
+    /// Xóa một sản phẩm khỏi danh sách yêu thích
     /// </summary>
     /// <param name="wishItemId"></param>
     /// <returns></returns>

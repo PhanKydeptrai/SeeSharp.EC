@@ -96,8 +96,7 @@ internal class CategoryQueryServices : ICategoryQueryServices
         //Filter
         if (!string.IsNullOrEmpty(filter))
         {
-            categoriesQuery = categoriesQuery
-                .Where(x => x.CategoryStatus == (CategoryStatus)Enum.Parse(typeof(CategoryStatus), filter));
+            categoriesQuery = categoriesQuery.Where(x => x.CategoryStatus == (CategoryStatus)Enum.Parse(typeof(CategoryStatus), filter));
         }
 
         //sort
@@ -129,5 +128,12 @@ internal class CategoryQueryServices : ICategoryQueryServices
             .CreateAsync(categories, page ?? 1, pageSize ?? 10);
 
         return categoriesList;
+    }
+
+    public async Task<List<CategoryInfo>> GetCategoryInfo()
+    {
+        return await _contextPostgreSQL.Categories
+            .Select(a => new CategoryInfo(a.CategoryId.ToGuid(), a.CategoryName))
+            .ToListAsync();
     }
 }

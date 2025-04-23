@@ -11,15 +11,22 @@ public sealed class UserName : ValueObject
 
     public static UserName NewUserName(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentNullException(
-                nameof(Value), "User name cannot be empty");
-        }
+        // if (string.IsNullOrWhiteSpace(value))
+        // {
+        //     //throw new ArgumentNullException(
+        //     //    nameof(Value), "User name cannot be empty");
+
+        //     throw new ArgumentException(
+        //         nameof(Value), "User name cannot be empty");
+
+        // }
 
         if (value.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
+            //throw new ArgumentOutOfRangeException(
+            //    nameof(Value), $"User name cannot be longer than {MaxLength} characters");
+
+            throw new ArgumentException(
                 nameof(Value), $"User name cannot be longer than {MaxLength} characters");
         }
 

@@ -13,6 +13,7 @@ public sealed class OrderTransaction
     public DescriptionOfOrderTransaction Description { get; private set; } = null!; //Nội dung giao dịch
     public PaymentMethod PaymentMethod { get; private set; }
     public IsVoucherUsed IsVoucherUsed { get; private set; } = null!;
+    public TransactionStatus TransactionStatus { get; private set; }
     public VoucherId? VoucherId { get; private set; } = null!;
     public OrderId OrderId { get; private set; } = null!;
     public BillId? BillId { get; private set; } = null!;
@@ -30,9 +31,10 @@ public sealed class OrderTransaction
         DescriptionOfOrderTransaction description,
         PaymentMethod paymentMethod,
         IsVoucherUsed isVoucherUsed,
-        VoucherId voucherId,
+        TransactionStatus transactionStatus,
+        VoucherId? voucherId,
         OrderId orderId,
-        BillId billId)
+        BillId? billId)
     {
         OrderTransactionId = orderTransactionId;
         PayerName = payerName;
@@ -41,6 +43,7 @@ public sealed class OrderTransaction
         Description = description;
         PaymentMethod = paymentMethod;
         IsVoucherUsed = isVoucherUsed;
+        TransactionStatus = transactionStatus;
         VoucherId = voucherId;
         OrderId = orderId;
         BillId = billId;
@@ -53,6 +56,7 @@ public sealed class OrderTransaction
         DescriptionOfOrderTransaction description,
         PaymentMethod paymentMethod,
         IsVoucherUsed isVoucherUsed,
+        TransactionStatus transactionStatus,
         VoucherId? voucherId,
         OrderId orderId,
         BillId? billId)
@@ -65,8 +69,14 @@ public sealed class OrderTransaction
             description,
             paymentMethod,
             isVoucherUsed,
-            voucherId ?? VoucherId.Empty,
+            transactionStatus,
+            voucherId ?? null,
             orderId,
-            billId ?? BillId.Empty);
+            billId);
+    }
+
+    public void ChangeTransactionStatus(TransactionStatus transactionStatus)
+    {
+        TransactionStatus = transactionStatus;
     }
 }

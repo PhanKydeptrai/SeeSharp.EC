@@ -19,7 +19,7 @@ internal class UnitOfWork : IUnitOfWork
         return transaction.GetDbTransaction();
     }
 
-    public async Task<int> SaveChangeAsync(CancellationToken cancellationToken = default)
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await _nextSharpPostgreSQLWriteDbContext.SaveChangesAsync(cancellationToken);
     }

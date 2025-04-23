@@ -38,7 +38,7 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
             return failure!;
         }
         category.Restore();
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         
         //Process product restore by category
         await _productRepository.RestoreProductByCategory(categoryId);

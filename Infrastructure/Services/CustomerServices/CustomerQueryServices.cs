@@ -1,9 +1,12 @@
 using Application.DTOs.Customer;
+using Application.Features.Pages;
 using Application.IServices;
+using Domain.Database.PostgreSQL.ReadModels;
 using Domain.Entities.Customers;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Services.CustomerServices;
 
@@ -50,8 +53,8 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
             a => a.UserReadModel.Email == email.Value 
             && a.UserReadModel.PasswordHash == password.Value
             && a.UserReadModel.IsVerify == true
-            && a.UserReadModel.UserStatus != (int)UserStatus.Deleted
-            && a.UserReadModel.UserStatus != (int)UserStatus.Blocked)
+            && a.UserReadModel.UserStatus != UserStatus.Deleted
+            && a.UserReadModel.UserStatus != UserStatus.Blocked)
             .Select(a => new CustomerAuthenticationResponse(
                 a.UserReadModel.UserId,
                 a.CustomerId,
@@ -64,8 +67,8 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
     {
         return await _dbContext.Customers.Where(
             a => a.UserReadModel.Email == email.Value 
-            && a.UserReadModel.UserStatus != (int)UserStatus.Deleted
-            && a.UserReadModel.UserStatus != (int)UserStatus.Blocked)
+            && a.UserReadModel.UserStatus != UserStatus.Deleted
+            && a.UserReadModel.UserStatus != UserStatus.Blocked)
             .Select(a => new CustomerAuthenticationResponse(
                 a.UserReadModel.UserId,
                 a.CustomerId,
@@ -92,9 +95,86 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
             .FirstOrDefaultAsync();
     }
 
-    public async Task<bool> IsAccountVerified(Email email, CancellationToken cancellationToken = default)
+    public async Task<PagedList<CustomerProfileResponse>> GetAllCustomerProfile(
+        string? statusFilter,
+        string? customerTypeFilter,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        var customerQuery = _dbContext.Customers
+            .Include(a => a.UserReadModel)
+            .AsQueryable();
+
+        //Search
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            customerQuery = customerQuery.Where(
+                x => x.UserReadModel.UserName.Contains(searchTerm));
+        }
+
+        //Filter
+        if (!string.IsNullOrEmpty(statusFilter))
+        {
+            customerQuery = customerQuery
+                .Where(
+                    x => x.UserReadModel.UserStatus == (UserStatus)Enum.Parse(typeof(UserStatus), 
+                    statusFilter));
+        }
+
+        if (!string.IsNullOrEmpty(customerTypeFilter))
+        {
+            customerQuery = customerQuery
+                .Where(
+                    x => x.CustomerType == (CustomerType)Enum.Parse(typeof(CustomerType),
+                    customerTypeFilter));
+        }
+
+        //sort
+        Expression<Func<CustomerReadModel, object>> keySelector = sortColumn?.ToLower() switch
+        {
+            "username" => x => x.UserReadModel.UserName,
+            "userid" => x => x.UserId,
+            _ => x => x.UserId
+        };
+
+        if (sortOrder?.ToLower() == "desc")
+        {
+            customerQuery = customerQuery.OrderByDescending(keySelector);
+        }
+        else
+        {
+            customerQuery = customerQuery.OrderBy(keySelector);
+        }
+
+        //paged
+        var categories = customerQuery
+            .Select(a => new CustomerProfileResponse(
+                a.UserId.ToGuid(),
+                a.UserReadModel.UserName,
+                a.UserReadModel.DateOfBirth,
+                a.UserReadModel.ImageUrl!,
+                a.UserReadModel.Gender.ToString(),
+                a.UserReadModel.PhoneNumber,
+                a.UserReadModel.Email,
+                a.CustomerType.ToString(),
+                a.UserReadModel.UserStatus.ToString())).AsQueryable();
+
+        var categoriesList = await PagedList<CustomerProfileResponse>
+            .CreateAsync(categories, page ?? 1, pageSize ?? 10);
+
+        return categoriesList;
+    }
+
+    public async Task<bool> IsAccountVerified(
+        Email email, 
+        CancellationToken cancellationToken = default)
     {
         return await _dbContext.Customers.AnyAsync(
-                a => a.UserReadModel.Email == email.Value && a.UserReadModel.IsVerify == true, cancellationToken);
+                a => a.UserReadModel.Email == email.Value 
+                && a.UserReadModel.IsVerify == true, 
+                cancellationToken);
     }
 }

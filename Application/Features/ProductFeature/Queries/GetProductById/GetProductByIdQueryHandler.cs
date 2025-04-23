@@ -37,42 +37,42 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
                         request.productId)));
         }
 
-        AddLinkForProduct(product);
+        // AddLinkForProduct(product);
         return Result.Success(product);
 
     }
 
-    private void AddLinkForProduct(ProductResponse productResponse)
-    {
-        productResponse.links.Add(_linkServices.Generate(
-            EndpointName.Product.GetById,
-            new { productId = productResponse.ProductId },
-            "self",
-            EndpointMethod.GET));
+    // private void AddLinkForProduct(ProductResponse productResponse)
+    // {
+    //     productResponse.links.Add(_linkServices.Generate(
+    //         EndpointName.Product.GetById,
+    //         new { productId = productResponse.ProductId },
+    //         "self",
+    //         EndpointMethod.GET));
 
-        productResponse.links.Add(_linkServices.Generate(
-            EndpointName.Product.Update,
-            new { productId = productResponse.ProductId },
-            "update-product",
-            EndpointMethod.PUT));
+    //     productResponse.links.Add(_linkServices.Generate(
+    //         EndpointName.Product.Update,
+    //         new { productId = productResponse.ProductId },
+    //         "update-product",
+    //         EndpointMethod.PUT));
 
-        if (productResponse.Status == ProductStatus.Discontinued.ToString())
-        {
-            productResponse.links.Add(_linkServices.Generate(
-                EndpointName.Product.Restore,
-                new { productId = productResponse.ProductId },
-                "restore-product",
-                EndpointMethod.PUT));
-        }
+    //     if (productResponse.Status == ProductStatus.Discontinued.ToString())
+    //     {
+    //         productResponse.links.Add(_linkServices.Generate(
+    //             EndpointName.Product.Restore,
+    //             new { productId = productResponse.ProductId },
+    //             "restore-product",
+    //             EndpointMethod.PUT));
+    //     }
 
-        if (productResponse.Status != ProductStatus.Discontinued.ToString())
-        {
-            productResponse.links.Add(_linkServices.Generate(
-                EndpointName.Product.Delete,
-                new { productId = productResponse.ProductId },
-                "delete-product",
-                EndpointMethod.DELETE));
-        }
+    //     if (productResponse.Status != ProductStatus.Discontinued.ToString())
+    //     {
+    //         productResponse.links.Add(_linkServices.Generate(
+    //             EndpointName.Product.Delete,
+    //             new { productId = productResponse.ProductId },
+    //             "delete-product",
+    //             EndpointMethod.DELETE));
+    //     }
 
-    }
+    // }
 }

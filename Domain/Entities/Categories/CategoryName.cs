@@ -11,19 +11,19 @@ public sealed class CategoryName : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(nameof(value), "Category name cannot be empty");
+            throw new ArgumentException(nameof(value), "Category name cannot be empty");
         }
         
         if (value.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
+            throw new ArgumentException(
                 nameof(value),
                 $"Category name cannot be longer than {MaxLength} characters");
         }
         
         return new CategoryName(value);
     }
-    public static CategoryName FromString(string value) => new(value);
+    public static CategoryName FromString(string value) => NewCategoryName(value);
 
     public static readonly CategoryName Empty = new(string.Empty);
     private const int MaxLength = 50;

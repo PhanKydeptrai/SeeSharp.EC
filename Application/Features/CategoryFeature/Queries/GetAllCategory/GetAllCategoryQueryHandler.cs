@@ -34,105 +34,105 @@ internal sealed class GetAllCategoryQueryHandler : IQueryHandler<GetAllCategoryQ
             request.pageSize
         );
 
-        foreach (var category in pagedList.Items)
-        {
-            AddLinkForCategory(category);
-        }
+        // foreach (var category in pagedList.Items)
+        // {
+        //     AddLinkForCategory(category);
+        // }
 
-        AddLinks(request, pagedList);
+        // AddLinks(request, pagedList);
 
         return Result.Success(pagedList);
     }
 
-    private void AddLinks(GetAllCategoryQuery request, PagedList<CategoryResponse> pagedList)
-    {
-        pagedList.Links.Add(_linkService.Generate(
-            EndpointName.Category.GetAll,
-            new
-            {
-                filter = request.filter,
-                searchTerm = request.searchTerm,
-                sortColumn = request.sortColumn,
-                sortOrder = request.sortOrder,
-                page = request.page,
-                pageSize = request.pageSize
+    // private void AddLinks(GetAllCategoryQuery request, PagedList<CategoryResponse> pagedList)
+    // {
+    //     pagedList.Links.Add(_linkService.Generate(
+    //         EndpointName.Category.GetAll,
+    //         new
+    //         {
+    //             filter = request.filter,
+    //             searchTerm = request.searchTerm,
+    //             sortColumn = request.sortColumn,
+    //             sortOrder = request.sortOrder,
+    //             page = request.page,
+    //             pageSize = request.pageSize
 
-            },
-            "self",
-            EndpointMethod.GET
-        ));
+    //         },
+    //         "self",
+    //         EndpointMethod.GET
+    //     ));
 
-        if (pagedList.HaspreviousPage)
-        {
-            pagedList.Links.Add(_linkService.Generate(
-                EndpointName.Category.GetAll,
-                new
-                {
-                    filter = request.filter,
-                    searchTerm = request.searchTerm,
-                    sortColumn = request.sortColumn,
-                    sortOrder = request.sortOrder,
-                    page = request.page - 1,
-                    pageSize = request.pageSize
-                },
-                "previous-page",
-                EndpointMethod.GET
-            ));
-        }
+    //     if (pagedList.HaspreviousPage)
+    //     {
+    //         pagedList.Links.Add(_linkService.Generate(
+    //             EndpointName.Category.GetAll,
+    //             new
+    //             {
+    //                 filter = request.filter,
+    //                 searchTerm = request.searchTerm,
+    //                 sortColumn = request.sortColumn,
+    //                 sortOrder = request.sortOrder,
+    //                 page = request.page - 1,
+    //                 pageSize = request.pageSize
+    //             },
+    //             "previous-page",
+    //             EndpointMethod.GET
+    //         ));
+    //     }
 
-        if (pagedList.HasNextPage)
-        {
-            pagedList.Links.Add(_linkService.Generate(
-                EndpointName.Category.GetAll,
-                new
-                {
-                    filter = request.filter,
-                    searchTerm = request.searchTerm,
-                    sortColumn = request.sortColumn,
-                    sortOrder = request.sortOrder,
-                    page = request.page + 1,
-                    pageSize = request.pageSize
-                },
-                "next-page",
-                EndpointMethod.GET
-            ));
-        }
-    }
+    //     if (pagedList.HasNextPage)
+    //     {
+    //         pagedList.Links.Add(_linkService.Generate(
+    //             EndpointName.Category.GetAll,
+    //             new
+    //             {
+    //                 filter = request.filter,
+    //                 searchTerm = request.searchTerm,
+    //                 sortColumn = request.sortColumn,
+    //                 sortOrder = request.sortOrder,
+    //                 page = request.page + 1,
+    //                 pageSize = request.pageSize
+    //             },
+    //             "next-page",
+    //             EndpointMethod.GET
+    //         ));
+    //     }
+    // }
 
-    private void AddLinkForCategory(CategoryResponse categoryResponse)
-    {
+    // private void AddLinkForCategory(CategoryResponse categoryResponse)
+    // {
 
-        categoryResponse.links.Add(_linkService.Generate(
-            EndpointName.Category.GetById,
-            new { categoryId = categoryResponse.categoryId },
-            "get-category-by-id",
-            EndpointMethod.GET));
+    //     categoryResponse.links.Add(_linkService.Generate(
+    //         EndpointName.Category.GetById,
+    //         new { categoryId = categoryResponse.categoryId },
+    //         "get-category-by-id",
+    //         EndpointMethod.GET));
             
-        if (!categoryResponse.isDefault)
-        {
-            categoryResponse.links.Add(_linkService.Generate(
-                        EndpointName.Category.Update,
-                        new { categoryId = categoryResponse.categoryId },
-                        "update-category",
-                        EndpointMethod.PUT));
+    //     if (!categoryResponse.isDefault)
+    //     {
+    //         categoryResponse.links.Add(_linkService.Generate(
+    //                     EndpointName.Category.Update,
+    //                     new { categoryId = categoryResponse.categoryId },
+    //                     "update-category",
+    //                     EndpointMethod.PUT));
 
-            if (categoryResponse.categoryStatus == CategoryStatus.Deleted.ToString())
-            {
-                categoryResponse.links.Add(_linkService.Generate(
-                            EndpointName.Category.Restore,
-                            new { categoryId = categoryResponse.categoryId },
-                            "restore-category",
-                            EndpointMethod.PUT));
-            }
+    //         if (categoryResponse.categoryStatus == CategoryStatus.Deleted.ToString())
+    //         {
+    //             categoryResponse.links.Add(_linkService.Generate(
+    //                         EndpointName.Category.Restore,
+    //                         new { categoryId = categoryResponse.categoryId },
+    //                         "restore-category",
+    //                         EndpointMethod.PUT));
+    //         }
 
-            if (categoryResponse.categoryStatus == CategoryStatus.Available.ToString())
-            {
-                categoryResponse.links.Add(_linkService.Generate(
-                            EndpointName.Category.Delete,
-                            new { categoryId = categoryResponse.categoryId },
-                            "delete-category",
-                            EndpointMethod.DELETE));
-            }
-        }
-    }
+    //         if (categoryResponse.categoryStatus == CategoryStatus.Available.ToString())
+    //         {
+    //             categoryResponse.links.Add(_linkService.Generate(
+    //                         EndpointName.Category.Delete,
+    //                         new { categoryId = categoryResponse.categoryId },
+    //                         "delete-category",
+    //                         EndpointMethod.DELETE));
+    //         }
+    //     }
+    // }
 }

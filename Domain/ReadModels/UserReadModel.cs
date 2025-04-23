@@ -1,4 +1,5 @@
-﻿using Domain.ReadModels;
+﻿using Domain.Entities.Users;
+using Domain.ReadModels;
 
 namespace Domain.Database.PostgreSQL.ReadModels;
 
@@ -9,13 +10,12 @@ public sealed class UserReadModel
     public string Email { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public string PasswordHash { get; set; } = null!;
-    public int UserStatus { get; set; }
+    public UserStatus UserStatus { get; set; }
     public bool IsVerify { get; set; }
     public int Gender { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public string? ImageUrl { get; set; }
     public CustomerReadModel? CustomerReadModel { get; set; }
     public EmployeeReadModel? EmployeeReadModel { get; set; }
-    // public ICollection<UserAuthenticationTokenReadModel> UserAuthenticationTokenReadModels { get; set; } = new List<UserAuthenticationTokenReadModel>();
     public ICollection<VerificationTokenReadModel> VerificationTokenReadModels { get; set; } = new List<VerificationTokenReadModel>();
 }

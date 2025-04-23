@@ -12,7 +12,7 @@ public sealed class Customer
     public CustomerId CustomerId { get; private set; } = null!;
     public UserId UserId { get; private set; } = null!;
     public CustomerType CustomerType { get; private set; }
-    public User? User { get; private set; } = null!;
+    public User? User { get; set; } = null!;
     //Foreign key
     public ICollection<ShippingInformation>? ShippingInformations { get; set; } = null!;
     public ICollection<CustomerVoucher>? CustomerVouchers { get; set; } = null!;

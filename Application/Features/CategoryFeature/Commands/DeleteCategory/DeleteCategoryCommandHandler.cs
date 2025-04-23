@@ -40,7 +40,7 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
         }
         category.Delete();
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         //Delete all products in this category
         await _productRepository.DeleteProductByCategory(category.CategoryId);

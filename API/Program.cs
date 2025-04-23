@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
 using System.Security.Claims;
 using API.Extentions;
+using API.Infrastructure.Authorization;
 using API.Services;
 using Application;
 using Application.Abstractions.LinkService;
@@ -9,23 +9,32 @@ using Application.Security;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
+using QuestPDF.Infrastructure;
 using Serilog;
+using SharedKernel.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 //TODO: Move to external file
 //Cấu hình Authen và Author
 #region Need to move to external file
+
+// Configure QuestPDF
+QuestPDF.Settings.License = LicenseType.Community;
+
 builder.Services.AddAuthentication(options =>
 {
-
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    // Nhưng cho quá trình external login, sử dụng Cookie để lưu trạng thái tạm thời
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
 })
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
     options.Events = new JwtBearerEvents
@@ -33,7 +42,9 @@ builder.Services.AddAuthentication(options =>
         OnTokenValidated = async context =>
         {
             var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            if (jti is not null)
+            var isGuest = context.Principal?.FindFirst(CustomJwtRegisteredClaimNames.GuestId)?.Value ?? string.Empty;
+
+            if (jti is not null && isGuest == string.Empty)
             {
                 var revocationService = context.HttpContext.RequestServices
                     .GetRequiredService<ITokenRevocationService>();
@@ -44,7 +55,7 @@ builder.Services.AddAuthentication(options =>
             }
         }
     };
-    
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -59,10 +70,31 @@ builder.Services.AddAuthentication(options =>
                                    // Đảm bảo token chứa claim về vai trò
         RoleClaimType = ClaimTypes.Role
     };
+})
+.AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration["Google:client_id"]!;
+    googleOptions.ClientSecret = builder.Configuration["Google:client_secret"]!;
+    googleOptions.SaveTokens = true; // Lưu trữ token sau khi xác thực thành công
+})
+.AddGitHub(githubOptions =>
+{
+    githubOptions.ClientId = builder.Configuration["Github:client_id"]!;
+    githubOptions.ClientSecret = builder.Configuration["Github:client_secret"]!;
+    githubOptions.Scope.Add("user:email");
+})
+.AddDiscord(discordOptions =>
+{
+    discordOptions.ClientId = builder.Configuration["Discord:client_id"]!;
+    discordOptions.ClientSecret = builder.Configuration["Discord:client_secret"]!;
 });
 #endregion
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    AuthorizationPolicies.ConfigurePolicies(options);
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
@@ -149,6 +181,7 @@ app.UseAuthorization();
 app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // Add static files middleware
 
 // app.UseRouting();
 

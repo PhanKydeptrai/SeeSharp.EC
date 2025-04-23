@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Services;
 using Domain.Entities.Categories;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
@@ -11,24 +12,42 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
     #region Dependency
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly CloudinaryService _cloudinaryService;
 
     public CreateCategoryCommandHandler(
         ICategoryRepository categoryRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        CloudinaryService cloudinaryService)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
-    } 
+        _cloudinaryService = cloudinaryService;
+    }
     #endregion
-    //FLOW: Create category -> Add category to Postgres
+
     public async Task<Result<CategoryId>> Handle(
         CreateCategoryCommand request,
         CancellationToken cancellationToken)
     {
-        //TODO: Xử lý ảnh
+        // Xử lý ảnh
         //--------------------
-
         string imageUrl = string.Empty;
+        if (request.image != null)
+        {
+
+            //tạo memory stream từ file ảnh
+            var memoryStream = new MemoryStream();
+            await request.image.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+
+            //Upload ảnh lên cloudinary
+            
+            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.image.FileName);
+            imageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
+            //Log
+            Console.WriteLine(resultUpload.JsonObj);
+        }
+
         //--------------------
 
         var category = Category.NewCategory(
@@ -36,7 +55,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
             imageUrl);
 
         await _categoryRepository.AddCategoryToPosgreSQL(category);
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         return Result.Success(category.CategoryId);
     }
 }

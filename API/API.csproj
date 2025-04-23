@@ -10,12 +10,20 @@
 	  <NoWarn>1701;1702;1591</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="AspNet.Security.OAuth.Discord" />
+		<PackageReference Include="AspNet.Security.OAuth.GitHub" />
+		<PackageReference Include="AspNet.Security.OAuth.Notion" />
+		<PackageReference Include="AspNet.Security.OAuth.Spotify" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<!-- <PackageReference Include="Razor.Templating.Core" /> -->
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="QuestPDF" />
 		<PackageReference Include="Scalar.AspNetCore" />
 		<PackageReference Include="Serilog.AspNetCore" />
 		<PackageReference Include="Serilog.Sinks.Seq" />

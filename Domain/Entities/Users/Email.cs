@@ -14,13 +14,13 @@ public sealed class Email : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(
+            throw new ArgumentException(
                 nameof(value), "Email cannot be empty");
         }
 
         if (value.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
+            throw new ArgumentException(
                 nameof(value), $"Email cannot be longer than {MaxLength} characters");
         }
 

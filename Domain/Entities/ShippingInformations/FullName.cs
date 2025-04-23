@@ -10,13 +10,13 @@ public sealed class FullName : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(
+            throw new ArgumentException(
                 nameof(value), "Full name cannot be empty");
         }
 
         if(value.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
+            throw new ArgumentException(
                 nameof(value), $"Full name cannot be longer than {MaxLength} characters");
         }
 

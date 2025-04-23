@@ -14,7 +14,7 @@ public class CustomerRepository : ICustomerRepository
         _postgreSQLWriteDbContext = postgreSQLWriteDbContext;
     }
 
-    public async Task AddCustomerToPostgreSQL(Customer customer)
+    public async Task AddCustomer(Customer customer)
     {
         await _postgreSQLWriteDbContext.Customers.AddAsync(customer);
     }
@@ -23,9 +23,14 @@ public class CustomerRepository : ICustomerRepository
     {
         return await _postgreSQLWriteDbContext.Customers.Include(a => a.User).FirstOrDefaultAsync(a => a.User!.Email == email);
     }
-    public async Task<Customer?> GetCustomerByFromPostgreSQLByUserId(UserId userId)
+    public async Task<Customer?> GetCustomerByUserId(UserId userId)
     {
         return await _postgreSQLWriteDbContext.Customers.Include(a => a.User)
             .FirstOrDefaultAsync(a => a.UserId == userId);
+    }
+
+    public async Task<Customer?> GetCustomerByCustomerId(CustomerId customerId)
+    {
+        return await _postgreSQLWriteDbContext.Customers.Include(a => a.User).FirstOrDefaultAsync(a => a.CustomerId == customerId);
     }
 }

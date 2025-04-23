@@ -5,7 +5,8 @@ namespace Domain.IRepositories.Customers;
 
 public interface ICustomerRepository
 {
-    Task AddCustomerToPostgreSQL(Customer customer);
+    Task AddCustomer(Customer customer);
     Task<Customer?> GetCustomerByEmailFromPostgreSQL(Email email);
-    Task<Customer?> GetCustomerByFromPostgreSQLByUserId(UserId userId);
+    Task<Customer?> GetCustomerByUserId(UserId userId);
+    Task<Customer?> GetCustomerByCustomerId(CustomerId customerId);
 }

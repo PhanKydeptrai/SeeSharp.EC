@@ -13,7 +13,7 @@ internal sealed class UserRepository : IUserRepository
     {
         _postgreSQLDbContext = postgreSQLDbContext;
     }
-    public async Task AddUserToPostgreSQL(User user)
+    public async Task AddUser(User user)
     {
         await _postgreSQLDbContext.Users.AddAsync(user);
     }
@@ -21,5 +21,10 @@ internal sealed class UserRepository : IUserRepository
     public async Task<User?> GetUserFromPostgreSQL(UserId userId)
     {
         return await _postgreSQLDbContext.Users.FindAsync(userId);
+    }
+    
+    public void UpdateUser(User user)
+    {
+        _postgreSQLDbContext.Users.Update(user);
     }
 }

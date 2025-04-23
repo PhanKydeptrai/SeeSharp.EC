@@ -7,7 +7,7 @@ public sealed class Employee
     public EmployeeId EmployeeId { get; private set; } = null!;
     public UserId UserId { get; private set; } = null!;
     public Role Role { get; private set; }
-    public User? User { get; private set; } = null!;
+    public User? User { get; set; } = null!;
 
     public Employee(
         EmployeeId employeeId, 
@@ -40,5 +40,6 @@ public sealed class Employee
         return new Employee(employeeId, userId, role);
     }
 
+    
 }
 

@@ -40,10 +40,10 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
         RuleFor(x => x.ColorCode)
             .NotEmpty()
             .WithErrorCode("ColorCode.IsRequied")
-            .WithMessage("ColorCode is required")
-            .Must(x => x.StartsWith("#") && x.Length == 7)
-            .WithErrorCode("ColorCode.Invalid")
-            .WithMessage("Color code must be in hex format (#RRGGBB)");
+            .WithMessage("ColorCode is required");
+            // .Must(x => x.StartsWith("#") && x.Length == 7)
+            // .WithErrorCode("ColorCode.Invalid")
+            // .WithMessage("Color code must be in hex format (#RRGGBB)");
 
         RuleFor(x => x.Description)
             .MaximumLength(250)
@@ -59,8 +59,10 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
             .WithMessage("ProductPrice must be greater than 0");
 
         RuleFor(x => x.CategoryId)
-            .Must(x => categoryQueryServices.IsCategoryStatusNotDeleted(CategoryId.FromGuid(x!.Value)).Result is false)
-            .When(x => x.CategoryId is not null);
+            .Must(x => categoryQueryServices.IsCategoryStatusNotDeleted(CategoryId.FromGuid(x!.Value)).Result is true)
+            .When(x => x.CategoryId is not null)
+            .WithErrorCode("CategoryId.Invalid")
+            .WithMessage("CategoryId is invalid or deleted");
 
     }
     // private bool ValidateInput(string input)

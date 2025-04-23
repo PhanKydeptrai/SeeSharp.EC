@@ -12,6 +12,9 @@ public record OrderResponse(
 public record OrderDetailResponse(
     Guid OrderDetailId,
     Guid ProductId,
+    string ProductName,
+    string VariantName,
+    string ColorCode,
     decimal Price,
     int Quantity,
     string ImageUrl,

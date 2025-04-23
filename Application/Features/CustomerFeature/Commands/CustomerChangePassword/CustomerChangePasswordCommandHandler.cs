@@ -69,7 +69,7 @@ internal sealed class CustomerChangePasswordCommandHandler : ICommandHandler<Cus
             message.MessageId, 
             message, _outBoxMessageServices);
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         //Publish event
         await _eventBus.PublishAsync(message);

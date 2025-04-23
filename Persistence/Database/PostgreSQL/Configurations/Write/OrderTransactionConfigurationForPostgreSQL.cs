@@ -52,6 +52,10 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
             .IsRequired()
             .HasColumnType("integer");
 
+        builder.Property(a => a.TransactionStatus)
+            .IsRequired()
+            .HasColumnType("integer");
+
         builder.Property(a => a.IsVoucherUsed)
             .IsRequired()
             .HasConversion(
@@ -81,7 +85,7 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
             .HasColumnType("uuid");
 
         builder.HasOne(a => a.Voucher)
-            .WithMany(a => a.OrderTransactions)
+            .WithMany(a => a.OrderTransactions).IsRequired(false)
             .HasForeignKey(a => a.VoucherId);
 
 

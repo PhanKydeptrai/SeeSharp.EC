@@ -9,5 +9,4 @@ public record CustomerProfileResponse(
     string PhoneNumber,
     string Email,
     string CustomerType,
-    string UserStatus
-);
+    string UserStatus);

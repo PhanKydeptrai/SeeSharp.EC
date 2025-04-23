@@ -10,6 +10,7 @@ public sealed class Bill
     public CustomerId CustomerId { get; private set; } = null!;
     public DateTime CreatedDate { get; private set; } 
     public PaymentMethod PaymentMethod { get; private set; }
+    public BillPaymentStatus BillPaymentStatus { get; private set; }
     public ShippingInformationId ShippingInformationId { get; private set; } = null!;
 
     //* Foreign key
@@ -24,6 +25,7 @@ public sealed class Bill
         CustomerId customerId,
         DateTime createdDate,
         PaymentMethod paymentMethod,
+        BillPaymentStatus billPaymentStatus,
         ShippingInformationId shippingInformationId)
     {
         BillId = billId;
@@ -31,6 +33,7 @@ public sealed class Bill
         CustomerId = customerId;
         CreatedDate = createdDate;
         PaymentMethod = paymentMethod;
+        BillPaymentStatus = billPaymentStatus;
         ShippingInformationId = shippingInformationId;
     }
 
@@ -39,6 +42,7 @@ public sealed class Bill
         CustomerId customerId,
         DateTime createdDate,
         PaymentMethod paymentMethod,
+        BillPaymentStatus billPaymentStatus,
         ShippingInformationId shippingInformationId)
     {
         return new Bill(
@@ -47,6 +51,17 @@ public sealed class Bill
             customerId,
             createdDate,
             paymentMethod,
+            billPaymentStatus,
             shippingInformationId);
     }
+
+    public void ChangeBillStatus(
+        BillPaymentStatus billPaymentStatus, 
+        PaymentMethod paymentMethod)
+    {
+        BillPaymentStatus = billPaymentStatus;
+        PaymentMethod = paymentMethod;
+    }
+
+
 }

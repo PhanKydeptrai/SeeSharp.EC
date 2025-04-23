@@ -1,5 +1,4 @@
-﻿
-using Domain.Entities.Customers;
+﻿using Domain.Entities.Customers;
 using Domain.Entities.Employees;
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.VerificationTokens;
@@ -16,8 +15,8 @@ public sealed class User
     public UserStatus UserStatus { get; private set; }
     public IsVerify IsVerify { get; private set; } 
     public Gender Gender { get; private set; }
-    public DateTime? DateOfBirth { get; private set; }
-    public string? ImageUrl { get; private set; } = string.Empty;
+    public DateOnly? DateOfBirth { get; private set; }
+    public string? ImageUrl { get; set; }
     public Customer? Customer { get; set; } = null!;
     public Employee? Employee { get; set; } = null!;
     public ICollection<UserAuthenticationToken>? UserAuthenticationTokens { get; set; } = null!;
@@ -30,7 +29,7 @@ public sealed class User
         UserStatus userStatus,
         IsVerify isVerify,
         Gender gender,
-        DateTime? dateOfBirth,
+        DateOnly? dateOfBirth,
         string? imageUrl)
     {
         UserId = userId;
@@ -52,7 +51,7 @@ public sealed class User
         Email email,
         PhoneNumber? phoneNumber,
         PasswordHash? passwordHash,
-        DateTime? dateOfBirth,
+        DateOnly? dateOfBirth,
         string? imageUrl)
     {
         return new User(
@@ -66,6 +65,20 @@ public sealed class User
             Gender.Unknown,
             dateOfBirth, 
             imageUrl ?? string.Empty);
+    }
+
+    public void UpdateUser(
+        UserName userName,
+        PhoneNumber? phoneNumber, 
+        DateOnly? dateOfBirth,
+        Gender gender,
+        string? imageUrl)
+    {
+        UserName = userName;
+        PhoneNumber = phoneNumber;
+        DateOfBirth = dateOfBirth;
+        Gender = gender;
+        ImageUrl = imageUrl;
     }
 
     public void ChangePassword(PasswordHash passwordHash)
@@ -94,6 +107,23 @@ public sealed class User
         UserStatus = UserStatus.Active;
     }
 
+    
+
+    public void BlockAccount()
+    {
+        if (UserStatus == UserStatus.Deleted)
+        {
+            throw new InvalidOperationException("User is deleted");
+        }
+
+        if (UserStatus == UserStatus.Blocked)
+        {
+            throw new InvalidOperationException("User is already blocked");
+        }
+
+        UserStatus = UserStatus.Blocked;
+    }
+
     public static User FromExisting(
         UserId userId, 
         UserName userName, 
@@ -113,5 +143,10 @@ public sealed class User
             Gender.Unknown,
             null, 
             imageUrl ?? string.Empty);
+    }
+
+    public void UpdateStatus(UserStatus status)
+    {
+        UserStatus = status;
     }
 }

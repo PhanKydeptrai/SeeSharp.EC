@@ -19,7 +19,5 @@ internal sealed class AddProductToOrderCommandValidator : AbstractValidator<AddP
             .GreaterThan(0)
             .WithErrorCode("Quantity.Invalid")
             .WithMessage("Quantity must be greater than 0");
-        
-        
     }
 }

@@ -1,18 +1,17 @@
 using System.IdentityModel.Tokens.Jwt;
 
 namespace API.Extentions;
-//TODO: Thêm cơ chế validate signature của token
 internal static class TokenExtentions
 {
-    internal static string GetTokenFromHeader(HttpContext httpContext)
+    internal static string? GetTokenFromHeader(HttpContext httpContext)
     {
-        //lấy token
-        string token = httpContext.Request.Headers["Authorization"]
-            .FirstOrDefault()!
-            .Substring("Bearer ".Length)
-            .Trim();
+        var authHeader = httpContext.Request.Headers["Authorization"].FirstOrDefault();
+        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+        {
+            return null;
+        }
 
-        return token;
+        return authHeader.Substring("Bearer ".Length).Trim();
     }
 
     public static IDictionary<string, string> DecodeJwt(string token)

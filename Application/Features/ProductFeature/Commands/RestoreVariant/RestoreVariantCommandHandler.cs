@@ -37,7 +37,7 @@ internal sealed class RestoreVariantCommandHandler : ICommandHandler<RestoreVari
 
         variant.Restore();
 
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         return Result.Success();
     }
 }

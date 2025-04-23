@@ -48,7 +48,7 @@ internal sealed class CustomerVerifyEmailCommandHandler : ICommandHandler<Custom
 
         var message = new CustomerConfirmedSuccessfullyEvent(token.User!.Email!.Value, Ulid.NewUlid().ToGuid());
         await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
-        await _unitOfWork.SaveChangeAsync();
+        await _unitOfWork.SaveChangesAsync();
         
         await _eventBus.PublishAsync(message);
         return Result.Success();

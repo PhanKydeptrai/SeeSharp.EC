@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Application.Security;
 using Domain.Entities.Customers;
+using Domain.Entities.Employees;
 using Domain.Entities.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -21,7 +22,8 @@ public class TokenProvider : ITokenProvider
         _config = config;
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SigningKey"]!));
     }
-    public string GenerateAccessToken(UserId userId, CustomerId customerId, Email email, string role, string jti)
+    
+    public string GenerateAccessTokenForCustomer(UserId userId, CustomerId customerId, Email email, string role, string jti)
     {
         var claims = new List<Claim>()
         {
@@ -47,9 +49,59 @@ public class TokenProvider : ITokenProvider
         return tokenHandler.WriteToken(token);
     }
 
+    
+    public string GenerateAccessTokenForEmployee(UserId userId, EmployeeId employeeId, Email email, string role, string jti)
+    {
+        var claims = new List<Claim>()
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, email.ToString()),
+            new Claim(JwtRegisteredClaimNames.Jti, jti),
+            new Claim("EmployeeId", employeeId.ToString()),
+            new Claim(ClaimTypes.Role, role)
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddHours(10),
+            SigningCredentials = credentials,
+            Issuer = _config["Jwt:Issuer"],
+            Audience = _config["Jwt:Audience"]
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+
+        return tokenHandler.WriteToken(token);
+    }
+
+    public async Task<string> GenerateAccessTokenForGuest()
+    {
+        var claims = new List<Claim>()
+        {
+            new Claim(JwtRegisteredClaimNames.Jti, Ulid.NewUlid().ToGuid().ToString()),
+            new Claim("GuestId", Ulid.NewUlid().ToGuid().ToString()),
+            new Claim(ClaimTypes.Role, "Guest")
+        };
+        
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddYears(10),
+            SigningCredentials = credentials,
+            Issuer = _config["Jwt:Issuer"],
+            Audience = _config["Jwt:Audience"]
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return await Task.FromResult(tokenHandler.WriteToken(token));
+    }
+
+    
     public string GenerateRefreshToken()
     {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(12));
     }
 
     public string GenerateRandomString(int length)
@@ -64,4 +116,6 @@ public class TokenProvider : ITokenProvider
 
         return result.ToString();
     }
+
+
 }

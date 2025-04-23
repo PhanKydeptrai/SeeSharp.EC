@@ -15,16 +15,17 @@ namespace Application.DTOs.Product;
 /// <param name="Variants"></param>
 public record ProductResponse(
     Guid ProductId,
+    Guid BaseVariantId,
     string ProductName,
     decimal PriceOfBaseVariant,
     string? ImageUrl,
     string? Description,
     string Status,
     string CategoryName,
-    VariantResponse[] Variants)
-{
-    public List<Link> links { get; set; } = new();
-}
+    VariantResponse[] Variants);
+// {
+//     public List<Link> links { get; set; } = new();
+// }
 
 /// <summary>
 /// Hỗ trợ bổ sung thông tin
@@ -44,5 +45,6 @@ public record VariantResponse(
     string ColorCode,
     string Description,
     decimal Price,
+    string ProductVariantStatus,
     string? ImageUrl,
     bool IsBaseVariant);

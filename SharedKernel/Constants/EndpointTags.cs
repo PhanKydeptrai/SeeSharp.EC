@@ -1,12 +1,13 @@
 ﻿namespace SharedKernel.Constants;
 
-public static class EndpointTag
+public static class EndpointTags
 {
     public const string Category = "Category";
     public const string Product = "Product";
     public const string Customer = "Customer";
     public const string Order = "Order";
     public const string Wishlist = "Wishlist";
+    public const string Voucher = "Voucher";
 }
 
 public static class EndpointName
@@ -25,6 +26,7 @@ public static class EndpointName
         public const string ResetPassword = "ResetPassword";
         public const string ChangePassword = "ChangePassword";
         public const string GetProfile = "GetProfile";
+        public const string UpdateProfile = "UpdateProfile";
 
         // public const string SignIn = "SignIn";
         // public const string SignOut = "SignOut";
@@ -36,6 +38,21 @@ public static class EndpointName
         // public const string ConfirmEmail = "ConfirmEmail";
         // public const string ResendEmailConfirmation = "ResendEmailConfirmation";
     }
+    
+    public class Employee
+    {
+        public const string GetAll = "GetAllEmployees";
+        public const string GetById = "GetEmployeeById";
+        public const string Create = "CreateEmployee";
+        public const string Update = "UpdateEmployee";
+        public const string UpdateStatus = "UpdateEmployeeStatus";
+        public const string ResetPassword = "EmployeeResetPassword";
+        public const string ChangePassword = "EmployeeChangePassword";
+        public const string GetProfile = "GetEmployeeProfile";
+        public const string SignIn = "EmployeeSignIn";
+        public const string SignInWithRefreshToken = "EmployeeSignInWithRefreshToken";
+    }
+    
     public class Product
     {
         public const string Create = "CreateProduct";
@@ -61,6 +78,7 @@ public static class EndpointName
         public const string Update = "UpdateCategory";
         public const string Delete = "DeleteCategory";
         public const string Restore = "RestoreCategory";
+        public const string GetCategoryInfo = "GetCategoryInfo";
     }
 
     public class Order
@@ -73,6 +91,7 @@ public static class EndpointName
         public const string GetCartInformation = "GetCartInformation";
         public const string GetAllOrderForAdmin = "GetAllOrderForAdmin";
         public const string GetAllOrderForCustomer = "GetAllOrderForCustomer";
+        public const string GetMakePaymentResponse = "GetMakePaymentResponse";
     }
 
     public class Wishlist
@@ -80,6 +99,16 @@ public static class EndpointName
         public const string AddWishList = "AddWishList";
         public const string RemoveWishList = "RemoveWishList";
         public const string GetWishList = "GetWishList";
+    }
+
+    public class Voucher
+    {
+        public const string Create = "CreateVoucher";
+        public const string GetById = "GetVoucherById";
+        public const string GetAll = "GetVouchers";
+        public const string Update = "UpdateVoucher";
+        public const string Delete = "DeleteVoucher";
+        public const string GetAllForCustomer = "GetAllCustomerVouchers";
     }
 }
 
@@ -94,5 +123,7 @@ public static class EndpointMethod
 public static class CustomJwtRegisteredClaimNames
 {
     public const string CustomerId = "CustomerId";
+    public const string EmployeeId = "EmployeeId";
+    public const string GuestId = "GuestId";
 }
 

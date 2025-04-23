@@ -6,13 +6,14 @@ using Application.Features.CategoryFeature.Commands.RestoreCategory;
 using Application.Features.CategoryFeature.Commands.UpdateCategory;
 using Application.Features.CategoryFeature.Queries.GetAllCategory;
 using Application.Features.CategoryFeature.Queries.GetCategoryById;
+using Application.Features.CategoryFeature.Queries.GetCategoryInfo;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
 
 namespace API.Controllers;
 
-[ApiKey]
+// [ApiKey]
 [Route("api/categories")]
 [ApiController]
 public sealed class CategoriesController : ControllerBase
@@ -24,7 +25,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Create a new category
+    /// Tạo một danh mục mới
     /// </summary>
     /// <param name="categoryName"></param>
     /// <param name="image"></param>
@@ -41,7 +42,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Delete a category
+    /// Xóa một danh mục
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>
@@ -55,7 +56,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Get all categories
+    /// Lấy tất cả các danh mục
     /// </summary>
     /// <param name="filter"></param>
     /// <param name="searchTerm"></param>
@@ -87,7 +88,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Get a category by id
+    /// Lấy một danh mục theo id
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>
@@ -100,7 +101,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Get a category by id for admin, this get anystate of category
+    /// Lấy một danh mục theo id cho admin, lấy bất kỳ trạng thái nào của danh mục
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>/api/admin/categories/{categoryId:guid}")]
@@ -114,7 +115,7 @@ public sealed class CategoriesController : ControllerBase
     }
     
     /// <summary>
-    /// Restore a category
+    /// Khôi phục một danh mục
     /// </summary>
     /// <param name="categoryId"></param>
     /// <returns></returns>
@@ -127,7 +128,7 @@ public sealed class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Update a category
+    /// Cập nhật một danh mục
     /// </summary>
     /// <param name="categoryId"></param>
     /// <param name="categoryName"></param>
@@ -138,10 +139,22 @@ public sealed class CategoriesController : ControllerBase
     public async Task<IResult> UpdateCategory(
         [FromRoute] Guid categoryId, 
         [FromForm] string categoryName, 
-        [FromForm] IFormFile? image)
+        IFormFile? image)
     {
         var result = await _sender.Send(new UpdateCategoryCommand(categoryId, categoryName, image));
         return result.Match(Results.NoContent, CustomResults.Problem);
+    }
+
+    /// <summary>
+    /// Lấy thông tin danh mục
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("info")]
+    [EndpointName(EndpointName.Category.GetCategoryInfo)]
+    public async Task<IResult> GetCategoryInfo()
+    {
+        var result = await _sender.Send(new GetCategoryInfoQuery());
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
 
 }

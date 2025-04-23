@@ -15,20 +15,20 @@ internal sealed class CreateCategoryCommandValidator : AbstractValidator<CreateC
             .MaximumLength(50)
             .WithMessage("Category name must not exceed 50 characters")
             .Must(a => categoryQueryServices.IsCategoryNameExist(null,CategoryName.FromString(a)).Result == false)
-            .WithMessage("Category name already exists")
-            .Must(ValidateInput)
-            .WithMessage("Category name contains invalid characters");
+            .WithMessage("Category name already exists");
+            // .Must(ValidateInput)
+            // .WithMessage("Category name contains invalid characters");
     }
 
-    private bool ValidateInput(string input)
-    {
-        foreach (var naughtyString in TheNaughtyStrings.All)
-        {
-            if (input.Contains(naughtyString))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+    // private bool ValidateInput(string input)
+    // {
+    //     foreach (var naughtyString in TheNaughtyStrings.All)
+    //     {
+    //         if (input.Contains(naughtyString))
+    //         {
+    //             return false;
+    //         }
+    //     }
+    //     return true;
+    // }
 }

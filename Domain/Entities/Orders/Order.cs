@@ -80,6 +80,25 @@ public sealed class Order
     public void AddNewValueToOrderTotal(OrderDetailUnitPrice unitPrice)
     {
         Total = OrderTotal.FromDecimal(Total.Value + unitPrice.Value);
-    } 
+    }
+
+    public void ChangePaymentStatus(OrderPaymentStatus paymentStatus)
+    {
+        PaymentStatus = paymentStatus;
+    }
+
+    public void Cancel()
+    {
+        OrderStatus = OrderStatus.Cancelled;
+    }
+    public void ChangeOrderStatus(OrderStatus orderStatus)
+    {
+        OrderStatus = orderStatus;
+    }
+
+    public void ChangeCustomerId(CustomerId customerId)
+    {
+        CustomerId = customerId;
+    }
 }
 

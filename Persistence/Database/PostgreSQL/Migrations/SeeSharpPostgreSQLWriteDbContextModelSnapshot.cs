@@ -27,6 +27,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("BillId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("BillPaymentStatus")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMPTZ");
 
@@ -245,6 +248,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<int>("PaymentMethod")
                         .HasColumnType("integer");
 
+                    b.Property<int>("TransactionStatus")
+                        .HasColumnType("integer");
+
                     b.Property<Guid?>("VoucherId")
                         .HasColumnType("uuid");
 
@@ -291,7 +297,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("ColorCode")
                         .IsRequired()
-                        .HasColumnType("varchar(7)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -427,8 +433,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("TIMESTAMPTZ");
+                    b.Property<DateOnly?>("DateOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -513,7 +519,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("ExpiredDate")
-                        .HasColumnType("TIMESTAMPTZ");
+                        .HasColumnType("date");
 
                     b.Property<decimal>("MaximumDiscountAmount")
                         .HasColumnType("decimal");
@@ -525,7 +531,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("TIMESTAMPTZ");
+                        .HasColumnType("date");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");

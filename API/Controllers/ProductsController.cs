@@ -5,6 +5,7 @@ using Application.Features.ProductFeature.Commands.CreateProductVariant;
 using Application.Features.ProductFeature.Commands.DeleteProduct;
 using Application.Features.ProductFeature.Commands.DeleteVariant;
 using Application.Features.ProductFeature.Commands.RestoreProduct;
+using Application.Features.ProductFeature.Commands.RestoreVariant;
 using Application.Features.ProductFeature.Commands.UpdateProduct;
 using Application.Features.ProductFeature.Commands.UpdateProductVariant;
 using Application.Features.ProductFeature.Queries.GetAllProduct;
@@ -12,6 +13,7 @@ using Application.Features.ProductFeature.Queries.GetAllVariantQuery;
 using Application.Features.ProductFeature.Queries.GetProductById;
 using Application.Features.ProductFeature.Queries.GetVariantById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
 
@@ -19,7 +21,6 @@ namespace API.Controllers;
 
 [Route("api/products")]
 [ApiController]
-[ApiKey]
 public sealed class ProductsController : ControllerBase
 {
     private readonly ISender _sender;
@@ -140,8 +141,8 @@ public sealed class ProductsController : ControllerBase
     /// <param name="VariantPrice">Giá sản phẩm, nó được áp dụng cho sản phẩm gốc</param>
     /// <param name="CategoryId">Mã danh mục</param>
     /// <returns></returns>
-    [HttpPost]
-    [EndpointName(EndpointName.Product.Create)]
+    [HttpPost(Name = EndpointName.Product.Create)]
+    [Authorize]
     public async Task<IResult> CreateProduct(
         [FromForm] string ProductName,
         [FromForm] string ProductBaseVariantName,
@@ -188,10 +189,10 @@ public sealed class ProductsController : ControllerBase
     {
         var command = new UpdateProductCommand(
             productId, 
-            productName, 
+            productName,
             productImage,
-            colorCode,
-            description, 
+            description,
+            colorCode, 
             productPrice, 
             categoryId);
         var result = await _sender.Send(command);
@@ -217,7 +218,7 @@ public sealed class ProductsController : ControllerBase
         [FromForm] string variantName,
         [FromForm] decimal productVariantPrice,
         [FromForm] string colorCode,
-        [FromForm] IFormFile? image,
+        IFormFile? image,
         [FromForm] string description,
         [FromForm] Guid productId,
         [FromForm] bool isBaseVariant)
@@ -279,7 +280,7 @@ public sealed class ProductsController : ControllerBase
         [FromForm] string variantName,
         [FromForm] decimal productVariantPrice,
         [FromForm] string colorCode,
-        [FromForm] IFormFile? image,
+        IFormFile? image,
         [FromForm] string productVariantDescription,
         [FromForm] Guid productId)
     {
@@ -318,7 +319,7 @@ public sealed class ProductsController : ControllerBase
     [EndpointName(EndpointName.Product.RestoreVariant)]
     public async Task<IResult> RestoreVariant([FromRoute] Guid variantId)
     {
-        var command = new DeleteVariantCommand(variantId);
+        var command = new RestoreVariantCommand(variantId);
         var result = await _sender.Send(command);
         return result.Match(Results.NoContent, CustomResults.Problem);
     }

@@ -11,7 +11,7 @@ public class PagedList<T>(List<T> items, int page, int pageSize, int totalCount)
     public int TotalCount { get; set; } = totalCount;
     public bool HasNextPage => Page * PageSize < TotalCount;
     public bool HaspreviousPage => Page > 1;
-    public List<Link> Links { get; set; } = new();
+    // public List<Link> Links { get; set; } = new();
 
     public static async Task<PagedList<T>> CreateAsync(IQueryable<T> query, int page, int pageSize)
     {

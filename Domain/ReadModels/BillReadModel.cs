@@ -10,8 +10,8 @@ public class BillReadModel
     public DateTime CreatedDate { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public Ulid ShippingInformationId { get; set; }
+    public BillPaymentStatus BillPaymentStatus { get; set; }
     public CustomerReadModel Customer { get; set; } = null!;
     public OrderReadModel Order { get; set; } = null!;
-    public ICollection<OrderTransactionReadModel> OrderTransactions { get; set; } = new List<OrderTransactionReadModel>();
     public ShippingInformationReadModel ShippingInformation { get; set; } = new ShippingInformationReadModel();
 }

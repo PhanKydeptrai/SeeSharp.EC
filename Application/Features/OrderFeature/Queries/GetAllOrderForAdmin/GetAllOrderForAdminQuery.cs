@@ -12,3 +12,5 @@ public record GetAllOrderForAdminQuery(
     string? sortOrder,
     int? page,
     int? pageSize) : IQuery<PagedList<OrderResponse>>;
+
+

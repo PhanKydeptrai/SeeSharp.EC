@@ -113,10 +113,12 @@ internal sealed class ProductQueryServices : IProductQueryServices
         ProductId productId,
         CancellationToken cancellationToken = default)
     {
+        #region Old Code
         return await _postgreSQLdbContext.Products
             .Where(a => a.ProductId == new Ulid(productId.Value))
             .Select(a => new ProductResponse(
                 a.ProductId.ToGuid(),
+                a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantId.ToGuid(),
                 a.ProductName,
                 a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantPrice,
                 a.ImageUrl,
@@ -130,9 +132,10 @@ internal sealed class ProductQueryServices : IProductQueryServices
                     b.ColorCode,
                     b.Description,
                     b.ProductVariantPrice,
+                    b.ProductVariantStatus.ToString(),
                     b.ImageUrl ?? string.Empty,
-                    b.IsBaseVariant)).ToArray()
-            )).FirstOrDefaultAsync();
+                    b.IsBaseVariant)).ToArray())).FirstOrDefaultAsync();
+        #endregion
     }
 
 
@@ -162,10 +165,10 @@ internal sealed class ProductQueryServices : IProductQueryServices
         }
 
         //Filter by CategoryId
-        if (!string.IsNullOrWhiteSpace(filterCategory) && Ulid.TryParse(filterCategory, out var _))
+        if (!string.IsNullOrWhiteSpace(filterCategory))
         {
-            productsQuery = productsQuery.Where(
-                x => x.CategoryId == Ulid.Parse(filterCategory));
+            var id = new Guid(filterCategory);
+            productsQuery = productsQuery.Where(x => x.CategoryId == new Ulid(id));
         }
 
         //sort
@@ -189,6 +192,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
         var products = productsQuery
             .Select(a => new ProductResponse(
                 a.ProductId.ToGuid(),
+                a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantId.ToGuid(),
                 a.ProductName,
                 a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantPrice,
                 a.ImageUrl,
@@ -202,6 +206,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                     b.ColorCode,
                     b.Description,
                     b.ProductVariantPrice,
+                    b.ProductVariantStatus.ToString(),
                     b.ImageUrl ?? string.Empty,
                     b.IsBaseVariant)).ToArray())).AsQueryable();
             

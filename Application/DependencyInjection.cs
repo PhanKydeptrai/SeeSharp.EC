@@ -21,6 +21,9 @@ public static class DependencyInjection
             //Đăng ký validation pipeline behavior
             config.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
         });
+
+        services.AddScoped<CloudinaryService>();
+        
         //NOTE: Chưa hiểu
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
         //Cấu hình FluentValidation
