@@ -24,6 +24,7 @@ public record OrderHistoryResponse(
     string? SpecificAddress,
     decimal Total,
     string PaymentStatus,
+    string OrderStatus,
     string PaymentMethod,
     string? VoucherCode,
     Guid BillId,

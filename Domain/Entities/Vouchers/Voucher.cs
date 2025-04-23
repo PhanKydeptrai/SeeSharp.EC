@@ -11,8 +11,8 @@ public sealed class Voucher
     public PercentageDiscount PercentageDiscount { get; private set; } = null!;
     public MaximumDiscountAmount MaximumDiscountAmount { get; private set; } = null!;
     public MinimumOrderAmount MinimumOrderAmount { get; private set; } = null!;
-    public DateTime StartDate { get; private set; }
-    public DateTime ExpiredDate { get; private set; }
+    public DateOnly StartDate { get; private set; }
+    public DateOnly ExpiredDate { get; private set; }
     public VoucherDescription Description { get; private set; } = null!;
     public Status Status { get; private set; }
 
@@ -28,8 +28,8 @@ public sealed class Voucher
         PercentageDiscount percentageDiscount,
         MaximumDiscountAmount maximumDiscountAmount,
         MinimumOrderAmount minimumOrderAmount,
-        DateTime startDate,
-        DateTime expiredDate,
+        DateOnly startDate,
+        DateOnly expiredDate,
         VoucherDescription description,
         Status status)
     {
@@ -52,8 +52,8 @@ public sealed class Voucher
         VoucherCode voucherCode,
         MaximumDiscountAmount maximumDiscountAmount,
         MinimumOrderAmount minimumOrderAmount,
-        DateTime startDate,
-        DateTime expiredDate,
+        DateOnly startDate,
+        DateOnly expiredDate,
         VoucherDescription voucherDescription)
     {
         if(startDate > expiredDate)
@@ -82,8 +82,8 @@ public sealed class Voucher
         PercentageDiscount percentageDiscount,
         MaximumDiscountAmount maximumDiscountAmount,
         MinimumOrderAmount minimumOrderAmount,
-        DateTime startDate,
-        DateTime expiredDate,
+        DateOnly startDate,
+        DateOnly expiredDate,
         VoucherDescription voucherDescription)
     {
         if (startDate > expiredDate)

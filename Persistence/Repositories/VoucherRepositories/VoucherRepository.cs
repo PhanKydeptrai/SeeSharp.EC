@@ -75,4 +75,9 @@ internal sealed class VoucherRepository : IVoucherRepository
             _dbContext.Vouchers.Remove(voucher);
         }
     }
+
+    public async Task AddCustomerVoucher(CustomerVoucher customerVoucher)
+    {
+        await _dbContext.CustomerVouchers.AddAsync(customerVoucher);
+    }
 } 

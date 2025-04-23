@@ -9,6 +9,6 @@ public record CreateNewVoucherCommand(
     int PercentageDiscount,
     decimal MaximumDiscountAmount,
     decimal MinimumOrderAmount,
-    DateTime StartDate,
-    DateTime ExpiredDate,
+    DateOnly StartDate,
+    DateOnly ExpiredDate,
     string VoucherDescription) : ICommand;

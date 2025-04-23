@@ -268,6 +268,7 @@ internal sealed class OrderQueryServices : IOrderQueryServices
                 a.Bill!.ShippingInformation.SpecificAddress.Value,
                 a.Total.Value,
                 a.PaymentStatus.ToString(),
+                a.OrderStatus.ToString(),
                 a.Bill!.PaymentMethod.ToString(),
                 a.OrderTransaction!.IsVoucherUsed.Value && a.OrderTransaction.Voucher != null ? a.OrderTransaction.Voucher.VoucherCode.Value : null,
                 a.Bill.BillId.Value,

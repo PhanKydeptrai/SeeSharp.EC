@@ -114,7 +114,7 @@ public class CustomerVoucherTests
         return (Voucher)constructor.Invoke(new object[] {
             voucherId,
             VoucherName.NewVoucherName("Test Voucher"),
-            VoucherCode.NewVoucherName("TESTCODE"),
+            VoucherCode.NewVoucherCode("TESTCODE"),
             VoucherType.Percentage,
             PercentageDiscount.NewPercentageDiscount(10),
             MaximumDiscountAmount.NewMaxDiscountAmount(100),
