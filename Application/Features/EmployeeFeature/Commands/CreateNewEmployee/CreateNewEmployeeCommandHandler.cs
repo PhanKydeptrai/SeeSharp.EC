@@ -58,6 +58,8 @@ internal sealed class CreateNewEmployeeCommandHandler : ICommandHandler<CreateNe
             request.DateOfBirth,
             string.Empty); //TODO: Add imageUrl
 
+        user.VerifyAccount();
+
         var employee = Employee.NewEmployee(user.UserId);
         
         await _userRepository.AddUser(user);

@@ -1,5 +1,6 @@
 using API.Extentions;
 using API.Infrastructure;
+using API.Infrastructure.Authorization;
 using Application.Features.ProductFeature.Commands.CreateProduct;
 using Application.Features.ProductFeature.Commands.CreateProductVariant;
 using Application.Features.ProductFeature.Commands.DeleteProduct;
@@ -178,6 +179,7 @@ public sealed class ProductsController : ControllerBase
     /// <returns></returns>
     [HttpPut("{productId:guid}")]
     [EndpointName(EndpointName.Product.Update)]
+    [AuthorizeByRole(AuthorizationPolicies.AdminOnly)]
     public async Task<IResult> UpdateProduct(
         [FromRoute] Guid productId,
         [FromForm] string productName,
