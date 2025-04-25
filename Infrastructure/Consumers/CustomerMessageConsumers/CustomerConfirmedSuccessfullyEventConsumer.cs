@@ -45,7 +45,7 @@ internal sealed class CustomerConfirmedSuccessfullyEventConsumer : IConsumer<Cus
             var email = _fluentEmail
                 .To(message.Email)
                 .Subject("Xác nhận tài khoản thành công")
-                .Body($"<h1>Xin chào</h1><p>Tài khoản của bạn đã được xác nhận thành công. Chúc quý khách mua hàng vui vẻ!</p>", isHtml: true);
+                .Body($"<h1>Xin chào</h1><p>Tài khoản của bạn đã được xác nhận thành công. <br> Nhằm tăng trải nghiệm mua hàng của quý khách cửa hàng xin phép gửi tặng quý khách một mã giảm giá áp dụng trị giá 10K, quý khách có thể áp dụng ngay cho đơn hàng đầu tiên <br> Chúc quý khách mua hàng vui vẻ!</p>", isHtml: true);
 
             await email.SendAsync();
 

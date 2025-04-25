@@ -74,8 +74,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     PercentageDiscount = table.Column<int>(type: "integer", nullable: false),
                     MaximumDiscountAmount = table.Column<decimal>(type: "decimal", nullable: false),
                     MinimumOrderAmount = table.Column<decimal>(type: "decimal", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "date", nullable: false),
-                    ExpiredDate = table.Column<DateTime>(type: "date", nullable: false),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ExpiredDate = table.Column<DateOnly>(type: "date", nullable: false),
                     Description = table.Column<string>(type: "varchar(255)", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -445,6 +445,11 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 table: "Users",
                 columns: new[] { "UserId", "DateOfBirth", "Email", "Gender", "ImageUrl", "IsVerify", "PasswordHash", "PhoneNumber", "UserName", "UserStatus" },
                 values: new object[] { new Guid("01960aec-bac7-71c5-cfb0-309df6c12572"), null, "kyp194490@gmail.com", "Unknown", "", true, "15E2B0D3C33891EBB0F1EF609EC419420C20E320CE94C65FBC8C3312448EB225", "0777637527", "PhanKy", 0 });
+
+            migrationBuilder.InsertData(
+                table: "Vouchers",
+                columns: new[] { "VoucherId", "Description", "ExpiredDate", "MaximumDiscountAmount", "MinimumOrderAmount", "PercentageDiscount", "StartDate", "Status", "VoucherCode", "VoucherName", "VoucherType" },
+                values: new object[] { new Guid("01966202-d308-ab67-f2a9-436e1dd0e91f"), "Voucher dành riêng cho khách hàng mới đăng ký tài khoản", new DateOnly(2026, 4, 23), 10000m, 100000m, 0, new DateOnly(2025, 4, 23), 1, "NEWUSER01", "NEWUSER01", 0 });
 
             migrationBuilder.InsertData(
                 table: "Employees",

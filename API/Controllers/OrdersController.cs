@@ -174,7 +174,7 @@ public sealed class OrdersController : ControllerBase
     /// <param name="pageSize"></param>
     /// <returns></returns>
     [HttpGet("admin", Name = EndpointName.Order.GetAllOrderForAdmin)]
-    [AuthorizeByRole(AuthorizationPolicies.AdminOnly)]
+    [AuthorizeByRole(AuthorizationPolicies.AllEmployee)]
     public async Task<IResult> GetAllOrderForAdmin(
         [FromQuery] string? statusFilter,
         [FromQuery] string? customerFilter,

@@ -1,4 +1,4 @@
-using Domain.Entities.Vouchers;
+﻿using Domain.Entities.Vouchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -79,5 +79,15 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
         builder.Property(a => a.Status)
             .IsRequired()
             .HasColumnType("integer");
+
+        builder.HasData(Voucher.NewDirectDiscountVoucher(
+                VoucherName.NewVoucherName("NEWUSER01"),
+                VoucherCode.NewVoucherCode("NEWUSER01"),
+                MaximumDiscountAmount.FromDecimal(10000),
+                MinimumOrderAmount.FromDecimal(100000),
+                DateOnly.FromDateTime(DateTime.Now),
+                DateOnly.FromDateTime(DateTime.Now.AddMonths(12)),
+                VoucherDescription.FromString("Voucher dành riêng cho khách hàng mới đăng ký tài khoản")));
+
     }
 }

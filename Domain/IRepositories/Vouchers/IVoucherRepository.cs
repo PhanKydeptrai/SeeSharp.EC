@@ -7,6 +7,7 @@ namespace Domain.IRepositories.Vouchers;
 public interface IVoucherRepository
 {
     Task AddVoucher(Voucher voucher);
+    Task AddCustomerVoucher(CustomerVoucher customerVoucher);
     Task<Voucher?> GetVoucherById(VoucherId voucherId);
     Task<Voucher?> GetVoucherByCode(VoucherCode voucherCode);
     Task<CustomerVoucher?> GetCustomerVoucherByVoucherCode(VoucherCode voucherCode, CustomerId customerId);

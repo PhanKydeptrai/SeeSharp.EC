@@ -5,7 +5,7 @@ namespace Domain.Entities.Vouchers;
 public sealed class VoucherCode : ValueObject
 {
     private VoucherCode(string value) => Value = value;
-    public static VoucherCode NewVoucherName(string value)
+    public static VoucherCode NewVoucherCode(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {

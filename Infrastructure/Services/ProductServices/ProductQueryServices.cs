@@ -175,6 +175,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
         Expression<Func<ProductReadModel, object>> keySelector = sortColumn?.ToLower() switch
         {
             "productname" => x => x.ProductName,
+            "price" => x => x.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantPrice,
             "productid" => x => x.ProductId,
             _ => x => x.ProductId
         };

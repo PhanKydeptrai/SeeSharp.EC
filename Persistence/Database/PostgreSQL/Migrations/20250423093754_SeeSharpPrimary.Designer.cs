@@ -12,7 +12,7 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(SeeSharpPostgreSQLWriteDbContext))]
-    [Migration("20250418173328_SeeSharpPrimary")]
+    [Migration("20250423093754_SeeSharpPrimary")]
     partial class SeeSharpPrimary
     {
         /// <inheritdoc />
@@ -521,7 +521,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<DateTime>("ExpiredDate")
+                    b.Property<DateOnly>("ExpiredDate")
                         .HasColumnType("date");
 
                     b.Property<decimal>("MaximumDiscountAmount")
@@ -533,7 +533,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<int>("PercentageDiscount")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
                     b.Property<int>("Status")
@@ -553,6 +553,22 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasKey("VoucherId");
 
                     b.ToTable("Vouchers");
+
+                    b.HasData(
+                        new
+                        {
+                            VoucherId = new Guid("01966202-d308-ab67-f2a9-436e1dd0e91f"),
+                            Description = "Voucher dành riêng cho khách hàng mới đăng ký tài khoản",
+                            ExpiredDate = new DateOnly(2026, 4, 23),
+                            MaximumDiscountAmount = 10000m,
+                            MinimumOrderAmount = 100000m,
+                            PercentageDiscount = 0,
+                            StartDate = new DateOnly(2025, 4, 23),
+                            Status = 1,
+                            VoucherCode = "NEWUSER01",
+                            VoucherName = "NEWUSER01",
+                            VoucherType = 0
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.WishItems.WishItem", b =>

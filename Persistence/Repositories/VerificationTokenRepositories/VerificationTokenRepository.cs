@@ -22,6 +22,7 @@ internal sealed class VerificationTokenRepository : IVerificationTokenRepository
     {
         return await _nextSharpPostgreSQLWriteDbContext.VerificationTokens
             .Include(a => a.User)
+            .ThenInclude(a => a.Customer)
             .FirstOrDefaultAsync(a => a.VerificationTokenId == verificationTokenId);
     }
 

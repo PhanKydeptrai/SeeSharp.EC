@@ -46,13 +46,13 @@ public class VoucherValueObjectsTests
     {
         if (isValid)
         {
-            var voucherCode = VoucherCode.NewVoucherName(code);
+            var voucherCode = VoucherCode.NewVoucherCode(code);
             Assert.NotNull(voucherCode);
             Assert.Equal(code, voucherCode.Value);
         }
         else
         {
-            Assert.Throws<ArgumentException>(() => VoucherCode.NewVoucherName(code));
+            Assert.Throws<ArgumentException>(() => VoucherCode.NewVoucherCode(code));
         }
     }
 
