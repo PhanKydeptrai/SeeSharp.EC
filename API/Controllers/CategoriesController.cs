@@ -13,7 +13,6 @@ using SharedKernel.Constants;
 
 namespace API.Controllers;
 
-// [ApiKey]
 [Route("api/categories")]
 [ApiController]
 public sealed class CategoriesController : ControllerBase
