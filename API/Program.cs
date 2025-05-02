@@ -23,7 +23,6 @@ var builder = WebApplication.CreateBuilder(args);
 //TODO: Move to external file
 //Cấu hình Authen và Author
 #region Need to move to external file
-
 // Configure QuestPDF
 QuestPDF.Settings.License = LicenseType.Community;
 
@@ -96,6 +95,7 @@ builder.Services.AddAuthorization(options =>
     AuthorizationPolicies.ConfigurePolicies(options);
 });
 
+builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
@@ -113,7 +113,7 @@ builder.Services.AddScoped<ILinkServices, LinkServices>(); //* Hateoas
 builder.Services.AddHttpContextAccessor();
 
 #endregion
-builder.Services.AddCustomProblemDetails();
+//builder.Services.AddCustomProblemDetails();
 builder.Host.UseSerilog((context, loggerConfig) =>
 loggerConfig.ReadFrom.Configuration(context.Configuration));
 //Seq
@@ -183,8 +183,7 @@ app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Add static files middleware
-
- app.UseRouting();
+app.UseRouting();
 
 #region Cấu hình minimal API
 app.MapControllers();
