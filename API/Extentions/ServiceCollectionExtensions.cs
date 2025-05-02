@@ -13,8 +13,7 @@ internal static class ServiceCollectionExtensions
     {
         services.AddSwaggerGen(o =>
         {
-            o.SwaggerDoc("v1", new OpenApiInfo { Title = "NextSharp", Version = "v1" });
-            // o.CustomSchemaIds(id => id.FullName!.Replace('+', '-'));
+            o.SwaggerDoc("v1", new OpenApiInfo { Title = "SeeSharp", Version = "v1" });
 
             var securityScheme = new OpenApiSecurityScheme
             {

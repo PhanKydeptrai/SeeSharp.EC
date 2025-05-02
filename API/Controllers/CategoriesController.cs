@@ -29,16 +29,16 @@ public sealed class CategoriesController : ControllerBase
     /// <param name="categoryName"></param>
     /// <param name="image"></param>
     /// <returns></returns>
-    [HttpPost]
-    [EndpointName(EndpointName.Category.Create)]
-    public async Task<IResult> CreateCategory(
-        [FromForm] string categoryName,
-        IFormFile? image)
-    {
-        var command = new CreateCategoryCommand(categoryName, image);
-        var result = await _sender.Send(command);
-        return result.Match(Results.Ok, CustomResults.Problem);
-    }
+    //[HttpPost]
+    //[EndpointName(EndpointName.Category.Create)]
+    //public async Task<IResult> CreateCategory(
+    //    [FromForm] string categoryName,
+    //    IFormFile? image)
+    //{
+    //    var command = new CreateCategoryCommand(categoryName, image);
+    //    var result = await _sender.Send(command);
+    //    return result.Match(Results.Ok, CustomResults.Problem);
+    //}
 
     /// <summary>
     /// Xóa một danh mục

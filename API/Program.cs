@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 using API.Extentions;
 using API.Infrastructure.Authorization;
@@ -100,7 +101,7 @@ builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 
-//builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 #region Dependency Injection
 builder.Services.AddApplication(builder.Configuration)
@@ -183,11 +184,11 @@ app.UseSwaggerAndScalar();
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Add static files middleware
 
-// app.UseRouting();
+ app.UseRouting();
 
 #region Cấu hình minimal API
 app.MapControllers();
-// app.MapEndpoints();
+app.MapEndpoints();
 #endregion
 
 app.Run();
