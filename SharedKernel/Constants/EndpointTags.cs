@@ -23,12 +23,14 @@ public static class EndpointName
         public const string RevokeRefreshTokens = "RevokeAllRefreshTokenForCustomer";
         public const string SignInWithRefreshToken = "CustomerSignInWithRefreshToken";
         public const string Verify = "Verify";
+        public const string GetCustomerProfileById = "GetCustomerProfileById";
         public const string ChangePasswordConfirm = "ChangePasswordConfirm";
         public const string ResetPasswordConfirm = "ResetPasswordConfirm";
         public const string ResetPassword = "ResetPassword";
         public const string ChangePassword = "ChangePassword";
         public const string GetProfile = "GetProfile";
         public const string UpdateProfile = "UpdateProfile";
+        public const string GetAll = "GetAllCustomers";
 
         // public const string SignIn = "SignIn";
         // public const string SignOut = "SignOut";

@@ -7,6 +7,3 @@ public record CustomerSignInCommand(
     string Email, 
     string Password) : ICommand<CustomerSignInResponse>;
 
-public record CustomerSignInRequest(
-    string Email, 
-    string Password);
