@@ -55,7 +55,7 @@ public static class EndpointExtensions
     /// </summary>
     /// <param name="builder"></param>
     /// <returns></returns>
-    public static RouteHandlerBuilder AddUnAuthorizedResponse(
+    public static RouteHandlerBuilder AddUnauthorizedResponse(
        this RouteHandlerBuilder builder)
     {
         return builder

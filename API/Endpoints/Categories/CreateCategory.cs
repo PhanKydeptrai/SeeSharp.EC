@@ -12,8 +12,8 @@ internal sealed class CreateCategory : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/categories", async (
-            [FromForm] Request request,
+        app.MapPost("api/categories", async (
+            [FromForm] CreateCategoryRequest request,
             ISender sender) =>
         {
             var command = new CreateCategoryCommand(request.categoryName, request.image);
@@ -21,11 +21,11 @@ internal sealed class CreateCategory : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
 
         })
-        .WithTags(EndpointTags.Category)
+        .WithTags(EndpointTags.Categories)
         .WithName(EndpointName.Category.Create)
         .Produces(StatusCodes.Status204NoContent)
         .AddBadRequestResponse()
-        .AddUnAuthorizedResponse()
+        .AddUnauthorizedResponse()
         .AddForbiddenResponse()
         .DisableAntiforgery()
         .WithSummary("Tạo danh mục mới")
@@ -40,7 +40,7 @@ internal sealed class CreateCategory : IEndpoint
         .RequireAuthorization();
     }
 
-    private class Request
+    private class CreateCategoryRequest
     {
         /// <summary>
         /// Tên danh mục
