@@ -89,6 +89,7 @@ public static class EndpointName
     public class Order
     {
         public const string AddProductToOrder = "AddProductToOrder";
+        public const string AddProductToOrderForGuest = "AddProductToOrderForGuest";
         public const string UpdateOrderDetail = "UpdateOrderDetail";
         public const string GetById = "GetOrder";
         public const string DeleteOrderDetail = "DeleteOrderDetail";
@@ -97,6 +98,10 @@ public static class EndpointName
         public const string GetAllOrderForAdmin = "GetAllOrderForAdmin";
         public const string GetAllOrderForCustomer = "GetAllOrderForCustomer";
         public const string GetMakePaymentResponse = "GetMakePaymentResponse";
+        public const string MakePaymentForSubscriber = "MakePaymentForSubscriber";
+        public const string ChangeOrderStatus = "ChangeOrderStatus";
+        public const string GetAllForAdmin = "GetAllForAdmin";
+        public const string CancelOrder = "CancelOrder";
     }
 
     public class Wishlist
