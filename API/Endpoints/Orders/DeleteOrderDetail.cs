@@ -11,7 +11,8 @@ internal sealed class DeleteOrderDetail : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("api/orders/details/{orderDetailId:guid}", async (
+        app.MapDelete("api/orders/details/{orderDetailId:guid}", 
+        async (
             [FromRoute] Guid orderDetailId,
             HttpContext httpContext, 
             ISender sender) =>

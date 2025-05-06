@@ -10,6 +10,7 @@ public static class EndpointTags
     public const string Voucher = "Voucher";
     public const string Employee = "Employee";
     public const string Bills = "Bills";
+    public const string ShippingInformations = "ShippingInformations";
 }
 
 public static class EndpointName
@@ -129,6 +130,17 @@ public static class EndpointName
         public const string Update = "UpdateBill";
         public const string Delete = "DeleteBill";
         public const string Restore = "RestoreBill";
+    }
+
+    public class ShippingInformations
+    {
+        public const string GetAll = "GetAllShippingInformation";
+        public const string GetDefaultShippingInformation = "GetDefaultShippingInformation";
+        public const string GetById = "GetShippingInformationById";
+        public const string Create = "CreateShippingInformation";
+        public const string Update = "UpdateShippingInformation";
+        public const string Delete = "DeleteShippingInformation";
+        public const string Restore = "RestoreShippingInformation";
     }
 }
 

@@ -11,14 +11,15 @@ internal sealed class ChangeOrderStatus : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("api/orders/{orderId:guid}/order-status", async (
+        app.MapPatch("api/orders/{orderId:guid}/order-status", 
+        async (
             [FromRoute] Guid orderId,
             ISender sender) =>
         {
             var result = await sender.Send(new ChangeOrderStatusCommand(orderId));
             return result.Match(Results.NoContent, CustomResults.Problem);
-        })
-        .WithTags(EndpointTags.Order)
+
+        }).WithTags(EndpointTags.Order)
         .WithName(EndpointName.Order.ChangeOrderStatus)
         .Produces(StatusCodes.Status204NoContent)
         .AddBadRequestResponse()

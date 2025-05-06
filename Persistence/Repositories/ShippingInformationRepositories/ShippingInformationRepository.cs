@@ -18,7 +18,14 @@ internal sealed class ShippingInformationRepository : IShippingInformationReposi
         await _postgreSQLWriteDbContext.ShippingInformations.AddAsync(shippingInformation);
     }
 
-    public async Task<bool> IsExistedShippingInformation(ShippingInformationId shippingInformationId)
+    public async Task<ShippingInformation?> GetShippingInformationById(
+        ShippingInformationId shippingInformationId)
+    {
+        return await _postgreSQLWriteDbContext.ShippingInformations.FindAsync(shippingInformationId);
+    }
+
+    public async Task<bool> IsExistedShippingInformation(
+        ShippingInformationId shippingInformationId)
     {
         return await _postgreSQLWriteDbContext.ShippingInformations.AnyAsync(x => x.ShippingInformationId == shippingInformationId);
     }

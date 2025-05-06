@@ -4,7 +4,7 @@ using Application.IServices;
 using Domain.Entities.Customers;
 using SharedKernel;
 
-namespace Application.Features.ShippingInformationFeature.Queries;
+namespace Application.Features.ShippingInformationFeature.Queries.GetDefaultShippingInformation;
 
 internal sealed class GetDefaultShippingInformationQueryHandler 
     : IQueryHandler<GetDefaultShippingInformationQuery, ShippingInformationResponse>

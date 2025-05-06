@@ -89,7 +89,6 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                 {
                     //Tạo thông tin vận chuyển mới
                     var shippingInformation = ShippingInformation.NewShippingInformation(
-                        ShippingInformationId.New(),
                         customerId,
                         FullName.FromString(request.FullName!),
                         PhoneNumber.FromString(request.PhoneNumber!),
@@ -180,7 +179,6 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                 {
                     //Tạo thông tin vận chuyển mới
                     var shippingInformation = ShippingInformation.NewShippingInformation(
-                        ShippingInformationId.New(),
                         customerId,
                         FullName.FromString(request.FullName!),
                         PhoneNumber.FromString(request.PhoneNumber!),
@@ -264,7 +262,6 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
             {
                 //Tạo thông tin vận chuyển mới
                 var shippingInformation = ShippingInformation.NewShippingInformation(
-                    ShippingInformationId.New(),
                     customerId,
                     FullName.FromString(request.FullName!),
                     PhoneNumber.FromString(request.PhoneNumber!),
