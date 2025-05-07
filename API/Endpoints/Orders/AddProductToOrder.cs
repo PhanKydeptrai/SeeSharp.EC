@@ -11,7 +11,8 @@ internal sealed class AddProductToOrder : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/orders", async (
+        app.MapPost("api/orders", 
+        async (
             [FromBody] AddProductToOrderRequest request,
             HttpContext httpContext,
             ISender sender) =>

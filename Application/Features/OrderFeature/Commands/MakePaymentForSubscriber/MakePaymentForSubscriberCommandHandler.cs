@@ -13,6 +13,7 @@ using Domain.IRepositories.Vouchers;
 using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
+//NOTE: Refactor
 /// <summary>
 /// Tạo order transaction cho đơn hàng của khách hàng, khách sẽ dùng voucher ở đây
 /// </summary>

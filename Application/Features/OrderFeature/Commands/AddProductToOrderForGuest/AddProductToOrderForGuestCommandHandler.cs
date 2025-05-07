@@ -13,7 +13,7 @@ using Domain.Utilities.Errors;
 using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.AddProductToOrderForGuest;
-
+//NOTE: Refactor
 internal sealed class AddProductToOrderForGuestCommandHandler : ICommandHandler<AddProductToOrderForGuestCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
