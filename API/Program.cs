@@ -159,22 +159,13 @@ app.MapHealthChecks("api/health", new HealthCheckOptions
 #endregion
 
 #region Serilog
-
-
 app.UseSerilogRequestLogging(); //Serilog middleware
 
 app.UseRequestContextLogging(); //Middleware log thông tin request
-
-
-
 #endregion
 
 #region Cors
 app.UseCors("AllowAll");
-#endregion
-
-#region Authen và Author
-
 #endregion
 
 app.UseAuthentication();

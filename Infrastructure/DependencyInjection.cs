@@ -143,8 +143,6 @@ public static class DependencyInjection
         return services;
     }
 
-
-
     private static IServiceCollection AddEventBus(this IServiceCollection services)
     {
         services.AddTransient<IEventBus, EventBus>();
