@@ -42,7 +42,6 @@ public sealed class ShippingInformation
 
     //Factory method
     public static ShippingInformation NewShippingInformation(
-        ShippingInformationId shippingInformationId,
         CustomerId customerId,
         FullName fullName,
         PhoneNumber phoneNumber,
@@ -53,7 +52,7 @@ public sealed class ShippingInformation
         Ward ward)
     {
         return new ShippingInformation(
-            shippingInformationId,
+            ShippingInformationId.New(),
             customerId,
             fullName,
             phoneNumber,

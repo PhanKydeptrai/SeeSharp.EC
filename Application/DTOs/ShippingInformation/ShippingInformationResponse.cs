@@ -9,5 +9,4 @@ public record ShippingInformationResponse(
     string SpecificAddress,
     string Province,
     string District,
-    string Ward
-);
+    string Ward);

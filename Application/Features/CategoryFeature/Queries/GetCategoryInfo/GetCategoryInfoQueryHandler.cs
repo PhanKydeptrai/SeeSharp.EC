@@ -16,6 +16,6 @@ internal sealed class GetCategoryInfoQueryHandler : IQueryHandler<GetCategoryInf
     public async Task<Result<List<CategoryInfo>>> Handle(GetCategoryInfoQuery request, CancellationToken cancellationToken)
     {
         var categoryInfo = await _categoryQueryServices.GetCategoryInfo();
-        return Result<List<CategoryInfo>>.Success(categoryInfo);
+        return Result.Success(categoryInfo);
     }
 }

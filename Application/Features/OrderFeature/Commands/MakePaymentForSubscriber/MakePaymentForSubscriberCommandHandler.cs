@@ -13,6 +13,7 @@ using Domain.IRepositories.Vouchers;
 using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
+//NOTE: Refactor
 /// <summary>
 /// Tạo order transaction cho đơn hàng của khách hàng, khách sẽ dùng voucher ở đây
 /// </summary>
@@ -89,7 +90,6 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                 {
                     //Tạo thông tin vận chuyển mới
                     var shippingInformation = ShippingInformation.NewShippingInformation(
-                        ShippingInformationId.New(),
                         customerId,
                         FullName.FromString(request.FullName!),
                         PhoneNumber.FromString(request.PhoneNumber!),
@@ -180,7 +180,6 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                 {
                     //Tạo thông tin vận chuyển mới
                     var shippingInformation = ShippingInformation.NewShippingInformation(
-                        ShippingInformationId.New(),
                         customerId,
                         FullName.FromString(request.FullName!),
                         PhoneNumber.FromString(request.PhoneNumber!),
@@ -264,7 +263,6 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
             {
                 //Tạo thông tin vận chuyển mới
                 var shippingInformation = ShippingInformation.NewShippingInformation(
-                    ShippingInformationId.New(),
                     customerId,
                     FullName.FromString(request.FullName!),
                     PhoneNumber.FromString(request.PhoneNumber!),

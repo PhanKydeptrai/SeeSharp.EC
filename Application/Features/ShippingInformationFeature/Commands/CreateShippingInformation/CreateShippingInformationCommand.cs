@@ -7,6 +7,6 @@ public record CreateShippingInformationCommand(
     string FullName,
     string PhoneNumber,
     string Province,
-    string SpecificAddress
-
-) : ICommand;
+    string District,
+    string Ward,
+    string SpecificAddress) : ICommand;

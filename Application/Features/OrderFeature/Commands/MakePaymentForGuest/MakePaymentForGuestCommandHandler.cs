@@ -47,7 +47,6 @@ internal sealed class MakePaymentForGuestCommandHandler : ICommandHandler<MakePa
 
         //Tạo thông tin vận chuyển mới
         var shippingInformation = ShippingInformation.NewShippingInformation(
-            ShippingInformationId.New(),
             customerId,
             FullName.FromString(request.FullName),
             PhoneNumber.FromString(request.PhoneNumber),

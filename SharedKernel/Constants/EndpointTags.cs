@@ -2,12 +2,15 @@
 
 public static class EndpointTags
 {
-    public const string Category = "Category";
-    public const string Product = "Product";
+    public const string Categories = "Categories";
+    public const string Product = "Products";
     public const string Customer = "Customer";
     public const string Order = "Order";
     public const string Wishlist = "Wishlist";
     public const string Voucher = "Voucher";
+    public const string Employee = "Employee";
+    public const string Bills = "Bills";
+    public const string ShippingInformations = "ShippingInformations";
 }
 
 public static class EndpointName
@@ -21,12 +24,14 @@ public static class EndpointName
         public const string RevokeRefreshTokens = "RevokeAllRefreshTokenForCustomer";
         public const string SignInWithRefreshToken = "CustomerSignInWithRefreshToken";
         public const string Verify = "Verify";
+        public const string GetCustomerProfileById = "GetCustomerProfileById";
         public const string ChangePasswordConfirm = "ChangePasswordConfirm";
         public const string ResetPasswordConfirm = "ResetPasswordConfirm";
         public const string ResetPassword = "ResetPassword";
         public const string ChangePassword = "ChangePassword";
         public const string GetProfile = "GetProfile";
         public const string UpdateProfile = "UpdateProfile";
+        public const string GetAll = "GetAllCustomers";
 
         // public const string SignIn = "SignIn";
         // public const string SignOut = "SignOut";
@@ -51,16 +56,17 @@ public static class EndpointName
         public const string GetProfile = "GetEmployeeProfile";
         public const string SignIn = "EmployeeSignIn";
         public const string SignInWithRefreshToken = "EmployeeSignInWithRefreshToken";
+        public const string UpdateProfile = "UpdateEmployeeProfile";
     }
     
     public class Product
     {
-        public const string Create = "CreateProduct";
-        public const string GetById = "GetProductById";
+        public const string CreateProduct = "CreateProduct";
+        public const string GetProductById = "GetProductById";
         public const string GetAll = "GetProducts";
         public const string GetAllVariant = "GetAllProductVariant";
         public const string Update = "UpdateProduct";
-        public const string Delete = "DeleteProduct";
+        public const string DeleteProduct = "DeleteProduct";
         public const string Restore = "RestoreProduct";
         public const string GetVariantById = "GetVariantById";
         public const string DeleteVariant = "DeleteVariant";
@@ -84,6 +90,7 @@ public static class EndpointName
     public class Order
     {
         public const string AddProductToOrder = "AddProductToOrder";
+        public const string AddProductToOrderForGuest = "AddProductToOrderForGuest";
         public const string UpdateOrderDetail = "UpdateOrderDetail";
         public const string GetById = "GetOrder";
         public const string DeleteOrderDetail = "DeleteOrderDetail";
@@ -92,12 +99,16 @@ public static class EndpointName
         public const string GetAllOrderForAdmin = "GetAllOrderForAdmin";
         public const string GetAllOrderForCustomer = "GetAllOrderForCustomer";
         public const string GetMakePaymentResponse = "GetMakePaymentResponse";
+        public const string MakePaymentForSubscriber = "MakePaymentForSubscriber";
+        public const string ChangeOrderStatus = "ChangeOrderStatus";
+        public const string GetAllForAdmin = "GetAllForAdmin";
+        public const string CancelOrder = "CancelOrder";
     }
 
     public class Wishlist
     {
         public const string AddWishList = "AddWishList";
-        public const string RemoveWishList = "RemoveWishList";
+        public const string DeleteWishListItem = "RemoveWishList";
         public const string GetWishList = "GetWishList";
     }
 
@@ -109,6 +120,27 @@ public static class EndpointName
         public const string Update = "UpdateVoucher";
         public const string Delete = "DeleteVoucher";
         public const string GetAllForCustomer = "GetAllCustomerVouchers";
+    }
+
+    public class Bill
+    {
+        public const string GetAll = "GetBills";
+        public const string GetById = "GetBillById";
+        public const string Create = "CreateBill";
+        public const string Update = "UpdateBill";
+        public const string Delete = "DeleteBill";
+        public const string Restore = "RestoreBill";
+    }
+
+    public class ShippingInformations
+    {
+        public const string GetAll = "GetAllShippingInformation";
+        public const string GetDefaultShippingInformation = "GetDefaultShippingInformation";
+        public const string GetById = "GetShippingInformationById";
+        public const string Create = "CreateShippingInformation";
+        public const string Update = "UpdateShippingInformation";
+        public const string Delete = "DeleteShippingInformation";
+        public const string Restore = "RestoreShippingInformation";
     }
 }
 

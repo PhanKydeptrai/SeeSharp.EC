@@ -11,7 +11,7 @@ using Domain.Utilities.Errors;
 using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands;
-
+//NOTE: Refactor
 internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProductToOrderCommand>
 {
 

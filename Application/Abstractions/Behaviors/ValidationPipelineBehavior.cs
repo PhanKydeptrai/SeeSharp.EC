@@ -1,8 +1,8 @@
-﻿using FluentValidation.Results;
-using FluentValidation;
+﻿using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
-using System.Reflection;
 using SharedKernel;
+using System.Reflection;
 
 namespace Application.Abstractions.Behaviors;
 

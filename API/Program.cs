@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 using API.Extentions;
 using API.Infrastructure.Authorization;
@@ -22,7 +23,6 @@ var builder = WebApplication.CreateBuilder(args);
 //TODO: Move to external file
 //Cấu hình Authen và Author
 #region Need to move to external file
-
 // Configure QuestPDF
 QuestPDF.Settings.License = LicenseType.Community;
 
@@ -95,12 +95,13 @@ builder.Services.AddAuthorization(options =>
     AuthorizationPolicies.ConfigurePolicies(options);
 });
 
+builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 
-//builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 #region Dependency Injection
 builder.Services.AddApplication(builder.Configuration)
@@ -112,7 +113,7 @@ builder.Services.AddScoped<ILinkServices, LinkServices>(); //* Hateoas
 builder.Services.AddHttpContextAccessor();
 
 #endregion
-builder.Services.AddCustomProblemDetails();
+//builder.Services.AddCustomProblemDetails();
 builder.Host.UseSerilog((context, loggerConfig) =>
 loggerConfig.ReadFrom.Configuration(context.Configuration));
 //Seq
@@ -158,22 +159,13 @@ app.MapHealthChecks("api/health", new HealthCheckOptions
 #endregion
 
 #region Serilog
-
-
 app.UseSerilogRequestLogging(); //Serilog middleware
 
 app.UseRequestContextLogging(); //Middleware log thông tin request
-
-
-
 #endregion
 
 #region Cors
 app.UseCors("AllowAll");
-#endregion
-
-#region Authen và Author
-
 #endregion
 
 app.UseAuthentication();
@@ -182,12 +174,11 @@ app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Add static files middleware
-
-// app.UseRouting();
+app.UseRouting();
 
 #region Cấu hình minimal API
 app.MapControllers();
-// app.MapEndpoints();
+app.MapEndpoints();
 #endregion
 
 app.Run();
