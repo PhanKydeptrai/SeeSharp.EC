@@ -55,7 +55,7 @@ builder.Services.AddAuthentication(options =>
             }
         }
     };
-
+    
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -73,6 +73,8 @@ builder.Services.AddAuthentication(options =>
 })
 .AddGoogle(googleOptions =>
 {
+    //googleOptions.ClientId = builder.Configuration["Google:client_id"]!;
+    //googleOptions.ClientSecret = builder.Configuration["Google:client_secret"]!;
     googleOptions.ClientId = builder.Configuration["Google:client_id"]!;
     googleOptions.ClientSecret = builder.Configuration["Google:client_secret"]!;
     googleOptions.SaveTokens = true; // Lưu trữ token sau khi xác thực thành công
@@ -82,12 +84,17 @@ builder.Services.AddAuthentication(options =>
     githubOptions.ClientId = builder.Configuration["Github:client_id"]!;
     githubOptions.ClientSecret = builder.Configuration["Github:client_secret"]!;
     githubOptions.Scope.Add("user:email");
-})
-.AddDiscord(discordOptions =>
-{
-    discordOptions.ClientId = builder.Configuration["Discord:client_id"]!;
-    discordOptions.ClientSecret = builder.Configuration["Discord:client_secret"]!;
 });
+//.AddFacebook(facebookOptions =>
+//{
+//    facebookOptions.ClientId = builder.Configuration["Facebook:client_id"]!;
+//    facebookOptions.ClientSecret = builder.Configuration["Facebook:client_secret"]!;
+//})
+//.AddDiscord(discordOptions =>
+//{
+//    discordOptions.ClientId = builder.Configuration["Discord:client_id"]!;
+//    discordOptions.ClientSecret = builder.Configuration["Discord:client_secret"]!;
+//});
 #endregion
 
 builder.Services.AddAuthorization(options =>

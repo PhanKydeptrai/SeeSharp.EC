@@ -6,7 +6,7 @@ internal sealed class JwtOptionsValidator : AbstractValidator<JwtOptions>
 {
     public JwtOptionsValidator()
     {
-        RuleFor(x => x.SecSigningKeyret)
+        RuleFor(x => x.SigningKey)
             .NotEmpty()
             .WithErrorCode("JwtSigningKey.Required")
             .WithMessage("Jwt signing key is required.");

@@ -6,7 +6,9 @@ using Application.Security;
 using Domain.Entities.Customers;
 using Domain.Entities.Employees;
 using Domain.Entities.Users;
+using Infrastructure.Options.Jwt;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Security;
@@ -15,14 +17,15 @@ public class TokenProvider : ITokenProvider
 {
     SymmetricSecurityKey _key;
     private static readonly string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
+    private readonly JwtOptions _jwtOptions;
     IConfiguration _config;
-    public TokenProvider(IConfiguration config)
+    public TokenProvider(IConfiguration config, IOptions<JwtOptions> jwtOptions)
     {
         _config = config;
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SigningKey"]!));
+        _jwtOptions = jwtOptions.Value;
     }
-    
+
     public string GenerateAccessTokenForCustomer(UserId userId, CustomerId customerId, Email email, string role, string jti)
     {
         var claims = new List<Claim>()
@@ -40,8 +43,10 @@ public class TokenProvider : ITokenProvider
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(10),
             SigningCredentials = credentials,
-            Issuer = _config["Jwt:Issuer"],
-            Audience = _config["Jwt:Audience"]
+            //Issuer = _config["Jwt:Issuer"],
+            //Audience = _config["Jwt:Audience"]
+            Issuer = _jwtOptions.Issuer,
+            Audience = _jwtOptions.Audience
 
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -67,8 +72,10 @@ public class TokenProvider : ITokenProvider
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(10),
             SigningCredentials = credentials,
-            Issuer = _config["Jwt:Issuer"],
-            Audience = _config["Jwt:Audience"]
+            //Issuer = _config["Jwt:Issuer"],
+            //Audience = _config["Jwt:Audience"]
+            Issuer = _jwtOptions.Issuer,
+            Audience = _jwtOptions.Audience
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
@@ -91,8 +98,11 @@ public class TokenProvider : ITokenProvider
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddYears(10),
             SigningCredentials = credentials,
-            Issuer = _config["Jwt:Issuer"],
-            Audience = _config["Jwt:Audience"]
+            //Issuer = _config["Jwt:Issuer"],
+            //Audience = _config["Jwt:Audience"]
+
+            Issuer = _jwtOptions.Issuer,
+            Audience = _jwtOptions.Audience
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return await Task.FromResult(tokenHandler.WriteToken(token));
