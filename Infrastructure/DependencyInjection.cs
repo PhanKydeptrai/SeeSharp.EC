@@ -5,12 +5,6 @@ using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers.CustomerMessageConsumers;
 using Infrastructure.Consumers.EmployeeEventConsumers;
 using Infrastructure.MessageBroker;
-using Infrastructure.Options;
-using Infrastructure.Options.Cloudinary;
-using Infrastructure.Options.GituhubAuth;
-using Infrastructure.Options.Google;
-using Infrastructure.Options.Jwt;
-using Infrastructure.Options.VnPay;
 using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
@@ -61,12 +55,15 @@ public static class DependencyInjection
         services.AddScoped<ITokenProvider, TokenProvider>();
         // services.AddScoped<ITokenRevocationService, TokenRevocationService>();
 
-        //Strongly Typed Settings
-        services.AddOptionsWithFluentValidation<GithubOptions>(GithubOptions.ConfigurationSection);
-        services.AddOptionsWithFluentValidation<GoogleOptions>(GoogleOptions.ConfigurationSection);
-        services.AddOptionsWithFluentValidation<JwtOptions>(JwtOptions.ConfigurationSection);
-        services.AddOptionsWithFluentValidation<VnPayOptions>(VnPayOptions.ConfigurationSection);
-        services.AddOptionsWithFluentValidation<CloudinaryOptions>(CloudinaryOptions.ConfigurationSection);
+        #region Strongly Typed Settings
+        //services.AddOptionsWithFluentValidation<GithubOptions>(GithubOptions.ConfigurationSection);
+        //services.AddOptionsWithFluentValidation<GoogleOptions>(GoogleOptions.ConfigurationSection);
+        //services.AddOptionsWithFluentValidation<JwtOptions>(JwtOptions.ConfigurationSection);
+        //services.AddOptionsWithFluentValidation<VnPayOptions>(VnPayOptions.ConfigurationSection);
+        //services.AddOptionsWithFluentValidation<CloudinaryOptions>(CloudinaryOptions.ConfigurationSection);
+        //services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+        #endregion
+
 
         services.AddHttpContextAccessor();
         return services;

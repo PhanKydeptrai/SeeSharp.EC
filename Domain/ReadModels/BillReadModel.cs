@@ -13,5 +13,5 @@ public class BillReadModel
     public BillPaymentStatus BillPaymentStatus { get; set; }
     public CustomerReadModel Customer { get; set; } = null!;
     public OrderReadModel Order { get; set; } = null!;
-    public ShippingInformationReadModel ShippingInformation { get; set; } = new ShippingInformationReadModel();
+    public ShippingInformationReadModel ShippingInformationReadModel { get; set; } = new ShippingInformationReadModel();
 }

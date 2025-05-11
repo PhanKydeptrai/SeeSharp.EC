@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Application.DTOs.Bills;
 using Application.DTOs.Order;
 using Application.Features.Pages;
@@ -9,6 +9,7 @@ using Domain.Entities.Customers;
 using Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Database.PostgreSQL;
+using static SharedKernel.Constants.EndpointName;
 
 namespace Infrastructure.Services.OrderServices;
 
@@ -22,7 +23,6 @@ internal sealed class OrderQueryServices : IOrderQueryServices
     {
         _dbContext = dbContext;
         _writeDbContext = writeDbContext;
-
     }
 
     public async Task<OrderId?> CheckOrderAvailability(CustomerId customerId)
@@ -250,45 +250,83 @@ internal sealed class OrderQueryServices : IOrderQueryServices
     }
 
 
+    //NOTE: Sửa lại sử dụng với readmodel
     public async Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId)
     {
-        return await _writeDbContext.Orders
-            .Include(a => a.OrderTransaction)
-            .ThenInclude(a => a!.Voucher)
-            .Include(a => a.Bill)
-            .ThenInclude(a => a!.ShippingInformation)
-            .Include(a => a.OrderDetails)
-            .Include(a => a.Customer)
-            .ThenInclude(a => a.User)
-            .Where(a => a.CustomerId == customerId && a.OrderStatus != OrderStatus.Waiting)
+        return await _dbContext.Orders
+            .Include(a => a.OrderTransactionReadModel)
+            .ThenInclude(a => a!.VoucherReadModel)
+            .Include(a => a.BillReadModel)
+            .ThenInclude(a => a!.ShippingInformationReadModel)
+            .Include(a => a.OrderDetailReadModels)
+            .Include(a => a.CustomerReadModel)
+            .ThenInclude(a => a.UserReadModel)
+            .Where(a => a.CustomerId == new Ulid(customerId) && a.OrderStatus != OrderStatus.Waiting)
             .Select(a => new OrderHistoryResponse(
-                a.CustomerId.Value,
-                a.Customer!.User!.UserName.Value,
-                a.Customer.User.PhoneNumber!.Value,
-                a.Bill!.ShippingInformation.SpecificAddress.Value,
-                a.Total.Value,
+                a.CustomerId.ToGuid(),
+                a.CustomerReadModel!.UserReadModel!.UserName,
+                a.CustomerReadModel.UserReadModel.PhoneNumber!,
+                a.BillReadModel!.ShippingInformationReadModel.SpecificAddress,
+                a.Total,
                 a.PaymentStatus.ToString(),
                 a.OrderStatus.ToString(),
-                a.Bill!.PaymentMethod.ToString(),
-                a.OrderTransaction!.IsVoucherUsed.Value && a.OrderTransaction.Voucher != null ? a.OrderTransaction.Voucher.VoucherCode.Value : null,
-                a.Bill.BillId.Value,
-                a.OrderTransaction.Amount.Value,
-                a.OrderId.Value,
-                a.OrderDetails!.Select(b => new OrderDetailResponse(
-                    b.OrderDetailId.Value,
-                    b.ProductVariantId.Value,
-                    b.ProductVariant!.Product!.ProductName.Value,
-                    b.ProductVariant.VariantName.Value,
-                    b.ProductVariant.ColorCode.Value,
-                    b.ProductVariant.ProductVariantPrice.Value,
-                    b.Quantity.Value,
-                    b.ProductVariant.ImageUrl ?? string.Empty,
-                    b.UnitPrice.Value
+                a.BillReadModel!.PaymentMethod.ToString(),
+                a.OrderTransactionReadModel!.IsVoucherUsed && a.OrderTransactionReadModel.VoucherReadModel != null ? a.OrderTransactionReadModel.VoucherReadModel.VoucherCode : null,
+                a.BillReadModel.BillId.ToGuid(),
+                a.OrderTransactionReadModel.Amount,
+                a.OrderId.ToGuid(),
+                a.OrderDetailReadModels!.Select(b => new OrderDetailResponse(
+                    b.OrderDetailId.ToGuid(),
+                    b.ProductVariantId.ToGuid(),
+                    b.ProductVariantReadModel!.ProductReadModel!.ProductName    ,
+                    b.ProductVariantReadModel.VariantName,
+                    b.ProductVariantReadModel.ColorCode,
+                    b.ProductVariantReadModel.ProductVariantPrice,
+                    b.Quantity,
+                    b.ProductVariantReadModel.ImageUrl ?? string.Empty,
+                    b.UnitPrice
                 )).ToArray()
             ))
             .ToListAsync();
+
+        //return await _writeDbContext.Orders
+        //    .Include(a => a.OrderTransaction)
+        //    .ThenInclude(a => a!.Voucher)
+        //    .Include(a => a.Bill)
+        //    .ThenInclude(a => a!.ShippingInformation)
+        //    .Include(a => a.OrderDetails)
+        //    .Include(a => a.Customer)
+        //    .ThenInclude(a => a.User)
+        //    .Where(a => a.CustomerId == customerId && a.OrderStatus != OrderStatus.Waiting)
+        //    .Select(a => new OrderHistoryResponse(
+        //        a.CustomerId.Value,
+        //        a.Customer!.User!.UserName.Value,
+        //        a.Customer.User.PhoneNumber!.Value,
+        //        a.Bill!.ShippingInformation.SpecificAddress.Value,
+        //        a.Total.Value,
+        //        a.PaymentStatus.ToString(),
+        //        a.OrderStatus.ToString(),
+        //        a.Bill!.PaymentMethod.ToString(),
+        //        a.OrderTransaction!.IsVoucherUsed.Value && a.OrderTransaction.Voucher != null ? a.OrderTransaction.Voucher.VoucherCode.Value : null,
+        //        a.Bill.BillId.Value,
+        //        a.OrderTransaction.Amount.Value,
+        //        a.OrderId.Value,
+        //        a.OrderDetails!.Select(b => new OrderDetailResponse(
+        //            b.OrderDetailId.Value,
+        //            b.ProductVariantId.Value,
+        //            b.ProductVariant!.Product!.ProductName.Value,
+        //            b.ProductVariant.VariantName.Value,
+        //            b.ProductVariant.ColorCode.Value,
+        //            b.ProductVariant.ProductVariantPrice.Value,
+        //            b.Quantity.Value,
+        //            b.ProductVariant.ImageUrl ?? string.Empty,
+        //            b.UnitPrice.Value
+        //        )).ToArray()
+        //    ))
+        //    .ToListAsync();
     }
 
+    //NOTE: Sửa lại sử dụng với readmodel
     public async Task<BillResponse?> GetBillByBillId(BillId billId)
     {
         return await _writeDbContext.Orders
@@ -328,41 +366,42 @@ internal sealed class OrderQueryServices : IOrderQueryServices
             )).FirstOrDefaultAsync();
     }
 
+    //NOTE: Sửa lại sử dụng với readmodel
     public async Task<BillResponse?> GetBillByOrderId(OrderId orderId)
     {
-        return await _writeDbContext.Orders
-            .Include(a => a.OrderTransaction)
-            .ThenInclude(a => a!.Voucher)
-            .Include(a => a.Bill)
-            .ThenInclude(a => a!.ShippingInformation)
-            .Include(a => a.OrderDetails)
-            .Include(a => a.Customer)
-            .ThenInclude(a => a!.User)
-            .Where(a => a.Bill!.OrderId == orderId && a.OrderStatus != OrderStatus.Waiting)
+        return await _dbContext.Orders
+            .Include(a => a.OrderTransactionReadModel)
+            .ThenInclude(a => a!.VoucherReadModel)
+            .Include(a => a.BillReadModel)
+            .ThenInclude(a => a!.ShippingInformationReadModel)
+            .Include(a => a.OrderDetailReadModels)
+            .Include(a => a.CustomerReadModel)
+            .ThenInclude(a => a!.UserReadModel)
+            .Where(a => a.BillReadModel!.OrderId == new Ulid(orderId) && a.OrderStatus != OrderStatus.Waiting)
             .Select(a => new BillResponse(
-                a.CustomerId.Value,
-                a.Customer!.User!.UserName.Value != string.Empty ? a.Customer.User.UserName!.Value : a.Bill!.ShippingInformation.FullName.Value,
-                a.Customer.User.Email!.Value,
-                a.Bill!.ShippingInformation.PhoneNumber!.Value,
-                a.Bill!.ShippingInformation.SpecificAddress.Value,
-                a.Total.Value,
+                a.CustomerId.ToGuid(),
+                a.CustomerReadModel!.UserReadModel!.UserName != string.Empty ? a.CustomerReadModel.UserReadModel.UserName : a.BillReadModel!.ShippingInformationReadModel.FullName,
+                a.CustomerReadModel.UserReadModel.Email,
+                a.BillReadModel!.ShippingInformationReadModel.PhoneNumber,
+                a.BillReadModel!.ShippingInformationReadModel.SpecificAddress,
+                a.Total,
                 a.PaymentStatus.ToString(),
                 a.OrderStatus.ToString(),
-                a.Bill!.PaymentMethod.ToString(),
-                a.OrderTransaction!.IsVoucherUsed.Value && a.OrderTransaction.Voucher != null ? a.OrderTransaction.Voucher.VoucherCode.Value : null,
-                a.Bill.BillId.Value,
-                a.OrderTransaction.Amount.Value,
-                a.OrderId.Value,
-                a.OrderDetails!.Select(b => new OrderDetailResponse(
-                    b.OrderDetailId.Value,
-                    b.ProductVariantId.Value,
-                    b.ProductVariant!.Product!.ProductName.Value,
-                    b.ProductVariant.VariantName.Value,
-                    b.ProductVariant.ColorCode.Value,
-                    b.ProductVariant.ProductVariantPrice.Value,
-                    b.Quantity.Value,
-                    b.ProductVariant.ImageUrl ?? string.Empty,
-                    b.UnitPrice.Value
+                a.BillReadModel!.PaymentMethod.ToString(),
+                a.OrderTransactionReadModel!.IsVoucherUsed && a.OrderTransactionReadModel.VoucherReadModel != null ? a.OrderTransactionReadModel.VoucherReadModel.VoucherCode : null,
+                a.BillReadModel.BillId.ToGuid(),
+                a.OrderTransactionReadModel.Amount,
+                a.OrderId.ToGuid(),
+                a.OrderDetailReadModels!.Select(b => new OrderDetailResponse(
+                    b.OrderDetailId.ToGuid(),
+                    b.ProductVariantId.ToGuid(),
+                    b.ProductVariantReadModel!.ProductReadModel!.ProductName,
+                    b.ProductVariantReadModel.VariantName,
+                    b.ProductVariantReadModel.ColorCode,
+                    b.ProductVariantReadModel.ProductVariantPrice,
+                    b.Quantity,
+                    b.ProductVariantReadModel.ImageUrl ?? string.Empty,
+                    b.UnitPrice
                 )).ToArray()
             )).FirstOrDefaultAsync();
     }

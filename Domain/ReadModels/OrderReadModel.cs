@@ -12,7 +12,7 @@ public class OrderReadModel
     public OrderStatus OrderStatus { get; set; }
     public Ulid OrderTransactionId { get; set; }
     // public Ulid? BillId { get; set; }
-    // public BillReadModel? BillReadModel { get; set; }
+     public BillReadModel? BillReadModel { get; set; }
 
     public CustomerReadModel CustomerReadModel { get; set; } = null!;
 

@@ -11,7 +11,8 @@ internal sealed class MakePaymentForSubscriber : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/orders/make-payment", async (
+        app.MapPost("api/orders/make-payment", 
+        async (
             [FromBody] MakePaymentForSubscriberRequest request,
             HttpContext httpContext,
             ISender sender) =>

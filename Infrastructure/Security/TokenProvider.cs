@@ -43,10 +43,8 @@ public class TokenProvider : ITokenProvider
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(10),
             SigningCredentials = credentials,
-            //Issuer = _config["Jwt:Issuer"],
-            //Audience = _config["Jwt:Audience"]
-            Issuer = _jwtOptions.Issuer,
-            Audience = _jwtOptions.Audience
+            Issuer = _config["Jwt:Issuer"],
+            Audience = _config["Jwt:Audience"]
 
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -72,10 +70,8 @@ public class TokenProvider : ITokenProvider
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(10),
             SigningCredentials = credentials,
-            //Issuer = _config["Jwt:Issuer"],
-            //Audience = _config["Jwt:Audience"]
-            Issuer = _jwtOptions.Issuer,
-            Audience = _jwtOptions.Audience
+            Issuer = _config["Jwt:Issuer"],
+            Audience = _config["Jwt:Audience"]
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
@@ -98,11 +94,8 @@ public class TokenProvider : ITokenProvider
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddYears(10),
             SigningCredentials = credentials,
-            //Issuer = _config["Jwt:Issuer"],
-            //Audience = _config["Jwt:Audience"]
-
-            Issuer = _jwtOptions.Issuer,
-            Audience = _jwtOptions.Audience
+            Issuer = _config["Jwt:Issuer"],
+            Audience = _config["Jwt:Audience"]
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return await Task.FromResult(tokenHandler.WriteToken(token));

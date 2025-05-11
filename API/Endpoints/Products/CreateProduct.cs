@@ -43,7 +43,7 @@ internal sealed class CreateProduct : IEndpoint
             
             """)
         .WithOpenApi()
-        .RequireAuthorization();
+        .RequireAdmin();
     }
 
     private class CreateProductRequest

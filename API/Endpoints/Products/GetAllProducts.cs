@@ -67,6 +67,7 @@ internal sealed class GetAllProducts : IEndpoint
             }
 
             return operation;
-        });
+        })
+        .RequireSubscribedOrGuest();
     }
 } 
