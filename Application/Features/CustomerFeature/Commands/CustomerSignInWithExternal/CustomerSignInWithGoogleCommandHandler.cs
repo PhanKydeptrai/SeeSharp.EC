@@ -1,4 +1,3 @@
-using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
 using Application.DTOs.Customer;
 using Application.Features.CustomerFeature.Commands.CustomerSignInWithExternal;
@@ -11,13 +10,12 @@ using Domain.IRepositories;
 using Domain.IRepositories.Customers;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.IRepositories.Users;
-using Domain.OutboxMessages.Services;
 using SharedKernel;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
 
 internal sealed class CustomerSignInWithGoogleCommandHandler
-    : ICommandHandler<CustomerSignInWithExternalCommand, CustomerSignInResponse>
+    : ICommandHandler<CustomerSignInWithGoogleCommand, CustomerSignInResponse>
 {
     #region Dependencies
     private readonly ICustomerRepository _customerRepository;
@@ -44,7 +42,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
     #endregion
 
     public async Task<Result<CustomerSignInResponse>> Handle(
-        CustomerSignInWithExternalCommand request,
+        CustomerSignInWithGoogleCommand request,
         CancellationToken cancellationToken)
     {
 

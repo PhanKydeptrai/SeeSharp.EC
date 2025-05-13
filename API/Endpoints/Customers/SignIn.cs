@@ -11,7 +11,8 @@ internal sealed class SignIn : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/customers/signin", async (
+        app.MapPost("api/customers/signin", 
+        async (
             [FromBody] CustomerSignInRequest request,
             ISender sender) =>
         {

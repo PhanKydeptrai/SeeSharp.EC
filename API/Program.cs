@@ -97,7 +97,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    AuthorizationPolicies.ConfigurePolicies(options);
+    options.AddPolicy("boss", policy => policy.RequireClaim(ClaimTypes.Role, "Boss"));
+    options.AddPolicy("customer", policy => policy.RequireClaim(ClaimTypes.Role, "Subscriber"));
+    options.AddPolicy("management", policy => policy.RequireClaim(ClaimTypes.Role, "Manager", "Boss"));
 });
 
 builder.Services.AddProblemDetails();
