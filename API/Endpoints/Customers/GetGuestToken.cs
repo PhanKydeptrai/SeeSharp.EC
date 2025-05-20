@@ -17,6 +17,7 @@ internal sealed class GetGuestToken : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(EndpointTags.Customer)
+        .Produces(StatusCodes.Status200OK)
         .WithSummary("Lấy mã khách hàng")
         .WithDescription("""
             Cho phép khách hàng lấy mã khách hàng để sử dụng các dịch vụ của hệ thống.
@@ -26,7 +27,6 @@ internal sealed class GetGuestToken : IEndpoint
                 GET /api/customers/guest-token
             
             """)
-        .WithOpenApi()
-        .Produces(StatusCodes.Status200OK);
+        .WithOpenApi();
     }
 } 

@@ -32,6 +32,8 @@ public static class EndpointName
         public const string GetProfile = "GetProfile";
         public const string UpdateProfile = "UpdateProfile";
         public const string GetAll = "GetAllCustomers";
+        public const string SignInWithGithub = "SignInWithGithub";
+        public const string SignInWithGithubCallback = "SignInWithGithubCallback";
 
         // public const string SignIn = "SignIn";
         // public const string SignOut = "SignOut";

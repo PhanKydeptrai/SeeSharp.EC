@@ -12,7 +12,8 @@ internal sealed class ChangePassword : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/customers/change-password", async (
+        app.MapPost("api/customers/change-password", 
+        async (
             [FromBody] ChangePasswordRequest request,
             HttpContext httpContext,
             ISender sender) =>

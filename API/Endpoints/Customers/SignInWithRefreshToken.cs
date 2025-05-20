@@ -11,7 +11,8 @@ internal sealed class SignInWithRefreshToken : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/customers/refresh-token", async (
+        app.MapGet("api/customers/refresh-token", 
+        async (
             [FromBody] CustomerSignInWithRefreshTokenRequest request,
             ISender sender) =>
         {

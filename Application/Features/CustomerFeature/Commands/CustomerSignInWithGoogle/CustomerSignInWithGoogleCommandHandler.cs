@@ -10,6 +10,7 @@ using Domain.IRepositories;
 using Domain.IRepositories.Customers;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.IRepositories.Users;
+using Google.Apis.Auth;
 using SharedKernel;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
@@ -17,7 +18,6 @@ namespace Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle
 internal sealed class CustomerSignInWithGoogleCommandHandler
     : ICommandHandler<CustomerSignInWithGoogleCommand, CustomerSignInResponse>
 {
-    #region Dependencies
     private readonly ICustomerRepository _customerRepository;
     private readonly ICustomerQueryServices _customerQueryServices;
     private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
@@ -39,19 +39,19 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
         _tokenProvider = tokenProvider;
         _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
     }
-    #endregion
 
     public async Task<Result<CustomerSignInResponse>> Handle(
         CustomerSignInWithGoogleCommand request,
         CancellationToken cancellationToken)
     {
+        var googleUser = await GoogleJsonWebSignature.ValidateAsync(request.token, new GoogleJsonWebSignature.ValidationSettings());
 
-        var customerAuthResponse = await _customerQueryServices.GetCustomerByEmail(Email.FromString(request.Email));
+        var customerAuthResponse = await _customerQueryServices.GetCustomerByEmail(Email.FromString(googleUser.Email));
 
         // nếu khách hàng đã tồn tại trong hệ thống -> đăng nhập
         if (customerAuthResponse is not null)
         {
-            if (customerAuthResponse.UserStatus == UserStatus.InActive.ToString()) // if this account not verify
+            if (customerAuthResponse.UserStatus == UserStatus.InActive.ToString()) // nếu tài khoản này chưa xác thực
             {
                 var customer = await _userRepository.GetUserFromPostgreSQL(
                     UserId.FromUlid(customerAuthResponse.UserId));
@@ -71,12 +71,12 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
         // nếu khách hàng chưa tồn tại trong hệ thống -> đăng ký
         var user = User.NewUser(
             null,
-            UserName.NewUserName(request.UserName),
-            Email.FromString(request.Email),
+            UserName.NewUserName(googleUser.Name),
+            Email.FromString(googleUser.Email),
             PhoneNumber.Empty,
             PasswordHash.Empty,
             null,
-            string.Empty); //NOTE: Chưa lấy được id_token
+            googleUser.Picture);
 
         user.VerifyAccount();
 
