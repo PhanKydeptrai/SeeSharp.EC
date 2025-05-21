@@ -10,7 +10,7 @@ internal sealed class SignInWithGoogle : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("google-signin/{token}", 
+        app.MapPost("/api/customers/google-signin/{token}", 
         async (
             string token, 
             ISender sender) =>
@@ -28,7 +28,7 @@ internal sealed class SignInWithGoogle : IEndpoint
 
             Sample Request:
 
-                POST /google-signin/{token}
+                POST /api/customers/google-signin/{token}
 
             """)
         .WithOpenApi(o =>

@@ -17,6 +17,7 @@ public static class EndpointName
 {
     public class Customer
     {
+        public const string SignInWithFacebook = "SignInWithFacebook";
         public const string SignUp = "SignUp";
         public const string SignIn = "SignIn";
         public const string SignInWithGoogle = "SignInWithGoogle";

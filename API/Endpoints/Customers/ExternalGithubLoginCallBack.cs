@@ -22,13 +22,12 @@ internal sealed class ExternalGithubLoginCallBack : IEndpoint
 
             var claims = authenticationResult.Principal.Claims;
 
-
             var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value;
             var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)!.Value;
 
             var result = await sender.Send(new CustomerSignInWithGithubCommand(email, name));
             
-
+            //Redirect về giao diện
             return Results.Redirect($"https://localhost:7222/api/customers/signin-github-callback?email={email}&name={name}");
 
         }).WithTags(EndpointTags.Customer)
