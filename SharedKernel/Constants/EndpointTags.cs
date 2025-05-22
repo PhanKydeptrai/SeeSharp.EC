@@ -11,6 +11,7 @@ public static class EndpointTags
     public const string Employee = "Employee";
     public const string Bills = "Bills";
     public const string ShippingInformations = "ShippingInformations";
+    public const string Feedbacks = "Feedbacks";
 }
 
 public static class EndpointName
@@ -144,6 +145,11 @@ public static class EndpointName
         public const string Update = "UpdateShippingInformation";
         public const string Delete = "DeleteShippingInformation";
         public const string Restore = "RestoreShippingInformation";
+    }
+
+    public class Feedback
+    {
+        public const string Create = "CreateFeedback";
     }
 }
 

@@ -34,6 +34,10 @@ internal sealed class SignIn : IEndpoint
             Sample Request:
              
                 POST /api/customers/signin
+                {
+                    "Email": "tonychang@gmail.com"
+                    "Password": "taibeou20000000000kg"
+                }
              
             """)
         .WithOpenApi();

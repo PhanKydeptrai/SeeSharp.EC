@@ -20,6 +20,7 @@
 	<ItemGroup>
 	  <Folder Include="Features\BillFeature\Commands\" />
 	  <Folder Include="Features\EmployeeFeature\Queries\" />
+	  <Folder Include="Features\FeedbackFeature\Queries\" />
 	</ItemGroup>
 
 </Project>

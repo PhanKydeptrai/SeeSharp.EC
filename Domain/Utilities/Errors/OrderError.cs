@@ -1,4 +1,4 @@
-using Domain.Entities.Customers;
+﻿using Domain.Entities.Customers;
 using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
@@ -27,4 +27,13 @@ public static class OrderError
     public static Error TransactionNotFound(OrderTransactionId orderTransactionId) => Error.NotFound(
         "OrderTransaction.NotCreated",
         $"Customer with the Id = '{orderTransactionId}' dont have any transaction yet");
+
+    /// <summary>
+    /// OrderStatus không hợp lệ
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    public static Error OrderStatusInValid(OrderId orderId) => Error.Problem(
+        "OrderStatus.Invalid",
+        $"The Order with the Id = '{orderId}' is not in a valid state to perform this action");
 }

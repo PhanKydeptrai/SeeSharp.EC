@@ -400,4 +400,11 @@ internal sealed class OrderQueryServices : IOrderQueryServices
                 )).ToArray()
             )).FirstOrDefaultAsync();
     }
+
+    public async Task<bool> IsOrderStatusDelivered(OrderId orderId)
+    {
+        return await _dbContext.Orders.AnyAsync(
+            a => a.OrderStatus == OrderStatus.Delivered 
+            && a.OrderId == orderId.ToUlid());
+    }
 }

@@ -4,12 +4,26 @@ using Application.Features.Pages;
 using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Orders;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Application.IServices;
 
 public interface IOrderQueryServices
 {
+    /// <summary>
+    /// Kiểm tra đơn hàng có tồn tại hay không bằng CustomerId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
     Task<OrderId?> CheckOrderAvailability(CustomerId customerId);
+
+    /// <summary>
+    /// Kiểm tra trạng thái đơn hàng có phải là Delivered hay không
+    /// </summary>
+    /// <param name="orderId"></param>
+    /// <returns></returns>
+    Task<bool> IsOrderStatusDelivered(OrderId orderId);
+
     /// <summary>
     /// Get Order and Order Details by OrderId with OrderStatus != New
     /// </summary>

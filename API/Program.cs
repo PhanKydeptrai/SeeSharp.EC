@@ -120,7 +120,7 @@ builder.Services.AddScoped<ILinkServices, LinkServices>(); //* Hateoas
 builder.Services.AddHttpContextAccessor();
 
 #endregion
-//builder.Services.AddCustomProblemDetails();
+builder.Services.AddCustomProblemDetails();
 builder.Host.UseSerilog((context, loggerConfig) =>
 loggerConfig.ReadFrom.Configuration(context.Configuration));
 //Seq
@@ -180,15 +180,15 @@ app.MapControllers();
 app.MapEndpoints();
 #endregion
 
-app.UseAuthentication();
-app.UseAuthorization();
+
 app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Add static files middleware
 app.UseRouting();
 
-
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
 

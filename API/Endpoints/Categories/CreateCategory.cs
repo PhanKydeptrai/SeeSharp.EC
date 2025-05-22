@@ -12,18 +12,19 @@ internal sealed class CreateCategory : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/categories", async (
+        app.MapPost("api/categories",
+        async (
             [FromForm] CreateCategoryRequest request,
             ISender sender) =>
         {
             var command = new CreateCategoryCommand(request.categoryName, request.image);
             var result = await sender.Send(command);
-            return result.Match(Results.Ok, CustomResults.Problem);
+            return result.Match(Results.Created, CustomResults.Problem);
 
         })
         .WithTags(EndpointTags.Categories)
         .WithName(EndpointName.Category.Create)
-        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status201Created)
         .AddBadRequestResponse()
         .AddUnauthorizedResponse()
         .AddForbiddenResponse()
