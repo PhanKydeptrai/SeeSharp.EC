@@ -1,10 +1,9 @@
 ﻿using API.Extentions;
 using API.Infrastructure;
+using API.Infrastructure.Authorization;
 using Application.Features.FeedbackFeature.Commands.CreateNewFeedBack;
-using Domain.Entities.Employees;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SharedKernel.Constants;
 
 namespace API.Endpoints.Feedbacks;
@@ -48,7 +47,7 @@ internal sealed class CreateFeedback : IEndpoint
         .AddBadRequestResponse()
         .AddUnauthorizedResponse()
         .AddForbiddenResponse()
-        .RequireAuthorization();
+        .RequireAuthorization(AuthorizationPolicies.SubscribedOnly);
 
     }
 

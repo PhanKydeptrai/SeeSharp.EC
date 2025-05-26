@@ -7,6 +7,7 @@ using API.Services;
 using Application;
 using Application.Abstractions.LinkService;
 using Application.Security;
+using Domain.Entities.Employees;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using QuestPDF.Infrastructure;
+using RabbitMQ.Client;
 using Serilog;
 using SharedKernel.Constants;
 
@@ -97,9 +99,29 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("boss", policy => policy.RequireClaim(ClaimTypes.Role, "Boss"));
-    options.AddPolicy("customer", policy => policy.RequireClaim(ClaimTypes.Role, "Subscriber"));
-    options.AddPolicy("management", policy => policy.RequireClaim(ClaimTypes.Role, "Manager", "Boss"));
+    //Chỉ cho phép admin
+    options.AddPolicy(AuthorizationPolicies.AdminOnly, policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, AuthorizationRoles.Admin);
+    });
+
+    // Chỉ cho phép khách hàng đã đăng ký
+    options.AddPolicy(AuthorizationPolicies.SubscribedOnly, policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, AuthorizationRoles.Subscribed);
+    });
+
+    //Chỉ cho phép nhân viên hoặc admin
+    options.AddPolicy(AuthorizationPolicies.SubscribedOrGuest, policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, AuthorizationRoles.Subscribed, AuthorizationRoles.Guest);
+    });
+
+    //Chỉ cho phép khách hàng
+    options.AddPolicy(AuthorizationPolicies.AllEmployee, policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, AuthorizationRoles.Employee, AuthorizationRoles.Admin);
+    });
 });
 
 builder.Services.AddProblemDetails();
