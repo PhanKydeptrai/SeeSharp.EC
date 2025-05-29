@@ -150,6 +150,7 @@ public static class EndpointName
     public class Feedback
     {
         public const string Create = "CreateFeedback";
+        public const string Update = "UpdateFeedback";
     }
 }
 

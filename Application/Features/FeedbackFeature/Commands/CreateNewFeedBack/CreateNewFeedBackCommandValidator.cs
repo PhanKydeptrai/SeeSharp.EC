@@ -9,7 +9,10 @@ internal class CreateNewFeedBackCommandValidator : AbstractValidator<CreateNewFe
         RuleFor(a => a.Substance)
             .NotEmpty()
             .WithErrorCode("Substance.Required")
-            .WithMessage("Substance is required");
+            .WithMessage("Substance is required")
+            .MaximumLength(500)
+            .WithErrorCode("Substance.TooLong")
+            .WithMessage("Substance is too long");
         
         RuleFor(a => a.RatingScore)
             .NotEmpty()

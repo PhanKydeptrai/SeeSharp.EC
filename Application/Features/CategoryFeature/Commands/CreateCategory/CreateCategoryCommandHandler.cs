@@ -47,7 +47,6 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
             //Log
             Console.WriteLine(resultUpload.JsonObj);
         }
-
         //--------------------
 
         var category = Category.NewCategory(

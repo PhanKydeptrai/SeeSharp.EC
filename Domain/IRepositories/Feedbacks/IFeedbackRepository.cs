@@ -10,4 +10,11 @@ public interface IFeedbackRepository
     /// <param name="feedback"></param>
     /// <returns></returns>
     Task CreateNewFeedback(Feedback feedback);
+
+    /// <summary>
+    /// Lấy feedback theo Id
+    /// </summary>
+    /// <param name="feedbackId"></param>
+    /// <returns></returns>
+    Task<Feedback?> GetFeedBackById(FeedbackId feedbackId);
 }

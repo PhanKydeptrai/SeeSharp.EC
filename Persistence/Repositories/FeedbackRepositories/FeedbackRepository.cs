@@ -17,4 +17,9 @@ internal sealed class FeedbackRepository : IFeedbackRepository
     {
         await _dbcontext.Feedbacks.AddAsync(feedback);
     }
+
+    public async Task<Feedback?> GetFeedBackById(FeedbackId feedbackId)
+    {
+        return await _dbcontext.Feedbacks.FindAsync(feedbackId);
+    }
 }

@@ -45,4 +45,14 @@ public sealed class Feedback
             orderId,
             customerId);
     }
+    
+    public void UpdatFeedback(
+        Substance substance,
+        RatingScore ratingScore,
+        string? imageUrl)
+    {
+        Substance = substance;
+        RatingScore = ratingScore;
+        ImageUrl = imageUrl ?? string.Empty;
+    }
 }
