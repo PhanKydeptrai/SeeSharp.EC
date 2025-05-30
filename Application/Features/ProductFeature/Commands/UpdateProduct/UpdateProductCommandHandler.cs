@@ -36,21 +36,8 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
         {
             string oldimageUrl = product.ImageUrl!;
 
-            //Xử lý lưu ảnh mới
             string newImageUrl = string.Empty;
-            // if (request.ProductImage != null)
-            // {
-            //tạo memory stream từ file ảnh
-            var memoryStream = new MemoryStream();
-            await request.ProductImage.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
-            //Upload ảnh lên cloudinary
-            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.ProductImage.FileName);
-            newImageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
-
-            //Log                                              
-            Console.WriteLine(resultUpload.JsonObj);
+            newImageUrl = await _cloudinaryService.UploadNewImage(request.ProductImage);
 
             UpdateProduct(product, request, newImageUrl);
 
@@ -59,8 +46,6 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
             {
                 //Upload ảnh lên cloudinary
                 var resultDelete = await _cloudinaryService.DeleteAsync(oldimageUrl);
-                //Log
-                Console.WriteLine(resultDelete.JsonObj);
             }
 
             var baseVariant = product.ProductVariants!.FirstOrDefault(a => a.IsBaseVariant == IsBaseVariant.True);
@@ -75,9 +60,6 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
 
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();
-            // }
-
-
         }
         else
         {

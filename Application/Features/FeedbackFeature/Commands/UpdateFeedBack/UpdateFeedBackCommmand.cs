@@ -7,4 +7,5 @@ public record UpdateFeedBackCommmand(
     Guid FeedbackId, 
     float RatingScore,
     string Substance,
+    Guid CustomerId,
     IFormFile? Image) : ICommand;

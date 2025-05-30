@@ -1,4 +1,6 @@
-﻿using API.Infrastructure;
+﻿using API.Extentions;
+using API.Infrastructure;
+using Application.Features.FeedbackFeature.Commands.UpdateFeedBack;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
@@ -12,13 +14,31 @@ public class UpdateFeedback : IEndpoint
         app.MapPut("/api/feedbacks/{feedBackId}", 
         async (
             [FromRoute] Guid feedBackId,
-            ISender sender) =>
+            [FromForm] UpdateFeedbackRequest request,
+            ISender sender,
+            HttpContext httpContext) =>
         {
-            var result = await sender.Send();
-            return result.Match(Results.Ok, CustomResults.Problem);
+            string token = TokenExtentions.GetTokenFromHeader(httpContext)!;
+            var claims = TokenExtentions.DecodeJwt(token);
+            claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
+
+            var result = await sender.Send(
+                new UpdateFeedBackCommmand(
+                    feedBackId, 
+                    request.RatingScore, 
+                    request.Substance, 
+                    new Guid(customerId!), 
+                    request.Image));
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
 
         }).WithTags(EndpointTags.Feedbacks)
         .WithName(EndpointName.Feedback.Update)
+        .Produces(StatusCodes.Status204NoContent)   
+        .AddBadRequestResponse()
+        .AddUnauthorizedResponse()
+        .AddForbiddenResponse()
+        .AddNotFoundResponse()
         .WithSummary("Cập nhật đánh giá")
         .WithDescription("""
             Cập nhật đánh giá của khách hàng về đơn hàng.
@@ -37,6 +57,30 @@ public class UpdateFeedback : IEndpoint
             }
 
             return o;
-        });
+        })
+        .RequireAuthorization();
     }
+
+    private class UpdateFeedbackRequest
+    {
+        /// <summary>
+        /// Nội dung đánh giá
+        /// </summary>
+        public string Substance { get; set; } = string.Empty;
+        /// <summary>
+        /// Điểm đánh giá
+        /// </summary>
+        public float RatingScore { get; set; }
+        /// <summary>
+        /// Ảnh đánh giá
+        /// </summary>
+        public IFormFile? Image { get; set; }
+    }
+
+    //public record UpdateFeedBackCommmand(
+    //    Guid FeedbackId,
+    //    float RatingScore,
+    //    string Substance,
+    //    Guid CustomerId,
+    //    IFormFile? Image) : ICommand;
 }

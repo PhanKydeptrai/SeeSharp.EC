@@ -64,26 +64,11 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
             return (null, null, Result.Failure(CategoryErrors.NotFound(categoryId)));
         }
 
-        
-        //Xử lý lưu 
         string imageUrl = string.Empty;
         if (command.ProductImage != null)
         {
-
-            //tạo memory stream từ file ảnh
-            var memoryStream = new MemoryStream();
-            await command.ProductImage.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
-            //Upload ảnh lên cloudinary
-            
-            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, command.ProductImage.FileName);
-            imageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
-            //Log
-            Console.WriteLine(resultUpload.JsonObj);
+            imageUrl = await _cloudinaryService.UploadNewImage(command.ProductImage);
         }
-
-        //--------------------
         
         var newProduct = Product.NewProduct(
             ProductName.NewProductName(command.ProductName),

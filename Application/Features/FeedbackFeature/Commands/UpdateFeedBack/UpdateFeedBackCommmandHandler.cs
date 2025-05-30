@@ -8,7 +8,7 @@ using SharedKernel;
 
 namespace Application.Features.FeedbackFeature.Commands.UpdateFeedBack;
 
-internal sealed class UpdateFeedBackCommmandHandler 
+internal sealed class UpdateFeedBackCommmandHandler
     : ICommandHandler<UpdateFeedBackCommmand>
 {
     private readonly IFeedbackRepository _feedbackRepository;
@@ -38,17 +38,8 @@ internal sealed class UpdateFeedBackCommmandHandler
         string newImageUrl = string.Empty;
         if (request.Image != null)
         {
-            //tạo memory stream từ file ảnh
-            var memoryStream = new MemoryStream();
-            await request.Image.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
             //Upload ảnh lên cloudinary
-            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.Image.FileName);
-            newImageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
-
-            //Log                                              
-            Console.WriteLine(resultUpload.JsonObj);
+            newImageUrl = await _cloudinaryService.UploadNewImage(request.Image);
         }
 
         feedback.UpdatFeedback(

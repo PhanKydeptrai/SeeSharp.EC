@@ -47,30 +47,17 @@ internal sealed class UpdateEmployeeProfileCommandHandler : ICommandHandler<Upda
             //Xử lý lưu ảnh mới
             string newImageUrl = string.Empty;
             if (request.ImageFile != null)
-            {
-                //tạo memory stream từ file ảnh
-                var memoryStream = new MemoryStream();
-                await request.ImageFile.CopyToAsync(memoryStream);
-                memoryStream.Position = 0;
-
-                //Upload ảnh lên cloudinary
-                var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.ImageFile.FileName);
-                newImageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
-
-                //Log                                              
-                Console.WriteLine(resultUpload.JsonObj);
+            { 
+                newImageUrl = await _cloudinaryService.UploadNewImage(request.ImageFile);
             }
 
             employee.User!.ImageUrl = newImageUrl;
-
 
             //Xóa ảnh cũ
             if (oldimageUrl != "")
             {
                 //Upload ảnh lên cloudinary
                 var resultDelete = await _cloudinaryService.DeleteAsync(oldimageUrl);
-                //Log
-                Console.WriteLine(resultDelete.JsonObj);
             }
         }
 

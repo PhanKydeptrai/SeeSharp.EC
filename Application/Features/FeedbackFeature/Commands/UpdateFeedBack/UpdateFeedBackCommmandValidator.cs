@@ -12,5 +12,13 @@ internal sealed class UpdateFeedBackCommmandValidator : AbstractValidator<Update
             .WithMessage("Substance is required.")
             .MaximumLength(500)
             .WithMessage("Substance must not exceed 500 characters.");
+
+        RuleFor(a => a.RatingScore)
+            .NotEmpty()
+            .WithErrorCode("RatingScore.Required")
+            .WithMessage("RatingScore is required")
+            .InclusiveBetween(1, 5)
+            .WithErrorCode("RatingScore.Range")
+            .WithMessage("RatingScore must be between 1 and 5");
     }
 }

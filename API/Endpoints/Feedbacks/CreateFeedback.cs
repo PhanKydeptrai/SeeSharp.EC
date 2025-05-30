@@ -14,7 +14,7 @@ internal sealed class CreateFeedback : IEndpoint
     {
         app.MapPost("api/feedbacks", 
         async (
-            [FromBody] CreateFeedbackRequest request,
+            [FromForm] CreateFeedbackRequest request,
             HttpContext httpContext,
             ISender sender) =>
         {
@@ -35,6 +35,9 @@ internal sealed class CreateFeedback : IEndpoint
         }).WithTags(EndpointTags.Feedbacks)
         .WithName(EndpointName.Feedback.Create)
         .Produces(StatusCodes.Status201Created)
+        .AddBadRequestResponse()
+        .AddUnauthorizedResponse()
+        .AddForbiddenResponse()
         .WithOpenApi()
         .WithSummary("Khách hàng đánh giá đơn hàng")
         .WithDescription("""
@@ -44,9 +47,6 @@ internal sealed class CreateFeedback : IEndpoint
 
                 POST: api/feedbacks
             """)
-        .AddBadRequestResponse()
-        .AddUnauthorizedResponse()
-        .AddForbiddenResponse()
         .RequireAuthorization(AuthorizationPolicies.SubscribedOnly);
 
     }

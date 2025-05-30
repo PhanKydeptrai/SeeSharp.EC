@@ -30,8 +30,8 @@ public static class DependencyInjection
         ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
         
         //Đăng ký supabase client
-        services.AddScoped<ICustomerSupabaseClient, CustomerSupabaseClient>();
-        services.AddScoped<IAdminSupabaseClient, AdminSupabaseClient>();
+        //services.AddScoped<ICustomerSupabaseClient, CustomerSupabaseClient>();
+        //services.AddScoped<IAdminSupabaseClient, AdminSupabaseClient>();
         
         return services;
     }

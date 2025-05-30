@@ -40,25 +40,12 @@ internal sealed class CreateNewFeedBackCommandHandler : ICommandHandler<CreateNe
             return Result.Failure(OrderError.OrderStatusInValid(orderId));
         }
 
-        // Xử lý ảnh
-        //--------------------
+
         string imageUrl = string.Empty;
         if (request.Image != null)
         {
-
-            //tạo memory stream từ file ảnh
-            var memoryStream = new MemoryStream();
-            await request.Image.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
-            //Upload ảnh lên cloudinary
-
-            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.Image.FileName);
-            imageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
-            //Log
-            Console.WriteLine(resultUpload.JsonObj);
+            imageUrl = await _cloudinaryService.UploadNewImage(request.Image);
         }
-        //--------------------
 
         var feedback = Feedback.NewFeedback(
             Substance.FromString(request.Substance),
