@@ -65,6 +65,17 @@ public interface IOrderQueryServices
             int? page,
             int? pageSize);
 
+    /// <summary>
+    /// Lấy tất cả order của khách hàng theo CustomerId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <param name="statusFilter"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
     Task<PagedList<OrderResponse>> GetAllOrderForCustomer(
         CustomerId customerId,
         string? statusFilter,
@@ -73,6 +84,7 @@ public interface IOrderQueryServices
         string? sortOrder,
         int? page,
         int? pageSize);
+
     Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId);
 
     /// <summary>

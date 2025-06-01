@@ -1,8 +1,10 @@
 using Domain.Entities.Customers;
+using Domain.Entities.Feedbacks;
 using Domain.Entities.Orders;
 using Domain.Entities.ShippingInformations;
 
 namespace Domain.Entities.Bills;
+
 public sealed class Bill
 {
     public BillId BillId { get; private set; } = null!;
@@ -12,9 +14,11 @@ public sealed class Bill
     public PaymentMethod PaymentMethod { get; private set; }
     public BillPaymentStatus BillPaymentStatus { get; private set; }
     public ShippingInformationId ShippingInformationId { get; private set; } = null!;
-
+    public IsRated IsRated { get; private set; } = IsRated.NotRated;
+    
     //* Foreign key
     public Order Order { get; set; } = null!;
+    public Feedback? Feedback { get; set; } = null!;
     public Customer Customer { get; set; } = null!;
     public ShippingInformation ShippingInformation { get; set; } = null!;
 
@@ -63,5 +67,8 @@ public sealed class Bill
         PaymentMethod = paymentMethod;
     }
 
-
+    public void MarkAsRated()
+    {
+        IsRated = IsRated.Rated;
+    }
 }

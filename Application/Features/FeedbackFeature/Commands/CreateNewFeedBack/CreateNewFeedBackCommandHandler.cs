@@ -1,61 +1,60 @@
-﻿using Application.Abstractions.Messaging;
-using Application.IServices;
-using Application.Services;
-using Domain.Entities.Customers;
-using Domain.Entities.Feedbacks;
-using Domain.Entities.Orders;
-using Domain.IRepositories;
-using Domain.IRepositories.Feedbacks;
-using Domain.Utilities.Errors;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using SharedKernel;
+﻿//using Application.Abstractions.Messaging;
+//using Application.IServices;
+//using Application.Services;
+//using Domain.Entities.Bills;
+//using Domain.Entities.Customers;
+//using Domain.Entities.Feedbacks;
+//using Domain.IRepositories;
+//using Domain.IRepositories.Feedbacks;
+//using Domain.Utilities.Errors;
+//using SharedKernel;
 
-namespace Application.Features.FeedbackFeature.Commands.CreateNewFeedBack;
+//namespace Application.Features.FeedbackFeature.Commands.CreateNewFeedBack;
 
-internal sealed class CreateNewFeedBackCommandHandler : ICommandHandler<CreateNewFeedBackCommand>
-{
-    private readonly IFeedbackRepository _feedbackRepository;
-    private readonly IOrderQueryServices _orderQueryServices;
-    private readonly CloudinaryService _cloudinaryService;
-    private readonly IUnitOfWork _unitOfWork;
-    public CreateNewFeedBackCommandHandler(
-        IFeedbackRepository feedbackRepository,
-        IUnitOfWork unitOfWork,
-        IOrderQueryServices orderQueryServices,
-        CloudinaryService cloudinaryService)
-    {
-        _feedbackRepository = feedbackRepository;
-        _unitOfWork = unitOfWork;
-        _orderQueryServices = orderQueryServices;
-        _cloudinaryService = cloudinaryService;
-    }
+//internal sealed class CreateNewFeedBackCommandHandler : ICommandHandler<CreateNewFeedBackCommand>
+//{
+//    private readonly IFeedbackRepository _feedbackRepository;
+//    private readonly IOrderQueryServices _orderQueryServices;
+//    private readonly CloudinaryService _cloudinaryService;
+//    private readonly IUnitOfWork _unitOfWork;
+//    public CreateNewFeedBackCommandHandler(
+//        IFeedbackRepository feedbackRepository,
+//        IUnitOfWork unitOfWork,
+//        IOrderQueryServices orderQueryServices,
+//        CloudinaryService cloudinaryService)
+//    {
+//        _feedbackRepository = feedbackRepository;
+//        _unitOfWork = unitOfWork;
+//        _orderQueryServices = orderQueryServices;
+//        _cloudinaryService = cloudinaryService;
+//    }
 
-    public async Task<Result> Handle(CreateNewFeedBackCommand request, CancellationToken cancellationToken)
-    {
-        var orderId = OrderId.FromGuid(request.OrderId);
-        var isValidOrder = await _orderQueryServices.IsOrderStatusDelivered(orderId);
+//    public async Task<Result> Handle(CreateNewFeedBackCommand request, CancellationToken cancellationToken)
+//    {
+//        var billId = BillId.FromGuid(request.BillId);
+//        //var isValidOrder = await _orderQueryServices.IsOrderStatusDelivered(orderId);
 
-        if (!isValidOrder)
-        {
-            return Result.Failure(OrderError.OrderStatusInValid(orderId));
-        }
+//        if (!isValidOrder)
+//        {
+//            //return Result.Failure(OrderError.OrderStatusInValid(orderId));
+//        }
 
 
-        string imageUrl = string.Empty;
-        if (request.Image != null)
-        {
-            imageUrl = await _cloudinaryService.UploadNewImage(request.Image);
-        }
+//        string imageUrl = string.Empty;
+//        if (request.Image != null)
+//        {
+//            imageUrl = await _cloudinaryService.UploadNewImage(request.Image);
+//        }
 
-        var feedback = Feedback.NewFeedback(
-            Substance.FromString(request.Substance),
-            RatingScore.FromFloat(request.RatingScore),
-            imageUrl,
-            orderId,
-            CustomerId.FromGuid(request.CustomerId));
+//        var feedback = Feedback.NewFeedback(
+//            Substance.FromString(request.Substance),
+//            RatingScore.FromFloat(request.RatingScore),
+//            imageUrl,
+//            billId,
+//            CustomerId.FromGuid(request.CustomerId));
 
-        await _feedbackRepository.CreateNewFeedback(feedback);
+//        await _feedbackRepository.CreateNewFeedback(feedback);
 
-        return Result.Success(feedback);
-    }
-}
+//        return Result.Success(feedback);
+//    }
+//}

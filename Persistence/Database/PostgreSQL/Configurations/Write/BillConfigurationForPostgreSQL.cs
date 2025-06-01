@@ -52,6 +52,13 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
                 value => ShippingInformationId.FromGuid(value))
             .HasColumnType("uuid");
 
+        builder.Property(x => x.IsRated)
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => IsRated.FromBoolean(value))
+            .HasColumnType("boolean");
+
         builder.HasOne(a => a.ShippingInformation)
             .WithMany(a => a.Bills)
             .HasForeignKey(a => a.ShippingInformationId);

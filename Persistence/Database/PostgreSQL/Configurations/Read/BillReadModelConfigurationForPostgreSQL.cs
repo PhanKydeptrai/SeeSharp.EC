@@ -49,6 +49,10 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
                 value => new Ulid(value))
             .HasColumnType("uuid");
 
+        builder.Property(x => x.IsRated)
+            .IsRequired()
+            .HasColumnType("boolean");
+
         builder.HasOne(a => a.ShippingInformationReadModel)
             .WithMany(a => a.Bills)
             .HasForeignKey(a => a.ShippingInformationId);

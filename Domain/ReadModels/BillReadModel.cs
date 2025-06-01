@@ -10,8 +10,10 @@ public class BillReadModel
     public DateTime CreatedDate { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public Ulid ShippingInformationId { get; set; }
+    public bool IsRated { get; set; }
     public BillPaymentStatus BillPaymentStatus { get; set; }
     public CustomerReadModel Customer { get; set; } = null!;
+    public FeedbackReadModel? Feedback { get; set; } = null!;
     public OrderReadModel Order { get; set; } = null!;
     public ShippingInformationReadModel ShippingInformationReadModel { get; set; } = new ShippingInformationReadModel();
 }
