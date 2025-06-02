@@ -55,7 +55,7 @@ internal sealed class ShippingInformationConfigurationForPostgreSQL : IEntityTyp
                 v => v.Value,
                 v => SpecificAddress.FromString(v)
             )
-            .HasColumnType("varchar(50)");
+            .HasColumnType("varchar(500)");
 
         builder.Property(x => x.Province)
             .IsRequired()

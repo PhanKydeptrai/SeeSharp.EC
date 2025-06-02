@@ -7,7 +7,6 @@ using API.Services;
 using Application;
 using Application.Abstractions.LinkService;
 using Application.Security;
-using Domain.Entities.Employees;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
@@ -17,7 +16,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using QuestPDF.Infrastructure;
-using RabbitMQ.Client;
 using Serilog;
 using SharedKernel.Constants;
 

@@ -20,9 +20,7 @@ public sealed class SeeSharpPostgreSQLReadDbContext : DbContext
     public DbSet<ProductReadModel> Products { get; set; }
     public DbSet<ProductVariantReadModel> ProductVariants { get; set; }
     public DbSet<ShippingInformationReadModel> ShippingInformations { get; set; }
-    // public DbSet<UserAuthenticationTokenReadModel> UserAuthenticationTokens { get; set; }
     public DbSet<UserReadModel> Users { get; set; }
-    // public DbSet<VerificationTokenReadModel> VerificationTokens { get; set; }
     public DbSet<VoucherReadModel> Vouchers { get; set; }
     public DbSet<WishItemReadModel> WishItems { get; set; }
 

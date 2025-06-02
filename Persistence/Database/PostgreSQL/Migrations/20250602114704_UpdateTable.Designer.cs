@@ -12,8 +12,8 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(SeeSharpPostgreSQLWriteDbContext))]
-    [Migration("20250423093754_SeeSharpPrimary")]
-    partial class SeeSharpPrimary
+    [Migration("20250602114704_UpdateTable")]
+    partial class UpdateTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsRated")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
@@ -170,14 +173,14 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("FeedbackId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("BillId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(255)");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
 
                     b.Property<float>("RatingScore")
                         .HasColumnType("float");
@@ -187,10 +190,10 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.HasKey("FeedbackId");
 
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("OrderId")
+                    b.HasIndex("BillId")
                         .IsUnique();
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Feedbacks");
                 });
@@ -389,7 +392,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("SpecificAddress")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("Ward")
                         .IsRequired()
@@ -557,13 +560,13 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasData(
                         new
                         {
-                            VoucherId = new Guid("01966202-d308-ab67-f2a9-436e1dd0e91f"),
+                            VoucherId = new Guid("01973077-7337-07e6-f542-45c86d0237f9"),
                             Description = "Voucher dành riêng cho khách hàng mới đăng ký tài khoản",
-                            ExpiredDate = new DateOnly(2026, 4, 23),
+                            ExpiredDate = new DateOnly(2026, 6, 2),
                             MaximumDiscountAmount = 10000m,
                             MinimumOrderAmount = 100000m,
                             PercentageDiscount = 0,
-                            StartDate = new DateOnly(2025, 4, 23),
+                            StartDate = new DateOnly(2025, 6, 2),
                             Status = 1,
                             VoucherCode = "NEWUSER01",
                             VoucherName = "NEWUSER01",
@@ -692,21 +695,21 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Feedbacks.Feedback", b =>
                 {
+                    b.HasOne("Domain.Entities.Bills.Bill", "Bill")
+                        .WithOne("Feedback")
+                        .HasForeignKey("Domain.Entities.Feedbacks.Feedback", "BillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.Customers.Customer", "Customer")
                         .WithMany("Feedbacks")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Orders.Order", "Order")
-                        .WithOne("Feedback")
-                        .HasForeignKey("Domain.Entities.Feedbacks.Feedback", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Bill");
 
                     b.Navigation("Customer");
-
-                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderDetails.OrderDetail", b =>
@@ -836,6 +839,11 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Navigation("ProductVariant");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
+                {
+                    b.Navigation("Feedback");
+                });
+
             modelBuilder.Entity("Domain.Entities.Categories.Category", b =>
                 {
                     b.Navigation("Products");
@@ -859,8 +867,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.Orders.Order", b =>
                 {
                     b.Navigation("Bill");
-
-                    b.Navigation("Feedback");
 
                     b.Navigation("OrderDetails");
 
