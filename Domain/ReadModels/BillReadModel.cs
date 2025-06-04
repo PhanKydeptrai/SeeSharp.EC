@@ -11,9 +11,14 @@ public class BillReadModel
     public PaymentMethod PaymentMethod { get; set; }
     public Ulid ShippingInformationId { get; set; }
     public bool IsRated { get; set; }
+    public string FullName { get; set; } = null!;
+    public string PhoneNumber { get; set; } = null!;
+    public string SpecificAddress { get; set; } = null!;
+    public string Province { get; set; } = null!;
+    public string District { get; set; } = null!;
+    public string Ward { get; set; } = null!;
     public BillPaymentStatus BillPaymentStatus { get; set; }
     public CustomerReadModel Customer { get; set; } = null!;
     public FeedbackReadModel? Feedback { get; set; } = null!;
     public OrderReadModel Order { get; set; } = null!;
-    public ShippingInformationReadModel ShippingInformationReadModel { get; set; } = new ShippingInformationReadModel();
 }

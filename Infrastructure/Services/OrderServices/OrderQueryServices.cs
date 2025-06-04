@@ -245,83 +245,85 @@ internal sealed class OrderQueryServices : IOrderQueryServices
     }
 
 
-    //NOTE: Sửa lại sử dụng với readmodel
+    //NOTE: Sửa lại sử dụng với readmodel //FIXME
     public async Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId)
     {
-        return await _dbContext.Orders
-            .Include(a => a.OrderTransactionReadModel)
-            .ThenInclude(a => a!.VoucherReadModel)
-            .Include(a => a.BillReadModel)
-            .ThenInclude(a => a!.ShippingInformationReadModel)
-            .Include(a => a.OrderDetailReadModels)
-            .Include(a => a.CustomerReadModel)
-            .ThenInclude(a => a.UserReadModel)
-            .Where(a => a.CustomerId == new Ulid(customerId) && a.OrderStatus != OrderStatus.Waiting)
-            .Select(a => new OrderHistoryResponse(
-                a.CustomerId.ToGuid(),
-                a.CustomerReadModel!.UserReadModel!.UserName,
-                a.CustomerReadModel.UserReadModel.PhoneNumber!,
-                a.BillReadModel!.ShippingInformationReadModel.SpecificAddress,
-                a.Total,
-                a.PaymentStatus.ToString(),
-                a.OrderStatus.ToString(),
-                a.BillReadModel!.PaymentMethod.ToString(),
-                a.OrderTransactionReadModel!.IsVoucherUsed && a.OrderTransactionReadModel.VoucherReadModel != null ? a.OrderTransactionReadModel.VoucherReadModel.VoucherCode : null,
-                a.BillReadModel.BillId.ToGuid(),
-                a.OrderTransactionReadModel.Amount,
-                a.OrderId.ToGuid(),
-                a.OrderDetailReadModels!.Select(b => new OrderDetailResponse(
-                    b.OrderDetailId.ToGuid(),
-                    b.ProductVariantId.ToGuid(),
-                    b.ProductVariantReadModel!.ProductReadModel!.ProductName,
-                    b.ProductVariantReadModel.VariantName,
-                    b.ProductVariantReadModel.ColorCode,
-                    b.ProductVariantReadModel.ProductVariantPrice,
-                    b.Quantity,
-                    b.ProductVariantReadModel.ImageUrl ?? string.Empty,
-                    b.UnitPrice
-                )).ToArray()
-            ))
-            .ToListAsync();
+        throw new NotImplementedException("This method is not implemented yet. Please use GetAllOrderForCustomer instead.");
+        //return await _dbContext.Orders
+        //    .Include(a => a.OrderTransactionReadModel)
+        //    .ThenInclude(a => a!.VoucherReadModel)
+        //    .Include(a => a.BillReadModel)
+        //    .ThenInclude(a => a!.ShippingInformationReadModel)
+        //    .Include(a => a.OrderDetailReadModels)
+        //    .Include(a => a.CustomerReadModel)
+        //    .ThenInclude(a => a.UserReadModel)
+        //    .Where(a => a.CustomerId == new Ulid(customerId) && a.OrderStatus != OrderStatus.Waiting)
+        //    .Select(a => new OrderHistoryResponse(
+        //        a.CustomerId.ToGuid(),
+        //        a.CustomerReadModel!.UserReadModel!.UserName,
+        //        a.CustomerReadModel.UserReadModel.PhoneNumber!,
+        //        a.BillReadModel!.ShippingInformationReadModel.SpecificAddress,
+        //        a.Total,
+        //        a.PaymentStatus.ToString(),
+        //        a.OrderStatus.ToString(),
+        //        a.BillReadModel!.PaymentMethod.ToString(),
+        //        a.OrderTransactionReadModel!.IsVoucherUsed && a.OrderTransactionReadModel.VoucherReadModel != null ? a.OrderTransactionReadModel.VoucherReadModel.VoucherCode : null,
+        //        a.BillReadModel.BillId.ToGuid(),
+        //        a.OrderTransactionReadModel.Amount,
+        //        a.OrderId.ToGuid(),
+        //        a.OrderDetailReadModels!.Select(b => new OrderDetailResponse(
+        //            b.OrderDetailId.ToGuid(),
+        //            b.ProductVariantId.ToGuid(),
+        //            b.ProductVariantReadModel!.ProductReadModel!.ProductName,
+        //            b.ProductVariantReadModel.VariantName,
+        //            b.ProductVariantReadModel.ColorCode,
+        //            b.ProductVariantReadModel.ProductVariantPrice,
+        //            b.Quantity,
+        //            b.ProductVariantReadModel.ImageUrl ?? string.Empty,
+        //            b.UnitPrice
+        //        )).ToArray()
+        //    ))
+        //    .ToListAsync();
     }
 
     public async Task<BillResponse?> GetBillByBillId(BillId billId)
     {
-        return await _dbContext.Orders
-            .Include(a => a.OrderTransactionReadModel)
-            .ThenInclude(a => a!.VoucherReadModel)
-            .Include(a => a.BillReadModel)
-            .ThenInclude(a => a!.ShippingInformationReadModel)
-            .Include(a => a.OrderDetailReadModels)
-            .Include(a => a.CustomerReadModel)
-            .ThenInclude(a => a!.UserReadModel)
-            .Where(a => a.BillReadModel!.BillId == new Ulid(billId) && a.OrderStatus != OrderStatus.Waiting)
-            .Select(a => new BillResponse(
-                a.CustomerId.ToGuid(),
-                a.CustomerReadModel!.UserReadModel!.UserName,
-                a.CustomerReadModel.UserReadModel.Email!,
-                a.BillReadModel!.ShippingInformationReadModel.PhoneNumber!,
-                a.BillReadModel!.ShippingInformationReadModel.SpecificAddress,
-                a.Total,
-                a.PaymentStatus.ToString(),
-                a.OrderStatus.ToString(),
-                a.BillReadModel!.PaymentMethod.ToString(),
-                a.OrderTransactionReadModel!.IsVoucherUsed && a.OrderTransactionReadModel.VoucherReadModel != null ? a.OrderTransactionReadModel.VoucherReadModel.VoucherCode : null,
-                a.BillReadModel.BillId.ToGuid(),
-                a.OrderTransactionReadModel.Amount,
-                a.OrderId.ToGuid(),
-                a.OrderDetailReadModels!.Select(b => new OrderDetailResponse(
-                    b.OrderDetailId.ToGuid(),
-                    b.ProductVariantId.ToGuid(),
-                    b.ProductVariantReadModel!.ProductReadModel!.ProductName,
-                    b.ProductVariantReadModel.VariantName,
-                    b.ProductVariantReadModel.ColorCode,
-                    b.ProductVariantReadModel.ProductVariantPrice,
-                    b.Quantity,
-                    b.ProductVariantReadModel.ImageUrl ?? string.Empty,
-                    b.UnitPrice
-                )).ToArray()
-            )).FirstOrDefaultAsync();
+        throw new NotImplementedException("This method is not implemented yet. Please use GetBillByOrderId instead.");
+        //return await _dbContext.Orders
+        //    .Include(a => a.OrderTransactionReadModel)
+        //    .ThenInclude(a => a!.VoucherReadModel)
+        //    .Include(a => a.BillReadModel)
+        //    .ThenInclude(a => a!.ShippingInformationReadModel)
+        //    .Include(a => a.OrderDetailReadModels)
+        //    .Include(a => a.CustomerReadModel)
+        //    .ThenInclude(a => a!.UserReadModel)
+        //    .Where(a => a.BillReadModel!.BillId == new Ulid(billId) && a.OrderStatus != OrderStatus.Waiting)
+        //    .Select(a => new BillResponse(
+        //        a.CustomerId.ToGuid(),
+        //        a.CustomerReadModel!.UserReadModel!.UserName,
+        //        a.CustomerReadModel.UserReadModel.Email!,
+        //        a.BillReadModel!.ShippingInformationReadModel.PhoneNumber!,
+        //        a.BillReadModel!.ShippingInformationReadModel.SpecificAddress,
+        //        a.Total,
+        //        a.PaymentStatus.ToString(),
+        //        a.OrderStatus.ToString(),
+        //        a.BillReadModel!.PaymentMethod.ToString(),
+        //        a.OrderTransactionReadModel!.IsVoucherUsed && a.OrderTransactionReadModel.VoucherReadModel != null ? a.OrderTransactionReadModel.VoucherReadModel.VoucherCode : null,
+        //        a.BillReadModel.BillId.ToGuid(),
+        //        a.OrderTransactionReadModel.Amount,
+        //        a.OrderId.ToGuid(),
+        //        a.OrderDetailReadModels!.Select(b => new OrderDetailResponse(
+        //            b.OrderDetailId.ToGuid(),
+        //            b.ProductVariantId.ToGuid(),
+        //            b.ProductVariantReadModel!.ProductReadModel!.ProductName,
+        //            b.ProductVariantReadModel.VariantName,
+        //            b.ProductVariantReadModel.ColorCode,
+        //            b.ProductVariantReadModel.ProductVariantPrice,
+        //            b.Quantity,
+        //            b.ProductVariantReadModel.ImageUrl ?? string.Empty,
+        //            b.UnitPrice
+        //        )).ToArray()
+        //    )).FirstOrDefaultAsync();
 
         #region Old Code
         //return await _writeDbContext.Orders
@@ -364,41 +366,43 @@ internal sealed class OrderQueryServices : IOrderQueryServices
 
     public async Task<BillResponse?> GetBillByOrderId(OrderId orderId)
     {
-        return await _dbContext.Orders
-            .Include(a => a.OrderTransactionReadModel)
-            .ThenInclude(a => a!.VoucherReadModel)
-            .Include(a => a.BillReadModel)
-            .ThenInclude(a => a!.ShippingInformationReadModel)
-            .Include(a => a.OrderDetailReadModels)
-            .Include(a => a.CustomerReadModel)
-            .ThenInclude(a => a!.UserReadModel)
-            .Where(a => a.BillReadModel!.OrderId == new Ulid(orderId) && a.OrderStatus != OrderStatus.Waiting)
-            .Select(a => new BillResponse(
-                a.CustomerId.ToGuid(),
-                a.CustomerReadModel!.UserReadModel!.UserName != string.Empty ? a.CustomerReadModel.UserReadModel.UserName : a.BillReadModel!.ShippingInformationReadModel.FullName,
-                a.CustomerReadModel.UserReadModel.Email,
-                a.BillReadModel!.ShippingInformationReadModel.PhoneNumber,
-                a.BillReadModel!.ShippingInformationReadModel.SpecificAddress,
-                a.Total,
-                a.PaymentStatus.ToString(),
-                a.OrderStatus.ToString(),
-                a.BillReadModel!.PaymentMethod.ToString(),
-                a.OrderTransactionReadModel!.IsVoucherUsed && a.OrderTransactionReadModel.VoucherReadModel != null ? a.OrderTransactionReadModel.VoucherReadModel.VoucherCode : null,
-                a.BillReadModel.BillId.ToGuid(),
-                a.OrderTransactionReadModel.Amount,
-                a.OrderId.ToGuid(),
-                a.OrderDetailReadModels!.Select(b => new OrderDetailResponse(
-                    b.OrderDetailId.ToGuid(),
-                    b.ProductVariantId.ToGuid(),
-                    b.ProductVariantReadModel!.ProductReadModel!.ProductName,
-                    b.ProductVariantReadModel.VariantName,
-                    b.ProductVariantReadModel.ColorCode,
-                    b.ProductVariantReadModel.ProductVariantPrice,
-                    b.Quantity,
-                    b.ProductVariantReadModel.ImageUrl ?? string.Empty,
-                    b.UnitPrice
-                )).ToArray()
-            )).FirstOrDefaultAsync();
+        //return await _dbContext.Orders
+        //    .Include(a => a.OrderTransactionReadModel)
+        //    .ThenInclude(a => a!.VoucherReadModel)
+        //    .Include(a => a.BillReadModel)
+        //    .ThenInclude(a => a!.ShippingInformationReadModel)
+        //    .Include(a => a.OrderDetailReadModels)
+        //    .Include(a => a.CustomerReadModel)
+        //    .ThenInclude(a => a!.UserReadModel)
+        //    .Where(a => a.BillReadModel!.OrderId == new Ulid(orderId) && a.OrderStatus != OrderStatus.Waiting)
+        //    .Select(a => new BillResponse(
+        //        a.CustomerId.ToGuid(),
+        //        a.CustomerReadModel!.UserReadModel!.UserName != string.Empty ? a.CustomerReadModel.UserReadModel.UserName : a.BillReadModel!.ShippingInformationReadModel.FullName,
+        //        a.CustomerReadModel.UserReadModel.Email,
+        //        a.BillReadModel!.ShippingInformationReadModel.PhoneNumber,
+        //        a.BillReadModel!.ShippingInformationReadModel.SpecificAddress,
+        //        a.Total,
+        //        a.PaymentStatus.ToString(),
+        //        a.OrderStatus.ToString(),
+        //        a.BillReadModel!.PaymentMethod.ToString(),
+        //        a.OrderTransactionReadModel!.IsVoucherUsed && a.OrderTransactionReadModel.VoucherReadModel != null ? a.OrderTransactionReadModel.VoucherReadModel.VoucherCode : null,
+        //        a.BillReadModel.BillId.ToGuid(),
+        //        a.OrderTransactionReadModel.Amount,
+        //        a.OrderId.ToGuid(),
+        //        a.OrderDetailReadModels!.Select(b => new OrderDetailResponse(
+        //            b.OrderDetailId.ToGuid(),
+        //            b.ProductVariantId.ToGuid(),
+        //            b.ProductVariantReadModel!.ProductReadModel!.ProductName,
+        //            b.ProductVariantReadModel.VariantName,
+        //            b.ProductVariantReadModel.ColorCode,
+        //            b.ProductVariantReadModel.ProductVariantPrice,
+        //            b.Quantity,
+        //            b.ProductVariantReadModel.ImageUrl ?? string.Empty,
+        //            b.UnitPrice
+        //        )).ToArray()
+
+        throw new NotImplementedException("This method is not implemented yet. Please use GetBillByBillId instead.");
+        //    )).FirstOrDefaultAsync();
     }
 
     public async Task<bool> IsOrderStatusDelivered(OrderId orderId)

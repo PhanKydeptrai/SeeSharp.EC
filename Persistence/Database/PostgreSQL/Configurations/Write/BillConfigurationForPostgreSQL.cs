@@ -2,6 +2,7 @@ using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Orders;
 using Domain.Entities.ShippingInformations;
+using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -45,13 +46,6 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
             .IsRequired()
             .HasColumnType("integer");
 
-        builder.Property(x => x.ShippingInformationId)
-            .IsRequired()
-            .HasConversion(
-                value => value.Value,
-                value => ShippingInformationId.FromGuid(value))
-            .HasColumnType("uuid");
-
         builder.Property(x => x.IsRated)
             .IsRequired()
             .HasConversion(
@@ -59,10 +53,47 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
                 value => IsRated.FromBoolean(value))
             .HasColumnType("boolean");
 
-        builder.HasOne(a => a.ShippingInformation)
-            .WithMany(a => a.Bills)
-            .HasForeignKey(a => a.ShippingInformationId);
+        builder.Property(x => x.FullName)
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => FullName.FromString(value))
+            .HasColumnType("text");
 
+        builder.Property(x => x.PhoneNumber)
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => PhoneNumber.FromString(value))
+            .HasColumnType("text");
+
+        builder.Property(x => x.SpecificAddress)
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => SpecificAddress.FromString(value))
+            .HasColumnType("text");
+
+        builder.Property(x => x.Province)
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => Province.FromString(value))
+            .HasColumnType("text");
+
+        builder.Property(x => x.District)
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => District.FromString(value))
+            .HasColumnType("text");
+
+        builder.Property(x => x.Ward)
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => Ward.FromString(value))
+            .HasColumnType("text");
 
     }
 }

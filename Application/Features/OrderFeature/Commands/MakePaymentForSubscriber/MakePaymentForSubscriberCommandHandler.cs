@@ -10,6 +10,7 @@ using Domain.IRepositories.Bills;
 using Domain.IRepositories.Orders;
 using Domain.IRepositories.ShippingInformations;
 using Domain.IRepositories.Vouchers;
+using Domain.Utilities.Errors;
 using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
@@ -45,11 +46,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
 
         if (orderInformation is null) //Không có đơn hàng nào
         {
-            return Result.Failure(
-                new Error(
-                    "Order not found",
-                    "The order does not exist for the given customer.",
-                    ErrorType.Problem));
+            return Result.Failure(OrderError.OrderNotExist());
         }
 
         if (!string.IsNullOrEmpty(request.voucherCode)) // Có sử dụng voucher
@@ -105,8 +102,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                         customerId,
                         DateTime.UtcNow,
                         PaymentMethod.None,
-                        BillPaymentStatus.Pending,
-                        shippingInformation.ShippingInformationId);
+                        BillPaymentStatus.Pending);
 
                     //Tạo order transaction mới
                     var orderTransaction = OrderTransaction.NewOrderTransaction(
@@ -146,8 +142,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                         customerId,
                         DateTime.UtcNow,
                         PaymentMethod.None,
-                        BillPaymentStatus.Pending,
-                        shippingInformationId);
+                        BillPaymentStatus.Pending);
 
                     //Tạo order transaction mới
                     var orderTransaction = OrderTransaction.NewOrderTransaction(
@@ -195,8 +190,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                         customerId,
                         DateTime.UtcNow,
                         PaymentMethod.None,
-                        BillPaymentStatus.Pending,
-                        shippingInformation.ShippingInformationId);
+                        BillPaymentStatus.Pending);
 
                     var orderTransaction = OrderTransaction.NewOrderTransaction(
                         PayerName.Empty,
@@ -236,8 +230,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                         customerId,
                         DateTime.UtcNow,
                         PaymentMethod.None,
-                        BillPaymentStatus.Pending,
-                        shippingInformationId);
+                        BillPaymentStatus.Pending);
 
                     var orderTransaction = OrderTransaction.NewOrderTransaction(
                         PayerName.Empty,
@@ -278,8 +271,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                     customerId,
                     DateTime.UtcNow,
                     PaymentMethod.None,
-                    BillPaymentStatus.Pending,
-                    shippingInformation.ShippingInformationId);
+                    BillPaymentStatus.Pending);
 
                 //Tạo order transaction mới
                 var orderTransaction = OrderTransaction.NewOrderTransaction(
@@ -319,8 +311,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                     customerId,
                     DateTime.UtcNow,
                     PaymentMethod.None,
-                    BillPaymentStatus.Pending,
-                    shippingInformationId);
+                    BillPaymentStatus.Pending);
 
                 //Tạo order transaction mới
                 var orderTransaction = OrderTransaction.NewOrderTransaction(

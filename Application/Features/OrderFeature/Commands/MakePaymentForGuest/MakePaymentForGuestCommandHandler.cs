@@ -62,8 +62,7 @@ internal sealed class MakePaymentForGuestCommandHandler : ICommandHandler<MakePa
             customerId,
             DateTime.UtcNow,
             PaymentMethod.None,
-            BillPaymentStatus.Pending,
-            shippingInformation.ShippingInformationId);
+            BillPaymentStatus.Pending);
 
         //Tạo order transaction mới
         var orderTransaction = OrderTransaction.NewOrderTransaction(

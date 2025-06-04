@@ -2,6 +2,7 @@ using Domain.Entities.Customers;
 using Domain.Entities.Feedbacks;
 using Domain.Entities.Orders;
 using Domain.Entities.ShippingInformations;
+using Domain.Entities.Users;
 
 namespace Domain.Entities.Bills;
 
@@ -13,14 +14,18 @@ public sealed class Bill
     public DateTime CreatedDate { get; private set; } 
     public PaymentMethod PaymentMethod { get; private set; }
     public BillPaymentStatus BillPaymentStatus { get; private set; }
-    public ShippingInformationId ShippingInformationId { get; private set; } = null!;
+    public FullName FullName { get; private set; } = FullName.Empty;
+    public PhoneNumber PhoneNumber { get; private set; } = PhoneNumber.Empty;
+    public SpecificAddress SpecificAddress { get; private set; } = SpecificAddress.Empty;
+    public Province Province { get; private set; } = Province.Empty;
+    public District District { get; private set; } = District.Empty;
+    public Ward Ward { get; private set; } = Ward.Empty;
     public IsRated IsRated { get; private set; } = IsRated.NotRated;
     
     //* Foreign key
     public Order Order { get; set; } = null!;
     public Feedback? Feedback { get; set; } = null!;
     public Customer Customer { get; set; } = null!;
-    public ShippingInformation ShippingInformation { get; set; } = null!;
 
 
     private Bill(
@@ -29,8 +34,7 @@ public sealed class Bill
         CustomerId customerId,
         DateTime createdDate,
         PaymentMethod paymentMethod,
-        BillPaymentStatus billPaymentStatus,
-        ShippingInformationId shippingInformationId)
+        BillPaymentStatus billPaymentStatus)
     {
         BillId = billId;
         OrderId = orderId;
@@ -38,7 +42,6 @@ public sealed class Bill
         CreatedDate = createdDate;
         PaymentMethod = paymentMethod;
         BillPaymentStatus = billPaymentStatus;
-        ShippingInformationId = shippingInformationId;
     }
 
     public static Bill NewBill(
@@ -46,8 +49,7 @@ public sealed class Bill
         CustomerId customerId,
         DateTime createdDate,
         PaymentMethod paymentMethod,
-        BillPaymentStatus billPaymentStatus,
-        ShippingInformationId shippingInformationId)
+        BillPaymentStatus billPaymentStatus)
     {
         return new Bill(
             BillId.New(),
@@ -55,8 +57,7 @@ public sealed class Bill
             customerId,
             createdDate,
             paymentMethod,
-            billPaymentStatus,
-            shippingInformationId);
+            billPaymentStatus);
     }
 
     public void ChangeBillStatus(

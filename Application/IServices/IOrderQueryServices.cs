@@ -20,9 +20,16 @@ public interface IOrderQueryServices
     /// <summary>
     /// Kiểm tra trạng thái đơn hàng có phải là Delivered hay không
     /// </summary>
-    /// <param name="orderId"></param>
+    /// <param name="orderId">Mã Order</param>
     /// <returns></returns>
     Task<bool> IsOrderStatusDelivered(OrderId orderId);
+
+    /// <summary>
+    /// Kiểm tra trạng thái đơn hàng có phải là Delivered hay không
+    /// </summary>
+    /// <param name="billId">Mã hoá đơn</param>
+    /// <returns></returns>
+    Task<bool> IsOrderStatusDelivered(BillId billId);
 
     /// <summary>
     /// Get Order and Order Details by OrderId with OrderStatus != New
