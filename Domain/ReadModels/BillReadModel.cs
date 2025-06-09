@@ -8,9 +8,9 @@ public class BillReadModel
     public Ulid OrderId { get; set; }
     public Ulid CustomerId { get; set; }
     public DateTime CreatedDate { get; set; }
-    public PaymentMethod PaymentMethod { get; set; }
     public Ulid ShippingInformationId { get; set; }
     public bool IsRated { get; set; }
+    public string Email { get; set; } = null!;
     public string FullName { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public string SpecificAddress { get; set; } = null!;

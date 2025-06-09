@@ -34,10 +34,10 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
             .IsRequired()
             .HasColumnType("TIMESTAMPTZ");
 
-        builder.Property(x => x.PaymentMethod)
+        builder.Property(x => x.Email)
             .IsRequired()
-            .HasColumnType("integer");
-        
+            .HasColumnType("text");
+
         builder.Property(x => x.BillPaymentStatus)
             .IsRequired()
             .HasColumnType("integer");
@@ -54,6 +54,10 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
             .HasColumnType("boolean");
 
         builder.Property(x => x.FullName)
+            .IsRequired()
+            .HasColumnType("text");
+
+        builder.Property(x => x.Email)
             .IsRequired()
             .HasColumnType("text");
 
