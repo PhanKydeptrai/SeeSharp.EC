@@ -43,7 +43,7 @@ public interface IOrderRepository
     /// <param name="orderDetailId"></param>
     /// <returns></returns>
     Task<OrderDetail?> GetOrderDetailById(OrderDetailId orderDetailId);
-    
+
     /// <summary>
     /// Huỷ đơn hàng
     /// </summary>
@@ -63,6 +63,12 @@ public interface IOrderRepository
     /// <param name="customerId"></param>
     /// <returns></returns>
     Task<Order?> GetOrderByCustomerId(CustomerId customerId);
+
+    /// <summary>
+    /// Lấy order đang chờ xử lý của khách hàng theo customerId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
     Task<Order?> GetWaitingOrderByCustomerId(CustomerId customerId);
 
     /// <summary>
@@ -82,7 +88,7 @@ public interface IOrderRepository
     /// Xoá order transaction
     /// </summary>
     /// <param name="orderTransaction"></param>
-    void RemoveOrderTransaction(OrderTransaction orderTransaction); 
+    void RemoveOrderTransaction(OrderTransaction orderTransaction);
     // Task SyncCartForCustomer(OrderId orderId, CustomerId customerId);
     // Task<Order?> GetOrderByGuestId(CustomerId customerId);
     void DeleteOrderDetail(OrderDetail orderDetail);

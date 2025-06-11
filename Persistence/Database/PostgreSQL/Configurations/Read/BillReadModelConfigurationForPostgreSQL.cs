@@ -77,5 +77,12 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
             .IsRequired()
             .HasColumnType("text");
 
+        builder.Property(x => x.Ward)
+            .IsRequired()
+            .HasColumnType("text");
+
+        builder.HasMany(x => x.BillDetails)
+            .WithOne(x => x.Bill)
+            .HasForeignKey(x => x.BillId);
     }
 }

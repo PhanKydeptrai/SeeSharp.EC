@@ -15,7 +15,6 @@ namespace Application.Features.OrderFeature.Commands;
 internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProductToOrderCommand>
 {
 
-    #region Dependencies
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductQueryServices _productQueryServices;
     private readonly IOrderRepository _orderRepository;
@@ -28,7 +27,6 @@ internal sealed class AddProductToOrderCommandHandler : ICommandHandler<AddProdu
         _orderRepository = orderRepository;
         _productQueryServices = productQueryServices;
     }
-    #endregion
 
     public async Task<Result> Handle(AddProductToOrderCommand request, CancellationToken cancellationToken)
     {

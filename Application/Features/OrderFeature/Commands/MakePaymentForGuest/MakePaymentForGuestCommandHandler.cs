@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Domain.Entities.BillDetails;
 using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.OrderTransactions;
@@ -55,6 +56,18 @@ internal sealed class MakePaymentForGuestCommandHandler : ICommandHandler<MakePa
             District.FromString(request.District),
             Ward.FromString(request.Ward));
 
+        //Tạo bill detail từ order
+        var billDetails = orderInformation.OrderDetails!.Select(orderDetail =>
+            BillDetail.Create(
+                bill.BillId,
+                orderDetail.ProductVariant!.Product!.ProductName,
+                orderDetail.ProductVariant!.VariantName,
+                orderDetail.ProductVariant!.ProductVariantPrice,
+                orderDetail.ProductVariant.ImageUrl ?? string.Empty,
+                BillDetailQuantity.FromInt(orderDetail.Quantity.Value),
+                orderDetail.ProductVariant.ColorCode,
+                orderDetail.ProductVariant.Description)).ToList();
+
         //Tạo order transaction mới
         var orderTransaction = OrderTransaction.NewOrderTransaction(
             PayerName.FromString(request.FullName),
@@ -69,6 +82,7 @@ internal sealed class MakePaymentForGuestCommandHandler : ICommandHandler<MakePa
             bill.BillId); //Cập nhật khi khách thanh toán thành công
 
         await _billRepository.AddBill(bill);
+        await _billRepository.AddBillDetail(billDetails);
         await _orderRepository.AddNewOrderTransaction(orderTransaction);
         await _unitOfWork.SaveChangesAsync();
 

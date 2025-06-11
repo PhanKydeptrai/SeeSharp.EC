@@ -1,10 +1,11 @@
 ﻿using Domain.Entities.Bills;
+using Domain.ReadModels;
 
 namespace Domain.Database.PostgreSQL.ReadModels;
 
 public class BillReadModel
 {
-    public Ulid BillId { get; set; } 
+    public Ulid BillId { get; set; }
     public Ulid OrderId { get; set; }
     public Ulid CustomerId { get; set; }
     public DateTime CreatedDate { get; set; }
@@ -21,4 +22,5 @@ public class BillReadModel
     public CustomerReadModel Customer { get; set; } = null!;
     public FeedbackReadModel? Feedback { get; set; } = null!;
     public OrderReadModel Order { get; set; } = null!;
+    public ICollection<BillDetailReadModel> BillDetails { get; set; } = new List<BillDetailReadModel>();
 }

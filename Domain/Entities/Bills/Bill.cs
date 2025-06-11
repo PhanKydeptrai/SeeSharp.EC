@@ -1,3 +1,4 @@
+using Domain.Entities.BillDetails;
 using Domain.Entities.Customers;
 using Domain.Entities.Feedbacks;
 using Domain.Entities.Orders;
@@ -26,8 +27,7 @@ public sealed class Bill
     public Order Order { get; set; } = null!;
     public Feedback? Feedback { get; set; } = null!;
     public Customer Customer { get; set; } = null!;
-
-
+    public ICollection<BillDetail>? BillDetails { get; set; } 
     private Bill(
         BillId billId,
         OrderId orderId,

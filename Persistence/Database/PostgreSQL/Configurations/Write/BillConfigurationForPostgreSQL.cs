@@ -1,4 +1,5 @@
 using Domain.Entities.Bills;
+using Domain.Entities.BillDetails;
 using Domain.Entities.Customers;
 using Domain.Entities.Orders;
 using Domain.Entities.ShippingInformations;
@@ -98,5 +99,8 @@ internal sealed class BillConfigurationForPostgreSQL : IEntityTypeConfiguration<
                 value => Ward.FromString(value))
             .HasColumnType("text");
 
+        builder.HasMany(x => x.BillDetails)
+            .WithOne(x => x.Bill)
+            .HasForeignKey(x => x.BillId);
     }
 }

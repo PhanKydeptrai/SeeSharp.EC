@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.Bills;
+using Domain.Entities.BillDetails;
 using Domain.Entities.Categories;
 using Domain.Entities.Customers;
 using Domain.Entities.CustomerVouchers;
@@ -8,7 +9,7 @@ using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
 using Domain.Entities.Products;
-using Domain.Entities.ProductVariants;
+using Domain.Entities.ProductVariants; 
 using Domain.Entities.ShippingInformations;
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.Users;
@@ -39,6 +40,7 @@ public sealed class SeeSharpPostgreSQLWriteDbContext : DbContext
         RootUserPassword = PasswordHash.FromString(configuration["RootUser:Password"]!.SHA256());
     }
     public DbSet<Bill> Bills { get; set; }
+    public DbSet<BillDetail> BillDetails { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<CustomerVoucher> CustomerVouchers { get; set; }

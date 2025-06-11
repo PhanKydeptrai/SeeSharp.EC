@@ -13,8 +13,7 @@ internal sealed class OrderRepository : IOrderRepository
 {
     private readonly SeeSharpPostgreSQLWriteDbContext _postgreSQLWriteDbContext;
 
-    public OrderRepository(
-        SeeSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
+    public OrderRepository(SeeSharpPostgreSQLWriteDbContext postgreSQLWriteDbContext)
     {
         _postgreSQLWriteDbContext = postgreSQLWriteDbContext;
     }
@@ -77,7 +76,9 @@ internal sealed class OrderRepository : IOrderRepository
     public async Task<Order?> GetWaitingOrderByCustomerId(CustomerId customerId)
     {
         return await _postgreSQLWriteDbContext.Orders
-            .Include(a => a.OrderDetails)
+            .Include(a => a.OrderDetails!)
+            .ThenInclude(a => a.ProductVariant)
+            .ThenInclude(a => a!.Product)
             .FirstOrDefaultAsync(x => x.CustomerId == customerId && x.OrderStatus == OrderStatus.Waiting);
     }
 
