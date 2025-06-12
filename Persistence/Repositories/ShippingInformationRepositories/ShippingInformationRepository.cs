@@ -1,3 +1,4 @@
+using Domain.Entities.Customers;
 using Domain.Entities.ShippingInformations;
 using Domain.IRepositories.ShippingInformations;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +25,17 @@ internal sealed class ShippingInformationRepository : IShippingInformationReposi
         return await _postgreSQLWriteDbContext.ShippingInformations.FindAsync(shippingInformationId);
     }
 
+    public async Task<bool> IsDefaultShippingInformationExist(CustomerId customerId)
+    {
+        return await _postgreSQLWriteDbContext.ShippingInformations.AnyAsync(
+            x => x.CustomerId == customerId
+            && x.IsDefault == IsDefault.True);
+    }
+
     public async Task<bool> IsExistedShippingInformation(
         ShippingInformationId shippingInformationId)
     {
-        return await _postgreSQLWriteDbContext.ShippingInformations.AnyAsync(x => x.ShippingInformationId == shippingInformationId);
+        return await _postgreSQLWriteDbContext.ShippingInformations.AnyAsync(
+            x => x.ShippingInformationId == shippingInformationId);
     }
 }

@@ -104,6 +104,7 @@ public static class EndpointName
         public const string GetAllOrderForCustomer = "GetAllOrderForCustomer";
         public const string GetMakePaymentResponse = "GetMakePaymentResponse";
         public const string MakePaymentForSubscriber = "MakePaymentForSubscriber";
+        public const string MakePaymentForGuest = "MakePaymentForGuest";
         public const string ChangeOrderStatus = "ChangeOrderStatus";
         public const string GetAllForAdmin = "GetAllForAdmin";
         public const string CancelOrder = "CancelOrder";
