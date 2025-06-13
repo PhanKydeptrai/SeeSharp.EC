@@ -51,6 +51,11 @@ internal sealed class ShippingInformationQueryServices : IShippingInformationQue
         return result;
     }
 
+    public Task<ShippingInformationResponse?> GetDefaultShippingInformation(ShippingInformationId shippingInformationId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<ShippingInformationResponse?> GetShippingInformationById(
         ShippingInformationId shippingInformationId)
     {
@@ -69,5 +74,11 @@ internal sealed class ShippingInformationQueryServices : IShippingInformationQue
             .FirstOrDefaultAsync();
 
         return result;
+    }
+
+    public async Task<bool> IsThisShippingInformationDefault(ShippingInformationId shippingInformationId)
+    {
+        return await _dbContext.ShippingInformations
+            .AnyAsync(x => x.ShippingInformationId == new Ulid(shippingInformationId) && x.IsDefault);
     }
 }

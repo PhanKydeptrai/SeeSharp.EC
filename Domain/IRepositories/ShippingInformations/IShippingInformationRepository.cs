@@ -32,4 +32,17 @@ public interface IShippingInformationRepository
     /// <param name="shippingInformationId"></param>
     /// <returns></returns>
     Task<bool> IsExistedShippingInformation(ShippingInformationId shippingInformationId);
+
+    /// <summary>
+    /// Lấy thông tin giao hàng mặc định của khách hàng.
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    Task<ShippingInformation?> GetDefaultShippingInformation(CustomerId customerId);
+
+    /// <summary>
+    /// Xoá thông tin giao hàng.
+    /// </summary>
+    /// <param name="shippingInformation"></param>
+    void RemoveShippingInformation(ShippingInformation shippingInformation); 
 }

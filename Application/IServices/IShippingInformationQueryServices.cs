@@ -8,5 +8,6 @@ public interface IShippingInformationQueryServices
 {
     Task<List<ShippingInformationResponse>> GetAllShippingInformation(CustomerId customerId);
     Task<ShippingInformationResponse?> GetShippingInformationById(ShippingInformationId shippingInformationId);
+    Task<bool> IsThisShippingInformationDefault(ShippingInformationId shippingInformationId);
     Task<ShippingInformationResponse?> GetDefaultShippingInformation(CustomerId customerId);
 }
