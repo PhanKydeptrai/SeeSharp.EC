@@ -83,16 +83,43 @@ builder.Services.AddAuthentication(options =>
     githubOptions.ClientSecret = builder.Configuration["Github:client_secret"]!;
     githubOptions.Scope.Add("user:email");
 })
-.AddDiscord(discordOptions =>
+.AddFacebook(facebookOptions =>
 {
-    discordOptions.ClientId = builder.Configuration["Discord:client_id"]!;
-    discordOptions.ClientSecret = builder.Configuration["Discord:client_secret"]!;
+    facebookOptions.ClientId = builder.Configuration["Facebook:client_id"]!;
+    facebookOptions.ClientSecret = builder.Configuration["Facebook:client_secret"]!;
 });
+//.AddDiscord(discordOptions =>
+//{
+//    discordOptions.ClientId = builder.Configuration["Discord:client_id"]!;
+//    discordOptions.ClientSecret = builder.Configuration["Discord:client_secret"]!;
+//});
 #endregion
 
 builder.Services.AddAuthorization(options =>
 {
-    AuthorizationPolicies.ConfigurePolicies(options);
+    //Chỉ cho phép admin
+    options.AddPolicy(AuthorizationPolicies.AdminOnly, policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, AuthorizationRoles.Admin);
+    });
+
+    // Chỉ cho phép khách hàng đã đăng ký
+    options.AddPolicy(AuthorizationPolicies.SubscribedOnly, policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, AuthorizationRoles.Subscribed);
+    });
+
+    //Chỉ cho phép nhân viên hoặc admin
+    options.AddPolicy(AuthorizationPolicies.SubscribedOrGuest, policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, AuthorizationRoles.Subscribed, AuthorizationRoles.Guest);
+    });
+
+    //Chỉ cho phép khách hàng
+    options.AddPolicy(AuthorizationPolicies.AllEmployee, policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, AuthorizationRoles.Employee, AuthorizationRoles.Admin);
+    });
 });
 
 builder.Services.AddProblemDetails();
@@ -113,7 +140,7 @@ builder.Services.AddScoped<ILinkServices, LinkServices>(); //* Hateoas
 builder.Services.AddHttpContextAccessor();
 
 #endregion
-//builder.Services.AddCustomProblemDetails();
+builder.Services.AddCustomProblemDetails();
 builder.Host.UseSerilog((context, loggerConfig) =>
 loggerConfig.ReadFrom.Configuration(context.Configuration));
 //Seq
@@ -168,18 +195,20 @@ app.UseRequestContextLogging(); //Middleware log thông tin request
 app.UseCors("AllowAll");
 #endregion
 
-app.UseAuthentication();
-app.UseAuthorization();
+#region Cấu hình minimal API
+app.MapControllers();
+app.MapEndpoints();
+#endregion
+
+
 app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Add static files middleware
 app.UseRouting();
 
-#region Cấu hình minimal API
-app.MapControllers();
-app.MapEndpoints();
-#endregion
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
 

@@ -9,6 +9,7 @@ public sealed class SeeSharpPostgreSQLReadDbContext : DbContext
     public SeeSharpPostgreSQLReadDbContext(DbContextOptions<SeeSharpPostgreSQLReadDbContext> options)
         : base(options) { }
     public DbSet<BillReadModel> Bills { get; set; }
+    public DbSet<BillDetailReadModel> BillDetails { get; set; }
     public DbSet<CategoryReadModel> Categories { get; set; }
     public DbSet<CustomerReadModel> Customers { get; set; }
     public DbSet<CustomerVoucherReadModel> CustomerVouchers { get; set; }
@@ -20,9 +21,7 @@ public sealed class SeeSharpPostgreSQLReadDbContext : DbContext
     public DbSet<ProductReadModel> Products { get; set; }
     public DbSet<ProductVariantReadModel> ProductVariants { get; set; }
     public DbSet<ShippingInformationReadModel> ShippingInformations { get; set; }
-    // public DbSet<UserAuthenticationTokenReadModel> UserAuthenticationTokens { get; set; }
     public DbSet<UserReadModel> Users { get; set; }
-    // public DbSet<VerificationTokenReadModel> VerificationTokens { get; set; }
     public DbSet<VoucherReadModel> Vouchers { get; set; }
     public DbSet<WishItemReadModel> WishItems { get; set; }
 

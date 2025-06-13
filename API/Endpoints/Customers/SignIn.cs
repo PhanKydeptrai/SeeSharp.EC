@@ -11,7 +11,8 @@ internal sealed class SignIn : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/customers/signin", async (
+        app.MapPost("api/customers/signin", 
+        async (
             [FromBody] CustomerSignInRequest request,
             ISender sender) =>
         {
@@ -33,6 +34,10 @@ internal sealed class SignIn : IEndpoint
             Sample Request:
              
                 POST /api/customers/signin
+                {
+                    "Email": "tonychang@gmail.com"
+                    "Password": "taibeou20000000000kg"
+                }
              
             """)
         .WithOpenApi();

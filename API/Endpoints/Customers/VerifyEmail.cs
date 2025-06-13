@@ -11,7 +11,8 @@ internal sealed class VerifyEmail : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/customers/verify-email/{verificationTokenId:guid}", async (
+        app.MapGet("api/customers/verify-email/{verificationTokenId:guid}", 
+        async (
             [FromRoute] Guid verificationTokenId,
             ISender sender) =>
         {

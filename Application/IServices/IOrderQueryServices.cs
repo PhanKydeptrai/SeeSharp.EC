@@ -4,12 +4,33 @@ using Application.Features.Pages;
 using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Orders;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Application.IServices;
 
 public interface IOrderQueryServices
 {
+    /// <summary>
+    /// Kiểm tra đơn hàng có tồn tại hay không bằng CustomerId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
     Task<OrderId?> CheckOrderAvailability(CustomerId customerId);
+
+    /// <summary>
+    /// Kiểm tra trạng thái đơn hàng có phải là Delivered hay không
+    /// </summary>
+    /// <param name="orderId">Mã Order</param>
+    /// <returns></returns>
+    Task<bool> IsOrderStatusDelivered(OrderId orderId);
+
+    /// <summary>
+    /// Kiểm tra trạng thái đơn hàng có phải là Delivered hay không
+    /// </summary>
+    /// <param name="billId">Mã hoá đơn</param>
+    /// <returns></returns>
+    Task<bool> IsOrderStatusDelivered(BillId billId);
+
     /// <summary>
     /// Get Order and Order Details by OrderId with OrderStatus != New
     /// </summary>
@@ -51,6 +72,17 @@ public interface IOrderQueryServices
             int? page,
             int? pageSize);
 
+    /// <summary>
+    /// Lấy tất cả order của khách hàng theo CustomerId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <param name="statusFilter"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
     Task<PagedList<OrderResponse>> GetAllOrderForCustomer(
         CustomerId customerId,
         string? statusFilter,
@@ -59,6 +91,7 @@ public interface IOrderQueryServices
         string? sortOrder,
         int? page,
         int? pageSize);
+
     Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId);
 
     /// <summary>

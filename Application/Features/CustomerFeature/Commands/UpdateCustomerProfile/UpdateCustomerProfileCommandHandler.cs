@@ -44,17 +44,7 @@ internal sealed class UpdateCustomerProfileCommandHandler : ICommandHandler<Upda
             string newImageUrl = string.Empty;
             if (request.ImageFile != null)
             {
-                //tạo memory stream từ file ảnh
-                var memoryStream = new MemoryStream();
-                await request.ImageFile.CopyToAsync(memoryStream);
-                memoryStream.Position = 0;
-
-                //Upload ảnh lên cloudinary
-                var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.ImageFile.FileName);
-                newImageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
-
-                //Log                                              
-                Console.WriteLine(resultUpload.JsonObj);
+                newImageUrl = await _cloudinaryService.UploadNewImage(request.ImageFile);
             }
 
             customer.User!.ImageUrl = newImageUrl;

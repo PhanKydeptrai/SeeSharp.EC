@@ -11,7 +11,8 @@ internal sealed class MakePaymentForSubscriber : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/orders/make-payment", async (
+        app.MapPost("api/orders/make-payment", 
+        async (
             [FromBody] MakePaymentForSubscriberRequest request,
             HttpContext httpContext,
             ISender sender) =>
@@ -23,9 +24,9 @@ internal sealed class MakePaymentForSubscriber : IEndpoint
             var result = await sender.Send(new MakePaymentForSubscriberCommand(
                 new Guid(customerId!),
                 request.voucherCode,
-                request.ShippingInformationId,
                 request.FullName,
                 request.PhoneNumber,
+                request.Email,
                 request.Province,
                 request.District,
                 request.Ward,
@@ -73,7 +74,12 @@ internal sealed class MakePaymentForSubscriber : IEndpoint
         /// Số điện thoại người nhận hàng
         /// </summary>
         public string PhoneNumber { get; init; } = string.Empty;
-        
+
+        /// <summary>
+        /// Email người đặt hàng
+        /// </summary>
+        public string Email { get; init; } = string.Empty;
+
         /// <summary>
         /// Tỉnh/Thành phố
         /// </summary>

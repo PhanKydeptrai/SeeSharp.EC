@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
+//using Microsoft.AspNetCore.Authorization;
 
-namespace API.Infrastructure.Authorization;
+//namespace API.Infrastructure.Authorization;
 
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-public class AuthorizeByRoleAttribute : AuthorizeAttribute
-{
-    public AuthorizeByRoleAttribute(string policy) : base(policy)
-    {
-    }
-}
+//[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
+//public class AuthorizeByRoleAttribute : AuthorizeAttribute
+//{
+//    public AuthorizeByRoleAttribute(string policy) : base(policy)
+//    {
+//    }
+//}

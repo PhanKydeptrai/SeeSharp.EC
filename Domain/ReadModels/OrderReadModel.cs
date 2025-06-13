@@ -11,13 +11,8 @@ public class OrderReadModel
     public PaymentMethod PaymentStatus { get; set; }
     public OrderStatus OrderStatus { get; set; }
     public Ulid OrderTransactionId { get; set; }
-    // public Ulid? BillId { get; set; }
-    // public BillReadModel? BillReadModel { get; set; }
-
+    public BillReadModel? BillReadModel { get; set; }
     public CustomerReadModel CustomerReadModel { get; set; } = null!;
-
-    public FeedbackReadModel? FeedbackReadModel { get; set; }
-
     public ICollection<OrderDetailReadModel> OrderDetailReadModels { get; set; } = new List<OrderDetailReadModel>();
 
     public OrderTransactionReadModel? OrderTransactionReadModel { get; set; }

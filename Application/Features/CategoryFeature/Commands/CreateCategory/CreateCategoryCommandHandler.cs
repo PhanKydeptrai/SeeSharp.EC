@@ -29,26 +29,12 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
         CreateCategoryCommand request,
         CancellationToken cancellationToken)
     {
-        // Xử lý ảnh
-        //--------------------
+        
         string imageUrl = string.Empty;
         if (request.image != null)
         {
-
-            //tạo memory stream từ file ảnh
-            var memoryStream = new MemoryStream();
-            await request.image.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
-            //Upload ảnh lên cloudinary
-            
-            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.image.FileName);
-            imageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
-            //Log
-            Console.WriteLine(resultUpload.JsonObj);
+            imageUrl = await _cloudinaryService.UploadNewImage(request.image);
         }
-
-        //--------------------
 
         var category = Category.NewCategory(
             CategoryName.NewCategoryName(request.categoryName),

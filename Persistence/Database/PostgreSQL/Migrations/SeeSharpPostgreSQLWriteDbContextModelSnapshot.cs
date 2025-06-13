@@ -22,6 +22,47 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Entities.BillDetails.BillDetail", b =>
+                {
+                    b.Property<Guid>("BillDetailId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("BillDetailQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("BillId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ColorCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProductVariantDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("ProductVariantPrice")
+                        .HasColumnType("decimal");
+
+                    b.Property<string>("VariantName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("BillDetailId");
+
+                    b.HasIndex("BillId");
+
+                    b.ToTable("BillDetails");
+                });
+
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
                 {
                     b.Property<Guid>("BillId")
@@ -36,14 +77,42 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsRated")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("integer");
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<Guid>("ShippingInformationId")
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ShippingInformationId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SpecificAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Ward")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("BillId");
 
@@ -167,14 +236,14 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("FeedbackId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("BillId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(255)");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
 
                     b.Property<float>("RatingScore")
                         .HasColumnType("float");
@@ -184,10 +253,10 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.HasKey("FeedbackId");
 
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("OrderId")
+                    b.HasIndex("BillId")
                         .IsUnique();
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Feedbacks");
                 });
@@ -386,7 +455,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<string>("SpecificAddress")
                         .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Ward")
                         .IsRequired()
@@ -554,13 +623,13 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasData(
                         new
                         {
-                            VoucherId = new Guid("01966202-d308-ab67-f2a9-436e1dd0e91f"),
+                            VoucherId = new Guid("019758f1-5449-87e0-d68b-e53ea6f1fb6b"),
                             Description = "Voucher dành riêng cho khách hàng mới đăng ký tài khoản",
-                            ExpiredDate = new DateOnly(2026, 4, 23),
+                            ExpiredDate = new DateOnly(2026, 6, 10),
                             MaximumDiscountAmount = 10000m,
                             MinimumOrderAmount = 100000m,
                             PercentageDiscount = 0,
-                            StartDate = new DateOnly(2025, 4, 23),
+                            StartDate = new DateOnly(2025, 6, 10),
                             Status = 1,
                             VoucherCode = "NEWUSER01",
                             VoucherName = "NEWUSER01",
@@ -619,6 +688,17 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.ToTable("OutboxMessages");
                 });
 
+            modelBuilder.Entity("Domain.Entities.BillDetails.BillDetail", b =>
+                {
+                    b.HasOne("Domain.Entities.Bills.Bill", "Bill")
+                        .WithMany("BillDetails")
+                        .HasForeignKey("BillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bill");
+                });
+
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
                 {
                     b.HasOne("Domain.Entities.Customers.Customer", "Customer")
@@ -633,17 +713,13 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.ShippingInformations.ShippingInformation", "ShippingInformation")
+                    b.HasOne("Domain.Entities.ShippingInformations.ShippingInformation", null)
                         .WithMany("Bills")
-                        .HasForeignKey("ShippingInformationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ShippingInformationId");
 
                     b.Navigation("Customer");
 
                     b.Navigation("Order");
-
-                    b.Navigation("ShippingInformation");
                 });
 
             modelBuilder.Entity("Domain.Entities.CustomerVouchers.CustomerVoucher", b =>
@@ -689,21 +765,21 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Feedbacks.Feedback", b =>
                 {
+                    b.HasOne("Domain.Entities.Bills.Bill", "Bill")
+                        .WithOne("Feedback")
+                        .HasForeignKey("Domain.Entities.Feedbacks.Feedback", "BillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.Customers.Customer", "Customer")
                         .WithMany("Feedbacks")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Orders.Order", "Order")
-                        .WithOne("Feedback")
-                        .HasForeignKey("Domain.Entities.Feedbacks.Feedback", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Bill");
 
                     b.Navigation("Customer");
-
-                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderDetails.OrderDetail", b =>
@@ -833,6 +909,13 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Navigation("ProductVariant");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
+                {
+                    b.Navigation("BillDetails");
+
+                    b.Navigation("Feedback");
+                });
+
             modelBuilder.Entity("Domain.Entities.Categories.Category", b =>
                 {
                     b.Navigation("Products");
@@ -856,8 +939,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.Orders.Order", b =>
                 {
                     b.Navigation("Bill");
-
-                    b.Navigation("Feedback");
 
                     b.Navigation("OrderDetails");
 

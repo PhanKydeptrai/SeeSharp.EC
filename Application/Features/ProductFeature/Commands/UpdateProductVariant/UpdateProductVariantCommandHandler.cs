@@ -44,17 +44,9 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
             string oldimageUrl = productVariant.ImageUrl!;
             //Xử lý lưu ảnh mới
             string newImageUrl = string.Empty;
-            //tạo memory stream từ file ảnh
-            var memoryStream = new MemoryStream();
-            await request.Image.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
             //Upload ảnh lên cloudinary
-            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.Image.FileName);
-            newImageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
+            newImageUrl = await _cloudinaryService.UploadNewImage(request.Image);
 
-            //Log                                              
-            Console.WriteLine(resultUpload.JsonObj);
 
             if (productVariant.IsBaseVariant == IsBaseVariant.False && request.IsBaseVariant == true)
             {

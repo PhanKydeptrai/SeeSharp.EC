@@ -11,7 +11,8 @@ internal sealed class GetOrderByOrderId : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/orders/{orderId:guid}", async (
+        app.MapGet("api/orders/{orderId:guid}",
+        async (
             [FromRoute] Guid orderId,
             ISender sender) =>
         {
@@ -28,8 +29,8 @@ internal sealed class GetOrderByOrderId : IEndpoint
             Cho phép khách hàng lấy thông tin đơn hàng của mình theo ID.
                 
             Sample Request:
-                
-             GET /api/orders/{orderId}
+            
+                GET /api/orders/{orderId}
               
             """)
         .WithOpenApi(operation =>
@@ -38,7 +39,7 @@ internal sealed class GetOrderByOrderId : IEndpoint
 
             if (orderIdParam is not null)
             {
-                orderIdParam.Description = "ID của đơn hàng (GUID)";    
+                orderIdParam.Description = "ID của đơn hàng (GUID)";
             }
             return operation;
         })

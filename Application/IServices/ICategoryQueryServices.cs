@@ -6,6 +6,16 @@ namespace Application.IServices;
 
 public interface ICategoryQueryServices
 {
+    /// <summary>
+    /// Lấy danh sách danh mục theo các điều kiện lọc, tìm kiếm, phân trang
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
     Task<PagedList<CategoryResponse>> PagedList(
         string? filter,
         string? searchTerm,
@@ -14,6 +24,12 @@ public interface ICategoryQueryServices
         int? page,
         int? pageSize);
     // Lấy thông tin chi tiết của một danh mục theo id lấy cả những danh mục đã bị xóa
+    /// <summary>
+    /// Lấy thông tin chi tiết của một danh mục theo id lấy cả những danh mục đã bị xóa
+    /// </summary>
+    /// <param name="categoryId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     Task<CategoryResponse?> GetById(
         CategoryId categoryId, 
         CancellationToken cancellationToken = default);

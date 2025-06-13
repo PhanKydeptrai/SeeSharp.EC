@@ -8,7 +8,7 @@ internal sealed class ApiKeyOptionsValidator : AbstractValidator<ApiKeyOptions>
     {
         RuleFor(x => x.ApiKey)
             .NotEmpty()
-            .WithErrorCode("ApiKey.IsEmpty")
+            .WithErrorCode("ApiKey.Required")
             .WithMessage("Api key must not be empty");
     }
 }

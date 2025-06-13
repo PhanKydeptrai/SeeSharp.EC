@@ -6,7 +6,9 @@ using Application.Security;
 using Domain.Entities.Customers;
 using Domain.Entities.Employees;
 using Domain.Entities.Users;
+using Infrastructure.Options.Jwt;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Security;
@@ -15,14 +17,15 @@ public class TokenProvider : ITokenProvider
 {
     SymmetricSecurityKey _key;
     private static readonly string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
+    private readonly JwtOptions _jwtOptions;
     IConfiguration _config;
-    public TokenProvider(IConfiguration config)
+    public TokenProvider(IConfiguration config, IOptions<JwtOptions> jwtOptions)
     {
         _config = config;
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SigningKey"]!));
+        _jwtOptions = jwtOptions.Value;
     }
-    
+
     public string GenerateAccessTokenForCustomer(UserId userId, CustomerId customerId, Email email, string role, string jti)
     {
         var claims = new List<Claim>()

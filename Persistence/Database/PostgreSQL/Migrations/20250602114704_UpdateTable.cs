@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     /// <inheritdoc />
-    public partial class SeeSharpPrimary : Migration
+    public partial class UpdateTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -268,7 +268,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     FullName = table.Column<string>(type: "varchar(50)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(10)", nullable: false),
                     IsDefault = table.Column<bool>(type: "boolean", nullable: false),
-                    SpecificAddress = table.Column<string>(type: "varchar(50)", nullable: false),
+                    SpecificAddress = table.Column<string>(type: "varchar(500)", nullable: false),
                     Province = table.Column<string>(type: "varchar(50)", nullable: false),
                     District = table.Column<string>(type: "varchar(50)", nullable: false),
                     Ward = table.Column<string>(type: "varchar(50)", nullable: false)
@@ -310,34 +310,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Feedbacks",
-                columns: table => new
-                {
-                    FeedbackId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Substance = table.Column<string>(type: "varchar(255)", nullable: true),
-                    RatingScore = table.Column<float>(type: "float", nullable: false),
-                    ImageUrl = table.Column<string>(type: "varchar(255)", nullable: true),
-                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Feedbacks", x => x.FeedbackId);
-                    table.ForeignKey(
-                        name: "FK_Feedbacks_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Feedbacks_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OrderDetails",
                 columns: table => new
                 {
@@ -374,7 +346,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     CreatedDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
                     PaymentMethod = table.Column<int>(type: "integer", nullable: false),
                     BillPaymentStatus = table.Column<int>(type: "integer", nullable: false),
-                    ShippingInformationId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ShippingInformationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsRated = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -396,6 +369,34 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         column: x => x.ShippingInformationId,
                         principalTable: "ShippingInformations",
                         principalColumn: "ShippingInformationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Feedbacks",
+                columns: table => new
+                {
+                    FeedbackId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Substance = table.Column<string>(type: "varchar(255)", nullable: true),
+                    RatingScore = table.Column<float>(type: "float", nullable: false),
+                    ImageUrl = table.Column<string>(type: "varchar(255)", nullable: true),
+                    BillId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Feedbacks", x => x.FeedbackId);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Bills_BillId",
+                        column: x => x.BillId,
+                        principalTable: "Bills",
+                        principalColumn: "BillId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "CustomerId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -449,7 +450,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
             migrationBuilder.InsertData(
                 table: "Vouchers",
                 columns: new[] { "VoucherId", "Description", "ExpiredDate", "MaximumDiscountAmount", "MinimumOrderAmount", "PercentageDiscount", "StartDate", "Status", "VoucherCode", "VoucherName", "VoucherType" },
-                values: new object[] { new Guid("01966202-d308-ab67-f2a9-436e1dd0e91f"), "Voucher dành riêng cho khách hàng mới đăng ký tài khoản", new DateOnly(2026, 4, 23), 10000m, 100000m, 0, new DateOnly(2025, 4, 23), 1, "NEWUSER01", "NEWUSER01", 0 });
+                values: new object[] { new Guid("01973077-7337-07e6-f542-45c86d0237f9"), "Voucher dành riêng cho khách hàng mới đăng ký tài khoản", new DateOnly(2026, 6, 2), 10000m, 100000m, 0, new DateOnly(2025, 6, 2), 1, "NEWUSER01", "NEWUSER01", 0 });
 
             migrationBuilder.InsertData(
                 table: "Employees",
@@ -501,15 +502,15 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_BillId",
+                table: "Feedbacks",
+                column: "BillId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Feedbacks_CustomerId",
                 table: "Feedbacks",
                 column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Feedbacks_OrderId",
-                table: "Feedbacks",
-                column: "OrderId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_OrderId",

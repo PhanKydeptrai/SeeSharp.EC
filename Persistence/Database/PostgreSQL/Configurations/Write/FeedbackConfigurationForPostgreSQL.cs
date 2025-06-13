@@ -1,3 +1,4 @@
+using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Feedbacks;
 using Domain.Entities.Orders;
@@ -37,11 +38,11 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
                 v => RatingScore.FromFloat(v))
             .HasColumnType("float");
 
-        builder.Property(x => x.OrderId)
+        builder.Property(x => x.BillId)
             .IsRequired()
             .HasConversion(
                 value => value.Value,
-                value => OrderId.FromGuid(value))
+                value => BillId.FromGuid(value))
             .HasColumnType("uuid");
 
         builder.Property(x => x.CustomerId)
@@ -52,9 +53,9 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
             .HasColumnType("uuid");
 
         //Một order có một feedback
-        builder.HasOne(x => x.Order)
+        builder.HasOne(x => x.Bill)
             .WithOne(x => x.Feedback)
-            .HasForeignKey<Feedback>(x => x.OrderId);
+            .HasForeignKey<Feedback>(x => x.BillId);
 
     }
 }

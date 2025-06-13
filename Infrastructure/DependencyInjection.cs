@@ -54,6 +54,17 @@ public static class DependencyInjection
         //Add TokenProvider
         services.AddScoped<ITokenProvider, TokenProvider>();
         // services.AddScoped<ITokenRevocationService, TokenRevocationService>();
+
+        #region Strongly Typed Settings
+        //services.AddOptionsWithFluentValidation<GithubOptions>(GithubOptions.ConfigurationSection);
+        //services.AddOptionsWithFluentValidation<GoogleOptions>(GoogleOptions.ConfigurationSection);
+        //services.AddOptionsWithFluentValidation<JwtOptions>(JwtOptions.ConfigurationSection);
+        //services.AddOptionsWithFluentValidation<VnPayOptions>(VnPayOptions.ConfigurationSection);
+        //services.AddOptionsWithFluentValidation<CloudinaryOptions>(CloudinaryOptions.ConfigurationSection);
+        //services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+        #endregion
+
+
         services.AddHttpContextAccessor();
         return services;
     }

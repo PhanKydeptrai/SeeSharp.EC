@@ -37,7 +37,7 @@ internal sealed class ShippingInformationReadModelConfigurationForPostgreSQL : I
 
         builder.Property(x => x.SpecificAddress)
             .IsRequired()
-            .HasColumnType("varchar(50)");
+            .HasColumnType("varchar(500)");
 
         builder.Property(x => x.Province)
             .IsRequired()

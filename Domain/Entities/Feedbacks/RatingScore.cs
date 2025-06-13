@@ -8,7 +8,7 @@ public sealed class RatingScore : ValueObject
     public float Value { get; }
     public static RatingScore NewRatingScore(float value)
     {
-        if (value < 0 || value > 5)
+        if (value <= 0 || value > 5)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(value), "Rating score must be between 0 and 5");
@@ -16,6 +16,7 @@ public sealed class RatingScore : ValueObject
         return new RatingScore(value);
     }
     public static RatingScore FromFloat(float value) => new RatingScore(value);
+    public static RatingScore Empty => new RatingScore(0);
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

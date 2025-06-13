@@ -17,7 +17,6 @@ public sealed class Order
     public ICollection<OrderDetail>? OrderDetails { get; set; } = null!;
     public OrderTransaction? OrderTransaction { get; set; } = null!; 
     public Customer? Customer { get; set; } = null!;
-    public Feedback? Feedback { get; set; } = null!; 
     public Bill? Bill { get; set; } = null!;
 
 

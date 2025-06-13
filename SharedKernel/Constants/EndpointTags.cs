@@ -11,12 +11,14 @@ public static class EndpointTags
     public const string Employee = "Employee";
     public const string Bills = "Bills";
     public const string ShippingInformations = "ShippingInformations";
+    public const string Feedbacks = "Feedbacks";
 }
 
 public static class EndpointName
 {
     public class Customer
     {
+        public const string SignInWithFacebook = "SignInWithFacebook";
         public const string SignUp = "SignUp";
         public const string SignIn = "SignIn";
         public const string SignInWithGoogle = "SignInWithGoogle";
@@ -32,6 +34,8 @@ public static class EndpointName
         public const string GetProfile = "GetProfile";
         public const string UpdateProfile = "UpdateProfile";
         public const string GetAll = "GetAllCustomers";
+        public const string SignInWithGithub = "SignInWithGithub";
+        public const string SignInWithGithubCallback = "SignInWithGithubCallback";
 
         // public const string SignIn = "SignIn";
         // public const string SignOut = "SignOut";
@@ -100,6 +104,7 @@ public static class EndpointName
         public const string GetAllOrderForCustomer = "GetAllOrderForCustomer";
         public const string GetMakePaymentResponse = "GetMakePaymentResponse";
         public const string MakePaymentForSubscriber = "MakePaymentForSubscriber";
+        public const string MakePaymentForGuest = "MakePaymentForGuest";
         public const string ChangeOrderStatus = "ChangeOrderStatus";
         public const string GetAllForAdmin = "GetAllForAdmin";
         public const string CancelOrder = "CancelOrder";
@@ -141,6 +146,12 @@ public static class EndpointName
         public const string Update = "UpdateShippingInformation";
         public const string Delete = "DeleteShippingInformation";
         public const string Restore = "RestoreShippingInformation";
+    }
+
+    public class Feedback
+    {
+        public const string Create = "CreateFeedback";
+        public const string Update = "UpdateFeedback";
     }
 }
 

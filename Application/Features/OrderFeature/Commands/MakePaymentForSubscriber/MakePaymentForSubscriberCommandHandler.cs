@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Domain.Entities.BillDetails;
 using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.OrderTransactions;
@@ -8,8 +9,8 @@ using Domain.Entities.Vouchers;
 using Domain.IRepositories;
 using Domain.IRepositories.Bills;
 using Domain.IRepositories.Orders;
-using Domain.IRepositories.ShippingInformations;
 using Domain.IRepositories.Vouchers;
+using Domain.Utilities.Errors;
 using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
@@ -20,7 +21,6 @@ namespace Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
 internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<MakePaymentForSubscriberCommand>
 {
     private readonly IVoucherRepository _voucherRepository;
-    private readonly IShippingInformationRepository _shippingInformationRepository;
     private readonly IBillRepository _billRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderRepository _orderRepository;
@@ -28,13 +28,11 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
         IUnitOfWork unitOfWork,
         IOrderRepository orderRepository,
         IVoucherRepository voucherRepository,
-        IShippingInformationRepository shippingInformationRepository,
         IBillRepository billRepository)
     {
         _unitOfWork = unitOfWork;
         _orderRepository = orderRepository;
         _voucherRepository = voucherRepository;
-        _shippingInformationRepository = shippingInformationRepository;
         _billRepository = billRepository;
     }
 
@@ -45,11 +43,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
 
         if (orderInformation is null) //Không có đơn hàng nào
         {
-            return Result.Failure(
-                new Error(
-                    "Order not found",
-                    "The order does not exist for the given customer.",
-                    ErrorType.Problem));
+            return Result.Failure(OrderError.OrderNotExist());
         }
 
         if (!string.IsNullOrEmpty(request.voucherCode)) // Có sử dụng voucher
@@ -86,87 +80,50 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
 
                 if (total < 0) total = 0; //Nếu thành tiền nhỏ hơn 0 thì thành tiền = 0
 
-                if (request.ShippingInformationId is null) //Không có địa chỉ sẵn
-                {
-                    //Tạo thông tin vận chuyển mới
-                    var shippingInformation = ShippingInformation.NewShippingInformation(
-                        customerId,
-                        FullName.FromString(request.FullName!),
-                        PhoneNumber.FromString(request.PhoneNumber!),
-                        IsDefault.False,
-                        SpecificAddress.FromString(request.SpecificAddress!),
-                        Province.FromString(request.Province!),
-                        District.FromString(request.District!),
-                        Ward.FromString(request.Ward!));
+                //Tạo bill mới
+                var bill = Bill.NewBill(
+                    orderInformation.OrderId,
+                    customerId,
+                    DateTime.UtcNow,
+                    BillPaymentStatus.Pending,
+                    FullName.FromString(request.FullName),
+                    PhoneNumber.FromString(request.PhoneNumber),
+                    Email.FromString(request.Email),
+                    SpecificAddress.FromString(request.SpecificAddress!),
+                    Province.FromString(request.Province),
+                    District.FromString(request.District),
+                    Ward.FromString(request.Ward));
 
-                    //Tạo bill mới
-                    var bill = Bill.NewBill(
-                        orderInformation.OrderId,
-                        customerId,
-                        DateTime.UtcNow,
-                        PaymentMethod.None,
-                        BillPaymentStatus.Pending,
-                        shippingInformation.ShippingInformationId);
+                //Tạo bill detail từ order
+                var billDetails = orderInformation.OrderDetails!.Select(orderDetail =>
+                    BillDetail.Create(
+                        bill.BillId,
+                        orderDetail.ProductVariant!.Product!.ProductName,
+                        orderDetail.ProductVariant!.VariantName,
+                        orderDetail.ProductVariant!.ProductVariantPrice,
+                        orderDetail.ProductVariant.ImageUrl ?? string.Empty,
+                        BillDetailQuantity.FromInt(orderDetail.Quantity.Value),
+                        orderDetail.ProductVariant.ColorCode,
+                        orderDetail.ProductVariant.Description)).ToList();
 
-                    //Tạo order transaction mới
-                    var orderTransaction = OrderTransaction.NewOrderTransaction(
-                        PayerName.Empty,
-                        Email.Empty,
-                        AmountOfOrderTransaction.FromDecimal(total),
-                        DescriptionOfOrderTransaction.FromString("Payment for order"),
-                        PaymentMethod.None,
-                        IsVoucherUsed.Used,
-                        TransactionStatus.Pending,
-                        customerVoucher.VoucherId,
-                        orderInformation.OrderId,
-                        bill.BillId);
+                //Tạo order transaction mới
+                var orderTransaction = OrderTransaction.NewOrderTransaction(
+                    PayerName.FromString(request.FullName),
+                    Email.FromString(request.Email),
+                    AmountOfOrderTransaction.FromDecimal(total),
+                    DescriptionOfOrderTransaction.FromString("Payment for order"),
+                    PaymentMethod.None,
+                    IsVoucherUsed.Used,
+                    TransactionStatus.Pending,
+                    customerVoucher.VoucherId,
+                    orderInformation.OrderId,
+                    bill.BillId);
 
-                    await _shippingInformationRepository.AddNewShippingInformation(shippingInformation);
-                    await _billRepository.AddBill(bill);
-                    await _orderRepository.AddNewOrderTransaction(orderTransaction);
-                    await _unitOfWork.SaveChangesAsync();
-                }
-                else
-                {
-                    var shippingInformationId = ShippingInformationId.FromGuid(request.ShippingInformationId.Value);
+                await _billRepository.AddBill(bill);
+                await _billRepository.AddBillDetail(billDetails);
+                await _orderRepository.AddNewOrderTransaction(orderTransaction);
+                await _unitOfWork.SaveChangesAsync();
 
-                    // Kiểm tra xem shippingInformationId có tồn tại không
-                    if (!await _shippingInformationRepository.IsExistedShippingInformation(shippingInformationId))
-                    {
-                        return Result.Failure(
-                            new Error(
-                                "ShippingInformation not found",
-                                "The shipping information does not exist.",
-                                ErrorType.Problem));
-                    }
-
-                    //Tạo bill mới
-                    var bill = Bill.NewBill(
-                        orderInformation.OrderId,
-                        customerId,
-                        DateTime.UtcNow,
-                        PaymentMethod.None,
-                        BillPaymentStatus.Pending,
-                        shippingInformationId);
-
-                    //Tạo order transaction mới
-                    var orderTransaction = OrderTransaction.NewOrderTransaction(
-                        PayerName.Empty,
-                        Email.Empty,
-                        AmountOfOrderTransaction.FromDecimal(total),
-                        DescriptionOfOrderTransaction.FromString("Payment for order"),
-                        PaymentMethod.None,
-                        IsVoucherUsed.Used,
-                        TransactionStatus.Pending,
-                        customerVoucher.VoucherId,
-                        orderInformation.OrderId,
-                        bill.BillId);
-
-                    await _billRepository.AddBill(bill);
-                    await _orderRepository.AddNewOrderTransaction(orderTransaction);
-                    await _unitOfWork.SaveChangesAsync();
-
-                }
             }
             else //Nếu là voucher phần trăm //#2
             {
@@ -176,169 +133,96 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
 
                 if (total < 0) total = 0; //Nếu thành tiền nhỏ hơn 0 thì thành tiền = 0
 
-                if (request.ShippingInformationId is null) //Không có địa chỉ sẵn
-                {
-                    //Tạo thông tin vận chuyển mới
-                    var shippingInformation = ShippingInformation.NewShippingInformation(
-                        customerId,
-                        FullName.FromString(request.FullName!),
-                        PhoneNumber.FromString(request.PhoneNumber!),
-                        IsDefault.False,
-                        SpecificAddress.FromString(request.SpecificAddress!),
-                        Province.FromString(request.Province!),
-                        District.FromString(request.District!),
-                        Ward.FromString(request.Ward!));
+                //Tạo bill mới
+                var bill = Bill.NewBill(
+                    orderInformation.OrderId,
+                    customerId,
+                    DateTime.UtcNow,
+                    BillPaymentStatus.Pending,
+                    FullName.FromString(request.FullName),
+                    PhoneNumber.FromString(request.PhoneNumber),
+                    Email.FromString(request.Email),
+                    SpecificAddress.FromString(request.SpecificAddress!),
+                    Province.FromString(request.Province),
+                    District.FromString(request.District),
+                    Ward.FromString(request.Ward));
 
-                    //Tạo bill mới
-                    var bill = Bill.NewBill(
-                        orderInformation.OrderId,
-                        customerId,
-                        DateTime.UtcNow,
-                        PaymentMethod.None,
-                        BillPaymentStatus.Pending,
-                        shippingInformation.ShippingInformationId);
+                //Tạo bill detail từ order
+                var billDetails = orderInformation.OrderDetails!.Select(orderDetail =>
+                    BillDetail.Create(
+                        bill.BillId,
+                        orderDetail.ProductVariant!.Product!.ProductName,
+                        orderDetail.ProductVariant!.VariantName,
+                        orderDetail.ProductVariant!.ProductVariantPrice,
+                        orderDetail.ProductVariant.ImageUrl ?? string.Empty,
+                        BillDetailQuantity.FromInt(orderDetail.Quantity.Value),
+                        orderDetail.ProductVariant.ColorCode,
+                        orderDetail.ProductVariant.Description)).ToList();
 
-                    var orderTransaction = OrderTransaction.NewOrderTransaction(
-                        PayerName.Empty,
-                        Email.Empty,
-                        AmountOfOrderTransaction.FromDecimal(total),
-                        DescriptionOfOrderTransaction.FromString("Payment for order"),
-                        PaymentMethod.None,
-                        IsVoucherUsed.Used,
-                        TransactionStatus.Pending,
-                        customerVoucher.VoucherId,
-                        orderInformation.OrderId,
-                        bill.BillId);
+                var orderTransaction = OrderTransaction.NewOrderTransaction(
+                    PayerName.FromString(request.FullName),
+                    Email.FromString(request.Email),
+                    AmountOfOrderTransaction.FromDecimal(total),
+                    DescriptionOfOrderTransaction.FromString("Payment for order"),
+                    PaymentMethod.None,
+                    IsVoucherUsed.Used,
+                    TransactionStatus.Pending,
+                    customerVoucher.VoucherId,
+                    orderInformation.OrderId,
+                    bill.BillId);
 
-                    await _shippingInformationRepository.AddNewShippingInformation(shippingInformation);
-                    await _billRepository.AddBill(bill);
-                    await _orderRepository.AddNewOrderTransaction(orderTransaction);
-                    await _unitOfWork.SaveChangesAsync();
-
-                }
-                else
-                {
-                    var shippingInformationId = ShippingInformationId.FromGuid(request.ShippingInformationId.Value);
-
-                    // Kiểm tra xem shippingInformationId có tồn tại không
-                    if (!await _shippingInformationRepository.IsExistedShippingInformation(shippingInformationId))
-                    {
-                        return Result.Failure(
-                            new Error(
-                                "ShippingInformation not found",
-                                "The shipping information does not exist.",
-                                ErrorType.Problem));
-                    }
-
-                    //Tạo bill mới
-                    var bill = Bill.NewBill(
-                        orderInformation.OrderId,
-                        customerId,
-                        DateTime.UtcNow,
-                        PaymentMethod.None,
-                        BillPaymentStatus.Pending,
-                        shippingInformationId);
-
-                    var orderTransaction = OrderTransaction.NewOrderTransaction(
-                        PayerName.Empty,
-                        Email.Empty,
-                        AmountOfOrderTransaction.FromDecimal(total),
-                        DescriptionOfOrderTransaction.FromString("Payment for order"),
-                        PaymentMethod.None,
-                        IsVoucherUsed.Used,
-                        TransactionStatus.Pending,
-                        customerVoucher.VoucherId,
-                        orderInformation.OrderId,
-                        bill.BillId);
-
-                    await _billRepository.AddBill(bill);
-                    await _orderRepository.AddNewOrderTransaction(orderTransaction);
-                    await _unitOfWork.SaveChangesAsync();
-                }
+                await _billRepository.AddBill(bill);
+                await _billRepository.AddBillDetail(billDetails);
+                await _orderRepository.AddNewOrderTransaction(orderTransaction);
+                await _unitOfWork.SaveChangesAsync();
             }
         }
         else
         {
-            if (request.ShippingInformationId is null) //Không có địa chỉ sẵn //#3
-            {
-                //Tạo thông tin vận chuyển mới
-                var shippingInformation = ShippingInformation.NewShippingInformation(
-                    customerId,
-                    FullName.FromString(request.FullName!),
-                    PhoneNumber.FromString(request.PhoneNumber!),
-                    IsDefault.False,
-                    SpecificAddress.FromString(request.SpecificAddress!),
-                    Province.FromString(request.Province!),
-                    District.FromString(request.District!),
-                    Ward.FromString(request.Ward!));
 
-                //Tạo bill mới
-                var bill = Bill.NewBill(
-                    orderInformation.OrderId,
-                    customerId,
-                    DateTime.UtcNow,
-                    PaymentMethod.None,
-                    BillPaymentStatus.Pending,
-                    shippingInformation.ShippingInformationId);
+            //Tạo bill mới
+            var bill = Bill.NewBill(
+                orderInformation.OrderId,
+                customerId,
+                DateTime.UtcNow,
+                BillPaymentStatus.Pending,
+                FullName.FromString(request.FullName),
+                PhoneNumber.FromString(request.PhoneNumber),
+                Email.FromString(request.Email),
+                SpecificAddress.FromString(request.SpecificAddress!),
+                Province.FromString(request.Province),
+                District.FromString(request.District),
+                Ward.FromString(request.Ward));
 
-                //Tạo order transaction mới
-                var orderTransaction = OrderTransaction.NewOrderTransaction(
-                    PayerName.Empty,
-                    Email.Empty,
-                    AmountOfOrderTransaction.FromDecimal(orderInformation.Total.Value),
-                    DescriptionOfOrderTransaction.FromString("Payment for order"),
-                    PaymentMethod.None,
-                    IsVoucherUsed.NotUsed,
-                    TransactionStatus.Pending,
-                    null, //
-                    orderInformation.OrderId,
-                    bill.BillId);
+            //Tạo bill detail từ order
+            var billDetails = orderInformation.OrderDetails!.Select(orderDetail =>
+                BillDetail.Create(
+                    bill.BillId,
+                    orderDetail.ProductVariant!.Product!.ProductName,
+                    orderDetail.ProductVariant!.VariantName,
+                    orderDetail.ProductVariant!.ProductVariantPrice,
+                    orderDetail.ProductVariant.ImageUrl ?? string.Empty,
+                    BillDetailQuantity.FromInt(orderDetail.Quantity.Value),
+                    orderDetail.ProductVariant.ColorCode,
+                    orderDetail.ProductVariant.Description)).ToList();
 
-                await _shippingInformationRepository.AddNewShippingInformation(shippingInformation);
-                await _billRepository.AddBill(bill);
-                await _orderRepository.AddNewOrderTransaction(orderTransaction);
-                await _unitOfWork.SaveChangesAsync();
-            }
-            else //Lấy thông tin vận chuyển
-            {
-                var shippingInformationId = ShippingInformationId.FromGuid(request.ShippingInformationId.Value);
+            //Tạo order transaction mới
+            var orderTransaction = OrderTransaction.NewOrderTransaction(
+                PayerName.Empty,
+                Email.Empty,
+                AmountOfOrderTransaction.FromDecimal(orderInformation.Total.Value),
+                DescriptionOfOrderTransaction.FromString("Payment for order"),
+                PaymentMethod.None,
+                IsVoucherUsed.NotUsed,
+                TransactionStatus.Pending,
+                null, //
+                orderInformation.OrderId,
+                bill.BillId);
 
-                // Kiểm tra xem shippingInformationId có tồn tại không
-                if (!await _shippingInformationRepository.IsExistedShippingInformation(shippingInformationId))
-                {
-                    return Result.Failure(
-                        new Error(
-                            "ShippingInformation not found",
-                            "The shipping information does not exist.",
-                            ErrorType.Problem));
-                }
-
-                //Tạo bill mới
-                var bill = Bill.NewBill(
-                    orderInformation.OrderId,
-                    customerId,
-                    DateTime.UtcNow,
-                    PaymentMethod.None,
-                    BillPaymentStatus.Pending,
-                    shippingInformationId);
-
-                //Tạo order transaction mới
-                var orderTransaction = OrderTransaction.NewOrderTransaction(
-                    PayerName.Empty,
-                    Email.Empty,
-                    AmountOfOrderTransaction.FromDecimal(orderInformation.Total.Value),
-                    DescriptionOfOrderTransaction.FromString("Payment for order"),
-                    PaymentMethod.None,
-                    IsVoucherUsed.NotUsed,
-                    TransactionStatus.Pending,
-                    null,
-                    orderInformation.OrderId,
-                    bill.BillId);
-
-                await _billRepository.AddBill(bill);
-                await _orderRepository.AddNewOrderTransaction(orderTransaction);
-                await _unitOfWork.SaveChangesAsync();
-            }
+            await _billRepository.AddBill(bill);
+            await _billRepository.AddBillDetail(billDetails);
+            await _orderRepository.AddNewOrderTransaction(orderTransaction);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         return Result.Success();

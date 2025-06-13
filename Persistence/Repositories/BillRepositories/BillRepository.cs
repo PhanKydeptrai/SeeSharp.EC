@@ -1,3 +1,4 @@
+using Domain.Entities.BillDetails;
 using Domain.Entities.Bills;
 using Domain.IRepositories.Bills;
 using Persistence.Database.PostgreSQL;
@@ -16,6 +17,16 @@ internal sealed class BillRepository : IBillRepository
     public async Task AddBill(Bill bill)
     {
         await _dbContext.Bills.AddAsync(bill);
+    }
+
+    public async Task AddBillDetail(BillDetail billDetail)
+    {
+        await _dbContext.BillDetails.AddAsync(billDetail);
+    }
+
+    public async Task AddBillDetail(List<BillDetail> billDetail)
+    {
+        await _dbContext.BillDetails.AddRangeAsync(billDetail);
     }
 
     public void RemoveBill(Bill bill)

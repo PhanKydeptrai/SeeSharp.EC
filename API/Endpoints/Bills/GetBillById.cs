@@ -1,5 +1,4 @@
 using API.Documents;
-using API.Extentions;
 using API.Infrastructure;
 using Application.Features.BillFeature.Queries.GetBillById;
 using MediatR;
@@ -13,7 +12,8 @@ internal sealed class GetBillById : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/bills/{billId:guid}", async (
+        app.MapGet("api/bills/{billId:guid}", 
+        async (
             [FromRoute] Guid billId,
             ISender sender) =>
         {

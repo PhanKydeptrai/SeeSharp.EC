@@ -24,29 +24,14 @@ internal sealed class CreateProductVariantCommandHandler : ICommandHandler<Creat
     }
 
     public async Task<Result> Handle(
-        CreateProductVariantCommand request, 
+        CreateProductVariantCommand request,
         CancellationToken cancellationToken)
     {
-        // Xử lý ảnh
-        //--------------------
         string imageUrl = string.Empty;
         if (request.Image != null)
         {
-
-            //tạo memory stream từ file ảnh
-            var memoryStream = new MemoryStream();
-            await request.Image.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
-            //Upload ảnh lên cloudinary
-            
-            var resultUpload = await _cloudinaryService.UploadAsync(memoryStream, request.Image.FileName);
-            imageUrl = resultUpload.SecureUrl.ToString(); //Nhận url ảnh từ cloudinary
-            //Log
-            Console.WriteLine(resultUpload.JsonObj);
+            imageUrl = await _cloudinaryService.UploadNewImage(request.Image);
         }
-
-        //--------------------
         var productVariant = ProductVariant.Create(
             VariantName.NewVariantName(request.VariantName),
             ProductVariantPrice.NewProductPrice(request.ProductVariantPrice),
@@ -55,7 +40,7 @@ internal sealed class CreateProductVariantCommandHandler : ICommandHandler<Creat
             ProductId.FromGuid(request.ProductId),
             imageUrl,
             IsBaseVariant.False);
-        
+
         await _productRepository.AddProductVariant(productVariant);
 
         await _unitOfWork.SaveChangesAsync();

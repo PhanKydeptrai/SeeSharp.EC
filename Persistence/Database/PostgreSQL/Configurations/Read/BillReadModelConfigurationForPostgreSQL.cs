@@ -34,10 +34,10 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
             .IsRequired()
             .HasColumnType("TIMESTAMPTZ");
 
-        builder.Property(x => x.PaymentMethod)
+        builder.Property(x => x.Email)
             .IsRequired()
-            .HasColumnType("integer");
-        
+            .HasColumnType("text");
+
         builder.Property(x => x.BillPaymentStatus)
             .IsRequired()
             .HasColumnType("integer");
@@ -49,10 +49,40 @@ internal sealed class BillReadModelConfigurationForPostgreSQL : IEntityTypeConfi
                 value => new Ulid(value))
             .HasColumnType("uuid");
 
-        builder.HasOne(a => a.ShippingInformation)
-            .WithMany(a => a.Bills)
-            .HasForeignKey(a => a.ShippingInformationId);
+        builder.Property(x => x.IsRated)
+            .IsRequired()
+            .HasColumnType("boolean");
 
+        builder.Property(x => x.FullName)
+            .IsRequired()
+            .HasColumnType("text");
 
+        builder.Property(x => x.Email)
+            .IsRequired()
+            .HasColumnType("text");
+
+        builder.Property(x => x.PhoneNumber)
+            .IsRequired()
+            .HasColumnType("varchar(10)");
+
+        builder.Property(x => x.SpecificAddress)
+            .IsRequired()
+            .HasColumnType("text");
+
+        builder.Property(x => x.Province)
+            .IsRequired()
+            .HasColumnType("text");
+
+        builder.Property(x => x.District)
+            .IsRequired()
+            .HasColumnType("text");
+
+        builder.Property(x => x.Ward)
+            .IsRequired()
+            .HasColumnType("text");
+
+        builder.HasMany(x => x.BillDetails)
+            .WithOne(x => x.Bill)
+            .HasForeignKey(x => x.BillId);
     }
 }

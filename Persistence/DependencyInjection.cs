@@ -30,6 +30,8 @@ using Persistence.Repositories.ShippingInformationRepositories;
 using Domain.IRepositories.ShippingInformations;
 using Domain.IRepositories.Bills;
 using Persistence.Repositories.BillRepositories;
+using Persistence.Repositories.FeedbackRepositories;
+using Domain.IRepositories.Feedbacks;
 
 namespace Persistence;
 public static class DependencyInjection
@@ -59,6 +61,7 @@ public static class DependencyInjection
         services.AddScoped<IVoucherRepository, VoucherRepository>();
         services.AddScoped<IShippingInformationRepository, ShippingInformationRepository>();
         services.AddScoped<IBillRepository, BillRepository>();
+        services.AddScoped<IFeedbackRepository, FeedbackRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

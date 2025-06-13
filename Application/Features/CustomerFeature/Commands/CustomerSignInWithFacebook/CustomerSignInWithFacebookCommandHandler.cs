@@ -1,59 +1,51 @@
-using Application.Abstractions.EventBus;
-using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Messaging;
 using Application.DTOs.Customer;
-using Application.Features.CustomerFeature.Commands.CustomerSignInWithExternal;
 using Application.IServices;
 using Application.Security;
-using Domain.Entities.Customers;
-using Domain.Entities.UserAuthenticationTokens;
-using Domain.Entities.Users;
-using Domain.IRepositories;
 using Domain.IRepositories.Customers;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.IRepositories.Users;
-using Domain.OutboxMessages.Services;
+using Domain.IRepositories;
 using SharedKernel;
+using Domain.Entities.Users;
+using Domain.Entities.Customers;
+using Domain.Entities.UserAuthenticationTokens;
 
-namespace Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
+namespace Application.Features.CustomerFeature.Commands.CustomerSignInWithFacebook;
 
-internal sealed class CustomerSignInWithGoogleCommandHandler
-    : ICommandHandler<CustomerSignInWithExternalCommand, CustomerSignInResponse>
+internal sealed class CustomerSignInWithFacebookCommandHandler
+    : ICommandHandler<CustomerSignInWithFacebookCommand, CustomerSignInResponse>
 {
-    #region Dependencies
     private readonly ICustomerRepository _customerRepository;
     private readonly ICustomerQueryServices _customerQueryServices;
     private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenProvider _tokenProvider;
-    public CustomerSignInWithGoogleCommandHandler(
+    public CustomerSignInWithFacebookCommandHandler(
         ICustomerRepository customerRepository,
+        ICustomerQueryServices customerQueryServices,
+        IUserAuthenticationTokenRepository userAuthenticationTokenRepository,
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
-        ICustomerQueryServices customerQueryServices,
-        ITokenProvider tokenProvider,
-        IUserAuthenticationTokenRepository userAuthenticationTokenRepository)
+        ITokenProvider tokenProvider)
     {
         _customerRepository = customerRepository;
+        _customerQueryServices = customerQueryServices;
+        _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
-        _customerQueryServices = customerQueryServices;
         _tokenProvider = tokenProvider;
-        _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
     }
-    #endregion
 
-    public async Task<Result<CustomerSignInResponse>> Handle(
-        CustomerSignInWithExternalCommand request,
-        CancellationToken cancellationToken)
+    public async Task<Result<CustomerSignInResponse>> Handle(CustomerSignInWithFacebookCommand request, CancellationToken cancellationToken)
     {
-
-        var customerAuthResponse = await _customerQueryServices.GetCustomerByEmail(Email.FromString(request.Email));
+        var customerAuthResponse = await _customerQueryServices.GetCustomerByEmail(Email.FromString(request.email));
 
         // nếu khách hàng đã tồn tại trong hệ thống -> đăng nhập
         if (customerAuthResponse is not null)
         {
-            if (customerAuthResponse.UserStatus == UserStatus.InActive.ToString()) // if this account not verify
+            if (customerAuthResponse.UserStatus == UserStatus.InActive.ToString()) // nếu tài khoản này chưa xác thực
             {
                 var customer = await _userRepository.GetUserFromPostgreSQL(
                     UserId.FromUlid(customerAuthResponse.UserId));
@@ -73,12 +65,12 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
         // nếu khách hàng chưa tồn tại trong hệ thống -> đăng ký
         var user = User.NewUser(
             null,
-            UserName.NewUserName(request.UserName),
-            Email.FromString(request.Email),
+            UserName.NewUserName(request.userName),
+            Email.FromString(request.email),
             PhoneNumber.Empty,
             PasswordHash.Empty,
             null,
-            string.Empty); //NOTE: Chưa lấy được id_token
+            request.imageUrl ?? string.Empty);
 
         user.VerifyAccount();
 
@@ -113,7 +105,6 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
         return Result.Success(new CustomerSignInResponse(newAccessToken, newRefreshToken));
     }
 
-    //Private method 
     private (UserAuthenticationToken userAuthenticationToken, CustomerSignInResponse customerSignInResponse) CreateAuthenticationToken(
         CustomerAuthenticationResponse customerAuthResponse)
     {

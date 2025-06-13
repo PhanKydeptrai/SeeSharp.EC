@@ -25,11 +25,11 @@ internal sealed class AddProductToOrder : IEndpoint
             var command = new AddProductToOrderCommand(request.ProductVariantId, new Guid(customerId!), request.Quantity);
             var result = await sender.Send(command);
 
-            return result.Match(Results.NoContent, CustomResults.Problem);
+            return result.Match(Results.Created, CustomResults.Problem);
         })
         .WithTags(EndpointTags.Order)
         .WithName(EndpointName.Order.AddProductToOrder)
-        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status201Created)
         .AddBadRequestResponse()
         .AddUnauthorizedResponse()
         .AddForbiddenResponse()

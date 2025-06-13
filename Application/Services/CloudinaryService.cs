@@ -1,5 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Services;
@@ -14,6 +16,32 @@ internal class CloudinaryService
         _configuration = configuration;
         _cloudinary = new Cloudinary(_configuration["Cloudinary"]);
         _cloudinary.Api.Secure = true;
+    }
+
+    //Upload new image to cloudinary
+    public async Task<string> UploadNewImage(IFormFile imageFile)
+    {
+        //tạo memory stream từ file ảnh
+        var memoryStream = new MemoryStream();
+        await imageFile.CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+
+        var uploadParams = new ImageUploadParams
+        {
+            File = new FileDescription(imageFile.FileName, memoryStream),
+            UploadPreset = "iiwd8tcu",
+            Transformation = new Transformation()
+                .Width(300)
+                .Height(300)
+                .Crop("fill")
+                .Chain()
+                .Quality("auto")
+                .Chain()
+                .FetchFormat("auto")
+        };
+        var result = await _cloudinary.UploadAsync(uploadParams);
+        
+        return result.SecureUrl.ToString();
     }
 
     //Upload image to cloudinary
@@ -32,6 +60,7 @@ internal class CloudinaryService
                 .Chain()
                 .FetchFormat("auto")
         };
+
         return await _cloudinary.UploadAsync(uploadParams);
     }
 
