@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Domain.Entities.Customers;
 using Domain.Entities.ShippingInformations;
 using Domain.IRepositories.ShippingInformations;
@@ -47,8 +46,17 @@ internal sealed class ShippingInformationRepository : IShippingInformationReposi
             x => x.ShippingInformationId == shippingInformationId);
     }
 
-    public void RemoveShippingInformation(ShippingInformation shippingInformation)
+    public void DeleteShippingInformation(ShippingInformation shippingInformation)
     {
         _postgreSQLWriteDbContext.ShippingInformations.Remove(shippingInformation);
+    }
+
+    public async Task<ShippingInformation?> GetCustomerShippingInformationById(
+        ShippingInformationId shippingInformationId,
+        CustomerId customerId)
+    {
+        return await _postgreSQLWriteDbContext.ShippingInformations
+            .FirstOrDefaultAsync(x => x.ShippingInformationId == shippingInformationId
+                                      && x.CustomerId == customerId);
     }
 }

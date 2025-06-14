@@ -1,0 +1,4 @@
+using Application.Abstractions.Messaging;
+
+namespace Application.Features.ShippingInformationFeature.Commands.SetDefaultForShippingInformation;
+public record SetDefaultForShippingInformationCommand(Guid ShippingInformationId, Guid CustomerId) : ICommand;

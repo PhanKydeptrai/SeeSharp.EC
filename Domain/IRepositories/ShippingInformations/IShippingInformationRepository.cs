@@ -44,5 +44,16 @@ public interface IShippingInformationRepository
     /// Xoá thông tin giao hàng.
     /// </summary>
     /// <param name="shippingInformation"></param>
-    void RemoveShippingInformation(ShippingInformation shippingInformation); 
+    void DeleteShippingInformation(ShippingInformation shippingInformation);
+
+    /// <summary>
+    /// Lấy thông tin giao hàng của khách hàng theo ID.
+    /// Chỉ trả về thông tin giao hàng nếu nó thuộc về khách hàng đó.
+    /// </summary>
+    /// <param name="shippingInformationId"></param>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    Task<ShippingInformation?> GetCustomerShippingInformationById(
+        ShippingInformationId shippingInformationId,
+        CustomerId customerId);
 }

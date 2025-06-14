@@ -146,6 +146,8 @@ public static class EndpointName
         public const string Update = "UpdateShippingInformation";
         public const string Delete = "DeleteShippingInformation";
         public const string Restore = "RestoreShippingInformation";
+        public const string SetDefault = "SetDefaultShippingInformation";
+        public const string UnSetDefault = "UnSetDefaultShippingInformation";
     }
 
     public class Feedback

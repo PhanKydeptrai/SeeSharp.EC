@@ -1,18 +1,19 @@
 using Application.Abstractions.Messaging;
+using Domain.Entities.Customers;
 using Domain.Entities.ShippingInformations;
 using Domain.IRepositories;
 using Domain.IRepositories.ShippingInformations;
 using Domain.Utilities.Errors;
 using SharedKernel;
 
-namespace Application.Features.ShippingInformationFeature.Commands.DeleteShippingInformation;
+namespace Application.Features.ShippingInformationFeature.Commands.SetDefaultForShippingInformation;
 
-internal sealed class DeleteShippingInformationCommandHandler : ICommandHandler<DeleteShippingInformationCommand>
+internal sealed class SetDefaultForShippingInformationCommandHandler : ICommandHandler<SetDefaultForShippingInformationCommand>
 {
     private readonly IShippingInformationRepository _shippingInformationRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteShippingInformationCommandHandler(
+    public SetDefaultForShippingInformationCommandHandler(
         IShippingInformationRepository shippingInformationRepository,
         IUnitOfWork unitOfWork)
     {
@@ -20,18 +21,23 @@ internal sealed class DeleteShippingInformationCommandHandler : ICommandHandler<
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(DeleteShippingInformationCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SetDefaultForShippingInformationCommand request, CancellationToken cancellationToken)
     {
         var shippingInformationId = ShippingInformationId.FromGuid(request.ShippingInformationId);
-        var shippingInformation = await _shippingInformationRepository.GetShippingInformationById(shippingInformationId);
+        var customerId = CustomerId.FromGuid(request.CustomerId);
+        var shippingInformation = await _shippingInformationRepository.GetCustomerShippingInformationById(shippingInformationId, customerId);
         if (shippingInformation is null)
         {
             return Result.Failure(ShippingInformationError.NotFound(shippingInformationId));
         }
 
-        _shippingInformationRepository.DeleteShippingInformation(shippingInformation);
+        if (shippingInformation.IsDefault == IsDefault.True)
+        {
+            return Result.Failure(ShippingInformationError.CannotSetDefaultShippingInformation(shippingInformationId));
+        }
 
+        shippingInformation.SetDefault();
         await _unitOfWork.SaveChangesAsync();
         return Result.Success();
     }
-}
+}   
