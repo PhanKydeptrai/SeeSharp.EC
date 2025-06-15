@@ -30,10 +30,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.ReverseProxy", "Yarp.R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{DF7C5224-CE02-4436-A086-DB2F40DC021E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTest", "Application.UnitTest\Application.UnitTest.csproj", "{986FBA3A-C5DE-49CD-83D8-FA0C892C4223}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,10 +64,6 @@ Global
 		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF7C5224-CE02-4436-A086-DB2F40DC021E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{986FBA3A-C5DE-49CD-83D8-FA0C892C4223}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{986FBA3A-C5DE-49CD-83D8-FA0C892C4223}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{986FBA3A-C5DE-49CD-83D8-FA0C892C4223}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{986FBA3A-C5DE-49CD-83D8-FA0C892C4223}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,7 +76,6 @@ Global
 		{BA548DC9-A28E-41AA-92EF-FE9C26F78079} = {AE797A1F-96E2-494A-B416-94E3DD77522E}
 		{7CB6011A-B7DA-4152-BAFA-A80771A8A855} = {A8FCA6D7-B9A4-4FCC-BD85-D09BDBACC34E}
 		{DF7C5224-CE02-4436-A086-DB2F40DC021E} = {AE797A1F-96E2-494A-B416-94E3DD77522E}
-		{986FBA3A-C5DE-49CD-83D8-FA0C892C4223} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4F4E9588-85A9-4147-A265-579B43C5D4AB}
