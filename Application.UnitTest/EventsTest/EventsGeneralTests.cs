@@ -63,8 +63,8 @@ public class EventsGeneralTests
     public void All_Events_Should_Support_Value_Equality()
     {
         // Arrange
-        var customerEvents = GetAllEventTypes().Where(t => t.Namespace.Contains("CustomerEvents")).ToList();
-        var employeeEvents = GetAllEventTypes().Where(t => t.Namespace.Contains("EmployeeEvents")).ToList();
+        var customerEvents = GetAllEventTypes().Where(t => t.Namespace!.Contains("CustomerEvents")).ToList();
+        var employeeEvents = GetAllEventTypes().Where(t => t.Namespace!.Contains("EmployeeEvents")).ToList();
         
         foreach (var eventType in customerEvents.Concat(employeeEvents))
         {

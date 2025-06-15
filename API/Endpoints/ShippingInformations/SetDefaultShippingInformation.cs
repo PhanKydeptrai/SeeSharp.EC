@@ -11,7 +11,7 @@ internal sealed class SetDefaultShippingInformation : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("api/shipping-informations/{shippingInformationId}/set-default",
+        app.MapPatch("api/shipping-informations/{shippingInformationId:guid}/set-default",
         async (
             [FromRoute] Guid shippingInformationId,
             ISender sender,
@@ -38,6 +38,7 @@ internal sealed class SetDefaultShippingInformation : IEndpoint
             Thiết lập một thông tin giao hàng làm mặc định trong sổ địa chỉ.
             Thông tin giao hàng được chọn sẽ được đặt làm mặc định và các thông tin giao hàng khác sẽ không còn là mặc định.
             Sample Request:
+            
                 PATCH /api/shipping-informations/00000000-0000-0000-0000-000000000001/set-default
             """)
         .WithOpenApi()

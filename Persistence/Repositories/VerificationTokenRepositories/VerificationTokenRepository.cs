@@ -22,7 +22,7 @@ internal sealed class VerificationTokenRepository : IVerificationTokenRepository
     {
         return await _nextSharpPostgreSQLWriteDbContext.VerificationTokens
             .Include(a => a.User)
-            .ThenInclude(a => a.Customer)
+            .ThenInclude(a => a!.Customer)
             .FirstOrDefaultAsync(a => a.VerificationTokenId == verificationTokenId);
     }
 
@@ -30,13 +30,4 @@ internal sealed class VerificationTokenRepository : IVerificationTokenRepository
     {
         _nextSharpPostgreSQLWriteDbContext.VerificationTokens.Remove(token);
     }
-
-    // public async Task<VerificationToken?> GetVerificationTokenFromPostgreSQL(VerificationTokenId verificationTokenId)
-    // {
-    //     return await _nextSharpPostgreSQLWriteDbContext.VerificationTokens
-    //             .Include(a => a.User)
-    //             .FirstOrDefaultAsync(a => a.VerificationTokenId == verificationTokenId);
-    // }
-
-
 }

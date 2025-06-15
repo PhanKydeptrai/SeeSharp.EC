@@ -26,18 +26,28 @@ internal sealed class SetDefaultForShippingInformationCommandHandler : ICommandH
         var shippingInformationId = ShippingInformationId.FromGuid(request.ShippingInformationId);
         var customerId = CustomerId.FromGuid(request.CustomerId);
         var shippingInformation = await _shippingInformationRepository.GetCustomerShippingInformationById(shippingInformationId, customerId);
+
+        // Kiểm tra xem thông tin giao hàng có tồn tại không
         if (shippingInformation is null)
         {
             return Result.Failure(ShippingInformationError.NotFound(shippingInformationId));
         }
 
+        // Kiểm tra xem thông tin giao hàng có phải là mặc định không
         if (shippingInformation.IsDefault == IsDefault.True)
         {
             return Result.Failure(ShippingInformationError.CannotSetDefaultShippingInformation(shippingInformationId));
         }
 
+        // Kiểm tra xem có thông tin giao hàng nào khác là mặc định không
+        var defaultShippingInformation = await _shippingInformationRepository.GetDefaultShippingInformation(customerId);
+        if (defaultShippingInformation is not null)
+        {
+            defaultShippingInformation.UnsetDefault();
+        }
+        
         shippingInformation.SetDefault();
         await _unitOfWork.SaveChangesAsync();
         return Result.Success();
     }
-}   
+}

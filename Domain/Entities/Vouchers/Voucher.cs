@@ -2,6 +2,7 @@ using Domain.Entities.CustomerVouchers;
 using Domain.Entities.OrderTransactions;
 
 namespace Domain.Entities.Vouchers;
+
 public sealed class Voucher
 {
     public VoucherId VoucherId { get; private set; } = null!;
@@ -56,12 +57,12 @@ public sealed class Voucher
         DateOnly expiredDate,
         VoucherDescription voucherDescription)
     {
-        if(startDate > expiredDate)
+        if (startDate > expiredDate)
         {
             throw new ArgumentException(
                 "Start date must be less than expired date", nameof(startDate));
         }
-        
+
         return new Voucher(
             VoucherId.New(),
             voucherName,
@@ -104,6 +105,33 @@ public sealed class Voucher
             expiredDate,
             voucherDescription,
             Status.Active);
+    }
+    
+    public static Voucher FromExisting(
+        VoucherId voucherId,
+        VoucherName voucherName,
+        VoucherCode voucherCode,
+        VoucherType voucherType,
+        PercentageDiscount percentageDiscount,
+        MaximumDiscountAmount maximumDiscountAmount,
+        MinimumOrderAmount minimumOrderAmount,
+        DateOnly startDate,
+        DateOnly expiredDate,
+        VoucherDescription description,
+        Status status)
+    {
+        return new Voucher(
+            voucherId,
+            voucherName,
+            voucherCode,
+            voucherType,
+            percentageDiscount,
+            maximumDiscountAmount,
+            minimumOrderAmount,
+            startDate,
+            expiredDate,
+            description,
+            status);
     }
 
 }

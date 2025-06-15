@@ -11,13 +11,18 @@ internal sealed class CreateShippingInformation : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/shipping-informations",
-        async (
+        app.MapPost("api/shipping-informations", async (
             [FromBody] CreateShippingInformationRequest request,
+            HttpContext httpContext,
             ISender sender) =>
         {
+            string token = TokenExtentions.GetTokenFromHeader(httpContext)!;
+            var claims = TokenExtentions.DecodeJwt(token);
+            claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
+            if (customerId is null) return Results.Unauthorized();
+
             var result = await sender.Send(new CreateShippingInformationCommand(
-                request.CustomerId,
+                new Guid(customerId),
                 request.FullName,
                 request.PhoneNumber,
                 request.Province,
@@ -28,13 +33,17 @@ internal sealed class CreateShippingInformation : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(EndpointTags.ShippingInformations)
         .WithName(EndpointName.ShippingInformations.Create)
+        .Produces(StatusCodes.Status204NoContent)
+        .AddBadRequestResponse()
+        .AddForbiddenResponse()
+        .AddUnauthorizedResponse()
         .WithSummary("Tạo thông tin giao hàng mới cho sổ địa chỉ")
         .WithDescription("""
             Thêm thông tin giao hàng mới cho sổ địa chỉ.
             Sample Request:
+
                 POST /api/shipping-informations
                 {
-                    "customerId": "00000000-0000-0000-0000-000000000001",
                     "fullName": "Nguyễn Văn A",
                     "phoneNumber": "0123456789",
                     "province": "Hà Nội",
@@ -49,11 +58,6 @@ internal sealed class CreateShippingInformation : IEndpoint
 
     private class CreateShippingInformationRequest
     {
-        /// <summary>
-        /// Mã khách hàng
-        /// </summary>
-        public Guid CustomerId { get; init; }
-
         /// <summary>
         /// Họ tên
         /// </summary>

@@ -56,8 +56,7 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
             .IsRequired()
             .HasConversion(
                 v => v.Value,
-                v => MinimumOrderAmount.FromDecimal(v)
-            )
+                v => MinimumOrderAmount.FromDecimal(v))
             .HasColumnType("decimal");
 
         builder.Property(a => a.StartDate)
@@ -80,14 +79,17 @@ internal sealed class VoucherConfigurationForPostgreSQL : IEntityTypeConfigurati
             .IsRequired()
             .HasColumnType("integer");
 
-        builder.HasData(Voucher.NewDirectDiscountVoucher(
-                VoucherName.NewVoucherName("NEWUSER01"),
-                VoucherCode.NewVoucherCode("NEWUSER01"),
-                MaximumDiscountAmount.FromDecimal(10000),
-                MinimumOrderAmount.FromDecimal(100000),
-                DateOnly.FromDateTime(DateTime.Now),
-                DateOnly.FromDateTime(DateTime.Now.AddMonths(12)),
-                VoucherDescription.FromString("Voucher dành riêng cho khách hàng mới đăng ký tài khoản")));
-
+        builder.HasData(Voucher.FromExisting(
+            VoucherId.DefaultVoucherId,
+            VoucherName.FromString("NEWUSER01"),
+            VoucherCode.FromString("NEWUSER01"),
+            VoucherType.Direct,
+            PercentageDiscount.FromInt(0),
+            MaximumDiscountAmount.FromDecimal(10000),
+            MinimumOrderAmount.FromDecimal(10000),
+            DateOnly.FromDateTime(DateTime.Now),
+            DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
+            VoucherDescription.FromString("Default voucher for testing purposes"),
+            Status.Active));
     }
 }
