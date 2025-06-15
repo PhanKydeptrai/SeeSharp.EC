@@ -14,6 +14,6 @@ public interface IVoucherRepository
     Task<CustomerVoucher?> GetCustomerVoucherByVoucherId(VoucherId voucherId, CustomerId customerId);
     Task<bool> IsVoucherCodeExist(VoucherCode voucherCode);
     Task<bool> IsVoucherNameExist(VoucherName voucherName);
-    Task UpdateVoucher(Voucher voucher);
+    // Task UpdateVoucher(Voucher voucher);
     Task DeleteVoucher(VoucherId voucherId);
 } 

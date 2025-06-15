@@ -10,8 +10,7 @@ internal sealed class GetDefaultShippingInformation : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/shipping-informations/default", 
-        async (
+        app.MapGet("api/shipping-informations/default", async (
             HttpContext httpContext,
             ISender sender) =>
         {

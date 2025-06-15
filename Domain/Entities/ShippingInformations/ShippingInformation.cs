@@ -3,6 +3,7 @@ using Domain.Entities.Customers;
 using Domain.Entities.Users;
 
 namespace Domain.Entities.ShippingInformations;
+
 public sealed class ShippingInformation
 {
     public ShippingInformationId ShippingInformationId { get; private set; } = null!;
@@ -63,4 +64,40 @@ public sealed class ShippingInformation
             ward);
     }
 
+    /// <summary>
+    /// Update shipping information
+    /// </summary>
+    public void Update(
+        FullName fullName,
+        PhoneNumber phoneNumber,
+        IsDefault isDefault,
+        SpecificAddress specificAddress,
+        Province province,
+        District district,
+        Ward ward)
+    {
+        FullName = fullName;
+        PhoneNumber = phoneNumber;
+        IsDefault = isDefault;
+        SpecificAddress = specificAddress;
+        Province = province;
+        District = district;
+        Ward = ward;
+    }
+    
+    /// <summary>
+    /// Set this shipping information as default
+    /// </summary>
+    public void SetDefault()
+    {
+        IsDefault = IsDefault.True;
+    }
+    
+    /// <summary>
+    /// Unset this shipping information as default
+    /// </summary>
+    public void UnsetDefault()
+    {
+        IsDefault = IsDefault.False;
+    }
 }

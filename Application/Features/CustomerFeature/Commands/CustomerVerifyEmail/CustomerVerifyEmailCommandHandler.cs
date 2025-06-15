@@ -55,7 +55,7 @@ internal sealed class CustomerVerifyEmailCommandHandler : ICommandHandler<Custom
 
         //Tạo một customer voucher cho khách hàng mới
         var customerVoucher = CustomerVoucher.NewCustomerVoucher(
-            VoucherId.FromGuid(new Guid("01966202-d308-ab67-f2a9-436e1dd0e91f")),
+            VoucherId.DefaultVoucherId,
             token.User.Customer!.CustomerId,
             CustomerVoucherQuantity.FromInt(1));
 

@@ -9,7 +9,7 @@ using Domain.Entities.OrderDetails;
 using Domain.Entities.Orders;
 using Domain.Entities.OrderTransactions;
 using Domain.Entities.Products;
-using Domain.Entities.ProductVariants; 
+using Domain.Entities.ProductVariants;
 using Domain.Entities.ShippingInformations;
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.Users;
@@ -25,15 +25,15 @@ using SharedKernel;
 namespace Persistence.Database.PostgreSQL;
 
 public sealed class SeeSharpPostgreSQLWriteDbContext : DbContext
-{   
+{
     public UserName RootUserName { get; }
     public Email RootUserEmail { get; }
     public PhoneNumber RootUserPhoneNumber { get; }
     public PasswordHash RootUserPassword { get; }
-    
+
     public SeeSharpPostgreSQLWriteDbContext(DbContextOptions<SeeSharpPostgreSQLWriteDbContext> options, IConfiguration configuration)
         : base(options)
-    { 
+    {
         RootUserName = UserName.FromString(configuration["RootUser:UserName"]!);
         RootUserEmail = Email.FromString(configuration["RootUser:Email"]!);
         RootUserPhoneNumber = PhoneNumber.FromString(configuration["RootUser:PhoneNumber"]!);
@@ -64,7 +64,7 @@ public sealed class SeeSharpPostgreSQLWriteDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(SeeSharpPostgreSQLWriteDbContext).Assembly,
             WriteConfigurationsFilter);
-        
+
         modelBuilder.ApplyConfiguration(new UserConfigurationForPostgreSQL(RootUserName, RootUserEmail, RootUserPhoneNumber, RootUserPassword));
         base.OnModelCreating(modelBuilder);
     }

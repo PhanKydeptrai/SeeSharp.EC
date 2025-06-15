@@ -16,8 +16,8 @@ internal sealed class SignUp : IEndpoint
             ISender sender) =>
         {
             var result = await sender.Send(new CustomerSignUpCommand(
-                request.Name,
                 request.Email,
+                request.UserName,
                 request.Password));
 
             return result.Match(Results.NoContent, CustomResults.Problem);
@@ -48,7 +48,7 @@ internal sealed class SignUp : IEndpoint
         /// <summary>
         /// Tên của khách hàng
         /// </summary>
-        public string Name { get; init; } = string.Empty;
+        public string UserName { get; init; } = string.Empty;
 
         /// <summary>
         /// Email của khách hàng

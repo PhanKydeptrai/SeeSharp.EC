@@ -1,63 +1,67 @@
-﻿using API.Extentions;
+using API.Extentions;
 using API.Infrastructure;
-using Application.Features.ShippingInformationFeature.Commands.CreateShippingInformation;
+using Application.Features.ShippingInformationFeature.Commands.UpdateShippingInformation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Constants;
 
 namespace API.Endpoints.ShippingInformations;
 
-internal sealed class CreateShippingInformation : IEndpoint
+internal sealed class UpdateShippingInformation : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/shipping-informations", async (
-            [FromBody] CreateShippingInformationRequest request,
-            HttpContext httpContext,
+        app.MapPut("api/shipping-informations/{shippingInformationId:guid}", async (
+            [FromRoute] Guid shippingInformationId,
+            [FromBody] UpdateShippingInformationRequest request,
             ISender sender) =>
         {
-            string token = TokenExtentions.GetTokenFromHeader(httpContext)!;
-            var claims = TokenExtentions.DecodeJwt(token);
-            claims.TryGetValue(CustomJwtRegisteredClaimNames.CustomerId, out var customerId);
-            if (customerId is null) return Results.Unauthorized();
-
-            var result = await sender.Send(new CreateShippingInformationCommand(
-                new Guid(customerId),
+            var result = await sender.Send(new UpdateShippingInformationCommand(
+                request.CustomerId,
+                shippingInformationId,
                 request.FullName,
                 request.PhoneNumber,
                 request.Province,
                 request.District,
+                request.IsDefault,
                 request.Ward,
                 request.SpecificAddress));
 
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(EndpointTags.ShippingInformations)
-        .WithName(EndpointName.ShippingInformations.Create)
+        .WithName(EndpointName.ShippingInformations.Update)
         .Produces(StatusCodes.Status204NoContent)
         .AddBadRequestResponse()
         .AddForbiddenResponse()
+        .AddNotFoundResponse()
         .AddUnauthorizedResponse()
-        .WithSummary("Tạo thông tin giao hàng mới cho sổ địa chỉ")
+        .WithSummary("Cập nhật thông tin giao hàng trong sổ địa chỉ")
         .WithDescription("""
-            Thêm thông tin giao hàng mới cho sổ địa chỉ.
+            Cập nhật thông tin giao hàng trong sổ địa chỉ.
             Sample Request:
-
-                POST /api/shipping-informations
+            
+                PUT /api/shipping-informations/00000000-0000-0000-0000-000000000001
                 {
                     "fullName": "Nguyễn Văn A",
                     "phoneNumber": "0123456789",
                     "province": "Hà Nội",
                     "district": "Hoàn Kiếm",
                     "ward": "Phường Tràng Tiền",
-                    "specificAddress": "Số 1, phố Tràng Tiền"
+                    "specificAddress": "Số 1, phố Tràng Tiền",
+                    "isDefault": true
                 }
             """)
         .WithOpenApi()
         .RequireAuthorization();
     }
 
-    private class CreateShippingInformationRequest
+    private class UpdateShippingInformationRequest
     {
+        /// <summary>
+        /// Mã khách hàng
+        /// </summary>
+        public Guid CustomerId { get; init; }
+
         /// <summary>
         /// Họ tên
         /// </summary>
@@ -87,5 +91,10 @@ internal sealed class CreateShippingInformation : IEndpoint
         /// Phường/Xã
         /// </summary>
         public string Ward { get; init; } = null!;
+
+        /// <summary>
+        /// Đặt làm địa chỉ mặc định
+        /// </summary>
+        public bool IsDefault { get; init; }
     }
 }
