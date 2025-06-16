@@ -135,7 +135,7 @@ public class BillDocument : IDocument
                 });
                 
                 table.Cell().Text("Tên:").Bold().FontColor(TextColor);
-                table.Cell().Text(_bill.UserName ?? "Không có thông tin").FontColor(TextColor);
+                table.Cell().Text(_bill.FullName ?? "Không có thông tin").FontColor(TextColor);
                 
                 table.Cell().Text("Số điện thoại:").Bold().FontColor(TextColor);
                 table.Cell().Text(_bill.PhoneNumber ?? "Không có thông tin").FontColor(TextColor);
@@ -189,9 +189,9 @@ public class BillDocument : IDocument
                 });
 
                 // Data rows
-                for (var i = 0; i < _bill.OrderDetails.Length; i++)
+                for (var i = 0; i < _bill.BillDetails.Length; i++)
                 {
-                    var item = _bill.OrderDetails[i];
+                    var item = _bill.BillDetails[i];
                     var backgroundColor = i % 2 == 0 ? Colors.White : Colors.Grey.Lighten5;
                     
                     table.Cell().Background(backgroundColor).Padding(5).Text(item.ProductName).FontColor(TextColor);
@@ -221,7 +221,7 @@ public class BillDocument : IDocument
             column.Item().Row(row =>
             {
                 row.RelativeItem(3).Text("Tổng tiền hàng:").FontColor(TextColor);
-                row.RelativeItem(2).Text($"{_bill.Total:N0} VNĐ").FontColor(TextColor).AlignRight();
+                row.RelativeItem(2).Text($"{_bill.BillTotal:N0} VNĐ").FontColor(TextColor).AlignRight();
             });
 
             if (!string.IsNullOrEmpty(_bill.VoucherCode))
@@ -229,7 +229,7 @@ public class BillDocument : IDocument
                 column.Item().PaddingTop(5).Row(row =>
                 {
                     row.RelativeItem(3).Text($"Mã giảm giá: {_bill.VoucherCode}").FontColor(TextColor);
-                    row.RelativeItem(2).Text($"-{(_bill.Total - _bill.BillTotal):N0} VNĐ").FontColor(Colors.Red.Medium).AlignRight();
+                    row.RelativeItem(2).Text($"-{(_bill.BillTotal - _bill.BillTotal):N0} VNĐ").FontColor(Colors.Red.Medium).AlignRight(); //WARNING: This should be the discount amount
                 });
                 
                 column.Item().PaddingTop(5).LineHorizontal(1).LineColor(BorderColor);
@@ -265,8 +265,8 @@ public class BillDocument : IDocument
                     {
                         column.Item().Text("TRẠNG THÁI").Bold().FontSize(10).FontColor(TextColor);
                         column.Item().PaddingTop(5);
-                        column.Item().Background(GetStatusColor(_bill.PaymentStatus)).PaddingVertical(3).PaddingHorizontal(5)
-                            .Text(_bill.PaymentStatus).FontColor(Colors.White).AlignCenter();
+                        column.Item().Background(GetStatusColor(_bill.BillPaymentStatus)).PaddingVertical(3).PaddingHorizontal(5)
+                            .Text(_bill.BillPaymentStatus).FontColor(Colors.White).AlignCenter();
                     });
             });
         });

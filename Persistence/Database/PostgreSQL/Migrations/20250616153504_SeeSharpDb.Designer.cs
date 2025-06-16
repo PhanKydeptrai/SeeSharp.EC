@@ -12,8 +12,8 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(SeeSharpPostgreSQLWriteDbContext))]
-    [Migration("20250610082501_BillDetailUpdate")]
-    partial class BillDetailUpdate
+    [Migration("20250616153504_SeeSharpDb")]
+    partial class SeeSharpDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -328,7 +328,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.HasKey("OrderTransactionId");
 
-                    b.HasIndex("BillId");
+                    b.HasIndex("BillId")
+                        .IsUnique();
 
                     b.HasIndex("OrderId")
                         .IsUnique();
@@ -627,12 +628,12 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         new
                         {
                             VoucherId = new Guid("019758f1-5449-87e0-d68b-e53ea6f1fb6b"),
-                            Description = "Voucher dành riêng cho khách hàng mới đăng ký tài khoản",
-                            ExpiredDate = new DateOnly(2026, 6, 10),
+                            Description = "Default voucher for testing purposes",
+                            ExpiredDate = new DateOnly(2026, 6, 16),
                             MaximumDiscountAmount = 10000m,
-                            MinimumOrderAmount = 100000m,
+                            MinimumOrderAmount = 10000m,
                             PercentageDiscount = 0,
-                            StartDate = new DateOnly(2025, 6, 10),
+                            StartDate = new DateOnly(2025, 6, 16),
                             Status = 1,
                             VoucherCode = "NEWUSER01",
                             VoucherName = "NEWUSER01",
@@ -807,8 +808,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.OrderTransactions.OrderTransaction", b =>
                 {
                     b.HasOne("Domain.Entities.Bills.Bill", "Bill")
-                        .WithMany()
-                        .HasForeignKey("BillId");
+                        .WithOne("OrderTransaction")
+                        .HasForeignKey("Domain.Entities.OrderTransactions.OrderTransaction", "BillId");
 
                     b.HasOne("Domain.Entities.Orders.Order", "Order")
                         .WithOne("OrderTransaction")
@@ -917,6 +918,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Navigation("BillDetails");
 
                     b.Navigation("Feedback");
+
+                    b.Navigation("OrderTransaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.Categories.Category", b =>
