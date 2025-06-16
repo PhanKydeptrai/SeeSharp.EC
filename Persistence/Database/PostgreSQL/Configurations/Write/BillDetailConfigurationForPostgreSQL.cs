@@ -48,6 +48,13 @@ internal sealed class BillDetailConfigurationForPostgreSQL : IEntityTypeConfigur
                 value => value.Value,
                 value => ProductVariantPrice.FromDecimal(value))
             .HasColumnType("decimal");
+        
+        builder.Property(x => x.UnitPrice)
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => BillDetailUnitPrice.FromDecimal(value))
+            .HasColumnType("decimal");
 
         builder.Property(x => x.ImageUrl)
             .IsRequired()

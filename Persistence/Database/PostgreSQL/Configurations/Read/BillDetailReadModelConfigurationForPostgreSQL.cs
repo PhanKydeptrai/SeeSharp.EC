@@ -35,6 +35,10 @@ internal sealed class BillDetailReadModelConfigurationForPostgreSQL : IEntityTyp
         builder.Property(x => x.ProductVariantPrice)
             .IsRequired()
             .HasColumnType("decimal");
+        
+        builder.Property(x => x.UnitPrice)
+            .IsRequired()
+            .HasColumnType("decimal");
 
         builder.Property(x => x.ImageUrl)
             .IsRequired()

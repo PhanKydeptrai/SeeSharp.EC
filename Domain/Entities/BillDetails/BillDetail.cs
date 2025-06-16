@@ -11,6 +11,7 @@ public sealed class BillDetail
     public ProductName ProductName { get; private set; } = ProductName.Empty;
     public VariantName VariantName { get; private set; } = VariantName.Empty;
     public ProductVariantPrice ProductVariantPrice { get; private set; } = null!;
+    public BillDetailUnitPrice UnitPrice { get; private set; } = null!;
     public string ImageUrl { get; private set; } = string.Empty;
     public BillDetailQuantity BillDetailQuantity { get; private set; } = null!;
     public ColorCode ColorCode { get; private set; } = null!;
