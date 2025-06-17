@@ -45,7 +45,7 @@ internal sealed class CreateFeedback : IEndpoint
 
             Sample Request:
 
-                POST: api/feedbacks
+                POST: /api/feedbacks
             """)
         .RequireAuthorization(AuthorizationPolicies.SubscribedOnly);
 

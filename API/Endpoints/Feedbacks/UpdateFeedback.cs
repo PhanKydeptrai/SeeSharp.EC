@@ -45,7 +45,7 @@ public class UpdateFeedback : IEndpoint
             
             Sample Request:
             
-                PUT: api/feedbacks/{feedBackId}
+                PUT: /api/feedbacks/{feedBackId}
             """)
         .WithOpenApi(o =>
         {

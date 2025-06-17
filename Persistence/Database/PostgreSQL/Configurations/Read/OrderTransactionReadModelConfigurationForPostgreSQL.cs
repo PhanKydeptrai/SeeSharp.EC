@@ -68,8 +68,12 @@ internal sealed class OrderTransactionReadModelConfigurationForPostgreSQL : IEnt
         builder.HasOne(a => a.VoucherReadModel)
             .WithMany(a => a.OrderTransactionReadModels)
             .HasForeignKey(a => a.VoucherId)
-            .IsRequired(false);;
+            .IsRequired(false); ;
 
+        builder.HasOne(a => a.BillReadModel)
+            .WithOne(a => a.OrderTransaction)
+            .HasForeignKey<OrderTransactionReadModel>(a => a.BillId)
+            .IsRequired(false);
 
     }
 

@@ -25,6 +25,7 @@ public sealed class BillDetail
         ProductName productName,
         VariantName variantName,
         ProductVariantPrice productVariantPrice,
+        BillDetailUnitPrice unitPrice,
         string imageUrl,
         BillDetailQuantity billDetailQuantity,
         ColorCode colorCode,
@@ -35,6 +36,7 @@ public sealed class BillDetail
         ProductName = productName;
         VariantName = variantName;
         ProductVariantPrice = productVariantPrice;
+        UnitPrice = unitPrice;
         ImageUrl = imageUrl;
         BillDetailQuantity = billDetailQuantity;
         ColorCode = colorCode;
@@ -46,6 +48,7 @@ public sealed class BillDetail
         ProductName productName,
         VariantName variantName,
         ProductVariantPrice productVariantPrice,
+        BillDetailUnitPrice unitPrice,
         string imageUrl,
         BillDetailQuantity billDetailQuantity,
         ColorCode colorCode,
@@ -57,6 +60,7 @@ public sealed class BillDetail
             productName,
             variantName,
             productVariantPrice,
+            unitPrice,
             imageUrl,
             billDetailQuantity,
             colorCode,

@@ -14,10 +14,6 @@ using Domain.Utilities.Errors;
 using SharedKernel;
 
 namespace Application.Features.OrderFeature.Commands.MakePaymentForSubscriber;
-//NOTE: Refactor
-/// <summary>
-/// Tạo order transaction cho đơn hàng của khách hàng, khách sẽ dùng voucher ở đây
-/// </summary>
 internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<MakePaymentForSubscriberCommand>
 {
     private readonly IVoucherRepository _voucherRepository;
@@ -101,6 +97,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                         orderDetail.ProductVariant!.Product!.ProductName,
                         orderDetail.ProductVariant!.VariantName,
                         orderDetail.ProductVariant!.ProductVariantPrice,
+                        BillDetailUnitPrice.FromDecimal(orderDetail.UnitPrice.Value),
                         orderDetail.ProductVariant.ImageUrl ?? string.Empty,
                         BillDetailQuantity.FromInt(orderDetail.Quantity.Value),
                         orderDetail.ProductVariant.ColorCode,
@@ -154,6 +151,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                         orderDetail.ProductVariant!.Product!.ProductName,
                         orderDetail.ProductVariant!.VariantName,
                         orderDetail.ProductVariant!.ProductVariantPrice,
+                        BillDetailUnitPrice.FromDecimal(orderDetail.UnitPrice.Value),
                         orderDetail.ProductVariant.ImageUrl ?? string.Empty,
                         BillDetailQuantity.FromInt(orderDetail.Quantity.Value),
                         orderDetail.ProductVariant.ColorCode,
@@ -201,6 +199,7 @@ internal sealed class MakePaymentForSubscriberCommandHandler : ICommandHandler<M
                     orderDetail.ProductVariant!.Product!.ProductName,
                     orderDetail.ProductVariant!.VariantName,
                     orderDetail.ProductVariant!.ProductVariantPrice,
+                    BillDetailUnitPrice.FromDecimal(orderDetail.UnitPrice.Value),
                     orderDetail.ProductVariant.ImageUrl ?? string.Empty,
                     BillDetailQuantity.FromInt(orderDetail.Quantity.Value),
                     orderDetail.ProductVariant.ColorCode,
