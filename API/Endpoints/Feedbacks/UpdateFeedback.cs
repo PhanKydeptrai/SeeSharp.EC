@@ -11,7 +11,7 @@ public class UpdateFeedback : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/feedbacks/{feedBackId}", 
+        app.MapPut("api/feedbacks/{feedBackId}", 
         async (
             [FromRoute] Guid feedBackId,
             [FromForm] UpdateFeedbackRequest request,

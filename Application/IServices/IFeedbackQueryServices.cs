@@ -1,6 +1,13 @@
-﻿namespace Application.IServices;
+﻿using Application.DTOs.Feedbacks;
+using Domain.Entities.Feedbacks;
 
-public interface IFeedbackQueryServices 
+namespace Application.IServices;
+
+public interface IFeedbackQueryServices
 {
-
+    /// <summary>
+    /// Lấy thông tin phản hồi theo ID
+    /// </summary>
+    /// <returns></returns>
+    Task<FeedbackResponse?> GetFeedbackById(FeedbackId feedbackId);
 }

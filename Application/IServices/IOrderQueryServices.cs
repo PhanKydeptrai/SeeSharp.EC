@@ -25,11 +25,12 @@ public interface IOrderQueryServices
     Task<bool> IsOrderStatusDelivered(OrderId orderId);
 
     /// <summary>
-    /// Kiểm tra trạng thái đơn hàng có phải là Delivered hay không
+    /// Kiểm tra trạng thái đơn hàng có phải là Delivered hay không,
+    /// Kiểm tra khách hàng có quyền truy cập vào hoá đơn hay không
     /// </summary>
     /// <param name="billId">Mã hoá đơn</param>
     /// <returns></returns>
-    Task<bool> IsOrderStatusDelivered(BillId billId);
+    Task<bool> IsOrderStatusDelivered(BillId billId, CustomerId customerId);
 
     /// <summary>
     /// Get Order and Order Details by OrderId with OrderStatus != New

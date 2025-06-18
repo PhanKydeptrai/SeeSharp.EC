@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Services;
+using Domain.Entities.Customers;
 using Domain.Entities.Feedbacks;
 using Domain.IRepositories;
 using Domain.IRepositories.Feedbacks;
@@ -27,7 +28,8 @@ internal sealed class UpdateFeedBackCommmandHandler
     public async Task<Result> Handle(UpdateFeedBackCommmand request, CancellationToken cancellationToken)
     {
         var feedackId = FeedbackId.FromGuid(request.FeedbackId);
-        var feedback = await _feedbackRepository.GetFeedBackById(feedackId);
+        var customerId = CustomerId.FromGuid(request.CustomerId);
+        var feedback = await _feedbackRepository.GetFeedBackOfCustomerById(feedackId, customerId);
 
         if (feedback is null)
         {

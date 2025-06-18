@@ -32,7 +32,8 @@ internal sealed class CreateNewFeedBackCommandHandler : ICommandHandler<CreateNe
     public async Task<Result> Handle(CreateNewFeedBackCommand request, CancellationToken cancellationToken)
     {
         var billId = BillId.FromGuid(request.BillId);
-        var isValidOrder = await _orderQueryServices.IsOrderStatusDelivered(billId);
+        var customerId = CustomerId.FromGuid(request.CustomerId);
+        var isValidOrder = await _orderQueryServices.IsOrderStatusDelivered(billId, customerId);
 
         if (!isValidOrder)
         {
