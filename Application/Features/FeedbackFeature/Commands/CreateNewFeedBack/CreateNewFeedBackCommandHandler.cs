@@ -4,6 +4,7 @@ using Application.Services;
 using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Feedbacks;
+using Domain.Entities.Orders;
 using Domain.IRepositories;
 using Domain.IRepositories.Feedbacks;
 using Domain.Utilities.Errors;
@@ -31,13 +32,14 @@ internal sealed class CreateNewFeedBackCommandHandler : ICommandHandler<CreateNe
 
     public async Task<Result> Handle(CreateNewFeedBackCommand request, CancellationToken cancellationToken)
     {
-        var billId = BillId.FromGuid(request.BillId);
+        // var billId = BillId.FromGuid(request.BillId);
+        var orderId = OrderId.FromGuid(request.OrderId);
         var customerId = CustomerId.FromGuid(request.CustomerId);
-        var isValidOrder = await _orderQueryServices.IsOrderStatusDelivered(billId, customerId);
+        var isValidOrder = await _orderQueryServices.IsOrderStatusDelivered(orderId, customerId);
 
-        if (!isValidOrder)
+        if (isValidOrder is not true)
         {
-            return Result.Failure(OrderError.BillStatusInValid(billId));
+            return Result.Failure(OrderError.BillStatusInValid(orderId));
         }
 
 

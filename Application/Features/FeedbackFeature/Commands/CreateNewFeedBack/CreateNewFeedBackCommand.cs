@@ -7,5 +7,5 @@ public record CreateNewFeedBackCommand(
     string Substance,
     int RatingScore,
     IFormFile? Image,
-    Guid BillId,
+    Guid OrderId,
     Guid CustomerId) : ICommand;

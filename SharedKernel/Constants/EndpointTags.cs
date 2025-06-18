@@ -155,6 +155,7 @@ public static class EndpointName
     {
         public const string Create = "CreateFeedback";
         public const string Update = "UpdateFeedback";
+        public const string GetFeedbackById = "GetFeedbackById";
     }
 }
 

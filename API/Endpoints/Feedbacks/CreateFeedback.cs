@@ -12,7 +12,7 @@ internal sealed class CreateFeedback : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/feedbacks", 
+        app.MapPost("api/feedbacks",
         async (
             [FromForm] CreateFeedbackRequest request,
             HttpContext httpContext,
@@ -27,7 +27,7 @@ internal sealed class CreateFeedback : IEndpoint
                 request.Substance,
                 request.RatingScore,
                 request.Image,
-                request.OrderId,
+                request.BillId,
                 new Guid(customerId)));
 
             return result.Match(Results.Created, CustomResults.Problem);
@@ -38,6 +38,7 @@ internal sealed class CreateFeedback : IEndpoint
         .AddBadRequestResponse()
         .AddUnauthorizedResponse()
         .AddForbiddenResponse()
+        .DisableAntiforgery()
         .WithOpenApi()
         .WithSummary("Khách hàng đánh giá đơn hàng")
         .WithDescription("""
@@ -69,8 +70,8 @@ internal sealed class CreateFeedback : IEndpoint
         public IFormFile? Image { get; set; }
 
         /// <summary>
-        /// Mã đơn hàng
+        /// Mã hoá hàng
         /// </summary>
-        public Guid OrderId { get; set; }
+        public Guid BillId { get; set; }
     }
 }

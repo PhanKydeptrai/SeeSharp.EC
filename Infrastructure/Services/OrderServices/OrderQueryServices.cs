@@ -335,11 +335,11 @@ internal sealed class OrderQueryServices : IOrderQueryServices
     }
 
     
-    public async Task<bool> IsOrderStatusDelivered(BillId billId, CustomerId customerId)
+    public async Task<bool> IsOrderStatusDelivered(OrderId orderId, CustomerId customerId)
     {
         return await _dbContext.Orders.AnyAsync(
             a => a.OrderStatus == OrderStatus.Delivered
-            && a.BillReadModel!.BillId == billId.ToUlid()
+            && a.BillReadModel!.OrderId == orderId.ToUlid()
             && a.BillReadModel.CustomerId == customerId.ToUlid());
     }
 }
