@@ -27,6 +27,7 @@ internal sealed class CreateFeedback : IEndpoint
                 request.Substance,
                 request.RatingScore,
                 request.Image,
+                request.IsPrivate,
                 request.BillId,
                 new Guid(customerId)));
 
@@ -68,6 +69,11 @@ internal sealed class CreateFeedback : IEndpoint
         /// Hình ảnh đánh giá
         /// </summary>
         public IFormFile? Image { get; set; }
+    
+        /// <summary>
+        ///  Đánh giá riêng tư
+        /// </summary>
+        public bool IsPrivate { get; set; }
 
         /// <summary>
         /// Mã hoá hàng

@@ -30,7 +30,7 @@ public interface IOrderQueryServices
     /// </summary>
     /// <param name="orderId">Mã Order</param>
     /// <returns></returns>
-    Task<bool> IsOrderStatusDelivered(OrderId orderId, CustomerId customerId);
+    Task<BillId?> GetBillIdByOrder(OrderId orderId, CustomerId customerId);
 
     /// <summary>
     /// Get Order and Order Details by OrderId with OrderStatus != New

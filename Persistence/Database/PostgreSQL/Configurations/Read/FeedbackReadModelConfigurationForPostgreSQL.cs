@@ -28,6 +28,10 @@ internal sealed class FeedbackReadModelConfigurationForPostgreSQL : IEntityTypeC
         builder.Property(x => x.RatingScore)
             .IsRequired()
             .HasColumnType("float");
+        
+        builder.Property(x => x.IsPrivate)
+            .IsRequired()
+            .HasColumnType("boolean");
 
         builder.Property(x => x.BillId)
             .IsRequired()

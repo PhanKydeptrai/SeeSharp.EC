@@ -334,12 +334,12 @@ internal sealed class OrderQueryServices : IOrderQueryServices
             && a.OrderId == orderId.ToUlid());
     }
 
-    
-    public async Task<bool> IsOrderStatusDelivered(OrderId orderId, CustomerId customerId)
+
+    public async Task<BillId?> GetBillIdByOrder(OrderId orderId, CustomerId customerId)
     {
-        return await _dbContext.Orders.AnyAsync(
-            a => a.OrderStatus == OrderStatus.Delivered
-            && a.BillReadModel!.OrderId == orderId.ToUlid()
-            && a.BillReadModel.CustomerId == customerId.ToUlid());
+        return await _dbContext.Bills
+            .Where(a => a.OrderId == orderId.ToUlid() && a.CustomerId == customerId.ToUlid())
+            .Select(a => BillId.FromUlid(a.BillId))
+            .FirstOrDefaultAsync();
     }
 }

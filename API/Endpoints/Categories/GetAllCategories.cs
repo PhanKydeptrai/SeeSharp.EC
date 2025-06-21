@@ -1,5 +1,4 @@
 using API.Extentions;
-using API.Infrastructure;
 using Application.Features.CategoryFeature.Queries.GetAllCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
