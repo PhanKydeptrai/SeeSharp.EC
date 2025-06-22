@@ -1,5 +1,4 @@
 using Domain.Entities.Bills;
-using Domain.Entities.BillDetails;
 using Domain.Entities.Customers;
 using Domain.Entities.Orders;
 using Domain.Entities.ShippingInformations;

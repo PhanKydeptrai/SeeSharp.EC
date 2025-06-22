@@ -28,7 +28,7 @@ internal sealed class CreateFeedback : IEndpoint
                 request.RatingScore,
                 request.Image,
                 request.IsPrivate,
-                request.BillId,
+                request.OrderId,
                 new Guid(customerId)));
 
             return result.Match(Results.Created, CustomResults.Problem);
@@ -76,8 +76,8 @@ internal sealed class CreateFeedback : IEndpoint
         public bool IsPrivate { get; set; }
 
         /// <summary>
-        /// Mã hoá hàng
+        /// Mã order của đơn hàng
         /// </summary>
-        public Guid BillId { get; set; }
+        public Guid OrderId { get; set; }
     }
 }

@@ -32,7 +32,14 @@ internal sealed class GetFeedbackOfProduct : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         }).WithTags(EndpointTags.Feedbacks)
         .WithSummary("Lấy danh sách phản hồi của sản phẩm")
-        .WithDescription("Lấy danh sách phản hồi của sản phẩm theo ID sản phẩm")
+        .WithDescription("""
+            Lấy danh sách phản hồi của sản phẩm theo ID sản phẩm
+
+            Sample Request:
+
+                GET: /api/feedbacks/products/{productId}?filter={filter}&sortColumn={sortColumn}&sortOrder={sortOrder}&page={page}&pageSize={pageSize}
+
+        """)
         .Produces(StatusCodes.Status200OK)
         .ProducesValidationProblem()
         .AddNotFoundResponse()

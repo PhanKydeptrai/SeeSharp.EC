@@ -4,7 +4,6 @@ using Application.Features.Pages;
 using Application.IServices;
 using Domain.Entities.Products;
 using Domain.Utilities.Errors;
-using Microsoft.AspNetCore.Http;
 using SharedKernel;
 
 namespace Application.Features.FeedbackFeature.Queries.GetFeecbackOfProduct;
