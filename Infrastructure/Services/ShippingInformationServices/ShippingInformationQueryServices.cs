@@ -51,11 +51,6 @@ internal sealed class ShippingInformationQueryServices : IShippingInformationQue
         return result;
     }
 
-    public Task<ShippingInformationResponse?> GetDefaultShippingInformation(ShippingInformationId shippingInformationId)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<ShippingInformationResponse?> GetShippingInformationById(
         ShippingInformationId shippingInformationId)
     {

@@ -93,6 +93,11 @@ public interface IOrderQueryServices
         int? page,
         int? pageSize);
 
+    /// <summary>
+    /// Lấy lịch sử đơn hàng của khách hàng theo CustomerId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
     Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId);
 
     /// <summary>

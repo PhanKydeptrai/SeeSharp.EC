@@ -41,13 +41,6 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
 
             UpdateProduct(product, request, newImageUrl);
 
-            //Xóa ảnh cũ
-            if (oldimageUrl != "")
-            {
-                //Upload ảnh lên cloudinary
-                var resultDelete = await _cloudinaryService.DeleteAsync(oldimageUrl);
-            }
-
             var baseVariant = product.ProductVariants!.FirstOrDefault(a => a.IsBaseVariant == IsBaseVariant.True);
 
             baseVariant!.Update(

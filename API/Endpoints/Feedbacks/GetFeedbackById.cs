@@ -31,7 +31,9 @@ public class GetFeedbackById : IEndpoint
             
         """)
         .Produces<FeedbackResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound)
         .AddNotFoundResponse()
-        .Produces(StatusCodes.Status404NotFound);
+        .AddBadRequestResponse()
+        .WithOpenApi();
     }
 }

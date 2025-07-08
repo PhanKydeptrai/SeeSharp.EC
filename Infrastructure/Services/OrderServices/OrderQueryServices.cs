@@ -247,7 +247,43 @@ internal sealed class OrderQueryServices : IOrderQueryServices
 
     public async Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId)
     {
-        throw new NotImplementedException("This method is not implemented yet. Please use GetAllOrderForCustomer instead.");
+        return await _dbContext.Orders
+            .Include(o => o.CustomerReadModel)
+                .ThenInclude(c => c.UserReadModel)
+            .Include(o => o.OrderTransactionReadModel)
+                .ThenInclude(ot => ot!.VoucherReadModel)
+            .Include(o => o.OrderTransactionReadModel)
+                .ThenInclude(ot => ot!.BillReadModel)
+            .Include(o => o.OrderDetailReadModels)
+                .ThenInclude(od => od.ProductVariantReadModel)
+                    .ThenInclude(pv => pv.ProductReadModel)
+            .Where(o => o.CustomerId == new Ulid(customerId) && o.OrderStatus != OrderStatus.Waiting)
+            .Select(o => new OrderHistoryResponse(
+                o.CustomerId.ToGuid(),
+                o.CustomerReadModel.UserReadModel.UserName,
+                o.CustomerReadModel.UserReadModel.PhoneNumber,
+                o.OrderTransactionReadModel!.BillReadModel!.SpecificAddress,
+                o.Total,
+                o.PaymentStatus.ToString(),
+                o.OrderStatus.ToString(),
+                o.OrderTransactionReadModel.PaymentMethod.ToString(),
+                o.OrderTransactionReadModel.VoucherReadModel != null ? o.OrderTransactionReadModel.VoucherReadModel.VoucherCode : null,
+                o.OrderTransactionReadModel.BillReadModel.BillId.ToGuid(),
+                o.OrderTransactionReadModel.Amount,
+                o.OrderId.ToGuid(),
+                o.OrderDetailReadModels.Select(od => new OrderDetailResponse(
+                    od.OrderDetailId.ToGuid(),
+                    od.ProductVariantId.ToGuid(),
+                    od.ProductVariantReadModel.ProductReadModel!.ProductName,
+                    od.ProductVariantReadModel.VariantName,
+                    od.ProductVariantReadModel.ColorCode,
+                    od.ProductVariantReadModel.ProductVariantPrice,
+                    od.Quantity,
+                    od.ProductVariantReadModel.ImageUrl ?? string.Empty,
+                    od.UnitPrice
+                )).ToArray()
+            ))
+            .ToListAsync();
     }
 
     public async Task<BillResponse?> GetBillByBillId(BillId billId)
