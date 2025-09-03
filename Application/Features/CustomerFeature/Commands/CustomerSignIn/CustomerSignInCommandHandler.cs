@@ -46,7 +46,6 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         if (failure is not null) return Result.Failure<CustomerSignInResponse>(failure.Error);
 
         #region Đồng bộ giỏ hàng giữa guest và customer
-        
         // //Lấy giỏ hàng của guest
         // var orderInfo = await _orderRepository.GetWaitingOrderByCustomerId(CustomerId.FromGuid(request.GuestId));
         // //Lấy thông tin khách hàng bằng email
@@ -84,7 +83,7 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
         var userAuthenticationToken = UserAuthenticationToken.NewUserAuthenticationToken(
             refreshToken,
             jti,
-            DateTime.UtcNow.AddDays(30),
+            DateTime.UtcNow.AddHours(10),
             UserId.FromUlid(response!.UserId));
 
         await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);

@@ -25,11 +25,12 @@ public interface IOrderQueryServices
     Task<bool> IsOrderStatusDelivered(OrderId orderId);
 
     /// <summary>
-    /// Kiểm tra trạng thái đơn hàng có phải là Delivered hay không
+    /// Kiểm tra trạng thái đơn hàng có phải là Delivered hay không,
+    /// Kiểm tra khách hàng có quyền truy cập vào hoá đơn hay không
     /// </summary>
-    /// <param name="billId">Mã hoá đơn</param>
+    /// <param name="orderId">Mã Order</param>
     /// <returns></returns>
-    Task<bool> IsOrderStatusDelivered(BillId billId);
+    Task<BillId?> GetBillIdByOrder(OrderId orderId, CustomerId customerId);
 
     /// <summary>
     /// Get Order and Order Details by OrderId with OrderStatus != New
@@ -92,6 +93,11 @@ public interface IOrderQueryServices
         int? page,
         int? pageSize);
 
+    /// <summary>
+    /// Lấy lịch sử đơn hàng của khách hàng theo CustomerId
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
     Task<List<OrderHistoryResponse>> GetOrderHistoryForCustomer(CustomerId customerId);
 
     /// <summary>

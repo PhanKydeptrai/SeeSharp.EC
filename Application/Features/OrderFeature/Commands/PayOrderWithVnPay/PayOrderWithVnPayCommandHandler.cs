@@ -36,7 +36,7 @@ internal sealed class PayOrderWithVnPayCommandHandler : ICommandHandler<PayOrder
 
         #region VnPay
         string paymentUrl = VnPayExtentions.GetVnPayUrl(
-            _configuration["VNP_RETURNURL_ORDERS"]!,
+            _configuration["VNPAY:VNP_RETURNURL_ORDERS"]!,
             (int)order.OrderTransaction.Amount.Value,
             order.OrderTransaction.OrderTransactionId.ToString(),
             _configuration);

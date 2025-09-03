@@ -29,6 +29,10 @@ internal sealed class FeedbackReadModelConfigurationForPostgreSQL : IEntityTypeC
             .IsRequired()
             .HasColumnType("float");
 
+        builder.Property(x => x.IsPrivate)
+            .IsRequired()
+            .HasColumnType("boolean");
+
         builder.Property(x => x.BillId)
             .IsRequired()
             .HasConversion(
@@ -42,5 +46,10 @@ internal sealed class FeedbackReadModelConfigurationForPostgreSQL : IEntityTypeC
                 value => value.ToGuid(),
                 value => new Ulid(value))
             .HasColumnType("uuid");
+            
+        //Một order có một feedback
+        builder.HasOne(x => x.BillReadModel)
+            .WithOne(x => x.Feedback)
+            .HasForeignKey<FeedbackReadModel>(x => x.BillId);
     }
 }

@@ -52,6 +52,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<decimal>("ProductVariantPrice")
                         .HasColumnType("decimal");
 
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal");
+
                     b.Property<string>("VariantName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -245,6 +248,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("varchar(255)");
 
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("boolean");
+
                     b.Property<float>("RatingScore")
                         .HasColumnType("float");
 
@@ -325,7 +331,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.HasKey("OrderTransactionId");
 
-                    b.HasIndex("BillId");
+                    b.HasIndex("BillId")
+                        .IsUnique();
 
                     b.HasIndex("OrderId")
                         .IsUnique();
@@ -623,13 +630,13 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasData(
                         new
                         {
-                            VoucherId = new Guid("01977285-5fa9-d0ab-f1d9-4c9c47362170"),
+                            VoucherId = new Guid("019758f1-5449-87e0-d68b-e53ea6f1fb6b"),
                             Description = "Default voucher for testing purposes",
-                            ExpiredDate = new DateOnly(2026, 6, 15),
+                            ExpiredDate = new DateOnly(2026, 6, 19),
                             MaximumDiscountAmount = 10000m,
                             MinimumOrderAmount = 10000m,
                             PercentageDiscount = 0,
-                            StartDate = new DateOnly(2025, 6, 15),
+                            StartDate = new DateOnly(2025, 6, 19),
                             Status = 1,
                             VoucherCode = "NEWUSER01",
                             VoucherName = "NEWUSER01",
@@ -804,8 +811,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.OrderTransactions.OrderTransaction", b =>
                 {
                     b.HasOne("Domain.Entities.Bills.Bill", "Bill")
-                        .WithMany()
-                        .HasForeignKey("BillId");
+                        .WithOne("OrderTransaction")
+                        .HasForeignKey("Domain.Entities.OrderTransactions.OrderTransaction", "BillId");
 
                     b.HasOne("Domain.Entities.Orders.Order", "Order")
                         .WithOne("OrderTransaction")
@@ -914,6 +921,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Navigation("BillDetails");
 
                     b.Navigation("Feedback");
+
+                    b.Navigation("OrderTransaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.Categories.Category", b =>

@@ -45,9 +45,9 @@ public static class OrderError
     /// <summary>
     /// BillStatus không hợp lệ
     /// </summary>
-    /// <param name="billId"></param>
+    /// <param name="orderId"></param>
     /// <returns></returns>
-    public static Error BillStatusInValid(BillId billId) => Error.Problem(
+    public static Error BillStatusInValid(OrderId orderId) => Error.Problem(
         "BillStatus.Invalid",
-        $"The Order with the Id = '{billId}' is not in a valid state to perform this action");
+        $"The Order with the Id = '{orderId}' is not in a valid state to perform this action");
 }

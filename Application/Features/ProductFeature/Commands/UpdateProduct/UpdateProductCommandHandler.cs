@@ -32,52 +32,26 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
         var (product, failure) = await GetProductById(productId);
         if (product is null) return failure!;
 
+        var tempUrl = product.ImageUrl ?? string.Empty;
         if (request.ProductImage is not null)
         {
-            string oldimageUrl = product.ImageUrl!;
-
-            string newImageUrl = string.Empty;
-            newImageUrl = await _cloudinaryService.UploadNewImage(request.ProductImage);
-
-            UpdateProduct(product, request, newImageUrl);
-
-            //Xóa ảnh cũ
-            if (oldimageUrl != "")
-            {
-                //Upload ảnh lên cloudinary
-                var resultDelete = await _cloudinaryService.DeleteAsync(oldimageUrl);
-            }
-
-            var baseVariant = product.ProductVariants!.FirstOrDefault(a => a.IsBaseVariant == IsBaseVariant.True);
-
-            baseVariant!.Update(
-                baseVariant.VariantName,
-                ProductVariantPrice.FromDecimal(request.ProductPrice),
-                ColorCode.FromString(request.ColorCode),
-                ProductVariantDescription.FromString(request.Description),
-                newImageUrl,
-                IsBaseVariant.True);
-
-            await _unitOfWork.SaveChangesAsync();
-            return Result.Success();
+            tempUrl = await _cloudinaryService.UploadNewImage(request.ProductImage);
         }
-        else
-        {
-            UpdateProduct(product, request, product.ImageUrl!);
 
-            var baseVariant = product.ProductVariants!.FirstOrDefault(a => a.IsBaseVariant == IsBaseVariant.True);
+        UpdateProduct(product, request, tempUrl);
 
-            baseVariant!.Update(
-                baseVariant.VariantName,
-                ProductVariantPrice.FromDecimal(request.ProductPrice),
-                ColorCode.FromString(request.ColorCode),
-                ProductVariantDescription.FromString(request.Description),
-                product.ImageUrl!,
-                IsBaseVariant.True);
+        var baseVariant = product.ProductVariants!.FirstOrDefault(a => a.IsBaseVariant == IsBaseVariant.True);
 
-            await _unitOfWork.SaveChangesAsync();
-            return Result.Success();
-        }
+        baseVariant!.Update(
+            baseVariant.VariantName,
+            ProductVariantPrice.FromDecimal(request.ProductPrice),
+            ColorCode.FromString(request.ColorCode),
+            ProductVariantDescription.FromString(request.Description),
+            tempUrl,
+            IsBaseVariant.True);
+
+        await _unitOfWork.SaveChangesAsync();
+        return Result.Success();
     }
 
     #region Private method

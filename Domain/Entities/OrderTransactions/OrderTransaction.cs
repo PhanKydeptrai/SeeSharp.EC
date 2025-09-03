@@ -22,7 +22,6 @@ public sealed class OrderTransaction
     public Order? Order { get; set; } = null!;
     public Voucher? Voucher { get; set; }
     public Bill? Bill { get; set; }
-
     private OrderTransaction(
         OrderTransactionId orderTransactionId,
         PayerName payerName,

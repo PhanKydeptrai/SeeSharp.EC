@@ -1,7 +1,6 @@
 using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Feedbacks;
-using Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -44,6 +43,13 @@ internal sealed class FeedbackConfigurationForPostgreSQL : IEntityTypeConfigurat
                 value => value.Value,
                 value => BillId.FromGuid(value))
             .HasColumnType("uuid");
+
+        builder.Property(x => x.IsPrivate)
+            .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => IsPrivate.FromBoolean(v))
+            .HasColumnType("boolean");
 
         builder.Property(x => x.CustomerId)
             .IsRequired()

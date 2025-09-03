@@ -12,8 +12,8 @@ using Persistence.Database.PostgreSQL;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     [DbContext(typeof(SeeSharpPostgreSQLWriteDbContext))]
-    [Migration("20250604133645_UpdateNewBillTable")]
-    partial class UpdateNewBillTable
+    [Migration("20250616175119_Add_UnitPrice_For_BillDetails")]
+    partial class Add_UnitPrice_For_BillDetails
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,50 @@ namespace Persistence.Database.PostgreSQL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.Entities.BillDetails.BillDetail", b =>
+                {
+                    b.Property<Guid>("BillDetailId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("BillDetailQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("BillId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ColorCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProductVariantDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("ProductVariantPrice")
+                        .HasColumnType("decimal");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal");
+
+                    b.Property<string>("VariantName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("BillDetailId");
+
+                    b.HasIndex("BillId");
+
+                    b.ToTable("BillDetails");
+                });
 
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
                 {
@@ -43,6 +87,10 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -52,9 +100,6 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("integer");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -286,7 +331,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
                     b.HasKey("OrderTransactionId");
 
-                    b.HasIndex("BillId");
+                    b.HasIndex("BillId")
+                        .IsUnique();
 
                     b.HasIndex("OrderId")
                         .IsUnique();
@@ -584,13 +630,13 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasData(
                         new
                         {
-                            VoucherId = new Guid("01973b28-93a4-f06f-3ba8-31876d66966d"),
-                            Description = "Voucher dành riêng cho khách hàng mới đăng ký tài khoản",
-                            ExpiredDate = new DateOnly(2026, 6, 4),
+                            VoucherId = new Guid("019758f1-5449-87e0-d68b-e53ea6f1fb6b"),
+                            Description = "Default voucher for testing purposes",
+                            ExpiredDate = new DateOnly(2026, 6, 17),
                             MaximumDiscountAmount = 10000m,
-                            MinimumOrderAmount = 100000m,
+                            MinimumOrderAmount = 10000m,
                             PercentageDiscount = 0,
-                            StartDate = new DateOnly(2025, 6, 4),
+                            StartDate = new DateOnly(2025, 6, 17),
                             Status = 1,
                             VoucherCode = "NEWUSER01",
                             VoucherName = "NEWUSER01",
@@ -647,6 +693,17 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OutboxMessages");
+                });
+
+            modelBuilder.Entity("Domain.Entities.BillDetails.BillDetail", b =>
+                {
+                    b.HasOne("Domain.Entities.Bills.Bill", "Bill")
+                        .WithMany("BillDetails")
+                        .HasForeignKey("BillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bill");
                 });
 
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
@@ -754,8 +811,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
             modelBuilder.Entity("Domain.Entities.OrderTransactions.OrderTransaction", b =>
                 {
                     b.HasOne("Domain.Entities.Bills.Bill", "Bill")
-                        .WithMany()
-                        .HasForeignKey("BillId");
+                        .WithOne("OrderTransaction")
+                        .HasForeignKey("Domain.Entities.OrderTransactions.OrderTransaction", "BillId");
 
                     b.HasOne("Domain.Entities.Orders.Order", "Order")
                         .WithOne("OrderTransaction")
@@ -861,7 +918,11 @@ namespace Persistence.Database.PostgreSQL.Migrations
 
             modelBuilder.Entity("Domain.Entities.Bills.Bill", b =>
                 {
+                    b.Navigation("BillDetails");
+
                     b.Navigation("Feedback");
+
+                    b.Navigation("OrderTransaction");
                 });
 
             modelBuilder.Entity("Domain.Entities.Categories.Category", b =>

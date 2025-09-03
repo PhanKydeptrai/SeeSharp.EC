@@ -63,6 +63,7 @@ internal sealed class MakePaymentForGuestCommandHandler : ICommandHandler<MakePa
                 orderDetail.ProductVariant!.Product!.ProductName,
                 orderDetail.ProductVariant!.VariantName,
                 orderDetail.ProductVariant!.ProductVariantPrice,
+                BillDetailUnitPrice.FromDecimal(orderDetail.UnitPrice.Value),
                 orderDetail.ProductVariant.ImageUrl ?? string.Empty,
                 BillDetailQuantity.FromInt(orderDetail.Quantity.Value),
                 orderDetail.ProductVariant.ColorCode,

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateTable : Migration
+    public partial class SeeSharpDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -268,7 +268,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     FullName = table.Column<string>(type: "varchar(50)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(10)", nullable: false),
                     IsDefault = table.Column<bool>(type: "boolean", nullable: false),
-                    SpecificAddress = table.Column<string>(type: "varchar(500)", nullable: false),
+                    SpecificAddress = table.Column<string>(type: "text", nullable: false),
                     Province = table.Column<string>(type: "varchar(50)", nullable: false),
                     District = table.Column<string>(type: "varchar(50)", nullable: false),
                     Ward = table.Column<string>(type: "varchar(50)", nullable: false)
@@ -344,10 +344,16 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
-                    PaymentMethod = table.Column<int>(type: "integer", nullable: false),
                     BillPaymentStatus = table.Column<int>(type: "integer", nullable: false),
-                    ShippingInformationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsRated = table.Column<bool>(type: "boolean", nullable: false)
+                    FullName = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    SpecificAddress = table.Column<string>(type: "text", nullable: false),
+                    Province = table.Column<string>(type: "text", nullable: false),
+                    District = table.Column<string>(type: "text", nullable: false),
+                    Ward = table.Column<string>(type: "text", nullable: false),
+                    IsRated = table.Column<bool>(type: "boolean", nullable: false),
+                    ShippingInformationId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -368,7 +374,31 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         name: "FK_Bills_ShippingInformations_ShippingInformationId",
                         column: x => x.ShippingInformationId,
                         principalTable: "ShippingInformations",
-                        principalColumn: "ShippingInformationId",
+                        principalColumn: "ShippingInformationId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BillDetails",
+                columns: table => new
+                {
+                    BillDetailId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BillId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProductName = table.Column<string>(type: "text", nullable: false),
+                    VariantName = table.Column<string>(type: "text", nullable: false),
+                    ProductVariantPrice = table.Column<decimal>(type: "decimal", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: false),
+                    BillDetailQuantity = table.Column<int>(type: "integer", nullable: false),
+                    ColorCode = table.Column<string>(type: "text", nullable: false),
+                    ProductVariantDescription = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BillDetails", x => x.BillDetailId);
+                    table.ForeignKey(
+                        name: "FK_BillDetails_Bills_BillId",
+                        column: x => x.BillId,
+                        principalTable: "Bills",
+                        principalColumn: "BillId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -450,12 +480,17 @@ namespace Persistence.Database.PostgreSQL.Migrations
             migrationBuilder.InsertData(
                 table: "Vouchers",
                 columns: new[] { "VoucherId", "Description", "ExpiredDate", "MaximumDiscountAmount", "MinimumOrderAmount", "PercentageDiscount", "StartDate", "Status", "VoucherCode", "VoucherName", "VoucherType" },
-                values: new object[] { new Guid("01973077-7337-07e6-f542-45c86d0237f9"), "Voucher dành riêng cho khách hàng mới đăng ký tài khoản", new DateOnly(2026, 6, 2), 10000m, 100000m, 0, new DateOnly(2025, 6, 2), 1, "NEWUSER01", "NEWUSER01", 0 });
+                values: new object[] { new Guid("019758f1-5449-87e0-d68b-e53ea6f1fb6b"), "Default voucher for testing purposes", new DateOnly(2026, 6, 16), 10000m, 10000m, 0, new DateOnly(2025, 6, 16), 1, "NEWUSER01", "NEWUSER01", 0 });
 
             migrationBuilder.InsertData(
                 table: "Employees",
                 columns: new[] { "EmployeeId", "Role", "UserId" },
                 values: new object[] { new Guid("01960aed-ac00-5c87-4826-7bf26a5d84ac"), 0, new Guid("01960aec-bac7-71c5-cfb0-309df6c12572") });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BillDetails_BillId",
+                table: "BillDetails",
+                column: "BillId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bills_CustomerId",
@@ -530,7 +565,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_OrderTransactions_BillId",
                 table: "OrderTransactions",
-                column: "BillId");
+                column: "BillId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderTransactions_OrderId",
@@ -582,6 +618,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BillDetails");
+
             migrationBuilder.DropTable(
                 name: "CustomerVouchers");
 

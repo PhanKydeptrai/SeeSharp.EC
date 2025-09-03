@@ -11,6 +11,7 @@ public sealed class BillDetail
     public ProductName ProductName { get; private set; } = ProductName.Empty;
     public VariantName VariantName { get; private set; } = VariantName.Empty;
     public ProductVariantPrice ProductVariantPrice { get; private set; } = null!;
+    public BillDetailUnitPrice UnitPrice { get; private set; } = null!;
     public string ImageUrl { get; private set; } = string.Empty;
     public BillDetailQuantity BillDetailQuantity { get; private set; } = null!;
     public ColorCode ColorCode { get; private set; } = null!;
@@ -24,6 +25,7 @@ public sealed class BillDetail
         ProductName productName,
         VariantName variantName,
         ProductVariantPrice productVariantPrice,
+        BillDetailUnitPrice unitPrice,
         string imageUrl,
         BillDetailQuantity billDetailQuantity,
         ColorCode colorCode,
@@ -34,6 +36,7 @@ public sealed class BillDetail
         ProductName = productName;
         VariantName = variantName;
         ProductVariantPrice = productVariantPrice;
+        UnitPrice = unitPrice;
         ImageUrl = imageUrl;
         BillDetailQuantity = billDetailQuantity;
         ColorCode = colorCode;
@@ -45,6 +48,7 @@ public sealed class BillDetail
         ProductName productName,
         VariantName variantName,
         ProductVariantPrice productVariantPrice,
+        BillDetailUnitPrice unitPrice,
         string imageUrl,
         BillDetailQuantity billDetailQuantity,
         ColorCode colorCode,
@@ -56,6 +60,7 @@ public sealed class BillDetail
             productName,
             variantName,
             productVariantPrice,
+            unitPrice,
             imageUrl,
             billDetailQuantity,
             colorCode,

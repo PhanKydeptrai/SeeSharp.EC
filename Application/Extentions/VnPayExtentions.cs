@@ -14,9 +14,9 @@ public static class VnPayExtentions
         //Get Config Info
         string vnp_Returnurl = returnUrl; //URL nhan ket qua tra ve
 
-        string vnp_Url = _configuration["VNP_URL"]!; //URL thanh toan cua VNPAY 
-        string vnp_TmnCode = _configuration["VNP_TMNCODE"]!; //Ma định danh merchant kết nối (Terminal Id)
-        string vnp_HashSecret = _configuration["VNP_HASHSECRET"]!; //Secret Key
+        string vnp_Url = _configuration["VNPAY:VNP_URL"]!; //URL thanh toan cua VNPAY 
+        string vnp_TmnCode = _configuration["VNPAY:VNP_TMNCODE"]!; //Ma định danh merchant kết nối (Terminal Id)
+        string vnp_HashSecret = _configuration["VNPAY:VNP_HASHSECRET"]!; //Secret Key
 
         //Build URL for VNPAY
         VnPayLibrary vnpay = new VnPayLibrary();

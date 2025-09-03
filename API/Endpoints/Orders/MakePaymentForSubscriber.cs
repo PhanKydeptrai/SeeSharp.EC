@@ -61,11 +61,6 @@ internal sealed class MakePaymentForSubscriber : IEndpoint
         public string? voucherCode { get; init; }
 
         /// <summary>
-        /// ID thông tin giao hàng (nếu có)
-        /// </summary>
-        public Guid? ShippingInformationId { get; init; }
-
-        /// <summary>
         /// Tên người nhận hàng
         /// </summary>
         public string FullName { get; init; } = string.Empty;

@@ -19,7 +19,6 @@ namespace Application.DTOs.Order;
 public record OrderHistoryResponse(
     Guid CustomerId,
     string? UserName,
-    // string? Email,
     string? PhoneNumber,
     string? SpecificAddress,
     decimal Total,
@@ -32,3 +31,4 @@ public record OrderHistoryResponse(
     Guid OrderId,
     OrderDetailResponse[] OrderDetails
 );
+

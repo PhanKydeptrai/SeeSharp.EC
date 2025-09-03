@@ -22,5 +22,6 @@ public class BillReadModel
     public CustomerReadModel Customer { get; set; } = null!;
     public FeedbackReadModel? Feedback { get; set; } = null!;
     public OrderReadModel Order { get; set; } = null!;
+    public OrderTransactionReadModel? OrderTransaction { get; set; } = null!;
     public ICollection<BillDetailReadModel> BillDetails { get; set; } = new List<BillDetailReadModel>();
 }

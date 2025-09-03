@@ -23,6 +23,7 @@ public interface ICategoryQueryServices
         string? sortOrder,
         int? page,
         int? pageSize);
+
     // Lấy thông tin chi tiết của một danh mục theo id lấy cả những danh mục đã bị xóa
     /// <summary>
     /// Lấy thông tin chi tiết của một danh mục theo id lấy cả những danh mục đã bị xóa

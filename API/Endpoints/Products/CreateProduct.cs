@@ -20,10 +20,10 @@ internal sealed class CreateProduct : IEndpoint
                 request.ProductImage,
                 request.ProductBaseVariantName,
                 request.ColorCode,
-                request.Description, 
-                request.VariantPrice, 
+                request.Description,
+                request.VariantPrice,
                 request.CategoryId);
-                
+
             var result = await sender.Send(command);
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
@@ -43,7 +43,8 @@ internal sealed class CreateProduct : IEndpoint
             
             """)
         .WithOpenApi()
-        .RequireAuthorization();
+        .RequireAuthorization()
+        .DisableAntiforgery();
     }
 
     private class CreateProductRequest

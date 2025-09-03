@@ -2,6 +2,7 @@ using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
 using Application.Outbox;
 using Application.Security;
+using Application.Services;
 using Domain.Entities.Employees;
 using Domain.Entities.Users;
 using Domain.IRepositories;
@@ -20,6 +21,7 @@ internal sealed class CreateNewEmployeeCommandHandler : ICommandHandler<CreateNe
     private readonly IEmployeeRepository _employeeRepository;
     private readonly ITokenProvider _tokenProvider;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly CloudinaryService _cloudinaryService;
     private readonly IOutBoxMessageServices _outboxMessageServices;
     private readonly IEventBus _eventBus;
 
@@ -29,7 +31,8 @@ internal sealed class CreateNewEmployeeCommandHandler : ICommandHandler<CreateNe
         IUnitOfWork unitOfWork,
         ITokenProvider tokenProvider,
         IOutBoxMessageServices outboxMessageServices,
-        IEventBus eventBus)
+        IEventBus eventBus,
+        CloudinaryService cloudinaryService)
     {
         _userRepository = userRepository;
         _employeeRepository = employeeRepository;
@@ -37,6 +40,7 @@ internal sealed class CreateNewEmployeeCommandHandler : ICommandHandler<CreateNe
         _tokenProvider = tokenProvider;
         _outboxMessageServices = outboxMessageServices;
         _eventBus = eventBus;
+        _cloudinaryService = cloudinaryService;
     }
 
     public async Task<Result> Handle(CreateNewEmployeeCommand request, CancellationToken cancellationToken)
@@ -44,10 +48,20 @@ internal sealed class CreateNewEmployeeCommandHandler : ICommandHandler<CreateNe
         var userExists = await _employeeRepository.IsEmployeeExist(Email.NewEmail(request.Email));
         if (userExists is not null)
         {
-            return Result.Failure(new Error("UserAlreadyExists", "User with this email already exists.", ErrorType.Problem));
+            return Result.Failure(new Error(
+                "UserAlreadyExists",
+                "User with this email already exists.",
+                ErrorType.Problem));
         }
     
         var randomPassword = _tokenProvider.GenerateRandomString(8);
+
+        // Xử lý ảnh 
+        string imageUrl = string.Empty;
+        if (request.ImageFile is not null)
+        {
+            imageUrl = await _cloudinaryService.UploadNewImage(request.ImageFile);
+        }
 
         var user = User.NewUser(
             null, 
@@ -56,7 +70,7 @@ internal sealed class CreateNewEmployeeCommandHandler : ICommandHandler<CreateNe
             PhoneNumber.NewPhoneNumber(request.PhoneNumber),
             PasswordHash.FromString(randomPassword.SHA256()),
             request.DateOfBirth,
-            string.Empty); //TODO: Add imageUrl
+            imageUrl);
 
         user.VerifyAccount();
 

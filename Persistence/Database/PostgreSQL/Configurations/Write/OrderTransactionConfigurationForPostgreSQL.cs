@@ -88,6 +88,10 @@ internal sealed class OrderTransactionConfigurationForPostgreSQL : IEntityTypeCo
             .WithMany(a => a.OrderTransactions).IsRequired(false)
             .HasForeignKey(a => a.VoucherId);
 
+        builder.HasOne(a => a.Bill)
+            .WithOne(a => a.OrderTransaction)
+            .HasForeignKey<OrderTransaction>(a => a.BillId)
+            .IsRequired(false);
 
     }
 

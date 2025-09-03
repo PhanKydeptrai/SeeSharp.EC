@@ -10,6 +10,7 @@ using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
 using Infrastructure.Services.CustomerServices;
 using Infrastructure.Services.EmployeeServices;
+using Infrastructure.Services.FeedbackServices;
 using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
 using Infrastructure.Services.ShippingInformationServices;
@@ -116,7 +117,7 @@ public static class DependencyInjection
         services.AddScoped<IEmployeeQueryServices, EmployeeQueryServices>();
         services.AddScoped<IVoucherQueryServices, VoucherQueryServices>();
         services.AddScoped<IShippingInformationQueryServices, ShippingInformationQueryServices>();
-        
+        services.AddScoped<IFeedbackQueryServices, FeedbackQueryServices>();
         
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;

@@ -7,6 +7,7 @@ public sealed class Feedback
     public FeedbackId FeedbackId { get; private set; } = null!;
     public Substance? Substance { get; private set; } = null!;
     public RatingScore RatingScore { get; private set; } = null!;
+    public IsPrivate IsPrivate { get; private set; } = null!;
     public string? ImageUrl { get; private set; } = string.Empty;
     public BillId BillId { get; private set; } = null!;
     public CustomerId CustomerId { get; private set; } = null!;
@@ -19,6 +20,7 @@ public sealed class Feedback
         FeedbackId feedbackId,
         Substance substance,
         RatingScore ratingScore,
+        IsPrivate isPrivate,
         string imageUrl,
         BillId billId,
         CustomerId customerId)
@@ -26,6 +28,7 @@ public sealed class Feedback
         FeedbackId = feedbackId;
         Substance = substance;
         RatingScore = ratingScore;
+        IsPrivate = isPrivate;
         ImageUrl = imageUrl;
         BillId = billId;
         CustomerId = customerId;
@@ -35,6 +38,7 @@ public sealed class Feedback
         Substance? substance,
         RatingScore ratingScore,
         string? imageUrl,
+        IsPrivate isPrivate,
         BillId billId,
         CustomerId customerId)
     {
@@ -42,6 +46,7 @@ public sealed class Feedback
             FeedbackId.New(),
             substance ?? Substance.Empty,
             ratingScore,
+            isPrivate,
             imageUrl ?? string.Empty,
             billId,
             customerId);

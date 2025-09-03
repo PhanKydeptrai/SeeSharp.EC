@@ -1,9 +1,9 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.IServices;
 using Application.Services;
-using Domain.Entities.Bills;
 using Domain.Entities.Customers;
 using Domain.Entities.Feedbacks;
+using Domain.Entities.Orders;
 using Domain.IRepositories;
 using Domain.IRepositories.Feedbacks;
 using Domain.Utilities.Errors;
@@ -31,12 +31,13 @@ internal sealed class CreateNewFeedBackCommandHandler : ICommandHandler<CreateNe
 
     public async Task<Result> Handle(CreateNewFeedBackCommand request, CancellationToken cancellationToken)
     {
-        var billId = BillId.FromGuid(request.BillId);
-        var isValidOrder = await _orderQueryServices.IsOrderStatusDelivered(billId);
+        var orderId = OrderId.FromGuid(request.OrderId);
+        var customerId = CustomerId.FromGuid(request.CustomerId);
+        var billId = await _orderQueryServices.GetBillIdByOrder(orderId, customerId);
 
-        if (!isValidOrder)
+        if (billId is null) //Nếu billId là null tức là không tìm thấy hoá đơn tương ứng với đơn hàng và khách hàng
         {
-            return Result.Failure(OrderError.BillStatusInValid(billId));
+            return Result.Failure(OrderError.OrderNotFound(orderId));
         }
 
 
@@ -50,6 +51,7 @@ internal sealed class CreateNewFeedBackCommandHandler : ICommandHandler<CreateNe
             Substance.FromString(request.Substance),
             RatingScore.FromFloat(request.RatingScore),
             imageUrl,
+            IsPrivate.FromBoolean(request.IsPrivate),
             billId,
             CustomerId.FromGuid(request.CustomerId));
 
