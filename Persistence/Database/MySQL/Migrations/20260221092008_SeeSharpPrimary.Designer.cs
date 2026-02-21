@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence.Database.PostgreSQL;
 
 #nullable disable
 
-namespace Persistence.Database.PostgreSQL.Migrations
+namespace Persistence.Database.MySQL.Migrations
 {
     [DbContext(typeof(SeeSharpPostgreSQLWriteDbContext))]
-    partial class SeeSharpPostgreSQLWriteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260221092008_SeeSharpPrimary")]
+    partial class SeeSharpPrimary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
