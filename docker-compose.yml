@@ -3,7 +3,7 @@ version: '3'
 services:
   redis:
     image: redis/redis-stack:latest
-    container_name: redis-nextsharp
+    container_name: redis-seesharp
     ports:
       - "6379:6379"
       - "8001:8001"
@@ -11,9 +11,10 @@ services:
 
   seq:
     image: datalust/seq:latest
-    container_name: nextsharp-seq
+    container_name: seesharp-seq
     environment:
       ACCEPT_EULA: Y
+      SEQ_FIRSTRUN_ADMINPASSWORD: ${SEQ_ADMIN_PASSWORD}
     ports:
       - "5341:80"
     restart: unless-stopped
@@ -22,13 +23,13 @@ services:
     image: changemakerstudiosus/papercut-smtp:latest
     container_name: papercut-smtp
     ports:
-      - "8080:80"
+      - "8080:8080"
       - "25:25"
     restart: unless-stopped
 
   # mysql:
   #   image: mysql:8.4
-  #   container_name: NextSharp-MySql
+  #   container_name: seesharp-MySql
   #   environment:
   #     MYSQL_ROOT_PASSWORD: "123456"
   #   ports:
@@ -37,7 +38,7 @@ services:
 
   # postgres:
   #   image: postgres:latest
-  #   container_name: NextSharp-Postgres
+  #   container_name: seesharp-Postgres
   #   environment:
   #     POSTGRES_PASSWORD: "123456"
   #   ports:
@@ -48,7 +49,7 @@ services:
 
 # rabbitmq:
 #   image: rabbitmq:3.8-management-alpine
-#   container_name: nextsharp-rabbit
+#   container_name: seesharp-rabbit
 #   hostname: my-rabbit
 #   environment:
 #     RABBITMQ_DEFAULT_USER: user
