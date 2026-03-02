@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.EventBus;
+﻿using System.Net.Mail;
+using Application.Abstractions.EventBus;
 using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
@@ -29,7 +30,7 @@ public static class DependencyInjection
 {
     //FIXME: AddInfrastructure
     public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,
+        this IServiceCollection services,   
         IConfiguration configuration)
     {
 
@@ -46,7 +47,7 @@ public static class DependencyInjection
 
         //Mail Test
         services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
-                .AddSmtpSender(configuration["Email:Host"], int.Parse(configuration["Email:Port"]!));
+                .AddSmtpSender(configuration["Email:Host"], configuration.GetValue<int>("Email:Port")!);
                 
         //Mail Thật
         // services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
