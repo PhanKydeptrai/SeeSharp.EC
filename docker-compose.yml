@@ -24,7 +24,7 @@ services:
     container_name: papercut-smtp
     ports:
       - "8080:8080"
-      - "25:25"
+      - "2525:2525"
     restart: unless-stopped
 
   # mysql:

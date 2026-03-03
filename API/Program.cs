@@ -88,11 +88,6 @@ builder.Services.AddAuthentication(options =>
     facebookOptions.ClientId = builder.Configuration["Facebook:client_id"]!;
     facebookOptions.ClientSecret = builder.Configuration["Facebook:client_secret"]!;
 });
-//.AddDiscord(discordOptions =>
-//{
-//    discordOptions.ClientId = builder.Configuration["Discord:client_id"]!;
-//    discordOptions.ClientSecret = builder.Configuration["Discord:client_secret"]!;
-//});
 #endregion
 
 builder.Services.AddAuthorization(options =>
