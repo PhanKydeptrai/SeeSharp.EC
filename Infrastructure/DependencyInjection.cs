@@ -26,6 +26,7 @@ using Persistence.Outbox;
 using Quartz;
 
 namespace Infrastructure;
+
 public static class DependencyInjection
 {
     //FIXME: AddInfrastructure
