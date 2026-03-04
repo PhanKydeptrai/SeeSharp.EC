@@ -7,7 +7,6 @@ using Domain.IRepositories.CategoryRepositories;
 using Domain.Utilities.Errors;
 using SharedKernel;
 using Domain.Entities.ProductVariants;
-using CloudinaryDotNet;
 using Application.Services;
 
 namespace Application.Features.ProductFeature.Commands.CreateProduct;
