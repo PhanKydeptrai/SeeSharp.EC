@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Database.PostgreSQL.Migrations
 {
     /// <inheritdoc />
-    public partial class SeeSharpDb : Migration
+    public partial class SeeSharpPrimary : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -153,7 +153,8 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     Jti = table.Column<string>(type: "varchar(100)", nullable: false),
                     ExpiredTime = table.Column<DateTime>(type: "TIMESTAMPTZ", nullable: false),
                     IsBlackList = table.Column<bool>(type: "boolean", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ChainId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -386,6 +387,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     ProductName = table.Column<string>(type: "text", nullable: false),
                     VariantName = table.Column<string>(type: "text", nullable: false),
                     ProductVariantPrice = table.Column<decimal>(type: "decimal", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal", nullable: false),
                     ImageUrl = table.Column<string>(type: "text", nullable: false),
                     BillDetailQuantity = table.Column<int>(type: "integer", nullable: false),
                     ColorCode = table.Column<string>(type: "text", nullable: false),
@@ -409,6 +411,7 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     FeedbackId = table.Column<Guid>(type: "uuid", nullable: false),
                     Substance = table.Column<string>(type: "varchar(255)", nullable: true),
                     RatingScore = table.Column<float>(type: "float", nullable: false),
+                    IsPrivate = table.Column<bool>(type: "boolean", nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(255)", nullable: true),
                     BillId = table.Column<Guid>(type: "uuid", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false)
@@ -475,12 +478,12 @@ namespace Persistence.Database.PostgreSQL.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserId", "DateOfBirth", "Email", "Gender", "ImageUrl", "IsVerify", "PasswordHash", "PhoneNumber", "UserName", "UserStatus" },
-                values: new object[] { new Guid("01960aec-bac7-71c5-cfb0-309df6c12572"), null, "kyp194490@gmail.com", "Unknown", "", true, "15E2B0D3C33891EBB0F1EF609EC419420C20E320CE94C65FBC8C3312448EB225", "0777637527", "PhanKy", 0 });
+                values: new object[] { new Guid("01960aec-bac7-71c5-cfb0-309df6c12572"), null, "lmao@gmail.com", "Unknown", "", true, "15E2B0D3C33891EBB0F1EF609EC419420C20E320CE94C65FBC8C3312448EB225", "0777637527", "hehe", 0 });
 
             migrationBuilder.InsertData(
                 table: "Vouchers",
                 columns: new[] { "VoucherId", "Description", "ExpiredDate", "MaximumDiscountAmount", "MinimumOrderAmount", "PercentageDiscount", "StartDate", "Status", "VoucherCode", "VoucherName", "VoucherType" },
-                values: new object[] { new Guid("019758f1-5449-87e0-d68b-e53ea6f1fb6b"), "Default voucher for testing purposes", new DateOnly(2026, 6, 16), 10000m, 10000m, 0, new DateOnly(2025, 6, 16), 1, "NEWUSER01", "NEWUSER01", 0 });
+                values: new object[] { new Guid("019758f1-5449-87e0-d68b-e53ea6f1fb6b"), "Default voucher for testing purposes", new DateOnly(2027, 3, 10), 10000m, 10000m, 0, new DateOnly(2026, 3, 10), 1, "NEWUSER01", "NEWUSER01", 0 });
 
             migrationBuilder.InsertData(
                 table: "Employees",

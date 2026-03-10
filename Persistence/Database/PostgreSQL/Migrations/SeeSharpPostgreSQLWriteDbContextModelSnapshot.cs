@@ -480,6 +480,9 @@ namespace Persistence.Database.PostgreSQL.Migrations
                     b.Property<Guid>("UserAuthenticationTokenId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ChainId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("ExpiredTime")
                         .HasColumnType("TIMESTAMPTZ");
 
@@ -632,11 +635,11 @@ namespace Persistence.Database.PostgreSQL.Migrations
                         {
                             VoucherId = new Guid("019758f1-5449-87e0-d68b-e53ea6f1fb6b"),
                             Description = "Default voucher for testing purposes",
-                            ExpiredDate = new DateOnly(2027, 2, 21),
+                            ExpiredDate = new DateOnly(2027, 3, 10),
                             MaximumDiscountAmount = 10000m,
                             MinimumOrderAmount = 10000m,
                             PercentageDiscount = 0,
-                            StartDate = new DateOnly(2026, 2, 21),
+                            StartDate = new DateOnly(2026, 3, 10),
                             Status = 1,
                             VoucherCode = "NEWUSER01",
                             VoucherName = "NEWUSER01",

@@ -1,4 +1,5 @@
 using Domain.Entities.Users;
+using Domain.Entities.VerificationTokens;
 
 namespace Domain.Entities.UserAuthenticationTokens;
 public sealed class UserAuthenticationToken
@@ -9,6 +10,7 @@ public sealed class UserAuthenticationToken
     public DateTime ExpiredTime { get; private set; }
     public IsBlackList IsBlackList { get; private set; } = null!;
     public UserId UserId { get; private set; } = null!;
+    public ChainId ChainId { get; private set; } = null!;
     public User? User { get; set; } = null!;
 
     private UserAuthenticationToken(
@@ -17,6 +19,7 @@ public sealed class UserAuthenticationToken
         string jti,
         DateTime expiredTime,
         IsBlackList isBlackList,
+        ChainId chainId,
         UserId userId)
     {
         UserAuthenticationTokenId = userAuthenticationTokenId;
@@ -24,6 +27,7 @@ public sealed class UserAuthenticationToken
         Jti = jti;
         ExpiredTime = expiredTime;
         IsBlackList = isBlackList;
+        ChainId = chainId;
         UserId = userId;
     }
 
@@ -32,6 +36,7 @@ public sealed class UserAuthenticationToken
         string value,
         string jti,
         DateTime expiredTime,
+        ChainId? chainId, // can be null, so we can reuse ChainId for multiple token
         UserId userId)
     {
         if (expiredTime <= DateTime.UtcNow)
@@ -47,6 +52,7 @@ public sealed class UserAuthenticationToken
             jti,
             expiredTime,
             IsBlackList.False,
+            chainId ?? ChainId.New(), 
             userId);
     }
 

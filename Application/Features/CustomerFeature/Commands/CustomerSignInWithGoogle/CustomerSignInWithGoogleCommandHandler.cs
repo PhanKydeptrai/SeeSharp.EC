@@ -11,6 +11,7 @@ using Domain.IRepositories.Customers;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.IRepositories.Users;
 using Google.Apis.Auth;
+using Microsoft.Extensions.Configuration;
 using SharedKernel;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerSignInWithGoogle;
@@ -22,6 +23,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
     private readonly ICustomerQueryServices _customerQueryServices;
     private readonly IUserAuthenticationTokenRepository _userAuthenticationTokenRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IConfiguration _configuration;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenProvider _tokenProvider;
     public CustomerSignInWithGoogleCommandHandler(
@@ -30,7 +32,8 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
         IUnitOfWork unitOfWork,
         ICustomerQueryServices customerQueryServices,
         ITokenProvider tokenProvider,
-        IUserAuthenticationTokenRepository userAuthenticationTokenRepository)
+        IUserAuthenticationTokenRepository userAuthenticationTokenRepository,
+        IConfiguration configuration)
     {
         _customerRepository = customerRepository;
         _userRepository = userRepository;
@@ -38,13 +41,18 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
         _customerQueryServices = customerQueryServices;
         _tokenProvider = tokenProvider;
         _userAuthenticationTokenRepository = userAuthenticationTokenRepository;
+        _configuration = configuration;
     }
 
     public async Task<Result<CustomerSignInResponse>> Handle(
         CustomerSignInWithGoogleCommand request,
         CancellationToken cancellationToken)
     {
-        var googleUser = await GoogleJsonWebSignature.ValidateAsync(request.token, new GoogleJsonWebSignature.ValidationSettings());
+        var validationSettings = new GoogleJsonWebSignature.ValidationSettings()
+        {
+            Audience = new List<string>() { _configuration["Google:ClientId"]! }
+        };
+        var googleUser = await GoogleJsonWebSignature.ValidateAsync(request.token, validationSettings);
 
         var customerAuthResponse = await _customerQueryServices.GetCustomerByEmail(Email.FromString(googleUser.Email));
 
@@ -102,6 +110,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
             newRefreshToken,
             newJti,
             DateTime.UtcNow.AddDays(30),
+            null,
             user.UserId);
 
         await _userAuthenticationTokenRepository.AddRefreshToken(newUserAuthenticationToken);
@@ -130,6 +139,7 @@ internal sealed class CustomerSignInWithGoogleCommandHandler
             refreshToken,
             jti,
             DateTime.UtcNow.AddDays(30),
+            null,
             UserId.FromUlid(customerAuthResponse.UserId));
 
 
