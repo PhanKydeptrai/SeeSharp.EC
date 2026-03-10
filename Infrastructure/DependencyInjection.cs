@@ -1,4 +1,4 @@
-﻿using System.Net.Mail;
+using System.Net.Mail;
 using Application.Abstractions.EventBus;
 using Application.IServices;
 using Application.Security;
@@ -57,6 +57,7 @@ public static class DependencyInjection
         //Add TokenProvider
         services.AddScoped<ITokenProvider, TokenProvider>();
         // services.AddScoped<ITokenRevocationService, TokenRevocationService>();
+        services.AddScoped<CustomJwtBearerEvents>();
 
         #region Strongly Typed Settings
         //services.AddOptionsWithFluentValidation<GithubOptions>(GithubOptions.ConfigurationSection);

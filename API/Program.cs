@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Security.Claims;
 using API.Extentions;
@@ -10,6 +10,7 @@ using Application.Security;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.MessageBroker;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -37,24 +38,7 @@ builder.Services.AddAuthentication(options =>
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
-    options.Events = new JwtBearerEvents
-    {
-        OnTokenValidated = async context =>
-        {
-            var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            var isGuest = context.Principal?.FindFirst(CustomJwtRegisteredClaimNames.GuestId)?.Value ?? string.Empty;
-
-            if (jti is not null && isGuest == string.Empty)
-            {
-                var revocationService = context.HttpContext.RequestServices
-                    .GetRequiredService<ITokenRevocationService>();
-                if (await revocationService.IsTokenRevoked(jti))
-                {
-                    context.Fail("Token was revoked.");
-                }
-            }
-        }
-    };
+    options.EventsType = typeof(CustomJwtBearerEvents);
 
     options.TokenValidationParameters = new TokenValidationParameters
     {

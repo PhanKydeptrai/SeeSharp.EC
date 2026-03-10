@@ -30,4 +30,14 @@ public class TokenRevocationService : ITokenRevocationService
         
         return false;
     }
+
+    public async Task RevokeTokenChainByJtiAsync(string jti)
+    {
+        var token = await _dbContext.UserAuthenticationTokens.FirstOrDefaultAsync(x => x.Jti == jti);
+
+        // Thu hồi tất cả token
+        await _dbContext.UserAuthenticationTokens
+            .Where(x => x.ChainId == token!.ChainId)
+            .ExecuteUpdateAsync(x => x.SetProperty(x => x.IsBlackList, IsBlackList.True));
+    }
 }
