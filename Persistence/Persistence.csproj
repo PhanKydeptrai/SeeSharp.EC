@@ -15,6 +15,6 @@
 	  <ProjectReference Include="..\Application\Application.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Database\PostgreSQL\Migrations\" />
+	  <Folder Include="Database/MySQL/" />
 	</ItemGroup>
 </Project>

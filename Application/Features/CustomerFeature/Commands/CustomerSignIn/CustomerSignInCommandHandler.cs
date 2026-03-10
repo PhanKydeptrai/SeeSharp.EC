@@ -84,6 +84,7 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
             refreshToken,
             jti,
             DateTime.UtcNow.AddHours(10),
+            null,
             UserId.FromUlid(response!.UserId));
 
         await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);

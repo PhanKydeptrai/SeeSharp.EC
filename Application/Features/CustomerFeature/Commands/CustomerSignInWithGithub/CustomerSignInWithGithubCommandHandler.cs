@@ -99,6 +99,7 @@ internal sealed class CustomerSignInWithGithubCommandHandler
             newRefreshToken,
             newJti,
             DateTime.UtcNow.AddDays(30),
+            null,
             user.UserId);
 
         await _userAuthenticationTokenRepository.AddRefreshToken(newUserAuthenticationToken);
@@ -126,6 +127,7 @@ internal sealed class CustomerSignInWithGithubCommandHandler
             refreshToken,
             jti,
             DateTime.UtcNow.AddDays(30),
+            null,
             UserId.FromUlid(customerAuthResponse.UserId));
 
 

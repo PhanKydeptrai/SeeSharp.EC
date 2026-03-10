@@ -28,13 +28,14 @@ internal sealed class GetMakePaymentResponse : IEndpoint
         .AddNotFoundResponse()
         .AddUnauthorizedResponse()
         .WithSummary("Lấy thông tin phản hồi thanh toán")
-        .WithDescription("""
+        .WithDescription(
+            """
             Cho phép khách hàng lấy thông tin phản hồi thanh toán của mình.
-               
-            Sample Request:
-               
-             GET /api/orders/make-payment
-               
+                
+                Sample Request:
+                
+                GET /api/orders/make-payment
+                
             """)
         .WithOpenApi()
         .RequireAuthorization();

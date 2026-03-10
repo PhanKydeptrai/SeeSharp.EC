@@ -56,6 +56,7 @@ internal sealed class CustomerSignInWithRefreshTokenCommandHandler
             response.refreshToken,
             jti,
             DateTime.UtcNow.AddDays(30),
+            userAuhenticationToken.ChainId,
             userAuhenticationToken.UserId);
 
         await _userAuthenticationTokenRepository.AddRefreshToken(newUserAuhenticationToken);

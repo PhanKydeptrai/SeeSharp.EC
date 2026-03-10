@@ -5,6 +5,7 @@ using Application.Security;
 using Domain.Entities.Employees;
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.Users;
+using Domain.Entities.VerificationTokens;
 using Domain.IRepositories;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.Utilities.Errors;
@@ -55,6 +56,7 @@ internal sealed class EmployeeSignInCommandHandler : ICommandHandler<EmployeeSig
             refreshToken,
             jti,
             DateTime.UtcNow.AddDays(30),
+            null,
             UserId.FromUlid(response!.UserId));
         
         await _userAuthenticationTokenRepository.AddRefreshToken(userAuthenticationToken);

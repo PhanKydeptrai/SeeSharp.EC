@@ -1,5 +1,6 @@
 using Domain.Entities.UserAuthenticationTokens;
 using Domain.Entities.Users;
+using Domain.Entities.VerificationTokens;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -36,6 +37,13 @@ internal sealed class UserAuthenticationTokenConfigurationForPostgreSQL : IEntit
                 v => v.Value,
                 v => IsBlackList.FromBoolean(v))
             .HasColumnType("boolean");
+        
+        builder.Property(x => x.ChainId)
+            .IsRequired()
+            .HasConversion(
+                value => value.Value,
+                value => ChainId.FromGuid(value))
+            .HasColumnType("uuid");
         
         builder.Property(x => x.UserId)
             .IsRequired()

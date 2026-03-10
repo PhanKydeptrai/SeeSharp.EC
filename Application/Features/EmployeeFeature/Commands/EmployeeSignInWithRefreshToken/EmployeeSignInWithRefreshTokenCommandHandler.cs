@@ -2,6 +2,7 @@ using Application.Abstractions.Messaging;
 using Application.DTOs.Employee;
 using Application.Security;
 using Domain.Entities.UserAuthenticationTokens;
+using Domain.Entities.Users;
 using Domain.IRepositories;
 using Domain.IRepositories.UserAuthenticationTokens;
 using Domain.Utilities.Errors;
@@ -56,6 +57,7 @@ internal sealed class EmployeeSignInWithRefreshTokenCommandHandler
             response.refreshToken,
             jti,
             DateTime.UtcNow.AddDays(30),
+            userAuhenticationToken.ChainId, // reuse chain id to link between old token and new token
             userAuhenticationToken.UserId);
 
         await _userAuthenticationTokenRepository.AddRefreshToken(newUserAuhenticationToken);
