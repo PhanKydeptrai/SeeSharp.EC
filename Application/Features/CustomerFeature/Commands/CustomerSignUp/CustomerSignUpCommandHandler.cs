@@ -9,9 +9,9 @@ using Domain.IRepositories.Customers;
 using Domain.IRepositories.Users;
 using Domain.IRepositories.VerificationTokens;
 using Domain.OutboxMessages.Services;
+using Application.Abstractions.Authentication;
 using Domain.Utilities.Errors;
 using Domain.Utilities.Events.CustomerEvents;
-using NETCore.Encrypt.Extensions;
 using SharedKernel;
 
 namespace Application.Features.CustomerFeature.Commands.CustomerSignUp;
@@ -25,6 +25,7 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
     private readonly IOutBoxMessageServices _outBoxMessageServices;
     private readonly IEventBus _eventBus;
     private readonly IVerificationTokenRepository _verificationTokenRepository;
+    private readonly IPasswordHasher _passwordHasher;
 
     public CustomerSignUpCommandHandler(
         ICustomerRepository customerRepository,
@@ -32,7 +33,8 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
         IEventBus eventBus,
         IUserRepository userRepository,
         IOutBoxMessageServices outBoxMessageServices,
-        IVerificationTokenRepository verificationTokenRepository)
+        IVerificationTokenRepository verificationTokenRepository,
+        IPasswordHasher passwordHasher)
     {
         _customerRepository = customerRepository;
         _unitOfWork = unitOfWork;
@@ -40,6 +42,7 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
         _userRepository = userRepository;
         _outBoxMessageServices = outBoxMessageServices;
         _verificationTokenRepository = verificationTokenRepository;
+        _passwordHasher = passwordHasher;
     }
     #endregion
 
@@ -110,7 +113,7 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
             UserName.NewUserName(request.UserName),
             Email.NewEmail(request.Email),
             PhoneNumber.Empty,
-            PasswordHash.NewPasswordHash(request.Password.SHA256()),
+            PasswordHash.NewPasswordHash(_passwordHasher.Hash(request.Password)),
             null,
             string.Empty);
     }
