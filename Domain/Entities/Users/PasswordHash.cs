@@ -18,12 +18,12 @@ public sealed class PasswordHash : ValueObject
 
         }
 
-        if (value.Length != Length)
-        {
-            //throw new ArgumentOutOfRangeException(nameof(value), $"Password hash must be {Length} char");
-            throw new ArgumentException(nameof(value), $"Password hash must be {Length} char");
+        // if (value.Length != Length)
+        // {
+        //     //throw new ArgumentOutOfRangeException(nameof(value), $"Password hash must be {Length} char");
+        //     throw new ArgumentException(nameof(value), $"Password hash must be {Length} char");
 
-        }
+        // }
         return new PasswordHash(value);
     }
     public static PasswordHash FromString(string value) => new PasswordHash(value);

@@ -1,3 +1,4 @@
+using Application.Abstractions.Authentication;
 using Application.DTOs.Customer;
 using Application.Features.Pages;
 using Application.IServices;
@@ -13,10 +14,13 @@ namespace Infrastructure.Services.CustomerServices;
 internal sealed class CustomerQueryServices : ICustomerQueryServices
 {
     private readonly SeeSharpPostgreSQLReadDbContext _dbContext;
+    private readonly IPasswordHasher _passwordHasher;
     public CustomerQueryServices(
-        SeeSharpPostgreSQLReadDbContext dbContext)
+        SeeSharpPostgreSQLReadDbContext dbContext, 
+        IPasswordHasher passwordHasher)
     {
         _dbContext = dbContext;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<bool> IsCustomerEmailExist(
@@ -49,9 +53,9 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
     public async Task<CustomerAuthenticationResponse?> AuthenticateCustomer(
         Email email, PasswordHash password)
     {
-        return await _dbContext.Customers.Where(
+        var user = await _dbContext.Customers.Where(
             a => a.UserReadModel.Email == email.Value 
-            && a.UserReadModel.PasswordHash == password.Value
+            // && a.UserReadModel.PasswordHash == password.Value
             && a.UserReadModel.IsVerify == true
             && a.UserReadModel.UserStatus != UserStatus.Deleted
             && a.UserReadModel.UserStatus != UserStatus.Blocked)
@@ -60,8 +64,16 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
                 a.CustomerId,
                 a.UserReadModel.Email,
                 a.UserReadModel.UserStatus.ToString(),
+                a.UserReadModel.PasswordHash.ToString(),
                 a.CustomerType.ToString()))
             .FirstOrDefaultAsync();
+
+        if(_passwordHasher.Verify(password.Value, user!.HashPassword))
+        {
+            return user;
+        }
+
+        return null;
     }
     public async Task<CustomerAuthenticationResponse?> GetCustomerByEmail(Email email)
     {
@@ -74,6 +86,7 @@ internal sealed class CustomerQueryServices : ICustomerQueryServices
                 a.CustomerId,
                 a.UserReadModel.Email,
                 a.UserReadModel.UserStatus.ToString(),
+                a.UserReadModel.PasswordHash.ToString(),
                 a.CustomerType.ToString()))
             .FirstOrDefaultAsync();
     }

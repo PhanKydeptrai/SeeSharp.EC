@@ -5,4 +5,5 @@ public record CustomerAuthenticationResponse(
     Ulid CustomerId,
     string Email,
     string UserStatus,
+    string HashPassword,
     string CustomerType);

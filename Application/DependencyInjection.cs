@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Behaviors;
+﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Behaviors;
 using Application.Security;
 using Application.Services;
 using FluentValidation;
@@ -23,7 +24,6 @@ public static class DependencyInjection
         });
 
         services.AddScoped<CloudinaryService>();
-        
         //NOTE: Chưa hiểu
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
         //Cấu hình FluentValidation

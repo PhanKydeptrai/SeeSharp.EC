@@ -1,4 +1,5 @@
 using System.Net.Mail;
+using Application.Abstractions.Authentication;
 using Application.Abstractions.EventBus;
 using Application.IServices;
 using Application.Security;
@@ -121,7 +122,7 @@ public static class DependencyInjection
         services.AddScoped<IVoucherQueryServices, VoucherQueryServices>();
         services.AddScoped<IShippingInformationQueryServices, ShippingInformationQueryServices>();
         services.AddScoped<IFeedbackQueryServices, FeedbackQueryServices>();
-        
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }

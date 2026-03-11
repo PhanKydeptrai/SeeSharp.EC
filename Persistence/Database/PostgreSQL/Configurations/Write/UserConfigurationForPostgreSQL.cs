@@ -65,7 +65,7 @@ internal sealed class UserConfigurationForPostgreSQL : IEntityTypeConfiguration<
                 v => v!.Value,
                 v => PasswordHash.FromString(v)
             )
-            .HasColumnType("varchar(64)");
+            .HasColumnType("varchar(100)");
 
         builder.Property(a => a.UserStatus)
             .IsRequired()
