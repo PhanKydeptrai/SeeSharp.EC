@@ -101,7 +101,7 @@ internal sealed class CustomerSignInCommandHandler : ICommandHandler<CustomerSig
     {
         var response = await _customerQueryServices.AuthenticateCustomer(
             Email.NewEmail(request.Email),
-            PasswordHash.NewPasswordHash(request.Password.SHA256()));
+            PasswordHash.NewPasswordHash(request.Password));
 
         if (response is null) return (null, Result.Failure<CustomerSignInResponse>(CustomerError.LoginFailed()));
 
