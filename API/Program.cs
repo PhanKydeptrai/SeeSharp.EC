@@ -101,7 +101,7 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
-builder.Services.AddProblemDetails();
+// builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
