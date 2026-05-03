@@ -98,7 +98,6 @@ public static class DependencyInjection
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
-        //NOTE: provider bị lỏ
         services.AddScoped<CategoryQueryServices>();
         services.AddScoped<ICategoryQueryServices>(provider =>
         {
