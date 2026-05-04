@@ -32,6 +32,7 @@ using Domain.IRepositories.Bills;
 using Persistence.Repositories.BillRepositories;
 using Persistence.Repositories.FeedbackRepositories;
 using Domain.IRepositories.Feedbacks;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Persistence;
 public static class DependencyInjection
@@ -49,7 +50,16 @@ public static class DependencyInjection
     //Add Repository
     public static IServiceCollection AddRepository(this IServiceCollection services)
     {
-        services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<CategoryRepository>();
+        services.AddScoped<ICategoryRepository>(provider =>
+        {
+            var categoryRepository = provider.GetRequiredService<CategoryRepository>();
+
+            return new CategoryRepositoryDecorated(
+                categoryRepository,
+                provider.GetRequiredService<IDistributedCache>());
+        });
+
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IUserRepository, UserRepository>();

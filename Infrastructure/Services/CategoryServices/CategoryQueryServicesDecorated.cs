@@ -9,6 +9,8 @@ namespace Infrastructure.Services.CategoryServices;
 
 internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 {
+    private const string CategoryCacheVersionKey = "Category:CacheVersion";
+
     private static readonly DistributedCacheEntryOptions CategoryCacheOptions = new()
     {
         AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
@@ -34,7 +36,7 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         CategoryId categoryId, 
         CancellationToken cancellationToken = default)
     {
-        string cacheKey = BuildCategoryByIdCacheKey(categoryId);
+        string cacheKey = BuildCategoryByIdCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
         string? cachedCategory = await _cache.GetStringAsync(cacheKey, cancellationToken);
 
         if (!string.IsNullOrEmpty(cachedCategory))
@@ -62,7 +64,7 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         CategoryId categoryId, 
         CancellationToken cancellationToken = default)
     {
-        string cacheKey = BuildCategoryDetailCacheKey(categoryId);
+        string cacheKey = BuildCategoryDetailCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
         string? cachedCategoryDetail = await _cache.GetStringAsync(cacheKey, cancellationToken);
 
         if (!string.IsNullOrEmpty(cachedCategoryDetail))
@@ -88,7 +90,7 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 
     public async Task<List<CategoryInfo>> GetCategoryInfo()
     {
-        const string cacheKey = "CategoryInfo:All";
+        string cacheKey = BuildCategoryInfoCacheKey(await GetCacheVersionAsync());
         string? cachedCategoryInfo = await _cache.GetStringAsync(cacheKey);
 
         if (!string.IsNullOrEmpty(cachedCategoryInfo))
@@ -129,7 +131,14 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         int? page,
         int? pageSize)
     {
-        string cacheKey = BuildPagedListCacheKey(filter, searchTerm, sortColumn, sortOrder, page, pageSize);
+        string cacheKey = BuildPagedListCacheKey(
+            await GetCacheVersionAsync(),
+            filter,
+            searchTerm,
+            sortColumn,
+            sortOrder,
+            page,
+            pageSize);
         string? cachedPagedList = await _cache.GetStringAsync(cacheKey);
 
         if (!string.IsNullOrEmpty(cachedPagedList))
@@ -148,17 +157,28 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         return pagedCategories;
     }
 
-    private static string BuildCategoryByIdCacheKey(CategoryId categoryId)
+    private async Task<string> GetCacheVersionAsync(CancellationToken cancellationToken = default)
     {
-        return $"CategoryResponse:{categoryId.Value}";
+        return await _cache.GetStringAsync(CategoryCacheVersionKey, cancellationToken) ?? "v1";
     }
 
-    private static string BuildCategoryDetailCacheKey(CategoryId categoryId)
+    private static string BuildCategoryByIdCacheKey(string version, CategoryId categoryId)
     {
-        return $"CategoryDetailResponse:{categoryId.Value}";
+        return $"Category:{version}:Response:{categoryId.Value}";
+    }
+
+    private static string BuildCategoryDetailCacheKey(string version, CategoryId categoryId)
+    {
+        return $"Category:{version}:DetailResponse:{categoryId.Value}";
+    }
+
+    private static string BuildCategoryInfoCacheKey(string version)
+    {
+        return $"Category:{version}:Info:All";
     }
 
     private static string BuildPagedListCacheKey(
+        string version,
         string? filter,
         string? searchTerm,
         string? sortColumn,
@@ -166,6 +186,6 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         int? page,
         int? pageSize)
     {
-        return $"CategoryPagedList:{filter ?? "all"}:{searchTerm ?? "none"}:{sortColumn ?? "categoryid"}:{sortOrder ?? "asc"}:{page ?? 1}:{pageSize ?? 10}";
+        return $"Category:{version}:PagedList:{filter ?? "all"}:{searchTerm ?? "none"}:{sortColumn ?? "categoryid"}:{sortOrder ?? "asc"}:{page ?? 1}:{pageSize ?? 10}";
     }
 }
