@@ -63,7 +63,7 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
 
             await _verificationTokenRepository.AddVerificationTokenToPostgreSQL(newVerificationToken);
 
-            var newMessage = new AccountVerificationEmailSentEvent(
+            var newMessage = new AccountVerificationEmailSentIntergrationEvent(
                 account.UserId,
                 newVerificationToken.VerificationTokenId,
                 account.User.Email!.Value,
@@ -83,7 +83,7 @@ internal sealed class CustomerSignUpCommandHandler : ICommandHandler<CustomerSig
         var verificationToken = VerificationToken.NewVerificationToken(
             string.Empty, user.UserId, DateTime.UtcNow.AddMinutes(5));
 
-        var message = new AccountVerificationEmailSentEvent(
+        var message = new AccountVerificationEmailSentIntergrationEvent(
                 user.UserId,
                 verificationToken.VerificationTokenId,
                 user.Email!.Value,

@@ -4,8 +4,7 @@ using Application.Abstractions.EventBus;
 using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
-using Infrastructure.Consumers.CustomerMessageConsumers;
-using Infrastructure.Consumers.EmployeeEventConsumers;
+using Infrastructure.Consumers;
 using Infrastructure.MessageBroker;
 using Infrastructure.Security;
 using Infrastructure.Services;
@@ -140,19 +139,7 @@ public static class DependencyInjection
             });
 
             //* Đăng ký consumers
-            busConfiguration.AddConsumer<CustomerResetPasswordEmailSendMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerResetPasswordMessageConsumer>();
-            busConfiguration.AddConsumer<AccountVerificationEmailSentMessageConsumer>();
-            busConfiguration.AddConsumer<CustomerConfirmedSuccessfullyEventConsumer>();
-            busConfiguration.AddConsumer<CustomerChangePasswordEventConsumer>();
-            busConfiguration.AddConsumer<CustomerConfirmChangePasswordEventConsumer>();
-            busConfiguration.AddConsumer<SendDefaultPasswordToUserEventConsumer>();
-            
-            // Đăng ký employee password management consumers
-            busConfiguration.AddConsumer<EmployeeResetPasswordEmailSendEventConsumer>();
-            busConfiguration.AddConsumer<EmployeeResetPasswordEventConsumer>();
-            busConfiguration.AddConsumer<EmployeeChangePasswordEventConsumer>();
-            busConfiguration.AddConsumer<EmployeeConfirmChangePasswordEventConsumer>();
+            busConfiguration.AddConsumer<EmailNotificationConsumer>();
         });
 
         return services;

@@ -7,7 +7,7 @@ namespace Domain.Utilities.Events.CustomerEvents;
 /// <param name="VerificationTokenId"></param>
 /// <param name="Email"></param>
 /// <param name="MessageId"></param>
-public record CustomerChangePasswordEvent(
+public record CustomerChangePasswordIntergrationEvent(
     Guid UserId, 
     Guid VerificationTokenId, 
     string Email,

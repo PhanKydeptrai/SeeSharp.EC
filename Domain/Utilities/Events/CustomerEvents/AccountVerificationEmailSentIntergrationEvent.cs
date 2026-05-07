@@ -1,6 +1,6 @@
 namespace Domain.Utilities.Events.CustomerEvents;
 
-public record AccountVerificationEmailSentEvent(
+public record AccountVerificationEmailSentIntergrationEvent(
     Guid UserId, 
     Guid VerificationTokenId, 
     string Email, 
