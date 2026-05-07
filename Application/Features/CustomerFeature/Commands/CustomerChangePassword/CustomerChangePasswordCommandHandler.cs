@@ -59,7 +59,7 @@ internal sealed class CustomerChangePasswordCommandHandler : ICommandHandler<Cus
         await _verificationTokenRepository.AddVerificationTokenToPostgreSQL(token);
 
         //Create event
-        var message = new CustomerChangePasswordEvent(
+        var message = new CustomerChangePasswordIntergrationEvent(
             user.UserId,
             token.VerificationTokenId, 
             user.Email!.Value,

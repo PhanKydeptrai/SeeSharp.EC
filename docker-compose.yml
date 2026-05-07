@@ -2,7 +2,7 @@ version: '3'
 
 services:
   redis:
-    image: redis/redis-stack:latest
+    image: redis/redis-stack@sha256:25dbb04fc4d6d190eda327dab551631500b0f9ac8f9808e8e63b7fda1ddff196
     container_name: redis-seesharp
     ports:
       - "6379:6379"
@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
 
   seq:
-    image: datalust/seq:latest
+    image: datalust/seq@sha256:868a12e93ec0b8c993767a7dd4cd6c8ebc441511c79e4cfac66c911f62d4db65
     container_name: seesharp-seq
     environment:
       ACCEPT_EULA: Y
@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
 
   papercut-smtp:
-    image: changemakerstudiosus/papercut-smtp:latest
+    image: changemakerstudiosus/papercut-smtp@sha256:19af2acb6dc029add134bdaa0a57935f60e9bfa6df2c887d5715f19b028241a2
     container_name: papercut-smtp
     ports:
       - "8080:8080"
@@ -43,7 +43,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "5431:5432"
+      - "5432:5432"
     volumes:
       - ${VOLUME_PATH}
     restart: unless-stopped

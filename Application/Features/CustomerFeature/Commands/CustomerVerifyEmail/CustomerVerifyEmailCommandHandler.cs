@@ -62,7 +62,7 @@ internal sealed class CustomerVerifyEmailCommandHandler : ICommandHandler<Custom
         await _voucherRepository.AddCustomerVoucher(customerVoucher);
 
 
-        var message = new CustomerConfirmedSuccessfullyEvent("NEWUSER01", token.User!.Email!.Value, Ulid.NewUlid().ToGuid());
+        var message = new CustomerConfirmedEvent("NEWUSER01", token.User!.Email!.Value, Ulid.NewUlid().ToGuid());
         await OutboxMessageExtentions.InsertOutboxMessageAsync(message.MessageId, message, _outBoxMessageServices);
         await _unitOfWork.SaveChangesAsync();
         

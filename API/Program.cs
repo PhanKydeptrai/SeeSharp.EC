@@ -101,7 +101,7 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
-builder.Services.AddProblemDetails();
+// builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(); //* Cấu hình tự viết
 builder.Services.AddHealthChecks();
@@ -170,10 +170,13 @@ app.UseSerilogRequestLogging(); //Serilog middleware
 app.UseRequestContextLogging(); //Middleware log thông tin request
 #endregion
 
+app.UseRouting();
+
 #region Cors
 app.UseCors("AllowAll");
 #endregion
-
+app.UseAuthentication();
+app.UseAuthorization();
 #region Cấu hình minimal API
 app.MapControllers();
 app.MapEndpoints();
@@ -183,11 +186,6 @@ app.MapEndpoints();
 app.UseSwaggerAndScalar();
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Add static files middleware
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
+// app.UseStaticFiles(); // Add static files middleware
 app.Run();
 
