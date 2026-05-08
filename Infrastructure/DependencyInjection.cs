@@ -41,7 +41,7 @@ public static class DependencyInjection
             .AddScoped<OutboxProcessor>() //Đăng ký OutboxProcessor
             .AddEventBus()
             .AddRedisConfig(configuration)
-            .AddCacheService()
+            .AddAppResilience()
             .AddBackgoundJob()
             .AddMassTransitConfiguration();
 

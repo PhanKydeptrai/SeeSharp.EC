@@ -8,7 +8,7 @@ namespace Infrastructure.Options;
 
 public static class CacheServiceExtensions
 {
-    public static IServiceCollection AddCacheService(this IServiceCollection services)
+    public static IServiceCollection AddAppResilience(this IServiceCollection services)
     {
         IPolicyRegistry<string?> registry = new PolicyRegistry();
         // Nếu lỗi thì trả về null (Cache Miss)
@@ -28,9 +28,9 @@ public static class CacheServiceExtensions
         var genericCircuitBreaker = circuitBreakerPolicy.AsAsyncPolicy<string?>();
 
         var resilienceStrategy = Policy.WrapAsync(fallbackPolicy, genericCircuitBreaker);
+
         registry.Add(Strategy.RedisStrategy, resilienceStrategy);
         services.AddSingleton<IReadOnlyPolicyRegistry<string?>>(registry);
-
         return services;
     }
 }
