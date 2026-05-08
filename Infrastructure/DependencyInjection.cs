@@ -6,6 +6,7 @@ using Application.Security;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers;
 using Infrastructure.MessageBroker;
+using Infrastructure.Options;
 using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
@@ -40,6 +41,7 @@ public static class DependencyInjection
             .AddScoped<OutboxProcessor>() //Đăng ký OutboxProcessor
             .AddEventBus()
             .AddRedisConfig(configuration)
+            .AddCacheService()
             .AddBackgoundJob()
             .AddMassTransitConfiguration();
 

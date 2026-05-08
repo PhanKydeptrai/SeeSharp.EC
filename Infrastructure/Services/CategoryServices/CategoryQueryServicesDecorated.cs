@@ -4,6 +4,9 @@ using Application.IServices;
 using Domain.Entities.Categories;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using Polly;
+using Polly.Registry;
+using SharedKernel.Constants;
 
 namespace Infrastructure.Services.CategoryServices;
 
@@ -23,45 +26,56 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 
     private readonly ICategoryQueryServices _decorated;
     private readonly IDistributedCache _cache;
+    private readonly IAsyncPolicy<string?> _resiliencePolicy;
 
     public CategoryQueryServicesDecorated(
         ICategoryQueryServices decorated,
-        IDistributedCache cache)
+        IDistributedCache cache,
+        IReadOnlyPolicyRegistry<string> policyRegistry)
     {
         _decorated = decorated;
         _cache = cache;
+        _resiliencePolicy = policyRegistry.Get<IAsyncPolicy<string?>>(Strategy.RedisStrategy);
     }
 
     public async Task<CategoryResponse?> GetById(
-        CategoryId categoryId, 
+        CategoryId categoryId,
         CancellationToken cancellationToken = default)
     {
-        string cacheKey = BuildCategoryByIdCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
-        string? cachedCategory = await _cache.GetStringAsync(cacheKey, cancellationToken);
 
-        if (!string.IsNullOrEmpty(cachedCategory))
+        string? cachedData = await _resiliencePolicy.ExecuteAsync(
+            async () =>
+            {
+                string cacheKey = BuildCategoryByIdCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
+                string? cachedCategory = await _cache.GetStringAsync(cacheKey, cancellationToken);
+                return cachedCategory;
+            }
+        );
+
+        if (!string.IsNullOrEmpty(cachedData))
         {
-            return JsonConvert.DeserializeObject<CategoryResponse>(cachedCategory);
+            return JsonConvert.DeserializeObject<CategoryResponse>(cachedData);
         }
 
         var category = await _decorated.GetById(categoryId, cancellationToken);
 
-        if (category is null)
+        if (category is not null)
         {
-            return null;
+            string cacheKey = BuildCategoryByIdCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
+            await _resiliencePolicy.ExecuteAsync(async () =>
+            {
+                var serializedData = JsonConvert.SerializeObject(category);
+                
+                await _cache.SetStringAsync(cacheKey, serializedData, CategoryCacheOptions, cancellationToken);
+                return null;
+            });
         }
-
-        await _cache.SetStringAsync(
-            cacheKey,
-            JsonConvert.SerializeObject(category),
-            CategoryCacheOptions,
-            cancellationToken);
 
         return category;
     }
 
     public async Task<CategoryResponse?> GetCategoryDetail(
-        CategoryId categoryId, 
+        CategoryId categoryId,
         CancellationToken cancellationToken = default)
     {
         string cacheKey = BuildCategoryDetailCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
@@ -109,15 +123,15 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
     }
 
     public async Task<bool> IsCategoryNameExist(
-        CategoryId? categoryId, 
-        CategoryName categoryName, 
+        CategoryId? categoryId,
+        CategoryName categoryName,
         CancellationToken cancellationToken = default)
     {
         return await _decorated.IsCategoryNameExist(categoryId ?? null, categoryName, cancellationToken);
     }
 
     public async Task<bool> IsCategoryStatusNotDeleted(
-        CategoryId categoryId, 
+        CategoryId categoryId,
         CancellationToken cancellationToken = default)
     {
         return await _decorated.IsCategoryStatusNotDeleted(categoryId, cancellationToken);
