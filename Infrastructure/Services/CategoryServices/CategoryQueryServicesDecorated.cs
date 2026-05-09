@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Category;
+using Application.DTOs.Category;
 using Application.Features.Pages;
 using Application.IServices;
 using Domain.Entities.Categories;
@@ -61,9 +61,10 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 
         if (category is not null)
         {
-            string cacheKey = BuildCategoryByIdCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
+            
             await _resiliencePolicy.ExecuteAsync(async () =>
             {
+                string cacheKey = BuildCategoryByIdCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
                 var serializedData = JsonConvert.SerializeObject(category);
                 
                 await _cache.SetStringAsync(cacheKey, serializedData, CategoryCacheOptions, cancellationToken);
@@ -78,8 +79,11 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         CategoryId categoryId,
         CancellationToken cancellationToken = default)
     {
-        string cacheKey = BuildCategoryDetailCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
-        string? cachedCategoryDetail = await _cache.GetStringAsync(cacheKey, cancellationToken);
+        string? cachedCategoryDetail = await _resiliencePolicy.ExecuteAsync(async () =>
+        {
+            string cacheKey = BuildCategoryDetailCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
+            return await _cache.GetStringAsync(cacheKey, cancellationToken);
+        });
 
         if (!string.IsNullOrEmpty(cachedCategoryDetail))
         {
@@ -88,24 +92,30 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 
         var categoryDetail = await _decorated.GetCategoryDetail(categoryId, cancellationToken);
 
-        if (categoryDetail is null)
+        if (categoryDetail is not null)
         {
-            return null;
+            await _resiliencePolicy.ExecuteAsync(async () =>
+            {
+                string cacheKey = BuildCategoryDetailCacheKey(await GetCacheVersionAsync(cancellationToken), categoryId);
+                await _cache.SetStringAsync(
+                    cacheKey,
+                    JsonConvert.SerializeObject(categoryDetail),
+                    CategoryCacheOptions,
+                    cancellationToken);
+                return null;
+            });
         }
-
-        await _cache.SetStringAsync(
-            cacheKey,
-            JsonConvert.SerializeObject(categoryDetail),
-            CategoryCacheOptions,
-            cancellationToken);
 
         return categoryDetail;
     }
 
     public async Task<List<CategoryInfo>> GetCategoryInfo()
     {
-        string cacheKey = BuildCategoryInfoCacheKey(await GetCacheVersionAsync());
-        string? cachedCategoryInfo = await _cache.GetStringAsync(cacheKey);
+        string? cachedCategoryInfo = await _resiliencePolicy.ExecuteAsync(async () =>
+        {
+            string cacheKey = BuildCategoryInfoCacheKey(await GetCacheVersionAsync());
+            return await _cache.GetStringAsync(cacheKey);
+        });
 
         if (!string.IsNullOrEmpty(cachedCategoryInfo))
         {
@@ -114,10 +124,15 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 
         var categoryInfo = await _decorated.GetCategoryInfo();
 
-        await _cache.SetStringAsync(
-            cacheKey,
-            JsonConvert.SerializeObject(categoryInfo),
-            CategoryInfoCacheOptions);
+        await _resiliencePolicy.ExecuteAsync(async () =>
+        {
+            string cacheKey = BuildCategoryInfoCacheKey(await GetCacheVersionAsync());
+            await _cache.SetStringAsync(
+                cacheKey,
+                JsonConvert.SerializeObject(categoryInfo),
+                CategoryInfoCacheOptions);
+            return null;
+        });
 
         return categoryInfo;
     }
@@ -145,15 +160,18 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
         int? page,
         int? pageSize)
     {
-        string cacheKey = BuildPagedListCacheKey(
-            await GetCacheVersionAsync(),
-            filter,
-            searchTerm,
-            sortColumn,
-            sortOrder,
-            page,
-            pageSize);
-        string? cachedPagedList = await _cache.GetStringAsync(cacheKey);
+        string? cachedPagedList = await _resiliencePolicy.ExecuteAsync(async () =>
+        {
+            string cacheKey = BuildPagedListCacheKey(
+                await GetCacheVersionAsync(),
+                filter,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
+            return await _cache.GetStringAsync(cacheKey);
+        });
 
         if (!string.IsNullOrEmpty(cachedPagedList))
         {
@@ -163,10 +181,22 @@ internal class CategoryQueryServicesDecorated : ICategoryQueryServices
 
         var pagedCategories = await _decorated.PagedList(filter, searchTerm, sortColumn, sortOrder, page, pageSize);
 
-        await _cache.SetStringAsync(
-            cacheKey,
-            JsonConvert.SerializeObject(pagedCategories),
-            CategoryCacheOptions);
+        await _resiliencePolicy.ExecuteAsync(async () =>
+        {
+            string cacheKey = BuildPagedListCacheKey(
+                await GetCacheVersionAsync(),
+                filter,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
+            await _cache.SetStringAsync(
+                cacheKey,
+                JsonConvert.SerializeObject(pagedCategories),
+                CategoryCacheOptions);
+            return null;
+        });
 
         return pagedCategories;
     }

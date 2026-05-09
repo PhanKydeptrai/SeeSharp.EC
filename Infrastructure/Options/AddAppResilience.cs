@@ -29,7 +29,7 @@ public static class CacheServiceExtensions
 
         var resilienceStrategy = Policy.WrapAsync(fallbackPolicy, genericCircuitBreaker);
 
-        registry.Add(Strategy.RedisStrategy, resilienceStrategy);
+        registry.Add(Strategy.RedisStrategy, resilienceStrategy); // resilienceStrategy cho Redis
         services.AddSingleton<IReadOnlyPolicyRegistry<string?>>(registry);
         return services;
     }

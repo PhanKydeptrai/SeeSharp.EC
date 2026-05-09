@@ -24,7 +24,10 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Outbox;
+using Polly;
+using Polly.Registry;
 using Quartz;
+using SharedKernel.Constants;
 
 namespace Infrastructure;
 
@@ -103,7 +106,8 @@ public static class DependencyInjection
         services.AddScoped<ICategoryQueryServices>(provider =>
         {
             var categoryQueryServices = provider.GetRequiredService<CategoryQueryServices>();
-            return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!);
+            var policyRegistry = provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>();
+            return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!, policyRegistry);
         });
 
         services.AddScoped<ProductQueryServices>();
