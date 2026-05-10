@@ -42,27 +42,23 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         ProductId productId,
         CancellationToken cancellationToken = default)
     {
-        return await _decorated.GetProductWithVariantListById(productId, cancellationToken);
+        string cacheKey = $"ProductResponse:{productId.Value}";
+        string? cachedProduct = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
+        
+        if (string.IsNullOrEmpty(cachedProduct))
+        {
+            ProductResponse? product = await _decorated.GetProductWithVariantListById(productId, cancellationToken);
 
-        #region Cached
-        // string cacheKey = $"ProductResponse:{productId.Value}";
-        // string? cachedProduct = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
-        // ProductResponse? product;
-        // if (string.IsNullOrEmpty(cachedProduct))
-        // {
-        //     product = await _decorated.GetProductWithVariantListById(productId, cancellationToken);
+            if (product is null) return product;
 
-        //     if (product is null) return product;
+            await _distributedCache.SetStringAsync(
+                cacheKey,
+                JsonConvert.SerializeObject(product),
+                cancellationToken);
 
-        //     await _distributedCache.SetStringAsync(
-        //         cacheKey,
-        //         JsonConvert.SerializeObject(product),
-        //         cancellationToken);
-
-        //     return product;
-        // }
-        // return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
-        #endregion
+            return product;
+        }
+        return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
 
     }
 
@@ -208,10 +204,10 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
                 await Task.WhenAll(batchTasks);
 
                 var listInfoToCache = new CachedProductList(
-                result.Items.Select(p => p.ProductId).ToList(),
-                result.Page,
-                result.PageSize,
-                result.TotalCount);
+                    result.Items.Select(p => p.ProductId).ToList(),
+                    result.Page,
+                    result.PageSize,
+                    result.TotalCount);
 
                 // Ghi danh sách ProductId cùng với thông tin phân trang vào cache để lần sau có thể lấy nhanh
                 await _distributedCache.SetStringAsync(
