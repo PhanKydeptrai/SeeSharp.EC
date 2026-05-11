@@ -5,7 +5,9 @@ using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers;
+using Infrastructure.Helper;
 using Infrastructure.MessageBroker;
+using Infrastructure.Options;
 using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.CategoryServices;
@@ -23,7 +25,11 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Outbox;
+using Polly;
+using Polly.Registry;
 using Quartz;
+using SharedKernel.Constants;
+using StackExchange.Redis;
 
 namespace Infrastructure;
 
@@ -40,6 +46,7 @@ public static class DependencyInjection
             .AddScoped<OutboxProcessor>() //Đăng ký OutboxProcessor
             .AddEventBus()
             .AddRedisConfig(configuration)
+            .AddAppResilience()
             .AddBackgoundJob()
             .AddMassTransitConfiguration();
 
@@ -100,15 +107,22 @@ public static class DependencyInjection
         services.AddScoped<CategoryQueryServices>();
         services.AddScoped<ICategoryQueryServices>(provider =>
         {
-            var categoryQueryServices = provider.GetRequiredService<CategoryQueryServices>();
-            return new CategoryQueryServicesDecorated(categoryQueryServices, provider.GetService<IDistributedCache>()!);
+            return new CategoryQueryServicesDecorated(
+                provider.GetRequiredService<CategoryQueryServices>(), 
+                provider.GetRequiredService<IDistributedCache>(), 
+                provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>());
         });
 
         services.AddScoped<ProductQueryServices>();
         services.AddScoped<IProductQueryServices>(provider =>
         {
-            var productQueryServices = provider.GetRequiredService<ProductQueryServices>();
-            return new ProductQueryServicesDecorated(productQueryServices, provider.GetService<IDistributedCache>()!);
+            return new ProductQueryServicesDecorated(
+                provider.GetRequiredService<ProductQueryServices>(),
+                provider.GetRequiredService<IDistributedCache>(), 
+                provider.GetRequiredService<IConnectionMultiplexer>(),
+                provider.GetRequiredService<ICacheKeyGenerator>(),
+                provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
+            );
         });
 
         services.AddScoped<ICustomerQueryServices, CustomerQueryServices>();
@@ -121,6 +135,7 @@ public static class DependencyInjection
         services.AddScoped<IShippingInformationQueryServices, ShippingInformationQueryServices>();
         services.AddScoped<IFeedbackQueryServices, FeedbackQueryServices>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ICacheKeyGenerator, CacheKeyGenerator>();
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }
@@ -157,6 +172,9 @@ public static class DependencyInjection
     {
         string connection = configuration.GetConnectionString("Redis")
                 ?? throw new ArgumentNullException("Redis connection string is missing");
+
+        services.AddSingleton<StackExchange.Redis.IConnectionMultiplexer>(
+            StackExchange.Redis.ConnectionMultiplexer.Connect(connection));
 
         services.AddStackExchangeRedisCache(redisOptions =>
         {

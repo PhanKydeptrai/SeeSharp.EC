@@ -116,4 +116,24 @@ public interface IProductQueryServices
     /// <param name="productId"></param>
     /// <returns></returns>
     Task<bool> IsProductVariantExist(ProductVariantId productId);
+
+    /// <summary>
+    /// Get products by product ids
+    /// </summary>
+    /// <param name="productIds"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<List<ProductResponse>> GetProductsByIds(
+        IEnumerable<ProductId> productIds,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get product variants by product variant ids
+    /// </summary>
+    /// <param name="variantIds"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<List<ProductVariantResponse>> GetVariantsByIds(
+        IEnumerable<ProductVariantId> variantIds,
+        CancellationToken cancellationToken = default);
 }

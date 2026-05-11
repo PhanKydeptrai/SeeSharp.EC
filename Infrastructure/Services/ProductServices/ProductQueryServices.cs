@@ -43,7 +43,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
     }
 
     public async Task<ProductVariantResponse?> GetVariantById(
-        ProductVariantId productVariantId, 
+        ProductVariantId productVariantId,
         CancellationToken cancellationToken = default)
     {
         return await _postgreSQLdbContext.ProductVariants
@@ -57,13 +57,14 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.Description,
                 a.ProductReadModel!.CategoryReadModel.CategoryName,
                 a.ProductVariantPrice,
+                a.ProductVariantStatus.ToString(),
                 a.ImageUrl ?? string.Empty,
                 a.IsBaseVariant))
             .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<ProductVariantResponse?> GetVariantByIdForAdmin(
-        ProductVariantId productVariantId, 
+        ProductVariantId productVariantId,
         CancellationToken cancellationToken = default)
     {
         return await _postgreSQLdbContext.ProductVariants
@@ -78,6 +79,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.ProductReadModel!.CategoryReadModel.CategoryName,
                 a.ProductVariantPrice,
                 a.ImageUrl ?? string.Empty,
+                a.ProductVariantStatus.ToString(),
                 a.IsBaseVariant))
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -125,15 +127,17 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.Description,
                 a.ProductStatus.ToString(),
                 a.CategoryReadModel.CategoryName,
-                a.ProductVariantReadModels.Select(b => new VariantResponse(
+                a.ProductVariantReadModels.Select(b => new ProductVariantResponse(
                     b.ProductVariantId.ToGuid(),
                     b.ProductId.ToGuid(),
+                    b.ProductReadModel!.ProductName,
                     b.VariantName,
                     b.ColorCode,
                     b.Description,
+                    a.CategoryReadModel.CategoryName,
                     b.ProductVariantPrice,
-                    b.ProductVariantStatus.ToString(),
                     b.ImageUrl ?? string.Empty,
+                    b.ProductVariantStatus.ToString(),
                     b.IsBaseVariant)).ToArray())).FirstOrDefaultAsync();
         #endregion
     }
@@ -159,9 +163,9 @@ internal sealed class ProductQueryServices : IProductQueryServices
         //Filter
 
         //Filter by ProductStatus
-        if (!string.IsNullOrWhiteSpace(filterProductStatus))
+        if (!string.IsNullOrWhiteSpace(filterProductStatus) && Enum.TryParse<ProductStatus>(filterProductStatus, out var result))
         {
-            productsQuery = productsQuery.Where(x => x.ProductStatus == (ProductStatus)Enum.Parse(typeof(ProductStatus), filterProductStatus));
+            productsQuery = productsQuery.Where(x => x.ProductStatus == result);
         }
 
         //Filter by CategoryId
@@ -200,17 +204,19 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.Description,
                 a.ProductStatus.ToString(),
                 a.CategoryReadModel.CategoryName,
-                a.ProductVariantReadModels.Select(b => new VariantResponse(
+                a.ProductVariantReadModels.Select(b => new ProductVariantResponse(
                     b.ProductVariantId.ToGuid(),
                     b.ProductId.ToGuid(),
+                    b.ProductReadModel!.ProductName,
                     b.VariantName,
                     b.ColorCode,
                     b.Description,
+                    b.ProductReadModel!.CategoryReadModel.CategoryName,
                     b.ProductVariantPrice,
                     b.ProductVariantStatus.ToString(),
                     b.ImageUrl ?? string.Empty,
                     b.IsBaseVariant)).ToArray())).AsQueryable();
-            
+
 
         var productsList = await PagedList<ProductResponse>
             .CreateAsync(products, page ?? 1, pageSize ?? 10);
@@ -221,8 +227,8 @@ internal sealed class ProductQueryServices : IProductQueryServices
     public async Task<PagedList<ProductVariantResponse>> GetAllVariant(
         string? filterProductStatus,
         string? filterProduct,
-        string? filterCategory, 
-        string? searchTerm, 
+        string? filterCategory,
+        string? searchTerm,
         string? sortColumn,
         string? sortOrder,
         int? page,
@@ -241,12 +247,12 @@ internal sealed class ProductQueryServices : IProductQueryServices
 
         //Filter
         //Filter by ProductStatus
-        if (!string.IsNullOrWhiteSpace(filterProductStatus))
+        if (!string.IsNullOrWhiteSpace(filterProductStatus) && Enum.TryParse<ProductVariantStatus>(filterProductStatus, out var result))
         {
             productVariantQuery = productVariantQuery
-                .Where(x => x.ProductVariantStatus == (ProductVariantStatus)Enum.Parse(typeof(ProductVariantStatus), 
-                filterProductStatus));
+                .Where(x => x.ProductVariantStatus == result);
         }
+
 
         //Filter by CategoryId
         if (!string.IsNullOrWhiteSpace(filterCategory) && Ulid.TryParse(filterCategory, out var _))
@@ -285,19 +291,20 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.Description,
                 a.ProductReadModel!.CategoryReadModel.CategoryName,
                 a.ProductVariantPrice,
+                a.ProductVariantStatus.ToString(),
                 a.ImageUrl ?? string.Empty,
                 a.IsBaseVariant)).AsQueryable();
 
         var productVariantList = await PagedList<ProductVariantResponse>
             .CreateAsync(productVariants, page ?? 1, pageSize ?? 10);
-        
+
         return productVariantList;
     }
 
-    public async Task<ProductVariantPrice?> GetAvailableProductPrice(ProductVariantId productVariantId) 
+    public async Task<ProductVariantPrice?> GetAvailableProductPrice(ProductVariantId productVariantId)
     {
         return await _postgreSQLdbContext.ProductVariants
-            .Where(x => x.ProductVariantId == new Ulid(productVariantId.Value) 
+            .Where(x => x.ProductVariantId == new Ulid(productVariantId.Value)
             && x.ProductVariantStatus == ProductVariantStatus.InStock)
             .Select(x => ProductVariantPrice.FromDecimal(x.ProductVariantPrice))
             .FirstOrDefaultAsync();
@@ -307,5 +314,64 @@ internal sealed class ProductQueryServices : IProductQueryServices
     {
         return await _postgreSQLdbContext.ProductVariants
             .AnyAsync(x => x.ProductVariantId == new Ulid(productVariantId.Value) && x.ProductVariantStatus != ProductVariantStatus.Discontinued);
+    }
+
+    public async Task<List<ProductResponse>> GetProductsByIds(
+        IEnumerable<ProductId> productIds,
+        CancellationToken cancellationToken = default)
+    {
+        var ulidIds = productIds.Select(x => new Ulid(x.Value)).ToList();
+
+        var result = await _postgreSQLdbContext.Products
+            .Where(x => ulidIds.Contains(x.ProductId) && x.ProductStatus != ProductStatus.Discontinued)
+            .Select(a => new ProductResponse(
+                a.ProductId.ToGuid(),
+                a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantId.ToGuid(),
+                a.ProductName,
+                a.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantPrice,
+                a.ImageUrl,
+                a.Description,
+                a.ProductStatus.ToString(),
+                a.CategoryReadModel.CategoryName,
+                a.ProductVariantReadModels.Select(b => new ProductVariantResponse(
+                    b.ProductVariantId.ToGuid(),
+                    b.ProductId.ToGuid(),
+                    b.ProductReadModel!.ProductName,
+                    b.VariantName,
+                    b.ColorCode,
+                    b.Description,
+                    b.ProductReadModel!.CategoryReadModel.CategoryName,
+                    b.ProductVariantPrice,
+                    b.ProductVariantStatus.ToString(),
+                    b.ImageUrl ?? string.Empty,
+                    b.IsBaseVariant)).ToArray()))
+            .ToListAsync(cancellationToken);
+
+        return result;
+    }
+
+    public async Task<List<ProductVariantResponse>> GetVariantsByIds(
+        IEnumerable<ProductVariantId> variantIds,
+        CancellationToken cancellationToken = default)
+    {
+        var ulidIds = variantIds.Select(x => new Ulid(x.Value)).ToList();
+
+        var result = await _postgreSQLdbContext.ProductVariants
+            .Where(x => ulidIds.Contains(x.ProductVariantId) && x.ProductVariantStatus != ProductVariantStatus.Discontinued)
+            .Select(a => new ProductVariantResponse(
+                a.ProductVariantId.ToGuid(),
+                a.ProductId.ToGuid(),
+                a.ProductReadModel!.ProductName,
+                a.VariantName,
+                a.ColorCode,
+                a.Description,
+                a.ProductReadModel!.CategoryReadModel.CategoryName,
+                a.ProductVariantPrice,
+                a.ProductVariantStatus.ToString(),
+                a.ImageUrl ?? string.Empty,
+                a.IsBaseVariant))
+            .ToListAsync(cancellationToken);
+
+        return result;
     }
 }

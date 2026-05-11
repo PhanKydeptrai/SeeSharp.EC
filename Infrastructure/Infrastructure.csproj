@@ -15,6 +15,7 @@
 		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
 		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<PackageReference Include="Polly" />
 		<PackageReference Include="Seq.Extensions.Logging" />
 	</ItemGroup>
 	<ItemGroup>
