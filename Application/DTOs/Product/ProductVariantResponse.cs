@@ -9,6 +9,7 @@ namespace Application.DTOs.Product;
 /// <param name="ColorCode"></param>
 /// <param name="Description"></param>
 /// <param name="Price"></param>
+/// <param name="ProductVariantStatus"></param>
 /// <param name="ImageUrl"></param>
 /// <param name="IsBaseVariant"></param>
 public record ProductVariantResponse(
@@ -20,5 +21,6 @@ public record ProductVariantResponse(
     string Description,
     string CategoryName,
     decimal Price,
+    string ProductVariantStatus,
     string? ImageUrl,
     bool IsBaseVariant);

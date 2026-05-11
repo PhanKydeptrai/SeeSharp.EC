@@ -57,6 +57,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.Description,
                 a.ProductReadModel!.CategoryReadModel.CategoryName,
                 a.ProductVariantPrice,
+                a.ProductVariantStatus.ToString(),
                 a.ImageUrl ?? string.Empty,
                 a.IsBaseVariant))
             .FirstOrDefaultAsync(cancellationToken);
@@ -78,6 +79,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.ProductReadModel!.CategoryReadModel.CategoryName,
                 a.ProductVariantPrice,
                 a.ImageUrl ?? string.Empty,
+                a.ProductVariantStatus.ToString(),
                 a.IsBaseVariant))
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -125,15 +127,17 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.Description,
                 a.ProductStatus.ToString(),
                 a.CategoryReadModel.CategoryName,
-                a.ProductVariantReadModels.Select(b => new VariantResponse(
+                a.ProductVariantReadModels.Select(b => new ProductVariantResponse(
                     b.ProductVariantId.ToGuid(),
                     b.ProductId.ToGuid(),
+                    b.ProductReadModel!.ProductName,
                     b.VariantName,
                     b.ColorCode,
                     b.Description,
+                    a.CategoryReadModel.CategoryName,
                     b.ProductVariantPrice,
-                    b.ProductVariantStatus.ToString(),
                     b.ImageUrl ?? string.Empty,
+                    b.ProductVariantStatus.ToString(),
                     b.IsBaseVariant)).ToArray())).FirstOrDefaultAsync();
         #endregion
     }
@@ -200,12 +204,14 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.Description,
                 a.ProductStatus.ToString(),
                 a.CategoryReadModel.CategoryName,
-                a.ProductVariantReadModels.Select(b => new VariantResponse(
+                a.ProductVariantReadModels.Select(b => new ProductVariantResponse(
                     b.ProductVariantId.ToGuid(),
                     b.ProductId.ToGuid(),
+                    b.ProductReadModel!.ProductName,
                     b.VariantName,
                     b.ColorCode,
                     b.Description,
+                    b.ProductReadModel!.CategoryReadModel.CategoryName,
                     b.ProductVariantPrice,
                     b.ProductVariantStatus.ToString(),
                     b.ImageUrl ?? string.Empty,
@@ -285,6 +291,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.Description,
                 a.ProductReadModel!.CategoryReadModel.CategoryName,
                 a.ProductVariantPrice,
+                a.ProductVariantStatus.ToString(),
                 a.ImageUrl ?? string.Empty,
                 a.IsBaseVariant)).AsQueryable();
 
@@ -315,7 +322,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
     {
         var ulidIds = productIds.Select(x => new Ulid(x.Value)).ToList();
 
-        return await _postgreSQLdbContext.Products
+        var result = await _postgreSQLdbContext.Products
             .Where(x => ulidIds.Contains(x.ProductId) && x.ProductStatus != ProductStatus.Discontinued)
             .Select(a => new ProductResponse(
                 a.ProductId.ToGuid(),
@@ -326,16 +333,45 @@ internal sealed class ProductQueryServices : IProductQueryServices
                 a.Description,
                 a.ProductStatus.ToString(),
                 a.CategoryReadModel.CategoryName,
-                a.ProductVariantReadModels.Select(b => new VariantResponse(
+                a.ProductVariantReadModels.Select(b => new ProductVariantResponse(
                     b.ProductVariantId.ToGuid(),
                     b.ProductId.ToGuid(),
+                    b.ProductReadModel!.ProductName,
                     b.VariantName,
                     b.ColorCode,
                     b.Description,
+                    b.ProductReadModel!.CategoryReadModel.CategoryName,
                     b.ProductVariantPrice,
                     b.ProductVariantStatus.ToString(),
                     b.ImageUrl ?? string.Empty,
                     b.IsBaseVariant)).ToArray()))
             .ToListAsync(cancellationToken);
+
+        return result;
+    }
+
+    public async Task<List<ProductVariantResponse>> GetVariantsByIds(
+        IEnumerable<ProductVariantId> variantIds,
+        CancellationToken cancellationToken = default)
+    {
+        var ulidIds = variantIds.Select(x => new Ulid(x.Value)).ToList();
+
+        var result = await _postgreSQLdbContext.ProductVariants
+            .Where(x => ulidIds.Contains(x.ProductVariantId) && x.ProductVariantStatus != ProductVariantStatus.Discontinued)
+            .Select(a => new ProductVariantResponse(
+                a.ProductVariantId.ToGuid(),
+                a.ProductId.ToGuid(),
+                a.ProductReadModel!.ProductName,
+                a.VariantName,
+                a.ColorCode,
+                a.Description,
+                a.ProductReadModel!.CategoryReadModel.CategoryName,
+                a.ProductVariantPrice,
+                a.ProductVariantStatus.ToString(),
+                a.ImageUrl ?? string.Empty,
+                a.IsBaseVariant))
+            .ToListAsync(cancellationToken);
+
+        return result;
     }
 }

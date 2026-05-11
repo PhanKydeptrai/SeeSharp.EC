@@ -50,4 +50,14 @@ public interface ICategoryQueryServices
         CancellationToken cancellationToken = default);
     
     Task<List<CategoryInfo>> GetCategoryInfo();
+
+    /// <summary>
+    /// Lấy danh sách categories theo danh sách IDs
+    /// </summary>
+    /// <param name="categoryIds">Danh sách Category IDs</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Danh sách CategoryResponse</returns>
+    Task<List<CategoryResponse>> GetCategoriesByIds(
+        IEnumerable<CategoryId> categoryIds,
+        CancellationToken cancellationToken = default);
 }

@@ -13,12 +13,16 @@ internal class CacheKeyGenerator : ICacheKeyGenerator
         string? sortColumn,
         string? sortOrder,
         int? page,
-        int? pageSize)
+        int? pageSize,
+        string? filterProduct = null)
     {
         var parameters = new SortedDictionary<string, string>();
 
         if (!string.IsNullOrWhiteSpace(filterCategory))
             parameters.Add("cat", filterCategory.Trim().ToLower());
+
+        if (!string.IsNullOrWhiteSpace(filterProduct))
+            parameters.Add("prod", filterProduct.Trim().ToLower());
 
         if (!string.IsNullOrWhiteSpace(filterProductStatus))
             parameters.Add("stat", filterProductStatus.Trim().ToLower());
@@ -37,7 +41,7 @@ internal class CacheKeyGenerator : ICacheKeyGenerator
 
         var hash = Convert.ToHexString(MD5.HashData(Encoding.UTF8.GetBytes(rawString))).ToLower();
 
-        return $"{listPrefix}{hash}";
+        return $"{listPrefix}:{hash}";
 
     }
 }

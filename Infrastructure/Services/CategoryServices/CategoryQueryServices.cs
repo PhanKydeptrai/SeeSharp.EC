@@ -136,4 +136,21 @@ internal class CategoryQueryServices : ICategoryQueryServices
             .Select(a => new CategoryInfo(a.CategoryId.ToGuid(), a.CategoryName))
             .ToListAsync();
     }
+
+    public async Task<List<CategoryResponse>> GetCategoriesByIds(
+        IEnumerable<CategoryId> categoryIds,
+        CancellationToken cancellationToken = default)
+    {
+        var categoryIdsList = categoryIds.Select(c => new Ulid(c.Value)).ToList();
+
+        return await _contextPostgreSQL.Categories
+            .Where(c => categoryIdsList.Contains(c.CategoryId))
+            .Select(a => new CategoryResponse(
+                a.CategoryId.ToGuid(),
+                a.CategoryName,
+                a.ImageUrl,
+                a.CategoryStatus.ToString(),
+                a.IsDefault))
+            .ToListAsync(cancellationToken);
+    }
 }

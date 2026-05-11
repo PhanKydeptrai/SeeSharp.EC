@@ -13,6 +13,7 @@ public interface ICacheKeyGenerator
     /// <param name="sortOrder"></param>
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
+    /// <param name="filterProduct"></param>
     /// <returns></returns>
     string CreateCacheKey(
         string keyPrefix,
@@ -21,6 +22,7 @@ public interface ICacheKeyGenerator
         string? sortColumn,
         string? sortOrder,
         int? page,
-        int? pageSize);
+        int? pageSize,
+        string? filterProduct = null);
 
 }

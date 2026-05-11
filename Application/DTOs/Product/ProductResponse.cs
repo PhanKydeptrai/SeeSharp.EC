@@ -1,6 +1,4 @@
-﻿using Application.Abstractions.LinkService;
-
-namespace Application.DTOs.Product;
+﻿namespace Application.DTOs.Product;
 
 /// <summary>
 /// ProductResponse lấy thông tin cho chế độ xem tổng quan
@@ -22,29 +20,8 @@ public record ProductResponse(
     string? Description,
     string Status,
     string CategoryName,
-    VariantResponse[] Variants);
+    ProductVariantResponse[] Variants);
 // {
 //     public List<Link> links { get; set; } = new();
 // }
 
-/// <summary>
-/// Hỗ trợ bổ sung thông tin
-/// </summary>
-/// <param name="ProductVariantId"></param>
-/// <param name="ProductId"></param>
-/// <param name="VariantName"></param>
-/// <param name="ColorCode"></param>
-/// <param name="Description"></param>
-/// <param name="Price"></param>
-/// <param name="ImageUrl"></param>
-/// <param name="IsBaseVariant"></param>
-public record VariantResponse(
-    Guid ProductVariantId,
-    Guid ProductId,
-    string VariantName,
-    string ColorCode,
-    string Description,
-    decimal Price,
-    string ProductVariantStatus,
-    string? ImageUrl,
-    bool IsBaseVariant);

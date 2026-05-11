@@ -126,4 +126,14 @@ public interface IProductQueryServices
     Task<List<ProductResponse>> GetProductsByIds(
         IEnumerable<ProductId> productIds,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get product variants by product variant ids
+    /// </summary>
+    /// <param name="variantIds"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<List<ProductVariantResponse>> GetVariantsByIds(
+        IEnumerable<ProductVariantId> variantIds,
+        CancellationToken cancellationToken = default);
 }
