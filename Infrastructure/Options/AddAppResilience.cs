@@ -11,12 +11,13 @@ public static class CacheServiceExtensions
     public static IServiceCollection AddAppResilience(this IServiceCollection services)
     {
         IPolicyRegistry<string?> registry = new PolicyRegistry();
+
         // Nếu lỗi thì trả về null (Cache Miss)
         var fallbackPolicy = Policy<string?>
             .Handle<Exception>()
-            .FallbackAsync((string?)null);
+            .FallbackAsync((string?)null); // Nuốt lỗi
 
-        // Nếu lỗi 3 lần liên tiếp, ngắt mạch 30 giây
+        // Nếu lỗi 3 lần, ngắt mạch 30 giây
         var circuitBreakerPolicy = Policy
             .Handle<RedisConnectionException>()
             .Or<RedisTimeoutException>()
@@ -27,9 +28,8 @@ public static class CacheServiceExtensions
 
         var genericCircuitBreaker = circuitBreakerPolicy.AsAsyncPolicy<string?>();
 
-        var resilienceStrategy = Policy.WrapAsync(fallbackPolicy, genericCircuitBreaker);
-
-        registry.Add(Strategy.RedisStrategy, resilienceStrategy); // resilienceStrategy cho Redis
+        var cachePolicy = fallbackPolicy.WrapAsync(genericCircuitBreaker);
+        registry.Add(Strategy.RedisStrategy, cachePolicy); // cachePolicy cho Redis
         services.AddSingleton<IReadOnlyPolicyRegistry<string?>>(registry);
         return services;
     }

@@ -1,12 +1,28 @@
 using System.Security.Cryptography;
 using System.Text;
 using Infrastructure.Helper;
+using Polly;
+using StackExchange.Redis;
 
 namespace Infrastructure.Services;
 
 internal class CacheKeyGenerator : ICacheKeyGenerator
 {
-    public string CreateCacheKey(
+    private readonly IDatabase _redisDb;
+    private readonly IAsyncPolicy<string> _redisResiliencePolicy;
+
+    public CacheKeyGenerator(IConnectionMultiplexer redis)
+    {
+        _redisDb = redis.GetDatabase();
+
+        // Setup Polly: Timeout 500ms và Fallback trả về "1" nếu Redis gặp sự cố
+        _redisResiliencePolicy = Policy<string>
+            .Handle<Exception>()
+            .FallbackAsync("1") // Nếu lỗi, ngầm định version là v1
+            .WrapAsync(Policy.TimeoutAsync(TimeSpan.FromMilliseconds(500), Polly.Timeout.TimeoutStrategy.Pessimistic));
+    }
+
+    public async Task<string> CreateCacheKeyAsync(
         string listPrefix,
         string? filterProductStatus,
         string? filterCategory,
@@ -16,32 +32,67 @@ internal class CacheKeyGenerator : ICacheKeyGenerator
         int? pageSize,
         string? filterProduct = null)
     {
-        var parameters = new SortedDictionary<string, string>();
+        string scope = string.IsNullOrWhiteSpace(filterCategory) ? "global" : $"cat:{filterCategory.Trim().ToLower()}";
+        string versionKey = $"version:{listPrefix}:{scope}";
+
+        string version = await _redisResiliencePolicy.ExecuteAsync(async () =>
+        {
+            var val = await _redisDb.StringGetAsync(versionKey);
+            return val.HasValue ? val.ToString() : "1";
+        });
+
+        return BuildHashKey(
+            listPrefix, version, filterProductStatus, filterCategory, 
+            sortColumn, sortOrder, page, pageSize, filterProduct);
+
+    }
+    private string BuildHashKey(
+        string listPrefix,
+        string version,
+        string? filterProductStatus,
+        string? filterCategory,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize,
+        string? filterProduct)
+    {
+        // 1. Gom chuỗi
+        var sb = new StringBuilder();
 
         if (!string.IsNullOrWhiteSpace(filterCategory))
-            parameters.Add("cat", filterCategory.Trim().ToLower());
+            sb.Append("cat=").Append(filterCategory.Trim().ToLower()).Append('|');
 
         if (!string.IsNullOrWhiteSpace(filterProduct))
-            parameters.Add("prod", filterProduct.Trim().ToLower());
+            sb.Append("prod=").Append(filterProduct.Trim().ToLower()).Append('|');
 
         if (!string.IsNullOrWhiteSpace(filterProductStatus))
-            parameters.Add("stat", filterProductStatus.Trim().ToLower());
-
-        parameters.Add("p", (page ?? 1).ToString());
-        parameters.Add("sz", (pageSize ?? 10).ToString());
+            sb.Append("stat=").Append(filterProductStatus.Trim().ToLower()).Append('|');
 
         if (!string.IsNullOrWhiteSpace(sortColumn))
-            parameters.Add("sort", sortColumn.Trim().ToLower());
+            sb.Append("sort=").Append(sortColumn.Trim().ToLower()).Append('|');
 
         if (!string.IsNullOrWhiteSpace(sortOrder))
-            parameters.Add("ord", sortOrder.Trim().ToLower());
+            sb.Append("ord=").Append(sortOrder.Trim().ToLower()).Append('|');
 
-        
-        var rawString = string.Join("|", parameters.Select(kv => $"{kv.Key}={kv.Value}"));
+        sb.Append("p=").Append(page ?? 1).Append('|');
+        sb.Append("sz=").Append(pageSize ?? 10);
 
-        var hash = Convert.ToHexString(MD5.HashData(Encoding.UTF8.GetBytes(rawString))).ToLower();
+        string rawString = sb.ToString();
 
-        return $"{listPrefix}:{hash}";
+        // 2. Tối ưu bộ nhớ bằng Span và StackAlloc
+        int byteCount = Encoding.UTF8.GetByteCount(rawString);
 
+        // Cấp phát byte trên Stack (Thay vì cấp phát mảng byte[] trên Heap)
+        Span<byte> stringBytes = byteCount <= 256 ? stackalloc byte[byteCount] : new byte[byteCount];
+        Encoding.UTF8.GetBytes(rawString, stringBytes);
+
+        Span<byte> hashBytes = stackalloc byte[16]; // MD5 luôn là 16 bytes
+        MD5.HashData(stringBytes, hashBytes);
+
+        string hashHex = Convert.ToHexString(hashBytes).ToLower();
+
+        // 3. Lắp ráp kết quả
+        return $"{listPrefix}:v{version}:{hashHex}";
     }
 }

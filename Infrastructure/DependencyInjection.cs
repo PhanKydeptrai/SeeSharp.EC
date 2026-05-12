@@ -110,6 +110,8 @@ public static class DependencyInjection
             return new CategoryQueryServicesDecorated(
                 provider.GetRequiredService<CategoryQueryServices>(), 
                 provider.GetRequiredService<IDistributedCache>(), 
+                provider.GetRequiredService<IConnectionMultiplexer>(),
+                provider.GetRequiredService<ICacheKeyGenerator>(),
                 provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>());
         });
 
@@ -118,7 +120,6 @@ public static class DependencyInjection
         {
             return new ProductQueryServicesDecorated(
                 provider.GetRequiredService<ProductQueryServices>(),
-                provider.GetRequiredService<IDistributedCache>(), 
                 provider.GetRequiredService<IConnectionMultiplexer>(),
                 provider.GetRequiredService<ICacheKeyGenerator>(),
                 provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>()

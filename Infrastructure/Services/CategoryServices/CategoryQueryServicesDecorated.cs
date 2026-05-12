@@ -177,7 +177,7 @@ internal sealed class CategoryQueryServicesDecorated : ICategoryQueryServices
         int? page,
         int? pageSize)
     {
-        string cacheKey = _cacheKeyGenerator.CreateCacheKey("CategoryList", filter, null, sortColumn, sortOrder, page, pageSize, searchTerm);
+        string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync("CategoryList", filter, null, sortColumn, sortOrder, page, pageSize, searchTerm);
 
         string? cachedListInfo = await _resiliencePolicy.ExecuteAsync(
             async () =>

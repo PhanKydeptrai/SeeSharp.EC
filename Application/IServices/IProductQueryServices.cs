@@ -136,4 +136,25 @@ public interface IProductQueryServices
     Task<List<ProductVariantResponse>> GetVariantsByIds(
         IEnumerable<ProductVariantId> variantIds,
         CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Get product id list by filter, search, sort and pagination (For caching purpose)
+    /// </summary>
+    /// <param name="filterProductStatus"></param>
+    /// <param name="filterCategory"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    Task<GetProductIdListResponse> GetProductIdList(
+        string? filterProductStatus,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize);
+
 }

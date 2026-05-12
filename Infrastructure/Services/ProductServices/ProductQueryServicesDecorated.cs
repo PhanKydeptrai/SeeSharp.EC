@@ -17,7 +17,7 @@ namespace Infrastructure.Services.ProductServices;
 internal sealed class ProductQueryServicesDecorated : IProductQueryServices
 {
     private readonly IProductQueryServices _decorated;
-    private readonly IDistributedCache _distributedCache;
+    private readonly IDatabase _redisDb;
     private readonly IConnectionMultiplexer _connectionMultiplexer;
     private readonly ICacheKeyGenerator _cacheKeyGenerator;
     private readonly IAsyncPolicy<string?> _resiliencePolicy;
@@ -26,16 +26,15 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
 
     public ProductQueryServicesDecorated(
         IProductQueryServices decorated,
-        IDistributedCache distributedCache,
         IConnectionMultiplexer connectionMultiplexer,
         ICacheKeyGenerator cacheKeyGenerator,
         IReadOnlyPolicyRegistry<string> policyRegistry)
     {
         _decorated = decorated;
-        _distributedCache = distributedCache;
         _connectionMultiplexer = connectionMultiplexer;
         _cacheKeyGenerator = cacheKeyGenerator;
         _resiliencePolicy = policyRegistry.Get<IAsyncPolicy<string?>>(Strategy.RedisStrategy);
+        _redisDb = connectionMultiplexer.GetDatabase();
     }
 
     public async Task<ProductResponse?> GetProductWithVariantListById(
@@ -48,7 +47,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             async () =>
             {
                 // Lấy dữ liệu danh sách từ cache
-                string? cachedProduct = await _distributedCache.GetStringAsync(cacheKey);
+                var cachedProduct = await _redisDb.StringGetAsync(cacheKey);
                 return cachedProduct;
             }
         );
@@ -56,15 +55,14 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         if (string.IsNullOrEmpty(cachedProduct))
         {
             ProductResponse? product = await _decorated.GetProductWithVariantListById(productId, cancellationToken);
-            
+
             if (product is null) return product;
 
             await _resiliencePolicy.ExecuteAsync(async () =>
             {
-                await _distributedCache.SetStringAsync(
+                await _redisDb.StringSetAsync(
                     cacheKey,
-                    JsonConvert.SerializeObject(product),
-                    cancellationToken);
+                    JsonConvert.SerializeObject(product));
 
                 return null;
             });
@@ -91,6 +89,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
     private record CachedProductList(List<Guid> ProductIds, int Page, int PageSize, int TotalCount);
     private record CachedVariantList(List<Guid> VariantIds, int Page, int PageSize, int TotalCount);
 
+    #region GetAllProductWithVariantList
     public async Task<PagedList<ProductResponse>> GetAllProductWithVariantList(
         string? filterProductStatus,
         string? filterCategory,
@@ -100,19 +99,29 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         int? page,
         int? pageSize)
     {
-        string cacheKey = _cacheKeyGenerator.CreateCacheKey("ProductList", filterProductStatus, filterCategory, sortColumn, sortOrder, page, pageSize);
 
+        // Tạo cache key dựa trên các tham số lọc, sắp xếp và phân trang
+        string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync(
+            "ProductList",
+            filterProductStatus,
+            filterCategory,
+            sortColumn,
+            sortOrder,
+            page,
+            pageSize);
+
+        // Lấy dữ liệu danh sách từ cache
         string? cachedListInfo = await _resiliencePolicy.ExecuteAsync(
             async () =>
             {
-                // Lấy dữ liệu danh sách từ cache
-                string? cachedListInfo = await _distributedCache.GetStringAsync(cacheKey);
+                
+                string? cachedListInfo = await _redisDb.StringGetAsync(cacheKey);
                 return cachedListInfo;
             }
         );
 
 
-        if (!string.IsNullOrEmpty(cachedListInfo)) // Nếu có cache, tiếp tục lấy chi tiết từng sản phẩm
+        if (!string.IsNullOrEmpty(cachedListInfo)) //Nếu tìm thấy list id trong cache, tiếp tục lấy chi tiết từng sản phẩm
         {
             var listInfo = JsonConvert.DeserializeObject<CachedProductList>(cachedListInfo);
             var missingIds = new List<Guid>();
@@ -124,6 +133,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
                 await _resiliencePolicy.ExecuteAsync(async () =>
                 {
                     var db = _connectionMultiplexer.GetDatabase();
+                    
                     // Tạo mảng RedisKey cho tất cả các ProductId trong danh sách
                     var redisKeys = listInfo.ProductIds
                         .Select(id => (RedisKey)$"ProductResponse:{id}")
@@ -187,7 +197,8 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             }
         }
 
-        var result = await _decorated.GetAllProductWithVariantList(
+        // Cache miss hoàn toàn, gọi service để lấy list id sản phẩm trong DB rồi cache lại
+        var result = await _decorated.GetProductIdList(
             filterProductStatus,
             filterCategory,
             searchTerm,
@@ -196,7 +207,38 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             page,
             pageSize);
 
-        if (result.Items.Any())
+        // Nếu có kết quả thì cache lại thông tin list id sản phẩm
+        if (result.ProductIds.Any())
+        {
+            await _resiliencePolicy.ExecuteAsync(async () =>
+            {
+                await _redisDb.StringSetAsync(
+                    cacheKey,
+                    JsonConvert.SerializeObject(
+                        new CachedProductList(
+                            result.ProductIds, 
+                            result.Page, 
+                            result.PageSize, 
+                            result.TotalCount)
+                ));
+
+                return null;
+            });
+        }
+
+        // Query DB lấy dữ liệu chi tiết
+        var productList = await _decorated.GetProductsByIds(
+            result.ProductIds.Select(id => ProductId.FromGuid(id)),
+            CancellationToken.None);
+
+        // Ráp dữ liệu chi tiết vào kết quả trả về
+        var response = new PagedList<ProductResponse>(
+            productList,
+            result.Page,
+            result.PageSize,
+            result.TotalCount);
+
+        if (productList.Any()) // Nếu có kết quả, cache thông tin list id sản phẩm cùng với phân trang để lần sau truy vấn nhanh hơn
         {
             await _resiliencePolicy.ExecuteAsync(async () =>
             {
@@ -204,36 +246,26 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
                 var batch = db.CreateBatch();
                 var batchTasks = new List<Task>();
 
-                foreach (var product in result.Items)
+                foreach (var productId in result.ProductIds)
                 {
-                    string productCacheKey = $"ProductResponse:{product.ProductId}";
+                    string productCacheKey = $"ProductResponse:{productId}";
 
                     batchTasks.Add(batch.StringSetAsync(
                         productCacheKey,
-                        JsonConvert.SerializeObject(product),
+                        JsonConvert.SerializeObject(productId),
                         _entityCacheTtl));
                 }
 
                 batch.Execute();
-                await Task.WhenAll(batchTasks);
-
-                var listInfoToCache = new CachedProductList(
-                    result.Items.Select(p => p.ProductId).ToList(),
-                    result.Page,
-                    result.PageSize,
-                    result.TotalCount);
-
-                // Ghi danh sách ProductId cùng với thông tin phân trang vào cache để lần sau có thể lấy nhanh
-                await _distributedCache.SetStringAsync(
-                    cacheKey,
-                    JsonConvert.SerializeObject(listInfoToCache));
+                await Task.WhenAll(batchTasks); 
 
                 return null;
             });
         }
 
-        return result;
+        return response;
     }
+    #endregion
 
     public async Task<bool> IsProductExist(ProductId productId)
     {
@@ -259,13 +291,13 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         int? page,
         int? pageSize)
     {
-        string cacheKey = _cacheKeyGenerator.CreateCacheKey("VariantList", filterProductStatus, filterCategory, sortColumn, sortOrder, page, pageSize, filterProduct);
+        string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync("VariantList", filterProductStatus, filterCategory, sortColumn, sortOrder, page, pageSize, filterProduct);
 
         string? cachedListInfo = await _resiliencePolicy.ExecuteAsync(
             async () =>
             {
                 // Lấy dữ liệu danh sách từ cache
-                string? cachedListInfo = await _distributedCache.GetStringAsync(cacheKey);
+                string? cachedListInfo = await _redisDb.StringGetAsync(cacheKey);
                 return cachedListInfo;
             }
         );
@@ -383,7 +415,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
                     result.TotalCount);
 
                 // Ghi danh sách VariantId cùng với thông tin phân trang vào cache để lần sau có thể lấy nhanh
-                await _distributedCache.SetStringAsync(
+                await _redisDb.StringSetAsync(
                     cacheKey,
                     JsonConvert.SerializeObject(listInfoToCache));
 
@@ -417,5 +449,24 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
     public async Task<List<ProductVariantResponse>> GetVariantsByIds(IEnumerable<ProductVariantId> variantIds, CancellationToken cancellationToken = default)
     {
         return await _decorated.GetVariantsByIds(variantIds, cancellationToken);
+    }
+
+    public Task<GetProductIdListResponse> GetProductIdList(
+        string? filterProductStatus,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        return _decorated.GetProductIdList(
+            filterProductStatus,
+            filterCategory,
+            searchTerm,
+            sortColumn,
+            sortOrder,
+            page,
+            pageSize);
     }
 }

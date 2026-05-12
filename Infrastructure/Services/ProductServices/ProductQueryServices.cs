@@ -374,4 +374,67 @@ internal sealed class ProductQueryServices : IProductQueryServices
 
         return result;
     }
+
+    public async Task<GetProductIdListResponse> GetProductIdList(
+        string? filterProductStatus,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        var query = _postgreSQLdbContext.Products.AsQueryable();
+        
+        //Search
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query = query.Where(x => x.ProductName.Contains(searchTerm));
+        }
+
+        //Filter
+
+        //Filter by ProductStatus
+        if (!string.IsNullOrWhiteSpace(filterProductStatus) && Enum.TryParse<ProductStatus>(filterProductStatus, out var result))
+        {
+            query = query.Where(x => x.ProductStatus == result);
+        }
+
+        //Filter by CategoryId
+        if (!string.IsNullOrWhiteSpace(filterCategory))
+        {
+            var id = new Guid(filterCategory);
+            query = query.Where(x => x.CategoryId == new Ulid(id));
+        }
+
+        //sort
+        Expression<Func<ProductReadModel, object>> keySelector = sortColumn?.ToLower() switch
+        {
+            "productname" => x => x.ProductName,
+            "price" => x => x.ProductVariantReadModels.FirstOrDefault(b => b.IsBaseVariant)!.ProductVariantPrice,
+            "productid" => x => x.ProductId,
+            _ => x => x.ProductId
+        };
+
+        if (sortOrder?.ToLower() == "desc")
+        {
+            query = query.OrderByDescending(keySelector);
+        }
+        else
+        {
+            query = query.OrderBy(keySelector);
+        }
+
+        var totalCount = await query.CountAsync();
+        
+        var ids = await query
+            .Skip((page - 1 ?? 0) * (pageSize ?? 10))
+            .Take(pageSize ?? 10)
+            .Select(p => p.ProductId.ToGuid())
+            .ToListAsync();
+
+        var response = new GetProductIdListResponse(ids, page ?? 1, pageSize ?? 10, totalCount);
+
+        return response;
+    }
 }
