@@ -157,4 +157,25 @@ public interface IProductQueryServices
         int? page,
         int? pageSize);
 
+    /// <summary>
+    /// Get variant id list by filter, search, sort and pagination (For caching purpose)
+    /// </summary>
+    /// <param name="filterProductStatus"></param>
+    /// <param name="filterProduct"></param>
+    /// <param name="filterCategory"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    Task<GetVariantIdListResponse> GetVariantIdList(
+        string? filterProductStatus,
+        string? filterProduct,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize);
 }

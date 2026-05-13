@@ -60,4 +60,22 @@ public interface ICategoryQueryServices
     Task<List<CategoryResponse>> GetCategoriesByIds(
         IEnumerable<CategoryId> categoryIds,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Lấy danh sách ID danh mục theo các điều kiện lọc, tìm kiếm, phân trang (Dùng cho việc cache)
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="searchTerm"></param>
+    /// <param name="sortColumn"></param>
+    /// <param name="sortOrder"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    Task<GetCategoryIdListResponse> GetCategoryIdList(
+        string? filter,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize);
 }

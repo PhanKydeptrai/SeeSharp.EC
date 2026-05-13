@@ -1,11 +1,9 @@
-using System.Text;
 using Application.DTOs.Product;
 using Application.Features.Pages;
 using Application.IServices;
 using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
 using Infrastructure.Helper;
-using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Registry;
@@ -149,7 +147,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
                         if (cachedValue.HasValue && !cachedValue.IsNullOrEmpty)
                         {
                             var product = JsonConvert.DeserializeObject<ProductResponse>(cachedValue.ToString());
-                            if (product != null)
+                            if (product is not null)
                             {
                                 products.Add(product);
                             }
@@ -189,11 +187,13 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
                     return null;
                 });
 
-                return new PagedList<ProductResponse>(
+                var results= new PagedList<ProductResponse>(
                     products,
                     listInfo.Page,
                     listInfo.PageSize,
                     listInfo.TotalCount);
+
+                return results;
             }
         }
 
@@ -246,13 +246,13 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
                 var batch = db.CreateBatch();
                 var batchTasks = new List<Task>();
 
-                foreach (var productId in result.ProductIds)
+                foreach (var product in productList)
                 {
-                    string productCacheKey = $"ProductResponse:{productId}";
+                    string productCacheKey = $"ProductResponse:{product.ProductId}";
 
                     batchTasks.Add(batch.StringSetAsync(
                         productCacheKey,
-                        JsonConvert.SerializeObject(productId),
+                        JsonConvert.SerializeObject(product),
                         _entityCacheTtl));
                 }
 
@@ -377,7 +377,8 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             }
         }
 
-        var result = await _decorated.GetAllVariant(
+        // Cache miss hoàn toàn, gọi service để lấy list id variant trong DB rồi cache lại
+        var result = await _decorated.GetVariantIdList(
             filterProductStatus,
             filterProduct,
             filterCategory,
@@ -387,7 +388,38 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             page,
             pageSize);
 
-        if (result.Items.Any())
+        // Nếu có kết quả thì cache lại thông tin list id variant
+        if (result.VariantIds.Any())
+        {
+            await _resiliencePolicy.ExecuteAsync(async () =>
+            {
+                await _redisDb.StringSetAsync(
+                    cacheKey,
+                    JsonConvert.SerializeObject(
+                        new CachedVariantList(
+                            result.VariantIds, 
+                            result.Page, 
+                            result.PageSize, 
+                            result.TotalCount)
+                ));
+
+                return null;
+            });
+        }
+
+        // Query DB lấy dữ liệu chi tiết
+        var variantList = await _decorated.GetVariantsByIds(
+            result.VariantIds.Select(id => ProductVariantId.FromGuid(id)),
+            CancellationToken.None);
+
+        // Ráp dữ liệu chi tiết vào kết quả trả về
+        var response = new PagedList<ProductVariantResponse>(
+            variantList,
+            result.Page,
+            result.PageSize,
+            result.TotalCount);
+
+        if (variantList.Any()) // Nếu có kết quả, cache thông tin chi tiết từng variant để lần sau truy vấn nhanh hơn
         {
             await _resiliencePolicy.ExecuteAsync(async () =>
             {
@@ -395,7 +427,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
                 var batch = db.CreateBatch();
                 var batchTasks = new List<Task>();
 
-                foreach (var variant in result.Items)
+                foreach (var variant in variantList)
                 {
                     string variantCacheKey = $"ProductVariantResponse:{variant.ProductVariantId}";
 
@@ -406,24 +438,13 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
                 }
 
                 batch.Execute();
-                await Task.WhenAll(batchTasks);
-
-                var listInfoToCache = new CachedVariantList(
-                    result.Items.Select(p => p.ProductVariantId).ToList(),
-                    result.Page,
-                    result.PageSize,
-                    result.TotalCount);
-
-                // Ghi danh sách VariantId cùng với thông tin phân trang vào cache để lần sau có thể lấy nhanh
-                await _redisDb.StringSetAsync(
-                    cacheKey,
-                    JsonConvert.SerializeObject(listInfoToCache));
+                await Task.WhenAll(batchTasks); 
 
                 return null;
             });
         }
 
-        return result;
+        return response;
     }
 
     public async Task<ProductVariantPrice?> GetAvailableProductPrice(ProductVariantId productVariantId)
@@ -462,6 +483,27 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
     {
         return _decorated.GetProductIdList(
             filterProductStatus,
+            filterCategory,
+            searchTerm,
+            sortColumn,
+            sortOrder,
+            page,
+            pageSize);
+    }
+
+    public Task<GetVariantIdListResponse> GetVariantIdList(
+        string? filterProductStatus,
+        string? filterProduct,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        return _decorated.GetVariantIdList(
+            filterProductStatus,
+            filterProduct,
             filterCategory,
             searchTerm,
             sortColumn,

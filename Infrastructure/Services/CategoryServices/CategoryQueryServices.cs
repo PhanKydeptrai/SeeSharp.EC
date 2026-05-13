@@ -153,4 +153,55 @@ internal class CategoryQueryServices : ICategoryQueryServices
                 a.IsDefault))
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<GetCategoryIdListResponse> GetCategoryIdList(
+        string? filter,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        var categoriesQuery = _contextPostgreSQL.Categories.AsQueryable();
+
+        //Search
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            categoriesQuery = categoriesQuery.Where(
+                x => x.CategoryName.Contains(searchTerm));
+        }
+
+        //Filter
+        if (!string.IsNullOrEmpty(filter) && Enum.TryParse<CategoryStatus>(filter, out var statusResult))
+        {
+            categoriesQuery = categoriesQuery.Where(x => x.CategoryStatus == statusResult);
+        }
+
+        //sort
+        Expression<Func<CategoryReadModel, object>> keySelector = sortColumn?.ToLower() switch
+        {
+            "categoryname" => x => x.CategoryName,
+            "categoryid" => x => x.CategoryId,
+            _ => x => x.CategoryId
+        };
+
+        if (sortOrder?.ToLower() == "desc")
+        {
+            categoriesQuery = categoriesQuery.OrderByDescending(keySelector);
+        }
+        else
+        {
+            categoriesQuery = categoriesQuery.OrderBy(keySelector);
+        }
+
+        var totalCount = await categoriesQuery.CountAsync();
+
+        var ids = await categoriesQuery
+            .Skip((page - 1 ?? 0) * (pageSize ?? 10))
+            .Take(pageSize ?? 10)
+            .Select(p => p.CategoryId.ToGuid())
+            .ToListAsync();
+
+        return new GetCategoryIdListResponse(ids, page ?? 1, pageSize ?? 10, totalCount);
+    }
 }

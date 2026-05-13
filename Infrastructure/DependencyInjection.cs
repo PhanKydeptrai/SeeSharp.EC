@@ -174,8 +174,7 @@ public static class DependencyInjection
         string connection = configuration.GetConnectionString("Redis")
                 ?? throw new ArgumentNullException("Redis connection string is missing");
 
-        services.AddSingleton<StackExchange.Redis.IConnectionMultiplexer>(
-            StackExchange.Redis.ConnectionMultiplexer.Connect(connection));
+        services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connection));
 
         services.AddStackExchangeRedisCache(redisOptions =>
         {
