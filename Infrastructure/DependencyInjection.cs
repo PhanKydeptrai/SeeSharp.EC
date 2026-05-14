@@ -16,12 +16,12 @@ using Infrastructure.Services.EmployeeServices;
 using Infrastructure.Services.FeedbackServices;
 using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
+using Infrastructure.Services.RedisServices;
 using Infrastructure.Services.ShippingInformationServices;
 using Infrastructure.Services.UserServices;
 using Infrastructure.Services.VoucherServices;
 using Infrastructure.Services.WishItemServices;
 using MassTransit;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Outbox;
@@ -109,10 +109,10 @@ public static class DependencyInjection
         {
             return new CategoryQueryServicesDecorated(
                 provider.GetRequiredService<CategoryQueryServices>(), 
-                provider.GetRequiredService<IDistributedCache>(), 
                 provider.GetRequiredService<IConnectionMultiplexer>(),
                 provider.GetRequiredService<ICacheKeyGenerator>(),
-                provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>());
+                provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>(),
+                provider.GetRequiredService<IDatabase>());
         });
 
         services.AddScoped<ProductQueryServices>();
@@ -120,9 +120,8 @@ public static class DependencyInjection
         {
             return new ProductQueryServicesDecorated(
                 provider.GetRequiredService<ProductQueryServices>(),
-                provider.GetRequiredService<IConnectionMultiplexer>(),
-                provider.GetRequiredService<ICacheKeyGenerator>(),
-                provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
+                provider.GetRequiredService<IRedisCacheService>(),
+                provider.GetRequiredService<ICacheKeyGenerator>()
             );
         });
 
@@ -137,6 +136,7 @@ public static class DependencyInjection
         services.AddScoped<IFeedbackQueryServices, FeedbackQueryServices>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ICacheKeyGenerator, CacheKeyGenerator>();
+        services.AddScoped<IRedisCacheService, RedisCacheService>();
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }
@@ -176,9 +176,10 @@ public static class DependencyInjection
 
         services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connection));
 
-        services.AddStackExchangeRedisCache(redisOptions =>
+        services.AddScoped<IDatabase>(provider =>
         {
-            redisOptions.Configuration = connection;
+            var connectionMultiplexer = provider.GetRequiredService<IConnectionMultiplexer>();
+            return connectionMultiplexer.GetDatabase();
         });
 
         return services;
