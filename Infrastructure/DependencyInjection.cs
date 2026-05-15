@@ -136,7 +136,14 @@ public static class DependencyInjection
         services.AddScoped<IFeedbackQueryServices, FeedbackQueryServices>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ICacheKeyGenerator, CacheKeyGenerator>();
-        services.AddScoped<IRedisCacheService, RedisCacheService>();
+        services.AddScoped<RedisCacheService>();
+        services.AddScoped<IRedisCacheService>(provider =>
+        {
+            return new ResilienceRedisCacheService(
+                provider.GetRequiredService<RedisCacheService>()
+                // provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
+            );
+        });
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }
