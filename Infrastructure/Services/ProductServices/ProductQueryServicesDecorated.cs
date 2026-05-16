@@ -3,7 +3,7 @@ using Application.Features.Pages;
 using Application.IServices;
 using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
-using Infrastructure.Helper;
+using Application.Helper;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Registry;

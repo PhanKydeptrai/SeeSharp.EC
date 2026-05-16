@@ -1,4 +1,4 @@
-namespace Infrastructure.Helper;
+namespace Application.Helper;
 
 public interface ICacheKeyGenerator
 {

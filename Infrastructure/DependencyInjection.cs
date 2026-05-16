@@ -1,11 +1,11 @@
 using System.Net.Mail;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.EventBus;
+using Application.Helper;
 using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers;
-using Infrastructure.Helper;
 using Infrastructure.MessageBroker;
 using Infrastructure.Options;
 using Infrastructure.Security;
@@ -46,7 +46,6 @@ public static class DependencyInjection
             .AddScoped<OutboxProcessor>() //Đăng ký OutboxProcessor
             .AddEventBus()
             .AddRedisConfig(configuration)
-            .AddAppResilience()
             .AddBackgoundJob()
             .AddMassTransitConfiguration();
 
@@ -140,7 +139,8 @@ public static class DependencyInjection
         services.AddScoped<IRedisCacheService>(provider =>
         {
             return new ResilienceRedisCacheService(
-                provider.GetRequiredService<RedisCacheService>()
+                provider.GetRequiredService<RedisCacheService>(), 
+                provider.GetRequiredService<IRedisPipelineFactory>()
                 // provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
             );
         });
@@ -181,6 +181,8 @@ public static class DependencyInjection
         string connection = configuration.GetConnectionString("Redis")
                 ?? throw new ArgumentNullException("Redis connection string is missing");
 
+        services.AddSingleton<IRedisPipelineFactory, RedisPipelineFactory>();
+        
         services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connection));
 
         services.AddScoped<IDatabase>(provider =>
