@@ -37,7 +37,7 @@ public static class DependencyInjection
 {
     //FIXME: AddInfrastructure
     public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,   
+        this IServiceCollection services,
         IConfiguration configuration)
     {
 
@@ -55,7 +55,7 @@ public static class DependencyInjection
         //Mail Test
         services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
                 .AddSmtpSender(configuration["Email:Host"], configuration.GetValue<int>("Email:Port")!);
-                
+
         //Mail Thật
         // services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
         //          .AddSmtpSender(new SmtpClient(configuration["Email:Host"], int.Parse(configuration["Email:Port"])));
@@ -107,7 +107,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoryQueryServices>(provider =>
         {
             return new CategoryQueryServicesDecorated(
-                provider.GetRequiredService<CategoryQueryServices>(), 
+                provider.GetRequiredService<CategoryQueryServices>(),
                 provider.GetRequiredService<IConnectionMultiplexer>(),
                 provider.GetRequiredService<ICacheKeyGenerator>(),
                 provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>(),
@@ -139,9 +139,9 @@ public static class DependencyInjection
         services.AddScoped<IRedisCacheService>(provider =>
         {
             return new ResilienceRedisCacheService(
-                provider.GetRequiredService<RedisCacheService>(), 
+                provider.GetRequiredService<RedisCacheService>(),
                 provider.GetRequiredService<IRedisPipelineFactory>()
-                // provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
+            // provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
             );
         });
         // services.AddScoped<EmailVerificationLinkFactory>();
@@ -182,13 +182,19 @@ public static class DependencyInjection
                 ?? throw new ArgumentNullException("Redis connection string is missing");
 
         services.AddSingleton<IRedisPipelineFactory, RedisPipelineFactory>();
-        
+
         services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connection));
 
         services.AddScoped<IDatabase>(provider =>
         {
             var connectionMultiplexer = provider.GetRequiredService<IConnectionMultiplexer>();
             return connectionMultiplexer.GetDatabase();
+        });
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = connection; // Đường dẫn tới Redis Server
+            options.InstanceName = "SampleInstance:";
         });
 
         return services;

@@ -19,7 +19,7 @@ internal class CacheKeyGenerator : ICacheKeyGenerator
         _redisResiliencePolicy = Policy<string>
             .Handle<Exception>()
             .FallbackAsync("1") // Nếu lỗi, ngầm định version là v1
-            .WrapAsync(Policy.TimeoutAsync(TimeSpan.FromMilliseconds(500), Polly.Timeout.TimeoutStrategy.Pessimistic));
+            .WrapAsync(Policy.TimeoutAsync(TimeSpan.FromMilliseconds(20), Polly.Timeout.TimeoutStrategy.Pessimistic));
     }
 
     public async Task<string> CreateCacheKeyAsync(
@@ -38,7 +38,13 @@ internal class CacheKeyGenerator : ICacheKeyGenerator
         string version = await _redisResiliencePolicy.ExecuteAsync(async () =>
         {
             var val = await _redisDb.StringGetAsync(versionKey);
-            return val.HasValue ? val.ToString() : "1";
+            if (val.HasValue)
+            {
+                return val.ToString();
+            }
+
+            await _redisDb.StringSetAsync(versionKey, "1");
+            return "1";
         });
 
         return BuildHashKey(

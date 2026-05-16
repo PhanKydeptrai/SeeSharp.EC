@@ -8,6 +8,8 @@ using Domain.Utilities.Errors;
 using SharedKernel;
 using Domain.Entities.ProductVariants;
 using Application.Services;
+using MediatR;
+using Domain.Events.ProductEvents;
 
 namespace Application.Features.ProductFeature.Commands.CreateProduct;
 
@@ -17,16 +19,19 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
     private readonly CloudinaryService _cloudinaryService;
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IMediator _mediator;
     public CreateProductCommandHandler(
         IUnitOfWork unitOfWork,
         IProductRepository productRepository,
         ICategoryRepository categoryRepository,
-        CloudinaryService cloudinaryService)
+        CloudinaryService cloudinaryService,
+        IMediator mediator)
     {
         _unitOfWork = unitOfWork;
         _productRepository = productRepository;
         _categoryRepository = categoryRepository;
         _cloudinaryService = cloudinaryService;
+        _mediator = mediator;
     }
 
     public async Task<Result> Handle(
@@ -41,6 +46,9 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         await _productRepository.AddProductVariant(productVariant!);
         
         await _unitOfWork.SaveChangesAsync();
+
+        await _mediator.Publish(new ProductCreatedEvent(product.ProductId), cancellationToken);
+
         return Result.Success(product.ProductId);
     }
 
