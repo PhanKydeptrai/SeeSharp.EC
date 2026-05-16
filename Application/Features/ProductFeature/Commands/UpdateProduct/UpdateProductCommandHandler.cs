@@ -3,9 +3,11 @@ using Application.Services;
 using Domain.Entities.Categories;
 using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
+using Domain.Events.ProductEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.Utilities.Errors;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.ProductFeature.Commands.UpdateProduct;
@@ -16,14 +18,17 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
     private readonly IProductRepository _productRepository;
     private readonly CloudinaryService _cloudinaryService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPublisher _publisher;
     public UpdateProductCommandHandler(
         IProductRepository productRepository,
         IUnitOfWork unitOfWork,
-        CloudinaryService cloudinaryService)
+        CloudinaryService cloudinaryService,
+        IPublisher publisher)
     {
         _productRepository = productRepository;
         _unitOfWork = unitOfWork;
         _cloudinaryService = cloudinaryService;
+        _publisher = publisher;
     }
     #endregion
     public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -51,6 +56,11 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
             IsBaseVariant.True);
 
         await _unitOfWork.SaveChangesAsync();
+        
+        await _publisher.Publish(new ProductUpdatedEvent(
+            product.ProductId, 
+            baseVariant.ProductVariantId), cancellationToken);
+        
         return Result.Success();
     }
 

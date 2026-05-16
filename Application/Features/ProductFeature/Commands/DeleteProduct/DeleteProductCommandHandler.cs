@@ -1,8 +1,10 @@
 using Application.Abstractions.Messaging;
 using Domain.Entities.Products;
+using Domain.Events.ProductEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.Utilities.Errors;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.ProductFeature.Commands.DeleteProduct;
@@ -11,12 +13,16 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
 {
     private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPublisher _publisher;
+
     public DeleteProductCommandHandler(
         IUnitOfWork unitOfWork,
-        IProductRepository productRepository)
+        IProductRepository productRepository,
+        IPublisher publisher)
     {
         _unitOfWork = unitOfWork;
         _productRepository = productRepository;
+        _publisher = publisher;
     }
     public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
@@ -30,6 +36,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
             transaction.Rollback();
             return failure!;
         }
+
         product.Delete();
         await _unitOfWork.SaveChangesAsync();
 
@@ -37,6 +44,8 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
         await _productRepository.DeleteProductVariantByProduct(productId);
 
         transaction.Commit();
+
+        await _publisher.Publish(new ProductDeletedEvent(product.ProductId), cancellationToken);
         return Result.Success();
     }
 

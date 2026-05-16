@@ -55,12 +55,12 @@ internal sealed class UpdateProduct : IEndpoint
 
             return o;
         })
-        .RequireAuthorization();
+        .RequireAuthorization()
+        .DisableAntiforgery();
     }
 
     private class UpdateProductRequest
     {
-        public Guid ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;
         public IFormFile? ProductImage { get; set; }
         public string ColorCode { get; set; } = string.Empty;

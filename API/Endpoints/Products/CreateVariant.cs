@@ -42,7 +42,8 @@ internal sealed class CreateVariant : IEndpoint
             
             """)
         .WithOpenApi()
-        .RequireAuthorization();
+        .RequireAuthorization()
+        .DisableAntiforgery();
     }
 
     private class CreateProductVariantRequest

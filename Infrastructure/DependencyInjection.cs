@@ -194,7 +194,7 @@ public static class DependencyInjection
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = connection; // Đường dẫn tới Redis Server
-            options.InstanceName = "SampleInstance:";
+            // options.InstanceName = "SampleInstance:";
         });
 
         return services;
