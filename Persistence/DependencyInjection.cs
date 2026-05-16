@@ -1,4 +1,4 @@
-﻿using Domain.IRepositories;
+using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.IRepositories.Customers;
 using Domain.IRepositories.Employees;
@@ -57,7 +57,7 @@ public static class DependencyInjection
 
             return new CategoryRepositoryDecorated(
                 categoryRepository,
-                provider.GetRequiredService<IDistributedCache>());
+                provider.GetRequiredService<Application.IServices.IRedisCacheService>());
         });
 
         services.AddScoped<IProductRepository, ProductRepository>();

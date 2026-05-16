@@ -17,6 +17,9 @@ internal sealed class ProductCreatedEventHandler : INotificationHandler<ProductC
     public async Task Handle(ProductCreatedEvent notification, CancellationToken cancellationToken)
     {
         string globalVersionKey = "version:ProductList:global";
-        await _redisDb.StringIncrementAsync(globalVersionKey);
+        string variantListVersionKey = $"version:VariantList:global";
+        var globalVersion = _redisDb.StringIncrementAsync(globalVersionKey);
+        var variantListVersion = _redisDb.StringIncrementAsync(variantListVersionKey);
+        await Task.WhenAll(globalVersion, variantListVersion);
     }
 }

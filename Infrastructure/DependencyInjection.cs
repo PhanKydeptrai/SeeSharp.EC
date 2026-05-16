@@ -108,10 +108,8 @@ public static class DependencyInjection
         {
             return new CategoryQueryServicesDecorated(
                 provider.GetRequiredService<CategoryQueryServices>(),
-                provider.GetRequiredService<IConnectionMultiplexer>(),
-                provider.GetRequiredService<ICacheKeyGenerator>(),
-                provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>(),
-                provider.GetRequiredService<IDatabase>());
+                provider.GetRequiredService<IRedisCacheService>(),
+                provider.GetRequiredService<ICacheKeyGenerator>());
         });
 
         services.AddScoped<ProductQueryServices>();
@@ -185,7 +183,7 @@ public static class DependencyInjection
 
         services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connection));
 
-        services.AddScoped<IDatabase>(provider =>
+        services.AddSingleton<IDatabase>(provider =>
         {
             var connectionMultiplexer = provider.GetRequiredService<IConnectionMultiplexer>();
             return connectionMultiplexer.GetDatabase();
