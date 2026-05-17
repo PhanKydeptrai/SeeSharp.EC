@@ -1,9 +1,11 @@
 using Application.Abstractions.Messaging;
 using Application.Services;
 using Domain.Entities.ProductVariants;
+using Domain.Events.ProductVariantEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.Utilities.Errors;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.ProductFeature.Commands.UpdateProductVariant;
@@ -12,15 +14,18 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
 {
     private readonly IProductRepository _productRepository;
     private readonly CloudinaryService _cloudinaryService;
+    private readonly IPublisher _publisher;
     private readonly IUnitOfWork _unitOfWork;
     public UpdateProductVariantCommandHandler(
-        IProductRepository productRepository, 
-        IUnitOfWork unitOfWork, 
-        CloudinaryService cloudinaryService)
+        IProductRepository productRepository,
+        IUnitOfWork unitOfWork,
+        CloudinaryService cloudinaryService,
+        IPublisher publisher)
     {
         _productRepository = productRepository;
         _unitOfWork = unitOfWork;
         _cloudinaryService = cloudinaryService;
+        _publisher = publisher;
     }
 
     public async Task<Result> Handle(UpdateProductVariantCommand request, CancellationToken cancellationToken)
@@ -62,6 +67,7 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
                     IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
                 await _unitOfWork.SaveChangesAsync();
+                await _publisher.Publish(new ProductVariantUpdatedEvent(productVariant.ProductVariantId, productVariant.ProductId));
                 return Result.Success();
             }
 
@@ -74,7 +80,7 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
                 IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
             await _unitOfWork.SaveChangesAsync();
-
+            await _publisher.Publish(new ProductVariantUpdatedEvent(productVariant.ProductVariantId, productVariant.ProductId));
             return Result.Success();
         }
 
@@ -92,6 +98,9 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
                 IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
             await _unitOfWork.SaveChangesAsync();
+
+            await _publisher.Publish(new ProductVariantUpdatedEvent(productVariant.ProductVariantId, productVariant.ProductId));
+
             return Result.Success();
         }
 
@@ -104,6 +113,8 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
             IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
         await _unitOfWork.SaveChangesAsync();
+        
+        await _publisher.Publish(new ProductVariantUpdatedEvent(productVariant.ProductVariantId, productVariant.ProductId));
 
         return Result.Success();
     }

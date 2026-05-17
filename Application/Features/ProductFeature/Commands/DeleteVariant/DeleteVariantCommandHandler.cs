@@ -1,8 +1,10 @@
 using Application.Abstractions.Messaging;
 using Domain.Entities.ProductVariants;
+using Domain.Events.ProductVariantEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.Utilities.Errors;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.ProductFeature.Commands.DeleteVariant;
@@ -10,14 +12,17 @@ namespace Application.Features.ProductFeature.Commands.DeleteVariant;
 internal sealed class DeleteVariantCommandHandler : ICommandHandler<DeleteVariantCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPublisher _publisher;
     private readonly IProductRepository _productRepository;
 
     public DeleteVariantCommandHandler(
-        IUnitOfWork unitOfWork, 
-        IProductRepository productRepository)
+        IUnitOfWork unitOfWork,
+        IProductRepository productRepository,
+        IPublisher publisher)
     {
         _unitOfWork = unitOfWork;
         _productRepository = productRepository;
+        _publisher = publisher;
     }
 
     public async Task<Result> Handle(DeleteVariantCommand request, CancellationToken cancellationToken)
@@ -33,6 +38,10 @@ internal sealed class DeleteVariantCommandHandler : ICommandHandler<DeleteVarian
         productVariant.Delete();
         await _unitOfWork.SaveChangesAsync();
 
+        await _publisher.Publish(new ProductVariantDeletedEvent(
+            productVariant.ProductVariantId, 
+            productVariant.ProductId));
+        
         return Result.Success();
     }
 }

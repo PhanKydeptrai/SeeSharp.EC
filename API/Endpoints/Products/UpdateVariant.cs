@@ -56,7 +56,8 @@ internal sealed class UpdateVariant : IEndpoint
 
             return o;
         })
-        .RequireAuthorization();
+        .RequireAuthorization()
+        .DisableAntiforgery();
     }
 
     private class UpdateProductVariantRequest
