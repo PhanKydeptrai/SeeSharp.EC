@@ -1,26 +1,22 @@
+using Application.IServices;
 using Domain.Entities.Categories;
 using Domain.IRepositories.CategoryRepositories;
-using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
 
 namespace Persistence.Repositories.CategoryRepositories;
 
 internal sealed class CategoryRepositoryDecorated : ICategoryRepository
 {
-    private static readonly DistributedCacheEntryOptions RepositoryCacheOptions = new()
-    {
-        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-    };
+    private readonly TimeSpan _entityCacheTtl = TimeSpan.FromMinutes(10);
 
     private readonly ICategoryRepository _decorated;
-    private readonly IDistributedCache _cache;
+    private readonly IRedisCacheService _cacheService;
 
     public CategoryRepositoryDecorated(
         ICategoryRepository decorated, 
-        IDistributedCache cache)
+        IRedisCacheService cacheService)
     {
         _decorated = decorated;
-        _cache = cache;
+        _cacheService = cacheService;
     }
 
     public async Task AddCategoryToPosgreSQL(Category category)
@@ -30,28 +26,28 @@ internal sealed class CategoryRepositoryDecorated : ICategoryRepository
         string cacheKeyIsExist = $"CategoryRepository:IsExist:{category.CategoryId.Value}";
         string cacheKeyCategory = $"CategoryRepository:Category:{category.CategoryId.Value}";
         
-        await _cache.RemoveAsync(cacheKeyIsExist);
-        await _cache.RemoveAsync(cacheKeyCategory);
+        await _cacheService.RemoveAsync(cacheKeyIsExist);
+        await _cacheService.RemoveAsync(cacheKeyCategory);
     }
 
     public async Task<Category?> GetCategoryByIdFromPostgreSQL(CategoryId categoryId, CancellationToken cancellationToken = default)
     {
         string cacheKey = $"CategoryRepository:Category:{categoryId.Value}";
-        string? cachedCategory = await _cache.GetStringAsync(cacheKey, cancellationToken);
+        Category? cachedCategory = await _cacheService.GetAsync<Category>(cacheKey, cancellationToken);
 
-        if (!string.IsNullOrEmpty(cachedCategory))
+        if (cachedCategory is not null)
         {
-            return JsonConvert.DeserializeObject<Category>(cachedCategory);
+            return cachedCategory;
         }
 
         var category = await _decorated.GetCategoryByIdFromPostgreSQL(categoryId, cancellationToken);
         
         if (category is not null)
         {
-            await _cache.SetStringAsync(
+            await _cacheService.SetAsync(
                 cacheKey,
-                JsonConvert.SerializeObject(category),
-                RepositoryCacheOptions,
+                category,
+                _entityCacheTtl,
                 cancellationToken);
         }
 
@@ -61,19 +57,19 @@ internal sealed class CategoryRepositoryDecorated : ICategoryRepository
     public async Task<bool> IsCategoryIdExist(CategoryId categoryId, CancellationToken cancellationToken = default)
     {
         string cacheKey = $"CategoryRepository:IsExist:{categoryId.Value}";
-        string? cachedResult = await _cache.GetStringAsync(cacheKey, cancellationToken);
+        bool? cachedResult = await _cacheService.GetAsync<bool?>(cacheKey, cancellationToken);
 
-        if (!string.IsNullOrEmpty(cachedResult))
+        if (cachedResult is not null)
         {
-            return bool.Parse(cachedResult);
+            return cachedResult.Value;
         }
 
         bool isExist = await _decorated.IsCategoryIdExist(categoryId, cancellationToken);
 
-        await _cache.SetStringAsync(
+        await _cacheService.SetAsync(
             cacheKey,
-            isExist.ToString(),
-            RepositoryCacheOptions,
+            isExist,
+            _entityCacheTtl,
             cancellationToken);
 
         return isExist;

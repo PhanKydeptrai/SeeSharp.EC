@@ -1,4 +1,4 @@
-namespace Infrastructure.Helper;
+namespace Application.Helper;
 
 public interface ICacheKeyGenerator
 {
@@ -15,7 +15,7 @@ public interface ICacheKeyGenerator
     /// <param name="pageSize"></param>
     /// <param name="filterProduct"></param>
     /// <returns></returns>
-    string CreateCacheKey(
+    Task<string> CreateCacheKeyAsync(
         string keyPrefix,
         string? filterProductStatus,
         string? filterCategory,

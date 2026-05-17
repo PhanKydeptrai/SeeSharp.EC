@@ -10,7 +10,7 @@
 *.todo
 *.userosscache
 *.sln.docstates
-
+*.lscache
 
 .env
 # User-specific files (MonoDevelop/Xamarin Studio)

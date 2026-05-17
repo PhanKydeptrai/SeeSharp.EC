@@ -29,9 +29,9 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
         CreateCategoryCommand request,
         CancellationToken cancellationToken)
     {
-        
+
         string imageUrl = string.Empty;
-        if (request.image != null)
+        if (request.image is not null)
         {
             imageUrl = await _cloudinaryService.UploadNewImage(request.image);
         }

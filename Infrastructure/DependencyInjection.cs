@@ -1,11 +1,11 @@
 using System.Net.Mail;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.EventBus;
+using Application.Helper;
 using Application.IServices;
 using Application.Security;
 using Infrastructure.BackgoundJob;
 using Infrastructure.Consumers;
-using Infrastructure.Helper;
 using Infrastructure.MessageBroker;
 using Infrastructure.Options;
 using Infrastructure.Security;
@@ -16,12 +16,12 @@ using Infrastructure.Services.EmployeeServices;
 using Infrastructure.Services.FeedbackServices;
 using Infrastructure.Services.OrderServices;
 using Infrastructure.Services.ProductServices;
+using Infrastructure.Services.RedisServices;
 using Infrastructure.Services.ShippingInformationServices;
 using Infrastructure.Services.UserServices;
 using Infrastructure.Services.VoucherServices;
 using Infrastructure.Services.WishItemServices;
 using MassTransit;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Outbox;
@@ -37,7 +37,7 @@ public static class DependencyInjection
 {
     //FIXME: AddInfrastructure
     public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,   
+        this IServiceCollection services,
         IConfiguration configuration)
     {
 
@@ -46,7 +46,6 @@ public static class DependencyInjection
             .AddScoped<OutboxProcessor>() //Đăng ký OutboxProcessor
             .AddEventBus()
             .AddRedisConfig(configuration)
-            .AddAppResilience()
             .AddBackgoundJob()
             .AddMassTransitConfiguration();
 
@@ -56,7 +55,7 @@ public static class DependencyInjection
         //Mail Test
         services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
                 .AddSmtpSender(configuration["Email:Host"], configuration.GetValue<int>("Email:Port")!);
-                
+
         //Mail Thật
         // services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
         //          .AddSmtpSender(new SmtpClient(configuration["Email:Host"], int.Parse(configuration["Email:Port"])));
@@ -108,9 +107,9 @@ public static class DependencyInjection
         services.AddScoped<ICategoryQueryServices>(provider =>
         {
             return new CategoryQueryServicesDecorated(
-                provider.GetRequiredService<CategoryQueryServices>(), 
-                provider.GetRequiredService<IDistributedCache>(), 
-                provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>());
+                provider.GetRequiredService<CategoryQueryServices>(),
+                provider.GetRequiredService<IRedisCacheService>(),
+                provider.GetRequiredService<ICacheKeyGenerator>());
         });
 
         services.AddScoped<ProductQueryServices>();
@@ -118,10 +117,8 @@ public static class DependencyInjection
         {
             return new ProductQueryServicesDecorated(
                 provider.GetRequiredService<ProductQueryServices>(),
-                provider.GetRequiredService<IDistributedCache>(), 
-                provider.GetRequiredService<IConnectionMultiplexer>(),
-                provider.GetRequiredService<ICacheKeyGenerator>(),
-                provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
+                provider.GetRequiredService<IRedisCacheService>(),
+                provider.GetRequiredService<ICacheKeyGenerator>()
             );
         });
 
@@ -136,6 +133,15 @@ public static class DependencyInjection
         services.AddScoped<IFeedbackQueryServices, FeedbackQueryServices>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ICacheKeyGenerator, CacheKeyGenerator>();
+        services.AddScoped<RedisCacheService>();
+        services.AddScoped<IRedisCacheService>(provider =>
+        {
+            return new ResilienceRedisCacheService(
+                provider.GetRequiredService<RedisCacheService>(),
+                provider.GetRequiredService<IRedisPipelineFactory>()
+            // provider.GetRequiredService<IReadOnlyPolicyRegistry<string>>()
+            );
+        });
         // services.AddScoped<EmailVerificationLinkFactory>();
         return services;
     }
@@ -173,12 +179,20 @@ public static class DependencyInjection
         string connection = configuration.GetConnectionString("Redis")
                 ?? throw new ArgumentNullException("Redis connection string is missing");
 
-        services.AddSingleton<StackExchange.Redis.IConnectionMultiplexer>(
-            StackExchange.Redis.ConnectionMultiplexer.Connect(connection));
+        services.AddSingleton<IRedisPipelineFactory, RedisPipelineFactory>();
 
-        services.AddStackExchangeRedisCache(redisOptions =>
+        services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connection));
+
+        services.AddSingleton<IDatabase>(provider =>
         {
-            redisOptions.Configuration = connection;
+            var connectionMultiplexer = provider.GetRequiredService<IConnectionMultiplexer>();
+            return connectionMultiplexer.GetDatabase();
+        });
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = connection; // Đường dẫn tới Redis Server
+            // options.InstanceName = "SampleInstance:";
         });
 
         return services;

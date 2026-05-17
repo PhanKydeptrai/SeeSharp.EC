@@ -1,11 +1,9 @@
-using System.Text;
 using Application.DTOs.Product;
 using Application.Features.Pages;
 using Application.IServices;
 using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
-using Infrastructure.Helper;
-using Microsoft.Extensions.Caching.Distributed;
+using Application.Helper;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Registry;
@@ -17,25 +15,19 @@ namespace Infrastructure.Services.ProductServices;
 internal sealed class ProductQueryServicesDecorated : IProductQueryServices
 {
     private readonly IProductQueryServices _decorated;
-    private readonly IDistributedCache _distributedCache;
-    private readonly IConnectionMultiplexer _connectionMultiplexer;
+    private readonly IRedisCacheService _cacheService;
     private readonly ICacheKeyGenerator _cacheKeyGenerator;
-    private readonly IAsyncPolicy<string?> _resiliencePolicy;
 
     private readonly TimeSpan _entityCacheTtl = TimeSpan.FromMinutes(30);
 
     public ProductQueryServicesDecorated(
         IProductQueryServices decorated,
-        IDistributedCache distributedCache,
-        IConnectionMultiplexer connectionMultiplexer,
-        ICacheKeyGenerator cacheKeyGenerator,
-        IReadOnlyPolicyRegistry<string> policyRegistry)
+        IRedisCacheService cacheService,
+        ICacheKeyGenerator cacheKeyGenerator)
     {
         _decorated = decorated;
-        _distributedCache = distributedCache;
-        _connectionMultiplexer = connectionMultiplexer;
+        _cacheService = cacheService;
         _cacheKeyGenerator = cacheKeyGenerator;
-        _resiliencePolicy = policyRegistry.Get<IAsyncPolicy<string?>>(Strategy.RedisStrategy);
     }
 
     public async Task<ProductResponse?> GetProductWithVariantListById(
@@ -44,35 +36,21 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
     {
         string cacheKey = $"ProductResponse:{productId.Value}";
 
-        string? cachedProduct = await _resiliencePolicy.ExecuteAsync(
-            async () =>
-            {
-                // Lấy dữ liệu danh sách từ cache
-                string? cachedProduct = await _distributedCache.GetStringAsync(cacheKey);
-                return cachedProduct;
-            }
-        );
+        ProductResponse? cachedProduct = await _cacheService.GetAsync<ProductResponse>(cacheKey, cancellationToken);
 
-        if (string.IsNullOrEmpty(cachedProduct))
+        if (cachedProduct is not null)
         {
-            ProductResponse? product = await _decorated.GetProductWithVariantListById(productId, cancellationToken);
-            
-            if (product is null) return product;
-
-            await _resiliencePolicy.ExecuteAsync(async () =>
-            {
-                await _distributedCache.SetStringAsync(
-                    cacheKey,
-                    JsonConvert.SerializeObject(product),
-                    cancellationToken);
-
-                return null;
-            });
-
-            return product;
+            return cachedProduct;
         }
-        return JsonConvert.DeserializeObject<ProductResponse>(cachedProduct);
 
+        ProductResponse? product = await _decorated.GetProductWithVariantListById(productId, cancellationToken);
+
+        if (product is not null)
+        {
+            await _cacheService.SetAsync(cacheKey, product, _entityCacheTtl, cancellationToken);
+        }
+
+        return product;
     }
 
     public async Task<bool> CheckProductAvailability(ProductId productId)
@@ -91,6 +69,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
     private record CachedProductList(List<Guid> ProductIds, int Page, int PageSize, int TotalCount);
     private record CachedVariantList(List<Guid> VariantIds, int Page, int PageSize, int TotalCount);
 
+    #region GetAllProductWithVariantList
     public async Task<PagedList<ProductResponse>> GetAllProductWithVariantList(
         string? filterProductStatus,
         string? filterCategory,
@@ -100,94 +79,67 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         int? page,
         int? pageSize)
     {
-        string cacheKey = _cacheKeyGenerator.CreateCacheKey("ProductList", filterProductStatus, filterCategory, sortColumn, sortOrder, page, pageSize);
 
-        string? cachedListInfo = await _resiliencePolicy.ExecuteAsync(
-            async () =>
-            {
-                // Lấy dữ liệu danh sách từ cache
-                string? cachedListInfo = await _distributedCache.GetStringAsync(cacheKey);
-                return cachedListInfo;
-            }
-        );
+        // Tạo cache key dựa trên các tham số lọc, sắp xếp và phân trang
+        string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync(
+            "ProductList",
+            filterProductStatus,
+            filterCategory,
+            sortColumn,
+            sortOrder,
+            page,
+            pageSize);
 
+        // Lấy dữ liệu danh sách từ cache
+        CachedProductList? listInfo = await _cacheService.GetAsync<CachedProductList>(cacheKey);
 
-        if (!string.IsNullOrEmpty(cachedListInfo)) // Nếu có cache, tiếp tục lấy chi tiết từng sản phẩm
+        if (listInfo is not null) //Nếu tìm thấy list id trong cache, tiếp tục lấy chi tiết từng sản phẩm
         {
-            var listInfo = JsonConvert.DeserializeObject<CachedProductList>(cachedListInfo);
+            var redisKeys = listInfo.ProductIds.Select(id => $"ProductResponse:{id}").ToList();
+            var cachedProducts = await _cacheService.GetManyAsync<ProductResponse>(redisKeys);
+
+            var products = new List<ProductResponse>();
             var missingIds = new List<Guid>();
 
-            if (listInfo is not null)
+            for (int i = 0; i < listInfo.ProductIds.Count; i++)
             {
-                var products = new List<ProductResponse>();
-
-                await _resiliencePolicy.ExecuteAsync(async () =>
+                if (cachedProducts[i] is not null)
                 {
-                    var db = _connectionMultiplexer.GetDatabase();
-                    // Tạo mảng RedisKey cho tất cả các ProductId trong danh sách
-                    var redisKeys = listInfo.ProductIds
-                        .Select(id => (RedisKey)$"ProductResponse:{id}")
-                        .ToArray();
-
-                    // Lấy giá trị cache cho tất cả các sản phẩm trong danh sách
-                    var cachedValues = await db.StringGetAsync(redisKeys);
-                    for (int i = 0; i < listInfo.ProductIds.Count; i++)
-                    {
-                        var id = listInfo.ProductIds[i];
-                        var cachedValue = cachedValues[i];
-
-                        if (cachedValue.HasValue && !cachedValue.IsNullOrEmpty)
-                        {
-                            var product = JsonConvert.DeserializeObject<ProductResponse>(cachedValue.ToString());
-                            if (product != null)
-                            {
-                                products.Add(product);
-                            }
-                        }
-                        else
-                        {
-                            missingIds.Add(id);
-                        }
-
-                        // Xử lý cache miss
-                        if (missingIds.Any())
-                        {
-                            var missingProducts = await _decorated.GetProductsByIds(
-                                missingIds.Select(id => ProductId.FromGuid(id)),
-                                CancellationToken.None);
-
-                            var batch = db.CreateBatch();
-                            var batchTasks = new List<Task>();
-
-                            foreach (var product in missingProducts)
-                            {
-                                string productCacheKey = $"ProductResponse:{product.ProductId}";
-
-                                batchTasks.Add(batch.StringSetAsync(
-                                    productCacheKey,
-                                    JsonConvert.SerializeObject(product),
-                                    _entityCacheTtl));
-
-                                products.Add(product);
-                            }
-
-                            batch.Execute();
-                            await Task.WhenAll(batchTasks);
-                        }
-                    }
-
-                    return null;
-                });
-
-                return new PagedList<ProductResponse>(
-                    products,
-                    listInfo.Page,
-                    listInfo.PageSize,
-                    listInfo.TotalCount);
+                    products.Add(cachedProducts[i]!);
+                }
+                else
+                {
+                    missingIds.Add(listInfo.ProductIds[i]);
+                }
             }
+
+            // Xử lý cache miss cho từng phần tử
+            if (missingIds.Any())
+            {
+                var missingProducts = await _decorated.GetProductsByIds(
+                    missingIds.Select(id => ProductId.FromGuid(id)),
+                    CancellationToken.None);
+
+                if (missingProducts.Any())
+                {
+                    var productsToCache = missingProducts.ToDictionary(
+                        p => $"ProductResponse:{p.ProductId}",
+                        p => p);
+
+                    await _cacheService.SetManyAsync(productsToCache, _entityCacheTtl);
+                    products.AddRange(missingProducts);
+                }
+            }
+
+            return new PagedList<ProductResponse>(
+                products,
+                listInfo.Page,
+                listInfo.PageSize,
+                listInfo.TotalCount);
         }
 
-        var result = await _decorated.GetAllProductWithVariantList(
+        // Cache miss hoàn toàn, gọi service để lấy list id sản phẩm trong DB rồi cache lại
+        var result = await _decorated.GetProductIdList(
             filterProductStatus,
             filterCategory,
             searchTerm,
@@ -196,44 +148,45 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             page,
             pageSize);
 
-        if (result.Items.Any())
+        // Nếu có kết quả thì cache lại thông tin list id sản phẩm
+        if (result.ProductIds.Any())
         {
-            await _resiliencePolicy.ExecuteAsync(async () =>
+            var listToCache = new CachedProductList(
+                result.ProductIds,
+                result.Page,
+                result.PageSize,
+                result.TotalCount);
+
+            await _cacheService.SetAsync(cacheKey, listToCache);
+
+            // Query DB lấy dữ liệu chi tiết và cache lại
+            var productList = await _decorated.GetProductsByIds(
+                result.ProductIds.Select(id => ProductId.FromGuid(id)),
+                CancellationToken.None);
+
+            if (productList.Any())
             {
-                var db = _connectionMultiplexer.GetDatabase();
-                var batch = db.CreateBatch();
-                var batchTasks = new List<Task>();
+                var productsToCache = productList.ToDictionary(
+                    p => $"ProductResponse:{p.ProductId}",
+                    p => p);
 
-                foreach (var product in result.Items)
-                {
-                    string productCacheKey = $"ProductResponse:{product.ProductId}";
+                await _cacheService.SetManyAsync(productsToCache, _entityCacheTtl);
+            }
 
-                    batchTasks.Add(batch.StringSetAsync(
-                        productCacheKey,
-                        JsonConvert.SerializeObject(product),
-                        _entityCacheTtl));
-                }
-
-                batch.Execute();
-                await Task.WhenAll(batchTasks);
-
-                var listInfoToCache = new CachedProductList(
-                    result.Items.Select(p => p.ProductId).ToList(),
-                    result.Page,
-                    result.PageSize,
-                    result.TotalCount);
-
-                // Ghi danh sách ProductId cùng với thông tin phân trang vào cache để lần sau có thể lấy nhanh
-                await _distributedCache.SetStringAsync(
-                    cacheKey,
-                    JsonConvert.SerializeObject(listInfoToCache));
-
-                return null;
-            });
+            return new PagedList<ProductResponse>(
+                productList,
+                result.Page,
+                result.PageSize,
+                result.TotalCount);
         }
 
-        return result;
+        return new PagedList<ProductResponse>(
+            new List<ProductResponse>(),
+            result.Page,
+            result.PageSize,
+            result.TotalCount);
     }
+    #endregion
 
     public async Task<bool> IsProductExist(ProductId productId)
     {
@@ -259,93 +212,57 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         int? page,
         int? pageSize)
     {
-        string cacheKey = _cacheKeyGenerator.CreateCacheKey("VariantList", filterProductStatus, filterCategory, sortColumn, sortOrder, page, pageSize, filterProduct);
+        string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync("VariantList", filterProductStatus, filterCategory, sortColumn, sortOrder, page, pageSize, filterProduct);
 
-        string? cachedListInfo = await _resiliencePolicy.ExecuteAsync(
-            async () =>
-            {
-                // Lấy dữ liệu danh sách từ cache
-                string? cachedListInfo = await _distributedCache.GetStringAsync(cacheKey);
-                return cachedListInfo;
-            }
-        );
+        CachedVariantList? listInfo = await _cacheService.GetAsync<CachedVariantList>(cacheKey);
 
-        if (!string.IsNullOrEmpty(cachedListInfo)) // Nếu có cache, tiếp tục lấy chi tiết từng variant
+        if (listInfo is not null) // Nếu có cache, tiếp tục lấy chi tiết từng variant
         {
-            var listInfo = JsonConvert.DeserializeObject<CachedVariantList>(cachedListInfo);
+            var redisKeys = listInfo.VariantIds.Select(id => $"ProductVariantResponse:{id}").ToList();
+            var cachedVariants = await _cacheService.GetManyAsync<ProductVariantResponse>(redisKeys);
+
+            var variants = new List<ProductVariantResponse>();
             var missingIds = new List<Guid>();
 
-            if (listInfo is not null)
+            for (int i = 0; i < listInfo.VariantIds.Count; i++)
             {
-                var variants = new List<ProductVariantResponse>();
-
-                await _resiliencePolicy.ExecuteAsync(async () =>
+                if (cachedVariants[i] is not null)
                 {
-                    var db = _connectionMultiplexer.GetDatabase();
-                    // Tạo mảng RedisKey cho tất cả các VariantId trong danh sách
-                    var redisKeys = listInfo.VariantIds
-                        .Select(id => (RedisKey)$"ProductVariantResponse:{id}")
-                        .ToArray();
-
-                    // Lấy giá trị cache cho tất cả các variants trong danh sách
-                    var cachedValues = await db.StringGetAsync(redisKeys);
-                    for (int i = 0; i < listInfo.VariantIds.Count; i++)
-                    {
-                        var id = listInfo.VariantIds[i];
-                        var cachedValue = cachedValues[i];
-
-                        if (cachedValue.HasValue && !cachedValue.IsNullOrEmpty)
-                        {
-                            var variant = JsonConvert.DeserializeObject<ProductVariantResponse>(cachedValue.ToString());
-                            if (variant != null)
-                            {
-                                variants.Add(variant);
-                            }
-                        }
-                        else
-                        {
-                            missingIds.Add(id);
-                        }
-                    }
-
-                    // Xử lý cache miss
-                    if (missingIds.Any())
-                    {
-                        var missingVariants = await _decorated.GetVariantsByIds(
-                            missingIds.Select(id => ProductVariantId.FromGuid(id)),
-                            CancellationToken.None);
-
-                        var batch = db.CreateBatch();
-                        var batchTasks = new List<Task>();
-
-                        foreach (var variant in missingVariants)
-                        {
-                            string variantCacheKey = $"ProductVariantResponse:{variant.ProductVariantId}";
-
-                            batchTasks.Add(batch.StringSetAsync(
-                                variantCacheKey,
-                                JsonConvert.SerializeObject(variant),
-                                _entityCacheTtl));
-
-                            variants.Add(variant);
-                        }
-
-                        batch.Execute();
-                        await Task.WhenAll(batchTasks);
-                    }
-
-                    return null;
-                });
-
-                return new PagedList<ProductVariantResponse>(
-                    variants,
-                    listInfo.Page,
-                    listInfo.PageSize,
-                    listInfo.TotalCount);
+                    variants.Add(cachedVariants[i]!);
+                }
+                else
+                {
+                    missingIds.Add(listInfo.VariantIds[i]);
+                }
             }
+
+            // Xử lý cache miss cho từng phần tử
+            if (missingIds.Any())
+            {
+                var missingVariants = await _decorated.GetVariantsByIds(
+                    missingIds.Select(id => ProductVariantId.FromGuid(id)),
+                    CancellationToken.None);
+
+                if (missingVariants.Any())
+                {
+                    var variantsToCache = missingVariants.ToDictionary(
+                        v => $"ProductVariantResponse:{v.ProductVariantId}",
+                        v => v);
+
+                    await _cacheService.SetManyAsync(variantsToCache, _entityCacheTtl);
+                    variants.AddRange(missingVariants);
+                }
+            }
+
+            return new PagedList<ProductVariantResponse>(
+                variants,
+                listInfo.Page,
+                listInfo.PageSize,
+                listInfo.TotalCount);
         }
 
-        var result = await _decorated.GetAllVariant(
+        // Cache miss hoàn toàn, gọi service để lấy list id variant trong DB rồi cache lại
+        var result = await _decorated.GetVariantIdList(
             filterProductStatus,
             filterProduct,
             filterCategory,
@@ -355,43 +272,43 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
             page,
             pageSize);
 
-        if (result.Items.Any())
+        // Nếu có kết quả thì cache lại thông tin list id variant
+        if (result.VariantIds.Any())
         {
-            await _resiliencePolicy.ExecuteAsync(async () =>
+            var listToCache = new CachedVariantList(
+                result.VariantIds,
+                result.Page,
+                result.PageSize,
+                result.TotalCount);
+
+            await _cacheService.SetAsync(cacheKey, listToCache);
+
+            // Query DB lấy dữ liệu chi tiết và cache
+            var variantList = await _decorated.GetVariantsByIds(
+                result.VariantIds.Select(id => ProductVariantId.FromGuid(id)),
+                CancellationToken.None);
+
+            if (variantList.Any())
             {
-                var db = _connectionMultiplexer.GetDatabase();
-                var batch = db.CreateBatch();
-                var batchTasks = new List<Task>();
+                var variantsToCache = variantList.ToDictionary(
+                    v => $"ProductVariantResponse:{v.ProductVariantId}",
+                    v => v);
 
-                foreach (var variant in result.Items)
-                {
-                    string variantCacheKey = $"ProductVariantResponse:{variant.ProductVariantId}";
+                await _cacheService.SetManyAsync(variantsToCache, _entityCacheTtl);
+            }
 
-                    batchTasks.Add(batch.StringSetAsync(
-                        variantCacheKey,
-                        JsonConvert.SerializeObject(variant),
-                        _entityCacheTtl));
-                }
-
-                batch.Execute();
-                await Task.WhenAll(batchTasks);
-
-                var listInfoToCache = new CachedVariantList(
-                    result.Items.Select(p => p.ProductVariantId).ToList(),
-                    result.Page,
-                    result.PageSize,
-                    result.TotalCount);
-
-                // Ghi danh sách VariantId cùng với thông tin phân trang vào cache để lần sau có thể lấy nhanh
-                await _distributedCache.SetStringAsync(
-                    cacheKey,
-                    JsonConvert.SerializeObject(listInfoToCache));
-
-                return null;
-            });
+            return new PagedList<ProductVariantResponse>(
+                variantList,
+                result.Page,
+                result.PageSize,
+                result.TotalCount);
         }
 
-        return result;
+        return new PagedList<ProductVariantResponse>(
+            new List<ProductVariantResponse>(),
+            result.Page,
+            result.PageSize,
+            result.TotalCount);
     }
 
     public async Task<ProductVariantPrice?> GetAvailableProductPrice(ProductVariantId productVariantId)
@@ -417,5 +334,45 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
     public async Task<List<ProductVariantResponse>> GetVariantsByIds(IEnumerable<ProductVariantId> variantIds, CancellationToken cancellationToken = default)
     {
         return await _decorated.GetVariantsByIds(variantIds, cancellationToken);
+    }
+
+    public Task<GetProductIdListResponse> GetProductIdList(
+        string? filterProductStatus,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        return _decorated.GetProductIdList(
+            filterProductStatus,
+            filterCategory,
+            searchTerm,
+            sortColumn,
+            sortOrder,
+            page,
+            pageSize);
+    }
+
+    public Task<GetVariantIdListResponse> GetVariantIdList(
+        string? filterProductStatus,
+        string? filterProduct,
+        string? filterCategory,
+        string? searchTerm,
+        string? sortColumn,
+        string? sortOrder,
+        int? page,
+        int? pageSize)
+    {
+        return _decorated.GetVariantIdList(
+            filterProductStatus,
+            filterProduct,
+            filterCategory,
+            searchTerm,
+            sortColumn,
+            sortOrder,
+            page,
+            pageSize);
     }
 }

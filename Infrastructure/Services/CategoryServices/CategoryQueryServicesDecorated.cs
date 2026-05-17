@@ -1,49 +1,30 @@
 using Application.DTOs.Category;
 using Application.Features.Pages;
+using Application.Helper;
 using Application.IServices;
 using Domain.Entities.Categories;
-using Infrastructure.Helper;
-using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
-using Polly;
-using Polly.Registry;
 using SharedKernel.Constants;
-using StackExchange.Redis;
 
 namespace Infrastructure.Services.CategoryServices;
 
 internal sealed class CategoryQueryServicesDecorated : ICategoryQueryServices
 {
-    private static readonly DistributedCacheEntryOptions CategoryCacheOptions = new()
-    {
-        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-    };
-
-    private static readonly DistributedCacheEntryOptions CategoryInfoCacheOptions = new()
-    {
-        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
-    };
+    private readonly ICategoryQueryServices _decorated;
+    private readonly IRedisCacheService _cacheService;
+    private readonly ICacheKeyGenerator _cacheKeyGenerator;
 
     private readonly TimeSpan _entityCacheTtl = TimeSpan.FromMinutes(30);
-
-    private readonly ICategoryQueryServices _decorated;
-    private readonly IDistributedCache _cache;
-    private readonly IConnectionMultiplexer _connectionMultiplexer;
-    private readonly ICacheKeyGenerator _cacheKeyGenerator;
-    private readonly IAsyncPolicy<string?> _resiliencePolicy;
+    private readonly TimeSpan _listCacheTtl = TimeSpan.FromMinutes(10);
+    private readonly TimeSpan _categoryInfoCacheTtl = TimeSpan.FromMinutes(30);
 
     public CategoryQueryServicesDecorated(
         ICategoryQueryServices decorated,
-        IDistributedCache cache,
-        IConnectionMultiplexer connectionMultiplexer,
-        ICacheKeyGenerator cacheKeyGenerator,
-        IReadOnlyPolicyRegistry<string> policyRegistry)
+        IRedisCacheService cacheService,
+        ICacheKeyGenerator cacheKeyGenerator)
     {
         _decorated = decorated;
-        _cache = cache;
-        _connectionMultiplexer = connectionMultiplexer;
+        _cacheService = cacheService;
         _cacheKeyGenerator = cacheKeyGenerator;
-        _resiliencePolicy = policyRegistry.Get<IAsyncPolicy<string?>>(Strategy.RedisStrategy);
     }
 
     public async Task<CategoryResponse?> GetById(
@@ -52,32 +33,18 @@ internal sealed class CategoryQueryServicesDecorated : ICategoryQueryServices
     {
         string cacheKey = $"CategoryResponse:{categoryId.Value}";
 
-        string? cachedData = await _resiliencePolicy.ExecuteAsync(
-            async () =>
-            {
-                string? cachedCategory = await _cache.GetStringAsync(cacheKey, cancellationToken);
-                return cachedCategory;
-            }
-        );
+        CategoryResponse? cachedData = await _cacheService.GetAsync<CategoryResponse>(cacheKey, cancellationToken);
 
-        if (!string.IsNullOrEmpty(cachedData))
+        if (cachedData is not null)
         {
-            return JsonConvert.DeserializeObject<CategoryResponse>(cachedData);
+            return cachedData;
         }
 
         var category = await _decorated.GetById(categoryId, cancellationToken);
 
         if (category is not null)
         {
-            await _resiliencePolicy.ExecuteAsync(async () =>
-            {
-                await _cache.SetStringAsync(
-                    cacheKey,
-                    JsonConvert.SerializeObject(category),
-                    CategoryCacheOptions,
-                    cancellationToken);
-                return null;
-            });
+            await _cacheService.SetAsync(cacheKey, category, _entityCacheTtl, cancellationToken);
         }
 
         return category;
@@ -89,29 +56,18 @@ internal sealed class CategoryQueryServicesDecorated : ICategoryQueryServices
     {
         string cacheKey = $"CategoryDetailResponse:{categoryId.Value}";
 
-        string? cachedCategoryDetail = await _resiliencePolicy.ExecuteAsync(async () =>
-        {
-            return await _cache.GetStringAsync(cacheKey, cancellationToken);
-        });
+        CategoryResponse? cachedCategoryDetail = await _cacheService.GetAsync<CategoryResponse>(cacheKey, cancellationToken);
 
-        if (!string.IsNullOrEmpty(cachedCategoryDetail))
+        if (cachedCategoryDetail is not null)
         {
-            return JsonConvert.DeserializeObject<CategoryResponse>(cachedCategoryDetail);
+            return cachedCategoryDetail;
         }
 
         var categoryDetail = await _decorated.GetCategoryDetail(categoryId, cancellationToken);
 
         if (categoryDetail is not null)
         {
-            await _resiliencePolicy.ExecuteAsync(async () =>
-            {
-                await _cache.SetStringAsync(
-                    cacheKey,
-                    JsonConvert.SerializeObject(categoryDetail),
-                    CategoryCacheOptions,
-                    cancellationToken);
-                return null;
-            });
+            await _cacheService.SetAsync(cacheKey, categoryDetail, _entityCacheTtl, cancellationToken);
         }
 
         return categoryDetail;
@@ -121,26 +77,16 @@ internal sealed class CategoryQueryServicesDecorated : ICategoryQueryServices
     {
         string cacheKey = "CategoryInfo:All";
 
-        string? cachedCategoryInfo = await _resiliencePolicy.ExecuteAsync(async () =>
-        {
-            return await _cache.GetStringAsync(cacheKey);
-        });
+        var cachedCategoryInfo = await _cacheService.GetAsync<List<CategoryInfo>>(cacheKey);
 
-        if (!string.IsNullOrEmpty(cachedCategoryInfo))
+        if (cachedCategoryInfo is not null)
         {
-            return JsonConvert.DeserializeObject<List<CategoryInfo>>(cachedCategoryInfo) ?? [];
+            return cachedCategoryInfo;
         }
 
         var categoryInfo = await _decorated.GetCategoryInfo();
 
-        await _resiliencePolicy.ExecuteAsync(async () =>
-        {
-            await _cache.SetStringAsync(
-                cacheKey,
-                JsonConvert.SerializeObject(categoryInfo),
-                CategoryInfoCacheOptions);
-            return null;
-        });
+        await _cacheService.SetAsync(cacheKey, categoryInfo, _categoryInfoCacheTtl);
 
         return categoryInfo;
     }
@@ -177,132 +123,79 @@ internal sealed class CategoryQueryServicesDecorated : ICategoryQueryServices
         int? page,
         int? pageSize)
     {
-        string cacheKey = _cacheKeyGenerator.CreateCacheKey("CategoryList", filter, null, sortColumn, sortOrder, page, pageSize, searchTerm);
+        string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync("CategoryList", filter, null, sortColumn, sortOrder, page, pageSize, searchTerm);
 
-        string? cachedListInfo = await _resiliencePolicy.ExecuteAsync(
-            async () =>
-            {
-                // Lấy dữ liệu danh sách từ cache
-                string? cachedListInfo = await _cache.GetStringAsync(cacheKey);
-                return cachedListInfo;
-            }
-        );
+        CachedCategoryList? listInfo = await _cacheService.GetAsync<CachedCategoryList>(cacheKey);
 
-        if (!string.IsNullOrEmpty(cachedListInfo)) // Nếu có cache, tiếp tục lấy chi tiết từng category
+        if (listInfo is not null)
         {
-            var listInfo = JsonConvert.DeserializeObject<CachedCategoryList>(cachedListInfo);
+            var redisKeys = listInfo.CategoryIds.Select(id => $"CategoryResponse:{id}").ToList();
+            var cachedCategories = await _cacheService.GetManyAsync<CategoryResponse>(redisKeys);
+
+            var categories = new List<CategoryResponse>();
             var missingIds = new List<Guid>();
 
-            if (listInfo is not null)
+            for (int i = 0; i < listInfo.CategoryIds.Count; i++)
             {
-                var categories = new List<CategoryResponse>();
-
-                await _resiliencePolicy.ExecuteAsync(async () =>
+                if (cachedCategories[i] is not null)
                 {
-                    var db = _connectionMultiplexer.GetDatabase();
-                    // Tạo mảng RedisKey cho tất cả các CategoryId trong danh sách
-                    var redisKeys = listInfo.CategoryIds
-                        .Select(id => (RedisKey)$"CategoryResponse:{id}")
-                        .ToArray();
-
-                    // Lấy giá trị cache cho tất cả các categories trong danh sách
-                    var cachedValues = await db.StringGetAsync(redisKeys);
-                    for (int i = 0; i < listInfo.CategoryIds.Count; i++)
-                    {
-                        var id = listInfo.CategoryIds[i];
-                        var cachedValue = cachedValues[i];
-
-                        if (cachedValue.HasValue && !cachedValue.IsNullOrEmpty)
-                        {
-                            var category = JsonConvert.DeserializeObject<CategoryResponse>(cachedValue.ToString());
-                            if (category != null)
-                            {
-                                categories.Add(category);
-                            }
-                        }
-                        else
-                        {
-                            missingIds.Add(id);
-                        }
-                    }
-
-                    // Xử lý cache miss
-                    if (missingIds.Any())
-                    {
-                        var missingCategories = await _decorated.GetCategoriesByIds(
-                            missingIds.Select(id => CategoryId.FromGuid(id)),
-                            CancellationToken.None);
-
-                        var batch = db.CreateBatch();
-                        var batchTasks = new List<Task>();
-
-                        foreach (var category in missingCategories)
-                        {
-                            string categoryCacheKey = $"CategoryResponse:{category.categoryId}";
-
-                            batchTasks.Add(batch.StringSetAsync(
-                                categoryCacheKey,
-                                JsonConvert.SerializeObject(category),
-                                _entityCacheTtl));
-
-                            categories.Add(category);
-                        }
-
-                        batch.Execute();
-                        await Task.WhenAll(batchTasks);
-                    }
-
-                    return null;
-                });
-
-                return new PagedList<CategoryResponse>(
-                    categories,
-                    listInfo.Page,
-                    listInfo.PageSize,
-                    listInfo.TotalCount);
+                    categories.Add(cachedCategories[i]!);
+                }
+                else
+                {
+                    missingIds.Add(listInfo.CategoryIds[i]);
+                }
             }
+
+            if (missingIds.Any())
+            {
+                var missingCategories = await _decorated.GetCategoriesByIds(
+                    missingIds.Select(id => CategoryId.FromGuid(id)),
+                    CancellationToken.None);
+
+                if (missingCategories.Any())
+                {
+                    var categoriesToCache = missingCategories.ToDictionary(
+                        c => $"CategoryResponse:{c.categoryId}",
+                        c => c);
+
+                    await _cacheService.SetManyAsync(categoriesToCache, _entityCacheTtl);
+                    categories.AddRange(missingCategories);
+                }
+            }
+
+            return new PagedList<CategoryResponse>(
+                categories,
+                listInfo.Page,
+                listInfo.PageSize,
+                listInfo.TotalCount);
         }
 
         var result = await _decorated.PagedList(filter, searchTerm, sortColumn, sortOrder, page, pageSize);
 
         if (result.Items.Any())
         {
-            await _resiliencePolicy.ExecuteAsync(async () =>
-            {
-                var db = _connectionMultiplexer.GetDatabase();
-                var batch = db.CreateBatch();
-                var batchTasks = new List<Task>();
+            var listToCache = new CachedCategoryList(
+                result.Items.Select(c => c.categoryId).ToList(),
+                result.Page,
+                result.PageSize,
+                result.TotalCount);
 
-                foreach (var category in result.Items)
-                {
-                    string categoryCacheKey = $"CategoryResponse:{category.categoryId}";
+            await _cacheService.SetAsync(cacheKey, listToCache, _listCacheTtl);
 
-                    batchTasks.Add(batch.StringSetAsync(
-                        categoryCacheKey,
-                        JsonConvert.SerializeObject(category),
-                        _entityCacheTtl));
-                }
+            var categoriesToCache = result.Items.ToDictionary(
+                c => $"CategoryResponse:{c.categoryId}",
+                c => c);
 
-                batch.Execute();
-                await Task.WhenAll(batchTasks);
-
-                var listInfoToCache = new CachedCategoryList(
-                    result.Items.Select(c => c.categoryId).ToList(),
-                    result.Page,
-                    result.PageSize,
-                    result.TotalCount);
-
-                // Ghi danh sách CategoryId cùng với thông tin phân trang vào cache để lần sau có thể lấy nhanh
-                await _cache.SetStringAsync(
-                    cacheKey,
-                    JsonConvert.SerializeObject(listInfoToCache),
-                    CategoryCacheOptions);
-
-                return null;
-            });
+            await _cacheService.SetManyAsync(categoriesToCache, _entityCacheTtl);
         }
 
         return result;
+    }
+
+    public async Task<GetCategoryIdListResponse> GetCategoryIdList(string? filter, string? searchTerm, string? sortColumn, string? sortOrder, int? page, int? pageSize)
+    {
+        return await _decorated.GetCategoryIdList(filter, searchTerm, sortColumn, sortOrder, page, pageSize);
     }
 }
 

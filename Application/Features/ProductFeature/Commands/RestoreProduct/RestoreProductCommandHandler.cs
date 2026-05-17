@@ -1,10 +1,10 @@
-using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
 using Domain.Entities.Products;
+using Domain.Events.ProductEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
-using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.ProductFeature.Commands.RestoreProduct;
@@ -14,18 +14,15 @@ internal sealed class RestoreProductCommandHandler : ICommandHandler<RestoreProd
     #region Dependency Injection
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProductRepository _productRepository;
-    private readonly IOutBoxMessageServices _outboxService;
-    private readonly IEventBus _eventBus;
+    private readonly IPublisher _publisher;
     public RestoreProductCommandHandler(
         IUnitOfWork unitOfWork,
         IProductRepository productRepository,
-        IOutBoxMessageServices outboxService,
-        IEventBus eventBus)
+        IPublisher publisher)
     {
         _unitOfWork = unitOfWork;
         _productRepository = productRepository;
-        _outboxService = outboxService;
-        _eventBus = eventBus;
+        _publisher = publisher;
     }
     #endregion
 
@@ -45,6 +42,7 @@ internal sealed class RestoreProductCommandHandler : ICommandHandler<RestoreProd
         await _unitOfWork.SaveChangesAsync();
         await _productRepository.RestoreProductVariantByProduct(productId);
         transaction.Commit();
+        await _publisher.Publish(new ProductRestoredEvent(productId), CancellationToken.None);
         return Result.Success();
     }
 

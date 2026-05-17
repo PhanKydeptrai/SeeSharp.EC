@@ -17,9 +17,13 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
 		<PackageReference Include="Polly" />
 		<PackageReference Include="Seq.Extensions.Logging" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Persistence\Persistence.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Services/RedisServices/" />
 	</ItemGroup>
 
 </Project>
