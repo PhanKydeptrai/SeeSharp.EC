@@ -1,9 +1,11 @@
 using Application.Abstractions.Messaging;
 using Domain.Entities.Categories;
+using Domain.Events.CategoryEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.Utilities.Errors;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.DeleteCategory;
@@ -14,15 +16,18 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
     private readonly ICategoryRepository _categoryRepository;
     private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMediator _mediator;
 
     public DeleteCategoryCommandHandler(
         ICategoryRepository categoryRepository,
         IUnitOfWork unitOfWork,
-        IProductRepository productRepository)
+        IProductRepository productRepository,
+        IMediator mediator)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
         _productRepository = productRepository;
+        _mediator = mediator;
     }
 
     public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
@@ -47,6 +52,9 @@ internal sealed class DeleteCategoryCommandHandler : ICommandHandler<DeleteCateg
         //Delete all variant of products in this category
         await _productRepository.DeleteProductVariantByCategory(category.CategoryId);
         transaction.Commit();
+        
+        await _mediator.Publish(new CategoryDeletedEvent(categoryId), cancellationToken);
+        
         return Result.Success();
     }
     //----------------------------------------------------------------

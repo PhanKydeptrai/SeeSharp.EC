@@ -1,8 +1,10 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Services;
 using Domain.Entities.Categories;
+using Domain.Events.CategoryEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.CreateCategory;
@@ -13,15 +15,18 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly CloudinaryService _cloudinaryService;
+    private readonly IPublisher _publisher;
 
     public CreateCategoryCommandHandler(
         ICategoryRepository categoryRepository,
         IUnitOfWork unitOfWork,
-        CloudinaryService cloudinaryService)
+        CloudinaryService cloudinaryService,
+        IPublisher publisher)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
         _cloudinaryService = cloudinaryService;
+        _publisher = publisher;
     }
     #endregion
 
@@ -42,6 +47,7 @@ internal class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryComm
 
         await _categoryRepository.AddCategoryToPosgreSQL(category);
         await _unitOfWork.SaveChangesAsync();
+        await _publisher.Publish(new CategoryCreatedEvent(category.CategoryId), cancellationToken);
         return Result.Success(category.CategoryId);
     }
 }

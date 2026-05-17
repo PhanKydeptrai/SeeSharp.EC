@@ -19,19 +19,19 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
     private readonly CloudinaryService _cloudinaryService;
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;
-    private readonly IMediator _mediator;
+    private readonly IPublisher _publisher;
     public CreateProductCommandHandler(
         IUnitOfWork unitOfWork,
         IProductRepository productRepository,
         ICategoryRepository categoryRepository,
         CloudinaryService cloudinaryService,
-        IMediator mediator)
+        IPublisher publisher)
     {
         _unitOfWork = unitOfWork;
         _productRepository = productRepository;
         _categoryRepository = categoryRepository;
+        _publisher = publisher;
         _cloudinaryService = cloudinaryService;
-        _mediator = mediator;
     }
 
     public async Task<Result> Handle(
@@ -47,7 +47,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         
         await _unitOfWork.SaveChangesAsync();
 
-        await _mediator.Publish(new ProductCreatedEvent(product.ProductId), cancellationToken);
+        await _publisher.Publish(new ProductCreatedEvent(product.ProductId), cancellationToken);
 
         return Result.Success(product.ProductId);
     }

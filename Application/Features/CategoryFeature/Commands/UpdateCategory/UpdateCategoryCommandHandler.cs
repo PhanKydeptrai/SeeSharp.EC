@@ -1,9 +1,11 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Services;
 using Domain.Entities.Categories;
+using Domain.Events.CategoryEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.Utilities.Errors;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.UpdateCategory;
@@ -12,14 +14,18 @@ internal class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComm
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly CloudinaryService _cloudinaryService;
+    private readonly IMediator _mediator;
+
     public UpdateCategoryCommandHandler(
         ICategoryRepository categoryRepository,
         CloudinaryService cloudinaryService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IMediator mediator)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
         _cloudinaryService = cloudinaryService;
+        _mediator = mediator;
     }
 
     public async Task<Result> Handle(
@@ -36,6 +42,7 @@ internal class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryComm
         await UpdateCategoryAsync(category, request);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _mediator.Publish(new CategoryUpdatedEvent(categoryId), cancellationToken);
 
         return Result.Success();
     }

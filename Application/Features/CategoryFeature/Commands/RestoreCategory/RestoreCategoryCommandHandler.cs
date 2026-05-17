@@ -1,11 +1,13 @@
 using Application.Abstractions.EventBus;
 using Application.Abstractions.Messaging;
 using Domain.Entities.Categories;
+using Domain.Events.CategoryEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.IRepositories.CategoryRepositories;
 using Domain.OutboxMessages.Services;
 using Domain.Utilities.Errors;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.CategoryFeature.Commands.RestoreCategory;
@@ -15,14 +17,18 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
     private readonly ICategoryRepository _categoryRepository;
     private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMediator _mediator;
+
     public RestoreCategoryCommandHandler(
         IUnitOfWork unitOfWork,
         ICategoryRepository categoryRepository,
-        IProductRepository productRepository)
+        IProductRepository productRepository,
+        IMediator mediator)
     {
         _unitOfWork = unitOfWork;
         _categoryRepository = categoryRepository;
         _productRepository = productRepository;
+        _mediator = mediator;
     }
 
     public async Task<Result> Handle(RestoreCategoryCommand request, CancellationToken cancellationToken)
@@ -45,6 +51,8 @@ public class RestoreCategoryCommandHandler : ICommandHandler<RestoreCategoryComm
         await _productRepository.RestoreProductVariantByCategory(categoryId);
         //Commit transaction
         transaction.Commit();
+        
+        await _mediator.Publish(new CategoryRestoredEvent(categoryId), cancellationToken);
         
         return Result.Success();
     }
