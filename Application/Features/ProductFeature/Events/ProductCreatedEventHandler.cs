@@ -9,9 +9,9 @@ internal sealed class ProductCreatedEventHandler : INotificationHandler<ProductC
 {
     private readonly IDatabase _redisDb;
 
-    public ProductCreatedEventHandler(IConnectionMultiplexer redis)
+    public ProductCreatedEventHandler(IDatabase redis)
     {
-        _redisDb = redis.GetDatabase();
+        _redisDb = redis;
     }
 
     public async Task Handle(ProductCreatedEvent notification, CancellationToken cancellationToken)
@@ -19,10 +19,13 @@ internal sealed class ProductCreatedEventHandler : INotificationHandler<ProductC
         string globalVersionKey = "version:ProductList:global";
         string categoryListVersionKey = $"version:ProductList:cat:{notification.CategoryId.Value}";
         string variantListVersionKey = $"version:VariantList:global";
+        string variantCategoryListVersionKey = $"version:VariantList:cat:{notification.CategoryId.Value}";
 
         var globalVersion = _redisDb.StringIncrementAsync(globalVersionKey);
         var categoryListVersion = _redisDb.StringIncrementAsync(categoryListVersionKey);
         var variantListVersion = _redisDb.StringIncrementAsync(variantListVersionKey);
-        await Task.WhenAll(globalVersion, categoryListVersion, variantListVersion);
+        var variantCategoryListVersion = _redisDb.StringIncrementAsync(variantCategoryListVersionKey);
+
+        await Task.WhenAll(globalVersion, categoryListVersion, variantListVersion, variantCategoryListVersion);
     }
 }
