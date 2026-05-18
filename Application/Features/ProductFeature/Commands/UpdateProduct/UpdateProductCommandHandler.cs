@@ -59,7 +59,8 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
         
         await _publisher.Publish(new ProductUpdatedEvent(
             product.ProductId, 
-            baseVariant.ProductVariantId), cancellationToken);
+            baseVariant.ProductVariantId,
+            product.CategoryId), cancellationToken);
         
         return Result.Success();
     }

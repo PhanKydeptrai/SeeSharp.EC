@@ -123,11 +123,53 @@ internal sealed class CategoryQueryServicesDecorated : ICategoryQueryServices
         int? page,
         int? pageSize)
     {
-        string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync("CategoryList", filter, null, sortColumn, sortOrder, page, pageSize, searchTerm);
+        // Khi có searchTerm, bypass cache và query trực tiếp từ database
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var categoryIdListResponse = await _decorated.GetCategoryIdList(
+                filter,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
 
+            if (categoryIdListResponse.CategoryIds.Any())
+            {
+                var categoryList = await _decorated.GetCategoriesByIds(
+                    categoryIdListResponse.CategoryIds.Select(id => CategoryId.FromGuid(id)),
+                    CancellationToken.None);
+
+                if (categoryList.Any())
+                {
+                    var categoriesToCache = categoryList.ToDictionary(
+                        c => $"CategoryResponse:{c.categoryId}",
+                        c => c);
+
+                    await _cacheService.SetManyAsync(categoriesToCache, _entityCacheTtl);
+                }
+
+                return new PagedList<CategoryResponse>(
+                    categoryList,
+                    categoryIdListResponse.Page,
+                    categoryIdListResponse.PageSize,
+                    categoryIdListResponse.TotalCount);
+            }
+
+            return new PagedList<CategoryResponse>(
+                new List<CategoryResponse>(),
+                categoryIdListResponse.Page,
+                categoryIdListResponse.PageSize,
+                categoryIdListResponse.TotalCount);
+        }
+
+        // Tạo cache key dựa trên các tham số lọc, sắp xếp và phân trang
+        string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync("CategoryList", filter, null, sortColumn, sortOrder, page, pageSize);
+
+        // Lấy dữ liệu danh sách từ cache
         CachedCategoryList? listInfo = await _cacheService.GetAsync<CachedCategoryList>(cacheKey);
 
-        if (listInfo is not null)
+        if (listInfo is not null) //Nếu tìm thấy list id trong cache, tiếp tục lấy chi tiết từng category
         {
             var redisKeys = listInfo.CategoryIds.Select(id => $"CategoryResponse:{id}").ToList();
             var cachedCategories = await _cacheService.GetManyAsync<CategoryResponse>(redisKeys);
@@ -147,6 +189,7 @@ internal sealed class CategoryQueryServicesDecorated : ICategoryQueryServices
                 }
             }
 
+            // Xử lý cache miss cho từng phần tử
             if (missingIds.Any())
             {
                 var missingCategories = await _decorated.GetCategoriesByIds(
@@ -171,26 +214,52 @@ internal sealed class CategoryQueryServicesDecorated : ICategoryQueryServices
                 listInfo.TotalCount);
         }
 
-        var result = await _decorated.PagedList(filter, searchTerm, sortColumn, sortOrder, page, pageSize);
+        // Cache miss hoàn toàn, gọi service để lấy list id category trong DB rồi cache lại
+        var result = await _decorated.GetCategoryIdList(
+            filter,
+            searchTerm,
+            sortColumn,
+            sortOrder,
+            page,
+            pageSize);
 
-        if (result.Items.Any())
+        // Nếu có kết quả thì cache lại thông tin list id category
+        if (result.CategoryIds.Any())
         {
             var listToCache = new CachedCategoryList(
-                result.Items.Select(c => c.categoryId).ToList(),
+                result.CategoryIds,
                 result.Page,
                 result.PageSize,
                 result.TotalCount);
 
             await _cacheService.SetAsync(cacheKey, listToCache, _listCacheTtl);
 
-            var categoriesToCache = result.Items.ToDictionary(
-                c => $"CategoryResponse:{c.categoryId}",
-                c => c);
+            // Query DB lấy dữ liệu chi tiết và cache lại
+            var categoryList = await _decorated.GetCategoriesByIds(
+                result.CategoryIds.Select(id => CategoryId.FromGuid(id)),
+                CancellationToken.None);
 
-            await _cacheService.SetManyAsync(categoriesToCache, _entityCacheTtl);
+            if (categoryList.Any())
+            {
+                var categoriesToCache = categoryList.ToDictionary(
+                    c => $"CategoryResponse:{c.categoryId}",
+                    c => c);
+
+                await _cacheService.SetManyAsync(categoriesToCache, _entityCacheTtl);
+            }
+
+            return new PagedList<CategoryResponse>(
+                categoryList,
+                result.Page,
+                result.PageSize,
+                result.TotalCount);
         }
 
-        return result;
+        return new PagedList<CategoryResponse>(
+            new List<CategoryResponse>(),
+            result.Page,
+            result.PageSize,
+            result.TotalCount);
     }
 
     public async Task<GetCategoryIdListResponse> GetCategoryIdList(string? filter, string? searchTerm, string? sortColumn, string? sortOrder, int? page, int? pageSize)

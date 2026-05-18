@@ -2,7 +2,6 @@ using Application.Abstractions.Messaging;
 using Application.Services;
 using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
-using Domain.Events.ProductEvents;
 using Domain.Events.ProductVariantEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
@@ -51,7 +50,12 @@ internal sealed class CreateProductVariantCommandHandler : ICommandHandler<Creat
 
         await _unitOfWork.SaveChangesAsync();
 
-        await _publisher.Publish(new ProductVariantCreatedEvent(productVariant.ProductVariantId, productVariant.ProductId), cancellationToken);
+        var categoryId = await _productRepository.GetCategoryIdByProductId(productVariant.ProductId);
+
+        await _publisher.Publish(new ProductVariantCreatedEvent(
+            productVariant.ProductVariantId, 
+            productVariant.ProductId, 
+            categoryId), cancellationToken);
 
         return Result.Success();
     }

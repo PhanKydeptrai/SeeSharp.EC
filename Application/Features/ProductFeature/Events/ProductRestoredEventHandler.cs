@@ -22,7 +22,8 @@ internal sealed class ProductRestoredEventHandler : INotificationHandler<Product
 
         await Task.WhenAll(
             db.StringIncrementAsync("version:ProductList:global"),
-            db.StringIncrementAsync("version:VariantList:global")
+            db.StringIncrementAsync("version:VariantList:global"),
+            db.StringIncrementAsync($"version:ProductList:cat:{notification.CategoryId.Value}")
         );
 
         var server = _redis.GetServer(_redis.GetEndPoints().First());

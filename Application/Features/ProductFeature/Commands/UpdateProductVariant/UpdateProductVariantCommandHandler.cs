@@ -67,7 +67,10 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
                     IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
                 await _unitOfWork.SaveChangesAsync();
-                await _publisher.Publish(new ProductVariantUpdatedEvent(productVariant.ProductVariantId, productVariant.ProductId));
+                await _publisher.Publish(new ProductVariantUpdatedEvent(
+                    productVariant.ProductVariantId, 
+                    productVariant.ProductId,
+                    productVariant.Product!.CategoryId));
                 return Result.Success();
             }
 
@@ -80,7 +83,10 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
                 IsBaseVariant.FromBoolean(request.IsBaseVariant));
 
             await _unitOfWork.SaveChangesAsync();
-            await _publisher.Publish(new ProductVariantUpdatedEvent(productVariant.ProductVariantId, productVariant.ProductId));
+            await _publisher.Publish(new ProductVariantUpdatedEvent(
+                productVariant.ProductVariantId, 
+                productVariant.ProductId,
+                productVariant.Product!.CategoryId));
             return Result.Success();
         }
 
@@ -99,7 +105,10 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
 
             await _unitOfWork.SaveChangesAsync();
 
-            await _publisher.Publish(new ProductVariantUpdatedEvent(productVariant.ProductVariantId, productVariant.ProductId));
+            await _publisher.Publish(new ProductVariantUpdatedEvent(
+                productVariant.ProductVariantId, 
+                productVariant.ProductId,
+                productVariant.Product!.CategoryId));
 
             return Result.Success();
         }
@@ -114,7 +123,10 @@ internal sealed class UpdateProductVariantCommandHandler : ICommandHandler<Updat
 
         await _unitOfWork.SaveChangesAsync();
         
-        await _publisher.Publish(new ProductVariantUpdatedEvent(productVariant.ProductVariantId, productVariant.ProductId));
+        await _publisher.Publish(new ProductVariantUpdatedEvent(
+            productVariant.ProductVariantId, 
+            productVariant.ProductId,
+            productVariant.Product!.CategoryId));
 
         return Result.Success();
     }

@@ -1,8 +1,10 @@
 using Application.Abstractions.Messaging;
 using Domain.Entities.ProductVariants;
+using Domain.Events.ProductVariantEvents;
 using Domain.IRepositories;
 using Domain.IRepositories.Products;
 using Domain.Utilities.Errors;
+using MediatR;
 using SharedKernel;
 
 namespace Application.Features.ProductFeature.Commands.RestoreVariant;
@@ -10,13 +12,16 @@ namespace Application.Features.ProductFeature.Commands.RestoreVariant;
 internal sealed class RestoreVariantCommandHandler : ICommandHandler<RestoreVariantCommand>
 {
     private readonly IProductRepository _productRepository;
+    private readonly IPublisher _publisher;
     private readonly IUnitOfWork _unitOfWork;
 
     public RestoreVariantCommandHandler(
         IProductRepository productRepository, 
+        IPublisher publisher,
         IUnitOfWork unitOfWork)
     {
         _productRepository = productRepository;
+        _publisher = publisher;
         _unitOfWork = unitOfWork;
     }
 
@@ -38,6 +43,9 @@ internal sealed class RestoreVariantCommandHandler : ICommandHandler<RestoreVari
         variant.Restore();
 
         await _unitOfWork.SaveChangesAsync();
+
+        await _publisher.Publish(new ProductVariantRestoredEvent(variant.ProductVariantId, variant.ProductId, variant.Product!.CategoryId), cancellationToken);
+
         return Result.Success();
     }
 }

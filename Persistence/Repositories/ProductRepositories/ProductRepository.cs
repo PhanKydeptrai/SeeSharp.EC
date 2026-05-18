@@ -49,7 +49,16 @@ internal sealed class ProductRepository : IProductRepository
     public async Task<ProductVariant> GetBaseVariantOfProduct(ProductId id)
     {
         return await _postgreSQLWriteDbContext.ProductVariants
+            .Include(a => a.Product)
             .Where(a => a.ProductId == id && a.IsBaseVariant == IsBaseVariant.True)
+            .FirstAsync();
+    }
+
+    public async Task<CategoryId> GetCategoryIdByProductId(ProductId id)
+    {
+        return await _postgreSQLWriteDbContext.Products
+            .Where(p => p.ProductId == id)
+            .Select(p => p.CategoryId)
             .FirstAsync();
     }
 
@@ -63,7 +72,9 @@ internal sealed class ProductRepository : IProductRepository
 
     public async Task<ProductVariant?> GetProductVariant(ProductVariantId id)
     {
-        return await _postgreSQLWriteDbContext.ProductVariants.FindAsync(id);
+        return await _postgreSQLWriteDbContext.ProductVariants
+            .Include(a => a.Product)
+            .FirstAsync(a => a.ProductVariantId == id);
     }
 
     public async Task RestoreProductByCategory(CategoryId id)

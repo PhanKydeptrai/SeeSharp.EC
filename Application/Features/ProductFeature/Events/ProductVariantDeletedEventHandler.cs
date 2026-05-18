@@ -18,13 +18,15 @@ internal sealed class ProductVariantDeletedEventHandler : INotificationHandler<P
         string variantResponseKey = $"ProductVariantResponse:{notification.ProductVariantId.Value}";
         string productResponseKey = $"ProductResponse:{notification.ProductId.Value}";
         string variantListVersionKey = "version:VariantList:global";
-        string productListVersionKey = "version:ProductList:global";
+        string variantListVersionKeyForCategory = $"version:VariantList:cat:{notification.CategoryId.Value}";
+        
 
         var deleteVariantResponse = _redisDb.KeyDeleteAsync(variantResponseKey);
         var deleteProductResponse = _redisDb.KeyDeleteAsync(productResponseKey);
         var incrementVariantListVersion = _redisDb.StringIncrementAsync(variantListVersionKey);
-        var incrementProductListVersion = _redisDb.StringIncrementAsync(productListVersionKey);
+        var incrementCategoryVariantListVersion = _redisDb.StringIncrementAsync(variantListVersionKeyForCategory);
+        
 
-        await Task.WhenAll(deleteVariantResponse, deleteProductResponse, incrementVariantListVersion, incrementProductListVersion);
+        await Task.WhenAll(deleteVariantResponse, deleteProductResponse, incrementVariantListVersion, incrementCategoryVariantListVersion);
     }
 }

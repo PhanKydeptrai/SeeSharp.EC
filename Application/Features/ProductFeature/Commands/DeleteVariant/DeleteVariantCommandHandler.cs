@@ -40,8 +40,9 @@ internal sealed class DeleteVariantCommandHandler : ICommandHandler<DeleteVarian
 
         await _publisher.Publish(new ProductVariantDeletedEvent(
             productVariant.ProductVariantId, 
-            productVariant.ProductId));
-        
+            productVariant.ProductId,
+            productVariant.Product!.CategoryId), cancellationToken);
+            
         return Result.Success();
     }
 }

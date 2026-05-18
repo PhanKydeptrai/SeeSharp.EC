@@ -45,7 +45,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
 
         transaction.Commit();
 
-        await _publisher.Publish(new ProductDeletedEvent(product.ProductId), cancellationToken);
+        await _publisher.Publish(new ProductDeletedEvent(product.ProductId, product.CategoryId), cancellationToken);
         return Result.Success();
     }
 

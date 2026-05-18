@@ -17,10 +17,12 @@ internal sealed class ProductUpdatedEventHandler : INotificationHandler<ProductU
     {
         string productVersionKey = $"ProductResponse:{notification.ProductId.Value}";
         string productVariantVersionKey = $"VariantResponse:{notification.VariantId.Value}";
+        string categoryListVersionKey = $"version:ProductList:cat:{notification.CategoryId.Value}";
 
         var product = _redisDb.KeyDeleteAsync(productVersionKey);
         var productVariant = _redisDb.KeyDeleteAsync(productVariantVersionKey);
+        var categoryListVersion = _redisDb.StringIncrementAsync(categoryListVersionKey);
 
-        await Task.WhenAll(product, productVariant);
+        await Task.WhenAll(product, productVariant, categoryListVersion);
     }
 }

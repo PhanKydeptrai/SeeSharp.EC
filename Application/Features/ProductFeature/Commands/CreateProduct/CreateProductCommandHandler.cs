@@ -47,7 +47,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         
         await _unitOfWork.SaveChangesAsync();
 
-        await _publisher.Publish(new ProductCreatedEvent(product.ProductId), cancellationToken);
+        await _publisher.Publish(new ProductCreatedEvent(product.ProductId, product.CategoryId), cancellationToken);
 
         return Result.Success(product.ProductId);
     }

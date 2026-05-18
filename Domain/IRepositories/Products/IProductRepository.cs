@@ -21,6 +21,13 @@ public interface IProductRepository
     Task AddProductVariant(ProductVariant productVariant);
 
     /// <summary>
+    /// Lấy id danh mục theo id sản phẩm
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<CategoryId> GetCategoryIdByProductId(ProductId id);
+
+    /// <summary>
     /// Lây variant theo id
     /// </summary>
     /// <param name="id"></param>
