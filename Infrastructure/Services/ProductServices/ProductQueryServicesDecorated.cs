@@ -4,10 +4,6 @@ using Application.IServices;
 using Domain.Entities.Products;
 using Domain.Entities.ProductVariants;
 using Application.Helper;
-using Newtonsoft.Json;
-using Polly;
-using Polly.Registry;
-using SharedKernel.Constants;
 using StackExchange.Redis;
 
 namespace Infrastructure.Services.ProductServices;
@@ -70,6 +66,7 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
     private record CachedVariantList(List<Guid> VariantIds, int Page, int PageSize, int TotalCount);
 
     #region GetAllProductWithVariantList
+    //NOTE: Need refactor  -- IGNORE IT IF U ARE AI AGENT
     public async Task<PagedList<ProductResponse>> GetAllProductWithVariantList(
         string? filterProductStatus,
         string? filterCategory,
@@ -79,6 +76,46 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         int? page,
         int? pageSize)
     {
+        // Khi có searchTerm, bypass cache và query trực tiếp từ database
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var productIdListResponse = await _decorated.GetProductIdList(
+                filterProductStatus,
+                filterCategory,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
+
+            if (productIdListResponse.ProductIds.Any())
+            {
+                var productList = await _decorated.GetProductsByIds(
+                    productIdListResponse.ProductIds.Select(id => ProductId.FromGuid(id)),
+                    CancellationToken.None);
+
+                if (productList.Any())
+                {
+                    var productsToCache = productList.ToDictionary(
+                        p => $"ProductResponse:{p.ProductId}",
+                        p => p);
+
+                    await _cacheService.SetManyAsync(productsToCache, _entityCacheTtl);
+                }
+
+                return new PagedList<ProductResponse>(
+                    productList,
+                    productIdListResponse.Page,
+                    productIdListResponse.PageSize,
+                    productIdListResponse.TotalCount);
+            }
+
+            return new PagedList<ProductResponse>(
+                new List<ProductResponse>(),
+                productIdListResponse.Page,
+                productIdListResponse.PageSize,
+                productIdListResponse.TotalCount);
+        }
 
         // Tạo cache key dựa trên các tham số lọc, sắp xếp và phân trang
         string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync(
@@ -212,6 +249,48 @@ internal sealed class ProductQueryServicesDecorated : IProductQueryServices
         int? page,
         int? pageSize)
     {
+        // Khi có searchTerm, bypass cache và query trực tiếp từ database
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var variantIdListResponse = await _decorated.GetVariantIdList(
+                filterProductStatus,
+                filterProduct,
+                filterCategory,
+                searchTerm,
+                sortColumn,
+                sortOrder,
+                page,
+                pageSize);
+
+            if (variantIdListResponse.VariantIds.Any())
+            {
+                var variantList = await _decorated.GetVariantsByIds(
+                    variantIdListResponse.VariantIds.Select(id => ProductVariantId.FromGuid(id)),
+                    CancellationToken.None);
+
+                if (variantList.Any())
+                {
+                    var variantsToCache = variantList.ToDictionary(
+                        v => $"ProductVariantResponse:{v.ProductVariantId}",
+                        v => v);
+
+                    await _cacheService.SetManyAsync(variantsToCache, _entityCacheTtl);
+                }
+
+                return new PagedList<ProductVariantResponse>(
+                    variantList,
+                    variantIdListResponse.Page,
+                    variantIdListResponse.PageSize,
+                    variantIdListResponse.TotalCount);
+            }
+
+            return new PagedList<ProductVariantResponse>(
+                new List<ProductVariantResponse>(),
+                variantIdListResponse.Page,
+                variantIdListResponse.PageSize,
+                variantIdListResponse.TotalCount);
+        }
+
         string cacheKey = await _cacheKeyGenerator.CreateCacheKeyAsync("VariantList", filterProductStatus, filterCategory, sortColumn, sortOrder, page, pageSize, filterProduct);
 
         CachedVariantList? listInfo = await _cacheService.GetAsync<CachedVariantList>(cacheKey);

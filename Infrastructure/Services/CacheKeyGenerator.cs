@@ -15,11 +15,11 @@ internal class CacheKeyGenerator : ICacheKeyGenerator
     {
         _redisDb = redis.GetDatabase();
 
-        // Setup Polly: Timeout 500ms và Fallback trả về "1" nếu Redis gặp sự cố
+        // Setup Polly: Timeout 25ms và Fallback trả về "1" nếu Redis gặp sự cố
         _redisResiliencePolicy = Policy<string>
             .Handle<Exception>()
             .FallbackAsync("1") // Nếu lỗi, ngầm định version là v1
-            .WrapAsync(Policy.TimeoutAsync(TimeSpan.FromMilliseconds(20), Polly.Timeout.TimeoutStrategy.Pessimistic));
+            .WrapAsync(Policy.TimeoutAsync(TimeSpan.FromMilliseconds(25), Polly.Timeout.TimeoutStrategy.Pessimistic));
     }
 
     public async Task<string> CreateCacheKeyAsync(

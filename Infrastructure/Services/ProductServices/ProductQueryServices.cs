@@ -142,7 +142,7 @@ internal sealed class ProductQueryServices : IProductQueryServices
         #endregion
     }
 
-
+    //NOTE: Need refactor
     public async Task<PagedList<ProductResponse>> GetAllProductWithVariantList(
         string? filterProductStatus,
         string? filterCategory,
